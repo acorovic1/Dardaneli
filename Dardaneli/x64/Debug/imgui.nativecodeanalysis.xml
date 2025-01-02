@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>8588</LINE>
+      <COLUMN>45</COLUMN>
+    </SFA>
+    <DEFECTCODE>33011</DEFECTCODE>
+    <DESCRIPTION>Unchecked upper bound for enum key used as index..</DESCRIPTION>
+    <FUNCTION>ImGui::GetKeyData</FUNCTION>
+    <DECORATED>?GetKeyData@ImGui@@YAPEAUImGuiKeyData@@PEAUImGuiContext@@W4ImGuiKey@@@Z</DECORATED>
+    <FUNCLINE>8578</FUNCLINE>
+    <PATH>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>8578</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>8580</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>8580</LINE>
+        <COLUMN>23</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>8583</LINE>
+        <COLUMN>12</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>Branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Branching based on condition 'key &amp; 61440'. 'false' branch is taken</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>8587</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>Combination</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>Branching based on condition '0 &lt;= key'. 'true' branch is taken
+Enum value 'key' is checked for lower bound.</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>8587</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>Combination</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>Branching based on condition 'key &lt; 666'. 'false' branch is taken
+Enum value 'key' is checked for lower bound.</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>8587</LINE>
+        <COLUMN>4</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>8587</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>4</ID>
+          <KIND>Branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Branching based on condition '0'. 'false' branch is taken</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>8587</LINE>
+        <COLUMN>4</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>8587</LINE>
+        <COLUMN>4</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>8588</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>8588</LINE>
+        <COLUMN>19</COLUMN>
+        <KEYEVENT>
+          <ID>5</ID>
+          <KIND>Branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Branching based on condition 'result.IsLegacyKey'. 'true' branch is taken</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>8588</LINE>
+        <COLUMN>45</COLUMN>
+      </SFA>
+    </PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>9656</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>33010</DEFECTCODE>
+    <DESCRIPTION>Unchecked lower bound for enum source used as index..</DESCRIPTION>
+    <FUNCTION>GetInputSourceName</FUNCTION>
+    <DECORATED>?GetInputSourceName@@YAPEBDW4ImGuiInputSource@@@Z</DECORATED>
+    <FUNCLINE>9652</FUNCLINE>
+    <PATH>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9652</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9654</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9654</LINE>
+        <COLUMN>39</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9655</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>Branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Branching based on condition '1'. 'true' branch is taken</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9655</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>Combination</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>Branching based on condition '0 &lt;= source'. 'false' branch is taken
+Enum value 'source' is checked for upper bound.</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9655</LINE>
+        <COLUMN>4</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9655</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>Branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Branching based on condition '0'. 'false' branch is taken</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9655</LINE>
+        <COLUMN>4</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9655</LINE>
+        <COLUMN>4</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9656</LINE>
+        <COLUMN>4</COLUMN>
+      </SFA>
+    </PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>9662</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>33010</DEFECTCODE>
+    <DESCRIPTION>Unchecked lower bound for enum source used as index..</DESCRIPTION>
+    <FUNCTION>GetMouseSourceName</FUNCTION>
+    <DECORATED>?GetMouseSourceName@@YAPEBDW4ImGuiMouseSource@@@Z</DECORATED>
+    <FUNCLINE>9658</FUNCLINE>
+    <PATH>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9658</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9660</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9660</LINE>
+        <COLUMN>39</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9661</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>Branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Branching based on condition '1'. 'true' branch is taken</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9661</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>Combination</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>Branching based on condition '0 &lt;= source'. 'false' branch is taken
+Enum value 'source' is checked for upper bound.</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9661</LINE>
+        <COLUMN>4</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9661</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>Branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Branching based on condition '0'. 'false' branch is taken</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9661</LINE>
+        <COLUMN>4</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9661</LINE>
+        <COLUMN>4</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>9662</LINE>
+        <COLUMN>4</COLUMN>
+      </SFA>
+    </PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>12347</LINE>
+      <COLUMN>52</COLUMN>
+    </SFA>
+    <DEFECTCODE>6011</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer 'window'. </DESCRIPTION>
+    <FUNCTION>ImGui::NavCalcPreferredRefPos</FUNCTION>
+    <DECORATED>?NavCalcPreferredRefPos@ImGui@@YA?AUImVec2@@XZ</DECORATED>
+    <FUNCLINE>12322</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12324</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12325</LINE>
+        <COLUMN>17</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12326</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12329</LINE>
+        <COLUMN>70</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'window' may be NULL (Skip this branch)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12340</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12341</LINE>
+        <COLUMN>12</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this branch, (assume 'activated_shortcut')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12342</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12347</LINE>
+        <COLUMN>52</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12347</LINE>
+        <COLUMN>52</COLUMN>
+        <KEYEVENT>
+          <ID>4</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'window' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT>
+</DEFECTS>

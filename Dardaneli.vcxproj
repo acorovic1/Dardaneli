@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -44,6 +44,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>false</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -115,6 +116,8 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>ImGUI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,9 +142,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AABB.cpp" />
+    <ClCompile Include="BasicObjects.cpp" />
+    <ClCompile Include="BVHNode.cpp" />
+    <ClCompile Include="CamaraManager.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="DrawableAABB.cpp" />
     <ClCompile Include="EBO.cpp" />
+    <ClCompile Include="EditModeBVH.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="ImGUIZMO\GraphEditor.cpp" />
+    <ClCompile Include="ImGUIZMO\ImCurveEdit.cpp" />
+    <ClCompile Include="ImGUIZMO\ImGradient.cpp" />
+    <ClCompile Include="ImGUIZMO\ImGuizmo.cpp" />
     <ClCompile Include="ImGUI\imgui.cpp" />
     <ClCompile Include="ImGUI\imgui_demo.cpp" />
     <ClCompile Include="ImGUI\imgui_draw.cpp" />
@@ -151,23 +164,49 @@
     <ClCompile Include="ImGUI\imgui_widgets.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MyGUI.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
+    <ClCompile Include="ObjectModeBVH.cpp" />
+    <ClCompile Include="Ray.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VAO.cpp" />
     <ClCompile Include="VBO.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="basic.frag" />
     <None Include="basic.vert" />
-    <None Include="light.frag" />
-    <None Include="light.vert" />
+    <None Include="grid.frag" />
+    <None Include="grid.vert" />
+    <None Include="editMode.frag" />
+    <None Include="editMode.vert" />
+    <None Include="BVH.frag" />
+    <None Include="BVH.vert" />
+    <None Include="selectEdit.frag" />
+    <None Include="selectEdit.vert" />
+    <None Include="selectObject.frag" />
+    <None Include="selectObject.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AABB.h" />
+    <ClInclude Include="BasicObjects.h" />
+    <ClInclude Include="BVHNode.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraManager.h" />
+    <ClInclude Include="DrawableAABB.h" />
     <ClInclude Include="EBO.h" />
+    <ClInclude Include="EditModeBVH.h" />
+    <ClInclude Include="ImGUIZMO\GraphEditor.h" />
+    <ClInclude Include="ImGUIZMO\ImCurveEdit.h" />
+    <ClInclude Include="ImGUIZMO\ImGradient.h" />
+    <ClInclude Include="ImGUIZMO\ImGuizmo.h" />
+    <ClInclude Include="ImGUIZMO\ImZoomSlider.h" />
     <ClInclude Include="ImGUI\imconfig.h" />
     <ClInclude Include="ImGUI\imgui.h" />
     <ClInclude Include="ImGUI\imgui_impl_glfw.h" />
@@ -178,13 +217,20 @@
     <ClInclude Include="ImGUI\imstb_textedit.h" />
     <ClInclude Include="ImGUI\imstb_truetype.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MyGUI.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectManager.h" />
+    <ClInclude Include="ObjectModeBVH.h" />
+    <ClInclude Include="Ray.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="VAO.h" />
     <ClInclude Include="VBO.h" />
     <ClInclude Include="Vertex.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="planks.png" />

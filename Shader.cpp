@@ -1,5 +1,7 @@
 #include "Shader.h"
 
+
+
 std::string get_file_contents(const char* filename) {
 	std::ifstream in(filename, std::ios::binary);
 
@@ -13,11 +15,11 @@ std::string get_file_contents(const char* filename) {
 		return (contents);
 	}
 	throw (errno);
-}
+}	   
 
-Shader::Shader(const char* vertexFile, const char* fragmentFile) 
+
+Shader::Shader(std::string name,const char* vertexFile, const char* fragmentFile)
 {
-
 	std::string vertexCode = get_file_contents(vertexFile);
 	std::string fragmentCode = get_file_contents(fragmentFile);
 	const char* vertexSource =vertexCode.c_str();
@@ -35,24 +37,39 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile)
 	glCompileShader(fragmentShader);
 	compileErrors(fragmentShader, "FRAGMENT");
 
+	
 
 	ID = glCreateProgram();
 	glAttachShader(ID, vertexShader);		
 	glAttachShader(ID, fragmentShader);
 	glLinkProgram(ID);
+	
 	compileErrors(ID, "PROGRAM");
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
+	
+	shaderSingleton->addShader(name,this);
 };
 
 void Shader::Activate() {
 	glUseProgram(ID);
 }
-void Shader::Delete() {
+void Shader::Del() {
+	//shaderSingleton->deleteShader(this);
 	glDeleteProgram(ID);
 }
+void Shader::Delete() {
+	shaderSingleton->deleteShader(this);
+	glDeleteProgram(ID);
+}
+
+GLuint Shader::getID() { return ID; }
+
+
+
+
 
 
 void Shader::setFloat(bool activated,const char* uniform, float value)
@@ -112,15 +129,6 @@ void Shader::setMat4(bool activated,const char* uniform, glm::mat4& mat)
 
 
 
-
-
-
-
-
-
-
-
-
 void Shader::compileErrors(unsigned int shader, const char* type)
 {
 	// Stores status of compilation
@@ -133,16 +141,35 @@ void Shader::compileErrors(unsigned int shader, const char* type)
 		if (hasCompiled == GL_FALSE)
 		{
 			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-			std::cout << "SHADER_COMPILATION_ERROR for:" << type << "\n" << infoLog << std::endl;
+			std::cout << "SHADER_COMPILATION_ERROR for:" << type << "\n" << infoLog;
+			std::cout << "Shader.cpp Error: " << glGetError() << std::endl;
+			std::cout << "Shaders created: "<<shaderSingleton->getNumberOfShaders() << std::endl;
 		}
 	}
 	else
 	{
+		glValidateProgram(ID);
 		glGetProgramiv(shader, GL_LINK_STATUS, &hasCompiled);
 		if (hasCompiled == GL_FALSE)
 		{
 			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-			std::cout << "SHADER_LINKING_ERROR for:" << type << "\n" << infoLog << std::endl;
+			std::cout << "SHADER_LINKING_ERROR for:" << type << "\n" << infoLog;
+			std::cout << "Shaders created: "<<shaderSingleton->getNumberOfShaders() << std::endl;
 		}
 	}
+}
+
+
+
+
+void DeleteAllShaders()
+{
+
+
+	for (auto it = shaderSingleton->shaders.begin(); it != shaderSingleton->shaders.end();++it )
+		it->second->Del();
+	
+	shaderSingleton->shaders.clear();
+
+	
 }

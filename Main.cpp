@@ -1,200 +1,150 @@
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+#include "Window.h"
+#include "Renderer.h"
+#include "MyGUI.h"
+#include "Scene.h"
 
 
-#include <iostream>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/rotate_vector.hpp>
-#include <glm/gtx/vector_angle.hpp>
+// Debug message callback function
+void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+{
+	// Ignore non-significant error/warning codes
+	if (id == 131169 || id == 131185 || id == 131218 || id == 131204)
+		return;
 
-#include "Shader.h"
-#include "Camera.h"
-#include "Mesh.h"
+	std::cout << "\nDebug message (" << id << "): " << message << std::endl;
 
-int width=800, height=600;
+	switch (source)
+	{
+	case GL_DEBUG_SOURCE_API:             std::cout << "Source: API"; break;
+	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cout << "Source: Window System"; break;
+	case GL_DEBUG_SOURCE_SHADER_COMPILER: std::cout << "Source: Shader Compiler"; break;
+	case GL_DEBUG_SOURCE_THIRD_PARTY:     std::cout << "Source: Third Party"; break;
+	case GL_DEBUG_SOURCE_APPLICATION:     std::cout << "Source: Application"; break;
+	case GL_DEBUG_SOURCE_OTHER:           std::cout << "Source: Other"; break;
+	}
+	std::cout << std::endl;
+
+	switch (type)
+	{
+	case GL_DEBUG_TYPE_ERROR:               std::cout << "Type: Error"; break;
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: std::cout << "Type: Deprecated Behaviour"; break;
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  std::cout << "Type: Undefined Behaviour"; break;
+	case GL_DEBUG_TYPE_PORTABILITY:         std::cout << "Type: Portability"; break;
+	case GL_DEBUG_TYPE_PERFORMANCE:         std::cout << "Type: Performance"; break;
+	case GL_DEBUG_TYPE_MARKER:              std::cout << "Type: Marker"; break;
+	case GL_DEBUG_TYPE_PUSH_GROUP:          std::cout << "Type: Push Group"; break;
+	case GL_DEBUG_TYPE_POP_GROUP:           std::cout << "Type: Pop Group"; break;
+	case GL_DEBUG_TYPE_OTHER:               std::cout << "Type: Other"; break;
+	}
+	std::cout << std::endl;
+
+	switch (severity)
+	{
+	case GL_DEBUG_SEVERITY_HIGH:         std::cout << "Severity: high"; break;
+	case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "Severity: medium"; break;
+	case GL_DEBUG_SEVERITY_LOW:          std::cout << "Severity: low"; break;
+	case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "Severity: notification"; break;
+	}
+	std::cout << std::endl;
+	std::cout << std::endl;
+}
 
 
 int main() {
 
+
+
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-	glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
-	GLFWwindow* window = glfwCreateWindow(width, height, "Dardaneli", NULL, NULL);
-	glfwMakeContextCurrent(window);
-	gladLoadGL();
-	glViewport(0, 0, width, height);
+	Window window(800, 600, "Dardaneli");
+	window.Init();
 
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	ImGui::StyleColorsDark();
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
-	ImGui_ImplOpenGL3_Init("#version 460");
+	MyGUI gui;
+	gui.Init(window.GetWindow());
 
+	Scene scene;
+	scene.Init();
 
-	// Cube vertex data (positions, normals, colors, and UVs)
-	std::vector<Vertex>cubeVertices{
-		// Position         // Normal           // Color           // UV
-		// Front face
-	Vertex{ glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f) }, // V0
-		Vertex{ glm::vec3(0.5f, -0.5f,  0.5f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f) }, // V1
-		Vertex{ glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f) }, // V2
-		Vertex{ glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f) }, // V3
+	Renderer renderer;
+	renderer.Init();
 
-		// Back face
-		Vertex{ glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f) }, // V4
-		Vertex{ glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f) }, // V5
-		Vertex{ glm::vec3(0.5f,  0.5f, -0.5f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f) }, // V6
-		Vertex{ glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f) }, // V7
-	};
+	double prevTime = 0.0;
+	double crntTime = 0.0;
+	double timeDiff;
 
-	// Cube indices for indexed drawing
-	std::vector<GLuint> cubeIndices = {
-		// Front face
-		0, 1, 2,
-		2, 3, 0,
-		// Back face
-		4, 5, 6,
-		6, 7, 4,
-		// Left face
-		0, 3, 7,
-		7, 4, 0,
-		// Right face
-		1, 2, 6,
-		6, 5, 1,
-		// Top face
-		3, 2, 6,
-		6, 7, 3,
-		// Bottom face
-		0, 1, 5,
-		5, 4, 0
-	};
-
-	// Plane vertex data (positions, normals, colors, and UVs)
-	std::vector<Vertex> planeVertices = {
-		// Position         // Normal           // Color           // UV
-		Vertex{glm::vec3(-0.5f, 0.0f,  0.5f),glm::vec3(0.0f, 1.0f,  0.0f),glm::vec3(1.0f, 0.0f, 0.0f),glm::vec2(0.0f, 0.0f),},  // V0
-		Vertex{glm::vec3(0.5f, 0.0f,  0.5f), glm::vec3(0.0f, 1.0f,  0.0f),glm::vec3(0.0f, 1.0f, 0.0f),glm::vec2(1.0f, 0.0f)},  // V1
-		Vertex{glm::vec3(0.5f, 0.0f, -0.5f), glm::vec3(0.0f, 1.0f,  0.0f),glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f)},  // V2
-		Vertex{glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(0.0f, 1.0f,  0.0f),glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)}  // V3
-	};
-
-	// Plane indices for indexed drawing
-	std::vector<GLuint>planeIndices = {
-		0, 1, 2,
-		2, 3, 0
-	};
-
-
-	std::vector<Texture> textures
+	unsigned int counter = 0;
+	int flags;
+	glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+	if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
 	{
-		//Texture("planks.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
-		//Texture("planksSpec.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE)
+		std::cout << "Debug context enabled." << std::endl;
+	}
+	else
+	{
+		std::cout << "Debug context not enabled." << std::endl;
+	}
+
+
+	glfwSetTime(0);
+	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	glDebugMessageCallback(glDebugOutput, nullptr);
+	const GLubyte* version = glGetString(GL_VERSION);
+	std::cout << "OpenGL Version: " << version << std::endl;
+
+	while (!window.ShouldClose()) {
+
+		crntTime = glfwGetTime();
+		timeDiff = crntTime - prevTime;
+		counter++;
+		if (timeDiff >= 1.0 / 30.0)
+		{
+			std::string FPS = std::to_string((1.0 / timeDiff) * counter);
+			std::string ms = std::to_string((timeDiff / counter) * 1000);
+			std::string newTitle = "Dardaneli - " + FPS + "FPS / " + ms + "ms";
+			glfwSetWindowTitle(window.GetWindow(), newTitle.c_str());
+
+			prevTime = crntTime;
+			counter = 0;
+
+		}
+
+		gui.NewFrame();
+
+		window.getCamera().Update();
+
+		renderer.Render(window, gui);
+
+
+
+		if (!gui.getIO()->WantCaptureMouse) {
+
+			window.getCamera().Inputs(window.GetWindow(), gui);
+
+		}
+		gui.Grid();
+		gui.DrawUI();
+		gui.Render();
+
+		window.PollEvents();
 	};
 
-	Mesh plane(planeVertices, planeIndices, textures);
-	Mesh cube1(cubeVertices, cubeIndices, textures);
-	Mesh cube(cubeVertices, cubeIndices, textures);
+	std::cout << "\nTime = " << glfwGetTime();
 
-	glm::mat4 model = glm::mat4(1.0f);
-	glm::mat4 view = glm::mat4(1.0f);
-	glm::mat4 projection = glm::mat4(1.0f);
+	gui.Shutdown();
 
+	DeleteAllShaders();
 
-	model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
-
-
-	
-
-	Shader basicShader("basic.vert", "basic.frag");
-	Shader lightShader("light.vert", "light.frag");
-	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
-
-	basicShader.Activate();
-	
-	
-	glEnable(GL_DEPTH_TEST);
-	
-	//testiranje indexa
-	std::cout << "Cube index = " << cube.getIndex()<<"\n";
-	std::cout << "plane index = "<<plane.getIndex() << "\n";
-	
-	float translation[3] = { 0.0f,0.0f,0.0f };
-	int objectIndex=0;
-	
-
-	while (!glfwWindowShouldClose(window)) {
-		
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-
-		if (!io.WantCaptureMouse) {
-
-		camera.Inputs(window);
-		}
-
-		camera.Update(45.0f, 0.1f, 100.0f);
-
-		//camera.CameraUniform(basicShader, "cameraMatrix");
-
-
-		//lightShader.setMat4(false, "model", model);
-		//cube.Draw(basicShader, camera);
-		cube.Draw(lightShader, camera);
-		plane.Draw(lightShader, camera);
-
-		ImGui::Begin("Dardaneli - ImGUI");
-		ImGui::Text("Hello");
-		
-		if (ImGui::InputInt("Index", &objectIndex))
-		{
-			std::cout << "Index change to - " << objectIndex << "\n";
-			translation[0] = 0;
-			translation[1] = 0;
-			translation[2] = 0;
-		}
-
-		if (ImGui::InputFloat3("position", translation)) 
-		{
-			listOfObjects->getObject(objectIndex)->Translate(translation[0],translation[1],translation[2]);
-
-		}
-
-
-
-
-		
-		
-		
-		ImGui::End();
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	};
-
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
-
-
-	basicShader.Delete();
-	lightShader.Delete();
-	glfwDestroyWindow(window);
+	window.Terminate();
 	glfwTerminate();
 
 
 	return 0;
 }
+
+

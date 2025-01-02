@@ -1,6 +1,6 @@
 #pragma once
 
-#define SHADER_CLASS_H
+
 
 #include <glad/glad.h>
 #include <string>
@@ -12,17 +12,27 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-////////////SINGLE RESPONSIBILITY PRINCIPLE ////////
+#include "ShaderManager.h"
+
+/////////// SINGLE RESPONSIBILITY PRINCIPLE ////////
 std::string get_file_contents(const char* filename); 
-////////////SINGLE RESPONSIBILITY PRINCIPLE ////////
+/////////// SINGLE RESPONSIBILITY PRINCIPLE ////////
 
 class Shader {
 
-public:
 	GLuint ID;
-	Shader(const char* vertexFile, const char* fragmentFile);
+
+	void compileErrors(unsigned int shader, const char* type);
+
+	
+	void Del();
+public:
+	
+	Shader(std::string name,const char* vertexFile, const char* fragmentFile);
 
 	void Activate();
+	GLuint getID();
+	
 	void Delete();
 
 	void setFloat(bool activated,const char* uniform, float value);
@@ -35,7 +45,8 @@ public:
 	void setVector4f(bool activated,const char* uniform, glm::vec4 &vec);
 	void setMat4(bool activated,const char* uniform, glm::mat4 &mat);
 
-private:
-	void compileErrors(unsigned int shader, const char* type);
-
+	friend void DeleteAllShaders();
 };
+
+
+void DeleteAllShaders();

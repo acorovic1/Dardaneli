@@ -1,0 +1,1980 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mCurrentOperation' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mCurrentOperation"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mBoundsMatrix' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mBoundsMatrix"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mBoundsAxis' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mBoundsAxis"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mBoundsBestAxis' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mBoundsBestAxis"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mBoundsLocalPivot' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mBoundsLocalPivot"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mBoundsPlan' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mBoundsPlan"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mBoundsAnchor' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mBoundsAnchor"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mBoundsPivot' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mBoundsPivot"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mAxisFactor' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mAxisFactor"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mBelowPlaneLimit' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mBelowPlaneLimit"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mBelowAxisLimit' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mBelowAxisLimit"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mSaveMousePosx' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mSaveMousePosx"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mScaleLast' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mScaleLast"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mScaleValueOrigin' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mScaleValueOrigin"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mScale' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mScale"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mRotationAngleOrigin' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mRotationAngleOrigin"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mRotationAngle' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mRotationAngle"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mRotationVectorSource' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mRotationVectorSource"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mTranslationLastDelta' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mTranslationLastDelta"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mMatrixOrigin' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mMatrixOrigin"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mTranslationPlanOrigin' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mTranslationPlanOrigin"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mTranslationPlan' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mTranslationPlan"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mReversed' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mReversed"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mbMouseOver' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mbMouseOver"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mRelativeOrigin' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mRelativeOrigin"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mScreenFactor' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mScreenFactor"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mRadiusSquareCenter' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mRadiusSquareCenter"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mRayVector' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mRayVector"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mRayOrigin' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mRayOrigin"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mCameraUp' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mCameraUp"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mCameraDir' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mCameraDir"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mCameraRight' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mCameraRight"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mCameraEye' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mCameraEye"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mModelScaleOrigin' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mModelScaleOrigin"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mViewProjection' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mViewProjection"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mMVPLocal' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mMVPLocal"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mMVP' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mMVP"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mModelSourceInverse' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mModelSourceInverse"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mModelSource' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mModelSource"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mModelInverse' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mModelInverse"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mModelLocal' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mModelLocal"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mModel' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mModel"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mProjectionMat' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mProjectionMat"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mViewMat' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mViewMat"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mMode' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mMode"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuizmo::Context::mDrawList' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 669,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::Context::{ctor}",
+                  "decoratedName": "??0Context@ImGuizmo@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuizmo::Context::mDrawList"
+          }
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "`_alloca` indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 1303,
+                  "startColumn": 39,
+                  "endLine": 1303,
+                  "endColumn": 101
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::DrawRotationGizmo",
+                  "decoratedName": "?DrawRotationGizmo@ImGuizmo@@YAXW4OPERATION@1@H@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6263",
+          "message": {
+            "text": "Using `_alloca` in a loop."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 1303,
+                  "startColumn": 39,
+                  "endLine": 1303,
+                  "endColumn": 101
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::DrawRotationGizmo",
+                  "decoratedName": "?DrawRotationGizmo@ImGuizmo@@YAXW4OPERATION@1@H@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1287,
+                            "startColumn": 7
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6001",
+          "message": {
+            "text": "Using uninitialized memory 'axesWorldDirections'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 1716,
+                  "startColumn": 35
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::HandleAndDrawLocalBounds",
+                  "decoratedName": "?HandleAndDrawLocalBounds@ImGuizmo@@YAXPEBMPEAUmatrix_t@1@0W4OPERATION@1@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1650,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1651,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1654,
+                            "startColumn": 13
+                          }
+                        },
+                        "message": {
+                          "text": "'axesWorldDirections' is not initialized"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1655,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1656,
+                            "startColumn": 11
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1657,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1658,
+                            "startColumn": 15
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1659,
+                            "startColumn": 11
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1660,
+                            "startColumn": 11
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '!gContext.mbUsingBounds' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ]
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1687,
+                            "startColumn": 19
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'numAxes==0' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ]
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1694,
+                            "startColumn": 25
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'bestAxis!=axes[0]' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ]
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1713,
+                            "startColumn": 25
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1713,
+                            "startColumn": 50
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume 'axisIndex<numAxes')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ]
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1715,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1716,
+                            "startColumn": 33
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1719,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1721,
+                            "startColumn": 14
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1722,
+                            "startColumn": 14
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1724,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 1716,
+                            "startColumn": 35
+                          }
+                        },
+                        "message": {
+                          "text": "'axesWorldDirections' is used, but may not have been initialized"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6001",
+          "message": {
+            "text": "Using uninitialized memory 'rot'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                },
+                "region": {
+                  "startLine": 2516,
+                  "startColumn": 10
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuizmo::RecomposeMatrixFromComponents",
+                  "decoratedName": "?RecomposeMatrixFromComponents@ImGuizmo@@YAXPEBM00PEAM@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 2511,
+                            "startColumn": 17
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 2513,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "'rot' is not initialized"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 2514,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 2514,
+                            "startColumn": 25
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume 'i<3')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ]
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 2516,
+                            "startColumn": 29
+                          }
+                        },
+                        "message": {
+                          "text": "'rot' is an Output from 'ImGuizmo::matrix_t::RotationAxis' (declared on line 397)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ]
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+                          },
+                          "region": {
+                            "startLine": 2516,
+                            "startColumn": 10
+                          }
+                        },
+                        "message": {
+                          "text": "'rot' is used, but may not have been initialized"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.39.33523.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUIZMO/ImGuizmo.cpp"
+          },
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "88fad48e3847d24c3560431095425257dd2ded6662c2ed044071ff0206c34c2c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/visual studio projects/dardaneli/imgui/imgui.h"
+          },
+          "hashes": {
+            "sha-256": "a87c209c5b3b4d9c06d202e1797af2c23583ece973f89b9a389b103dd26bb2f4"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/visual studio projects/dardaneli/imgui/imconfig.h"
+          },
+          "hashes": {
+            "sha-256": "a768dd48f4b2ee7ccbb6684de45c3dcf94d46a9eca6b833a47e0bd3cc5ebfba0"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/visual studio projects/dardaneli/imgui/imgui_internal.h"
+          },
+          "hashes": {
+            "sha-256": "04abae6d6dcb525594b9cfb23757c434d9efb1f538915e4f3ac89761cc7716d3"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/visual studio projects/dardaneli/imgui/imstb_textedit.h"
+          },
+          "hashes": {
+            "sha-256": "99d5970b305c9865e7a1fcdeed0ee71cc3701bbc66bec45cf8b0c460e16d9cdd"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/visual studio projects/dardaneli/imguizmo/imguizmo.h"
+          },
+          "hashes": {
+            "sha-256": "798a43a140e6f0976742f34fc63e0d8a480977681a4e9cef87bc258e0741aa26"
+          }
+        }
+      ]
+    }
+  ]
+}

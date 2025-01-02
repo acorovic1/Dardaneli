@@ -1,0 +1,98 @@
+[33mcommit 5c8dbb7dbe2f80c5d4a0f2a0f54e8a39ea0af3f5[m[33m ([m[1;36mHEAD -> [m[1;32mDardaneli[m[33m)[m
+Author: Adnan Ćorović <acorovic1@etf.unsa.ba>
+Date:   Thu Jan 2 18:43:54 2025 +0100
+
+    Started working on 'edit mode'. Added vertex selection and extrusion
+
+ .../543230ff-a843-449e-ab5f-fe1ce03f89be.vsidx     |  Bin [31m815505[m -> [32m0[m bytes
+ .../d6a33085-eb84-4e3a-bf7a-ed246e4ac301.vsidx     |  Bin [31m0[m -> [32m34310[m bytes
+ .../f0704bb2-c943-41b2-b1a0-eb543b8be7ec.vsidx     |  Bin [31m0[m -> [32m820407[m bytes
+ .../f5a35b79-b7ff-4f82-bdb6-e702880a079c.vsidx     |  Bin [31m27633[m -> [32m0[m bytes
+ .vs/Dardaneli/v17/.suo                             |  Bin [31m142848[m -> [32m163840[m bytes
+ .vs/Dardaneli/v17/Browse.VC.db                     |  Bin [31m50503680[m -> [32m50503680[m bytes
+ .vs/Dardaneli/v17/DocumentLayout.json              |  143 [32m+[m[31m-[m
+ .vs/Dardaneli/v17/HierarchyCache.v1.txt            |  Bin [31m71959[m -> [32m72857[m bytes
+ .vs/Dardaneli/v17/fileList.bin                     |  Bin [31m56102[m -> [32m56442[m bytes
+ .../v17/ipch/AutoPCH/15a93a4ecf3e6d78/MAIN.ipch    |  Bin [31m0[m -> [32m106627072[m bytes
+ .../v17/ipch/AutoPCH/22bf6a8bf7be373c/VBO.ipch     |  Bin [31m0[m -> [32m86638592[m bytes
+ .../v17/ipch/AutoPCH/23b5156c9f93b7b9/BVHNODE.ipch |  Bin [31m0[m -> [32m105316352[m bytes
+ .../v17/ipch/AutoPCH/24d50c75893add78/SHADER.ipch  |  Bin [31m0[m -> [32m98238464[m bytes
+ .../2dd4de630d750025/IMGUI_IMPL_OPENGL3.ipch       |  Bin [31m0[m -> [32m4849664[m bytes
+ .../v17/ipch/AutoPCH/35f9e9fcc597f2a1/SCENE.ipch   |  Bin [31m0[m -> [32m104529920[m bytes
+ .../AutoPCH/46c118d9da65b0f9/OBJECTMODEBVH.ipch    |  Bin [31m0[m -> [32m104267776[m bytes
+ .../ipch/AutoPCH/576b92cbbe03618/EDITMODEBVH.ipch  |  Bin [31m0[m -> [32m104267776[m bytes
+ .../ipch/AutoPCH/59ed3180e9ae1a76/RENDERER.ipch    |  Bin [31m0[m -> [32m106627072[m bytes
+ .../ipch/AutoPCH/750e6f797c43ce19/EDITMODEBVH.ipch |  Bin [31m0[m -> [32m104267776[m bytes
+ .../AutoPCH/75f9999fdc74e5f/OBJECTMANAGER.ipch     |  Bin [31m0[m -> [32m26345472[m bytes
+ .../v17/ipch/AutoPCH/761d29702a1f05f7/VAO.ipch     |  Bin [31m0[m -> [32m86638592[m bytes
+ .../v17/ipch/AutoPCH/7b9f462c5e87161d/EBO.ipch     |  Bin [31m0[m -> [32m86638592[m bytes
+ .../v17/ipch/AutoPCH/809d3fcb91a65af3/GLAD.ipch    |  Bin [31m0[m -> [32m6422528[m bytes
+ .../v17/ipch/AutoPCH/9b49cf7a8fbdbdc8/MESH.ipch    |  Bin [31m0[m -> [32m104529920[m bytes
+ .../v17/ipch/AutoPCH/9cc7e814ff345f43/AABB.ipch    |  Bin [31m0[m -> [32m101908480[m bytes
+ .../v17/ipch/AutoPCH/af09368e4643fd0e/CAMERA.ipch  |  Bin [31m0[m -> [32m106364928[m bytes
+ .../v17/ipch/AutoPCH/b45401dc4edb1b9e/OBJECT.ipch  |  Bin [31m0[m -> [32m104529920[m bytes
+ .../AutoPCH/b51338a6b5b11245/DRAWABLEAABB.ipch     |  Bin [31m0[m -> [32m101908480[m bytes
+ .../AutoPCH/bf39d4907ec8f541/SHADERMANAGER.ipch    |  Bin [31m0[m -> [32m53870592[m bytes
+ .../AutoPCH/ec11a6fe15e5761b/BASICOBJECTS.ipch     |  Bin [31m0[m -> [32m101908480[m bytes
+ .../v17/ipch/AutoPCH/f7820d2ebc7735a4/MYGUI.ipch   |  Bin [31m0[m -> [32m110297088[m bytes
+ AABB.cpp                                           |   13 [32m+[m[31m-[m
+ AABB.h                                             |    7 [32m+[m[31m-[m
+ BVHNode.cpp                                        |   31 [32m+[m
+ BVHNode.h                                          |    3 [32m+[m
+ BasicObjects.cpp                                   |  127 [32m+[m[31m-[m
+ Camera.cpp                                         |   80 [32m+[m[31m-[m
+ Dardaneli.vcxproj                                  |   15 [32m+[m[31m-[m
+ Dardaneli.vcxproj.filters                          |   20 [32m+[m[31m-[m
+ Dardaneli/x64/Debug/AABB.nativecodeanalysis.sarif  | 1448 [32m++++++++++++++[m
+ Dardaneli/x64/Debug/AABB.nativecodeanalysis.xml    |  224 [32m+++[m
+ Dardaneli/x64/Debug/AABB.obj                       |  Bin [31m249153[m -> [32m255323[m bytes
+ Dardaneli/x64/Debug/BVH.obj                        |  Bin [31m212536[m -> [32m0[m bytes
+ .../x64/Debug/BVHNode.nativecodeanalysis.sarif     | 1456 [32m++++++++++++++[m
+ Dardaneli/x64/Debug/BVHNode.nativecodeanalysis.xml |  224 [32m+++[m
+ Dardaneli/x64/Debug/BVHNode.obj                    |  Bin [31m296201[m -> [32m303344[m bytes
+ .../Debug/BasicObjects.nativecodeanalysis.sarif    | 1448 [32m++++++++++++++[m
+ .../x64/Debug/BasicObjects.nativecodeanalysis.xml  |  224 [32m+++[m
+ Dardaneli/x64/Debug/BasicObjects.obj               |  Bin [31m501618[m -> [32m532938[m bytes
+ .../Debug/CamaraManager.nativecodeanalysis.sarif   | 1376 [32m++++++++++++++[m
+ .../x64/Debug/CamaraManager.nativecodeanalysis.xml |  224 [32m+++[m
+ Dardaneli/x64/Debug/CamaraManager.obj              |  Bin [31m300916[m -> [32m300856[m bytes
+ .../x64/Debug/Camera.nativecodeanalysis.sarif      | 1544 [32m+++++++++++++++[m
+ Dardaneli/x64/Debug/Camera.nativecodeanalysis.xml  |  224 [32m+++[m
+ Dardaneli/x64/Debug/Camera.obj                     |  Bin [31m326425[m -> [32m328195[m bytes
+ Dardaneli/x64/Debug/CodeAnalysisResultManifest.txt |  Bin [31m0[m -> [32m3980[m bytes
+ Dardaneli/x64/Debug/Dardaneli.Build.CppClean.log   |  122 [32m++[m
+ Dardaneli/x64/Debug/Dardaneli.ilk                  |  Bin [31m10906776[m -> [32m10292864[m bytes
+ Dardaneli/x64/Debug/Dardaneli.log                  |   34 [32m+[m[31m-[m
+ .../x64/Debug/Dardaneli.tlog/CL.command.1.tlog     |  Bin [31m28922[m -> [32m28134[m bytes
+ Dardaneli/x64/Debug/Dardaneli.tlog/CL.read.1.tlog  |  Bin [31m1037656[m -> [32m1101696[m bytes
+ Dardaneli/x64/Debug/Dardaneli.tlog/CL.write.1.tlog |  Bin [31m156652[m -> [32m18932[m bytes
+ Dardaneli/x64/Debug/Dardaneli.tlog/Cl.items.tlog   |    1 [32m+[m
+ .../x64/Debug/Dardaneli.tlog/link.command.1.tlog   |  Bin [31m9742[m -> [32m8612[m bytes
+ .../x64/Debug/Dardaneli.tlog/link.read.1.tlog      |  Bin [31m13284[m -> [32m13792[m bytes
+ .../x64/Debug/Dardaneli.tlog/link.secondary.1.tlog |    2 [32m+[m[31m-[m
+ .../x64/Debug/Dardaneli.tlog/link.write.1.tlog     |  Bin [31m5092[m -> [32m5236[m bytes
+ .../Debug/Dardaneli.vcxproj.FileListAbsolute.txt   |    0
+ .../Debug/DrawableAABB.nativecodeanalysis.sarif    | 1424 [32m++++++++++++++[m
+ .../x64/Debug/DrawableAABB.nativecodeanalysis.xml  |  224 [32m+++[m
+ Dardaneli/x64/Debug/DrawableAABB.obj               |  Bin [31m309395[m -> [32m309955[m bytes
+ Dardaneli/x64/Debug/EBO.nativecodeanalysis.sarif   | 1176 [32m++++++++++++[m
+ Dardaneli/x64/Debug/EBO.nativecodeanalysis.xml     |  224 [32m+++[m
+ Dardaneli/x64/Debug/EBO.obj                        |  Bin [31m63526[m -> [32m88832[m bytes
+ .../x64/Debug/EditModeBVH.nativecodeanalysis.sarif | 1464 [32m+++++++++++++++[m
+ .../x64/Debug/EditModeBVH.nativecodeanalysis.xml   |  224 [32m+++[m
+ Dardaneli/x64/Debug/EditModeBVH.obj                |  Bin [31m0[m -> [32m480369[m bytes
+ .../x64/Debug/GraphEditor.nativecodeanalysis.sarif |   75 [32m+[m
+ .../x64/Debug/GraphEditor.nativecodeanalysis.xml   |    2 [32m+[m
+ Dardaneli/x64/Debug/GraphEditor.obj                |  Bin [31m189846[m -> [32m189814[m bytes
+ .../x64/Debug/ImCurveEdit.nativecodeanalysis.sarif |   75 [32m+[m
+ .../x64/Debug/ImCurveEdit.nativecodeanalysis.xml   |    2 [32m+[m
+ Dardaneli/x64/Debug/ImCurveEdit.obj                |  Bin [31m549997[m -> [32m550057[m bytes
+ .../x64/Debug/ImGradient.nativecodeanalysis.sarif  |   75 [32m+[m
+ .../x64/Debug/ImGradient.nativecodeanalysis.xml    |    2 [32m+[m
+ Dardaneli/x64/Debug/ImGradient.obj                 |  Bin [31m47307[m -> [32m47307[m bytes
+ .../x64/Debug/ImGuizmo.nativecodeanalysis.sarif    | 1980 [32m++++++++++++++++++++[m
+ .../x64/Debug/ImGuizmo.nativecodeanalysis.xml      | 1076 [32m+++++++++++[m
+ Dardaneli/x64/Debug/ImGuizmo.obj                   |  Bin [31m407862[m -> [32m407862[m bytes
+ Dardaneli/x64/Debug/ImSequencer.obj                |  Bin [31m116063[m -> [32m0[m bytes
+ Dardaneli/x64/Debug/Main.nativecodeanalysis.sarif  | 1568 [32m++++++++++++++++[m
+ Dard

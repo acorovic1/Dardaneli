@@ -1,6 +1,6 @@
 #pragma once
 
-#define VBO_CLASS_H
+
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -13,9 +13,11 @@ class VBO {
 
 public:
 	GLuint ID;
-
+	VBO();
 	VBO(std::vector<Vertex>&vertices);
+	VBO(std::vector<glm::vec2>& vertices);
 
+	void bufferData(std::vector<Vertex>& vertices);
 	void Bind();
 	void Unbind();
 	void Delete();

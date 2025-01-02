@@ -1,0 +1,889 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C33011",
+          "message": {
+            "text": "Unchecked upper bound for enum key used as index.."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                },
+                "region": {
+                  "startLine": 8588,
+                  "startColumn": 29,
+                  "endLine": 8588,
+                  "endColumn": 50
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGui::GetKeyData",
+                  "decoratedName": "?GetKeyData@ImGui@@YAPEAUImGuiKeyData@@PEAUImGuiContext@@W4ImGuiKey@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 8578,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 8580,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 8580,
+                            "startColumn": 24
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 8583,
+                            "startColumn": 13
+                          }
+                        },
+                        "message": {
+                          "text": "Branching based on condition 'key & 61440'. 'false' branch is taken"
+                        }
+                      },
+                      "kinds": [
+                        "Branch"
+                      ]
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 8587,
+                            "startColumn": 5
+                          }
+                        },
+                        "message": {
+                          "text": "Branching based on condition '0 <= key'. 'true' branch is taken\nEnum value 'key' is checked for lower bound."
+                        }
+                      },
+                      "kinds": [
+                        "Combination"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 8587,
+                            "startColumn": 5
+                          }
+                        },
+                        "message": {
+                          "text": "Branching based on condition 'key < 666'. 'false' branch is taken\nEnum value 'key' is checked for lower bound."
+                        }
+                      },
+                      "kinds": [
+                        "Combination"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 8587,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 8587,
+                            "startColumn": 5
+                          }
+                        },
+                        "message": {
+                          "text": "Branching based on condition '0'. 'false' branch is taken"
+                        }
+                      },
+                      "kinds": [
+                        "Branch"
+                      ]
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 8587,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 8587,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 8588,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 8588,
+                            "startColumn": 20
+                          }
+                        },
+                        "message": {
+                          "text": "Branching based on condition 'result.IsLegacyKey'. 'true' branch is taken"
+                        }
+                      },
+                      "kinds": [
+                        "Branch"
+                      ]
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 8588,
+                            "startColumn": 46
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C33010",
+          "message": {
+            "text": "Unchecked lower bound for enum source used as index.."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                },
+                "region": {
+                  "startLine": 9656,
+                  "startColumn": 5,
+                  "endLine": 9656,
+                  "endColumn": 37
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "GetInputSourceName",
+                  "decoratedName": "?GetInputSourceName@@YAPEBDW4ImGuiInputSource@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9652,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9654,
+                            "startColumn": 17
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9654,
+                            "startColumn": 40
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9655,
+                            "startColumn": 5
+                          }
+                        },
+                        "message": {
+                          "text": "Branching based on condition '1'. 'true' branch is taken"
+                        }
+                      },
+                      "kinds": [
+                        "Branch"
+                      ]
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9655,
+                            "startColumn": 5
+                          }
+                        },
+                        "message": {
+                          "text": "Branching based on condition '0 <= source'. 'false' branch is taken\nEnum value 'source' is checked for upper bound."
+                        }
+                      },
+                      "kinds": [
+                        "Combination"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9655,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9655,
+                            "startColumn": 5
+                          }
+                        },
+                        "message": {
+                          "text": "Branching based on condition '0'. 'false' branch is taken"
+                        }
+                      },
+                      "kinds": [
+                        "Branch"
+                      ]
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9655,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9655,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9656,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C33010",
+          "message": {
+            "text": "Unchecked lower bound for enum source used as index.."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                },
+                "region": {
+                  "startLine": 9662,
+                  "startColumn": 5,
+                  "endLine": 9662,
+                  "endColumn": 37
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "GetMouseSourceName",
+                  "decoratedName": "?GetMouseSourceName@@YAPEBDW4ImGuiMouseSource@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9658,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9660,
+                            "startColumn": 17
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9660,
+                            "startColumn": 40
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9661,
+                            "startColumn": 5
+                          }
+                        },
+                        "message": {
+                          "text": "Branching based on condition '1'. 'true' branch is taken"
+                        }
+                      },
+                      "kinds": [
+                        "Branch"
+                      ]
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9661,
+                            "startColumn": 5
+                          }
+                        },
+                        "message": {
+                          "text": "Branching based on condition '0 <= source'. 'false' branch is taken\nEnum value 'source' is checked for upper bound."
+                        }
+                      },
+                      "kinds": [
+                        "Combination"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9661,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9661,
+                            "startColumn": 5
+                          }
+                        },
+                        "message": {
+                          "text": "Branching based on condition '0'. 'false' branch is taken"
+                        }
+                      },
+                      "kinds": [
+                        "Branch"
+                      ]
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9661,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9661,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 9662,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6011",
+          "message": {
+            "text": "Dereferencing NULL pointer 'window'. "
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                },
+                "region": {
+                  "startLine": 12347,
+                  "startColumn": 13,
+                  "endLine": 12347,
+                  "endColumn": 120
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGui::NavCalcPreferredRefPos",
+                  "decoratedName": "?NavCalcPreferredRefPos@ImGui@@YA?AUImVec2@@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 12324,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 12325,
+                            "startColumn": 18
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 12326,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 12329,
+                            "startColumn": 71
+                          }
+                        },
+                        "message": {
+                          "text": "'window' may be NULL (Skip this branch)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ]
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 12340,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 12341,
+                            "startColumn": 13
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this branch, (assume 'activated_shortcut')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ]
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 12342,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 12347,
+                            "startColumn": 53
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '<branch condition>' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ]
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 12347,
+                            "startColumn": 53
+                          }
+                        },
+                        "message": {
+                          "text": "'window' is dereferenced, but may still be NULL"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.39.33523.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///C:/VISUAL STUDIO PROJECTS/Dardaneli/ImGUI/imgui.cpp"
+          },
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "37ec3db421216ac45169153667911739e7abcb8360ff89b4b6ea59d05749998b"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/visual studio projects/dardaneli/imgui/imgui.h"
+          },
+          "hashes": {
+            "sha-256": "a87c209c5b3b4d9c06d202e1797af2c23583ece973f89b9a389b103dd26bb2f4"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/visual studio projects/dardaneli/imgui/imconfig.h"
+          },
+          "hashes": {
+            "sha-256": "a768dd48f4b2ee7ccbb6684de45c3dcf94d46a9eca6b833a47e0bd3cc5ebfba0"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/visual studio projects/dardaneli/imgui/imgui_internal.h"
+          },
+          "hashes": {
+            "sha-256": "04abae6d6dcb525594b9cfb23757c434d9efb1f538915e4f3ac89761cc7716d3"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/visual studio projects/dardaneli/imgui/imstb_textedit.h"
+          },
+          "hashes": {
+            "sha-256": "99d5970b305c9865e7a1fcdeed0ee71cc3701bbc66bec45cf8b0c460e16d9cdd"
+          }
+        }
+      ]
+    }
+  ]
+}

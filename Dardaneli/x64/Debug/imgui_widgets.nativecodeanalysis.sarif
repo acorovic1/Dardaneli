@@ -1,0 +1,67 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.39.33523.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///c:/visual studio projects/dardaneli/imgui/imgui_widgets.cpp"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "c707e3e5a1149e898c7ced7a5fc7fb174634f64d0327888defd3d47c14b5af68"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/visual studio projects/dardaneli/imgui/imgui.h"
+          },
+          "hashes": {
+            "sha-256": "a87c209c5b3b4d9c06d202e1797af2c23583ece973f89b9a389b103dd26bb2f4"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/visual studio projects/dardaneli/imgui/imconfig.h"
+          },
+          "hashes": {
+            "sha-256": "a768dd48f4b2ee7ccbb6684de45c3dcf94d46a9eca6b833a47e0bd3cc5ebfba0"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/visual studio projects/dardaneli/imgui/imgui_internal.h"
+          },
+          "hashes": {
+            "sha-256": "04abae6d6dcb525594b9cfb23757c434d9efb1f538915e4f3ac89761cc7716d3"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/visual studio projects/dardaneli/imgui/imstb_textedit.h"
+          },
+          "hashes": {
+            "sha-256": "99d5970b305c9865e7a1fcdeed0ee71cc3701bbc66bec45cf8b0c460e16d9cdd"
+          }
+        }
+      ]
+    }
+  ]
+}

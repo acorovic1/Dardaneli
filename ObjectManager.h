@@ -1,6 +1,6 @@
 #pragma once
 
-#define OBJECT_MANAGER_CLASS_H
+
 
 #include "glad/glad.h"
 
@@ -33,13 +33,15 @@ public:
 
 	GLuint getNumberOfObjects()const;
 	GLuint getAvailableIndex();
+
 	void addObject(Object* object);
 	void deleteObject(GLuint index);
 
 	Object* getObject(GLuint index);
 
+	std::vector<Object*>& getAllObjects();
 
 };
 
 
-extern ObjectManager* listOfObjects; // extern --- da bi se omogucilo koristenje kroz vise fajlova
+extern ObjectManager* objectSingleton;
