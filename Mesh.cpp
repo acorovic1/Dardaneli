@@ -42,6 +42,7 @@ GLuint Mesh::extrudeVertex(GLuint vertex)
 	edgeIndices.push_back(vertices.size()-1);
 
 	edgeEBO.bufferData(edgeIndices);
+	editModeBVHSingleton->BuildBottomUp(*this);
 
 	return vertices.size() - 1;
 }
@@ -124,7 +125,9 @@ void Mesh::Scale(float x, float y, float z) {
 	model = glm::scale(model, glm::vec3(x, y, z));
 }
 
-
+std::vector<int>& Mesh::getSelectedVertices() {
+	return vertexIndices;
+}
 
 
 

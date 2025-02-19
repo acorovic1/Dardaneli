@@ -1,1 +1,3 @@
-﻿  Dardaneli.vcxproj -> C:\VISUAL STUDIO PROJECTS\Dardaneli\x64\Debug\Dardaneli.exe
+﻿  Renderer.cpp
+C:\VISUAL STUDIO PROJECTS\Dardaneli\Renderer.cpp(34,23): warning C4018: '<': signed/unsigned mismatch
+  Dardaneli.vcxproj -> C:\VISUAL STUDIO PROJECTS\Dardaneli\x64\Debug\Dardaneli.exe

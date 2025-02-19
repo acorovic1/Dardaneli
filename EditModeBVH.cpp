@@ -17,7 +17,7 @@ EditModeBVH* EditModeBVH::getInstance()
 void EditModeBVH::BuildBottomUp(Object&object) // O(n^3)
 {
 	int numObjects = object.getNumberOfVertices();
-	std::vector<glm::vec3 >vertices = object.getVertexXmodel();
+	std::vector<glm::vec3 >vertices = object.getVerticesXmodel();
 	std::vector<BVHNode*> bvhNodes(0);
 
 	for (int i = 0; i < numObjects; i++)

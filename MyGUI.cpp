@@ -47,9 +47,9 @@ SelectMode MyGUI::getSelectMode()
 {
 	return selectMode;
 }
-int& MyGUI::getObjectIndex() { return objectIndex; }
-int& MyGUI::getVertexIndex() { return vertexIndex; }
-;
+std::vector<int>& MyGUI::getObjectIndex() { return objectIndex; }
+
+
 
 void MyGUI::DrawUI()
 {	
@@ -75,7 +75,8 @@ void MyGUI::DrawUI()
 		if (BVHTree)
 			DrawBVH();
 
-		if (ImGui::InputInt("Index", &objectIndex))
+		if(objectIndex.size())
+		if (ImGui::InputInt("Index", &objectIndex[objectIndex.size()-1]))
 			SelectObject();
 
 		Transformations();
@@ -87,33 +88,29 @@ void MyGUI::DrawUI()
 
 		if (edit)
 		{
-			editModeBVHSingleton->BuildBottomUp(*objectSingleton->getObject(objectIndex) );
+			editModeBVHSingleton->BuildBottomUp(*objectSingleton->getObject(objectIndex[objectIndex.size()-1]));
 			std::cout << "built";
 			edit = false;
 		}
+
 		if(BVHTree)
 			//editModeBVHSingleton->Draw(*cameraSingleton->getCamera(0),shaderSingleton->getShader("AABB"),eBVHSubd);
-		editModeBVHSingleton->DrawLeaves(editModeBVHSingleton->getRoot(),*cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
-		(ImGui::InputInt("Index", &vertexIndex));
-		if (glfwGetTime() > 10)
-		{
-			//objectSingleton->getObject(objectIndex)->getVertices()->at(vertexIndex).Translate(glm::vec3(-1.0f, 0.0f, 0.0f));
-			//objectSingleton->getObject(objectIndex)->UpdateData(vertexIndex);
-			//glfwSetTime(0);
-			//std::cout << "	moved " << objectSingleton->getObject(objectIndex)->getName() << " " << objectSingleton->getObject(0)->getVertices()->at(vertexIndex).position.x;
-			
-		}
+			editModeBVHSingleton->DrawLeaves(editModeBVHSingleton->getRoot(),*cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
+		auto& vertexIndicesTemp = static_cast<Mesh*>(objectSingleton->getObject(objectIndex[objectIndex.size() - 1]))->getSelectedVertices();
+		if(vertexIndicesTemp.size())
+		(ImGui::InputInt("Index", &vertexIndicesTemp[vertexIndicesTemp.size()-1]));
+
 		static int e = 0;
 
 		ImGui::RadioButton("Vertex select", &e, 0); ImGui::SameLine();
 		ImGui::RadioButton("Edge select", &e, 1); ImGui::SameLine();
 		ImGui::RadioButton("Face select", &e, 2);
 
-		
-
 		if (e == 0)selectMode = SelectMode::VERTEX;
 		else if (e == 1)selectMode = SelectMode::EDGE;
 		else if (e == 2)selectMode = SelectMode::FACE;
+
+
 		VertexTransform();
 	}
 
@@ -264,10 +261,11 @@ void MyGUI::Gizmos()
 	
 	glm::mat4 viewMatrix = camera->getViewMatrix();
 	glm::mat4 projMatrix = camera->getProjectionMatrix();
-	
+	//OVDE
 	static glm::mat4 transform = glm::mat4(1.0f);
-	if (objectIndex != -1 && objectIndex<objectSingleton->getNumberOfObjects())
-		transform = objectSingleton->getObject(objectIndex)->getModelReference();
+	if(objectIndex.size())
+	if (objectIndex[objectIndex.size() - 1] != -1 && objectIndex[objectIndex.size() - 1] <objectSingleton->getNumberOfObjects())
+		transform = objectSingleton->getObject(objectIndex[objectIndex.size() - 1])->getModelReference();
 	static glm::mat4 previousTransform = glm::mat4(1.0f);
 	
 	
@@ -293,7 +291,8 @@ void MyGUI::Gizmos()
 				std::cout << "\n Translate ";
 				auto delta = glm::vec3(transform[3]) - glm::vec3(previousTransform[3]);
 
-				objectSingleton->getObject(objectIndex)->Translate(delta);
+				for(auto x:objectIndex)
+					objectSingleton->getObject(x)->Translate(delta);
 			}
 
 		if (operation == ImGuizmo::OPERATION::ROTATE)
@@ -324,15 +323,18 @@ void MyGUI::Gizmos()
 				
 				if (fabs(rotate[2]) < epsilon)
 					rotate[2] = 0;
-				
-				auto object = objectSingleton->getObject(objectIndex);
-				
-				if (fabs(rotate[0]) > epsilon)
-					object->Rotate(rotate[0] - rotatePrev[0], glm::vec3(1.0f, 0.0f, 0.0f));
-				if (fabs(rotate[1]) > epsilon)
-					object->Rotate(rotate[1] - rotatePrev[1], glm::vec3(0.0f, 1.0f, 0.0f));
-				if (fabs(rotate[2]) > epsilon)
-					object->Rotate(rotate[2] - rotatePrev[2], glm::vec3(0.0f, 0.0f, 1.0f));
+				for (auto x : objectIndex)
+				{
+
+					auto object = objectSingleton->getObject(x);
+					
+					if (fabs(rotate[0]) > epsilon)
+						object->Rotate(rotate[0] - rotatePrev[0], glm::vec3(1.0f, 0.0f, 0.0f));
+					if (fabs(rotate[1]) > epsilon)
+						object->Rotate(rotate[1] - rotatePrev[1], glm::vec3(0.0f, 1.0f, 0.0f));
+					if (fabs(rotate[2]) > epsilon)
+						object->Rotate(rotate[2] - rotatePrev[2], glm::vec3(0.0f, 0.0f, 1.0f));
+				}
 			}
 
 		if (operation == ImGuizmo::OPERATION::SCALE)
@@ -352,8 +354,8 @@ void MyGUI::Gizmos()
 				if (scale[2] == 0)scale[2] == 1;
 
 				auto delta = transform / previousTransform;
-				
-				objectSingleton->getObject(objectIndex)->Scale(delta[0][0], delta[1][1], delta[2][2]);
+				for (auto x : objectIndex)
+					objectSingleton->getObject(x)->Scale(delta[0][0], delta[1][1], delta[2][2]);
 			}
 		objectBVHSingleton->Refit();
 		//editModeBVHSingleton->Refit();
@@ -371,11 +373,17 @@ void MyGUI::VertexTransform()
 {
 	 
 	static float offset[3];
-	
-	if (vertexIndex < 0 && vertexIndex >= objectSingleton->getObject(objectIndex)->getVerticesReference().size())return;
-	vertexPrevPosition[0] = vertexPosition[0] = objectSingleton->getObject(objectIndex)->getVerticesReference().at(vertexIndex).getPosition().x;
-	vertexPrevPosition[1] = vertexPosition[1] = objectSingleton->getObject(objectIndex)->getVerticesReference().at(vertexIndex).getPosition().y;
-	vertexPrevPosition[2] = vertexPosition[2] = objectSingleton->getObject(objectIndex)->getVerticesReference().at(vertexIndex).getPosition().z;
+
+	Object* activeObject = objectSingleton->getObject(objectIndex[objectIndex.size() - 1]);
+	std::vector<Vertex>& vertices = activeObject->getVerticesReference();
+	int numberOfVertices = activeObject->getNumberOfVertices();
+
+	std::vector<int>& selectedVertices = static_cast<Mesh*>(activeObject)->getSelectedVertices();
+	if (selectedVertices.size() == 0)return;
+
+	vertexPrevPosition[0] = vertexPosition[0] = vertices[selectedVertices[selectedVertices.size() - 1]].getPosition().x;
+	vertexPrevPosition[1] = vertexPosition[1] = vertices[selectedVertices[selectedVertices.size() - 1]].getPosition().y;
+	vertexPrevPosition[2] = vertexPosition[2] = vertices[selectedVertices[selectedVertices.size() - 1]].getPosition().z;
 
 	ImGui::InputFloat3("Vertex position", vertexPosition);
 	if (ImGui::IsItemDeactivatedAfterEdit())
@@ -387,22 +395,25 @@ void MyGUI::VertexTransform()
 		offset[1] = vertexPosition[1] - vertexPrevPosition[1];
 		offset[2] = vertexPosition[2] - vertexPrevPosition[2];
 
-		objectSingleton->getObject(objectIndex)->getVerticesReference().at(vertexIndex).Translate(offset);
-		objectSingleton->getObject(objectIndex)->UpdateData(vertexIndex);
+		for(int i = 0;i< selectedVertices.size();i++)
+		{
+			vertices[selectedVertices[i]].Translate(offset);
+			activeObject->UpdateData(selectedVertices[i]);
+		}
 
 		vertexPrevPosition[0] = vertexPosition[0];
 		vertexPrevPosition[1] = vertexPosition[1];
 		vertexPrevPosition[2] = vertexPosition[2];
 		//
-		editModeBVHSingleton->Refit(*objectSingleton->getObject(objectIndex));
+		editModeBVHSingleton->Refit(*activeObject);
 
 	}
 }
 
 void MyGUI::Transformations()
 {
-	
-
+	if (!objectIndex.size())return;
+	Object* activeObject = objectSingleton->getObject(objectIndex[objectIndex.size() - 1]);
 
 	ImGui::InputFloat3("Location", translate);
 	if (ImGui::IsItemDeactivatedAfterEdit())
@@ -410,7 +421,7 @@ void MyGUI::Transformations()
 	
 		std::cout << " Object moved ";
 
-		objectSingleton->getObject(objectIndex)->Translate(translate[0]-translatePrev[0], translate[1]-translatePrev[1], translate[2]-translatePrev[2]);
+		activeObject->Translate(translate[0]-translatePrev[0], translate[1]-translatePrev[1], translate[2]-translatePrev[2]);
 
 		translatePrev[0] = translate[0];
 		translatePrev[1] = translate[1];
@@ -426,11 +437,11 @@ void MyGUI::Transformations()
 		std::cout << " Object rotated ";
 
 		if(rotatePrev[0]!=rotate[0])
-			objectSingleton->getObject(objectIndex)->Rotate(rotate[0] - rotatePrev[0], glm::vec3(1.0f, 0.0f, 0.0f));
+			activeObject->Rotate(rotate[0] - rotatePrev[0], glm::vec3(1.0f, 0.0f, 0.0f));
 		else if (rotatePrev[1] != rotate[1])
-			objectSingleton->getObject(objectIndex)->Rotate(rotate[1] - rotatePrev[1], glm::vec3(0.0f, 1.0f, 0.0f));
+			activeObject->Rotate(rotate[1] - rotatePrev[1], glm::vec3(0.0f, 1.0f, 0.0f));
 		else if (rotatePrev[2] != rotate[2])
-			objectSingleton->getObject(objectIndex)->Rotate(rotate[2] - rotatePrev[2], glm::vec3(0.0f, 0.0f, 1.0f));
+			activeObject->Rotate(rotate[2] - rotatePrev[2], glm::vec3(0.0f, 0.0f, 1.0f));
 
 		objectBVHSingleton->Refit();
 
@@ -447,11 +458,11 @@ void MyGUI::Transformations()
 		std::cout << " Object scaled ";
 
 		if (scalePrev[0] != scale[0])
-			objectSingleton->getObject(objectIndex)->Scale(scale[0]/scalePrev[0], 1.0f, 1.0f);
+			activeObject->Scale(scale[0]/scalePrev[0], 1.0f, 1.0f);
 		else if (scalePrev[1] != scale[1])
-			objectSingleton->getObject(objectIndex)->Scale(1.0f, scale[1]/scalePrev[1], 1.0f);
+			activeObject->Scale(1.0f, scale[1]/scalePrev[1], 1.0f);
 		else if (scalePrev[2] != scale[2])
-			objectSingleton->getObject(objectIndex)->Scale(1.0f, 1.0f, scale[2]/scalePrev[2]);
+			activeObject->Scale(1.0f, 1.0f, scale[2]/scalePrev[2]);
 
 		objectBVHSingleton->Refit();
 
@@ -466,13 +477,13 @@ void MyGUI::Transformations()
 void MyGUI::SelectObject()
 {
 	
-	
-		if (objectIndex < objectSingleton->getNumberOfObjects() && objectIndex >= 0)
+	if (!objectIndex.size())return;
+		if (objectIndex[objectIndex.size()-1] < objectSingleton->getNumberOfObjects() && objectIndex[objectIndex.size() - 1] >= 0)
 		{
 			gizmo = true;
-			std::cout << "\nSELECTED ---> " << objectSingleton->getObject(objectIndex)->getName();
+			//std::cout << "\nSELECTED ---> " << objectSingleton->getObject(objectIndex[objectIndex.size()-1])->getName();
 
-			model = objectSingleton->getObject(objectIndex)->getModelReference();
+			model = objectSingleton->getObject(objectIndex[objectIndex.size()-1])->getModelReference();
 
 
 			translate[0] = translatePrev[0] = model[3][0];

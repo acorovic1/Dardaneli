@@ -61,19 +61,8 @@ Ray Camera::CreateRay(GLFWwindow* window)
 	return Ray(Position,glm::normalize(glm::vec3(A.x, A.y, A.z)));
 }
 
-
-
-void Camera::Inputs(GLFWwindow* window, MyGUI& gui) {
-
-	if(gui.getMode()==Mode::EDIT)
-		if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS && glfwGetTime()>1) {
-			Mesh *mesh = static_cast<Mesh*>(objectSingleton->getObject(gui.getObjectIndex()));
-			gui.getVertexIndex()=mesh->extrudeVertex(gui.getVertexIndex());
-			glfwSetTime(0);
-			std::cout << "a";
-		}
-
-
+void Camera::Movement(GLFWwindow* window, MyGUI& gui)
+{
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { // Go forward
 		Position += speed * Orientation;
@@ -106,9 +95,9 @@ void Camera::Inputs(GLFWwindow* window, MyGUI& gui) {
 	{
 		speed = 0.001f;
 	}
-	
 
-	if(glfwGetKey(window,GLFW_KEY_LEFT_ALT)==GLFW_PRESS)
+
+	if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS)
 	{
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
@@ -148,39 +137,64 @@ void Camera::Inputs(GLFWwindow* window, MyGUI& gui) {
 			glfwSetCursorPos(window, (width / 2), (height / 2));
 		}
 		else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
-			{
+		{
 
-				// Makes sure the next time the camera looks around it doesn't jump
-				firstClick = true;
-			}
+			// Makes sure the next time the camera looks around it doesn't jump
+			firstClick = true;
+		}
 
 	}
 
-	
-	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
-		
-		if (gui.getMode() == Mode::OBJECT)
-		{
-
-			objectBVHSingleton->getRoot()->Hit(CreateRay(window),gui.getObjectIndex());
-			gui.SelectObject();
-
-			if (gui.getObjectIndex() != -1 ) // -1 is the miss constant
-			{
-			std::cout << "\nSELECTED ---> " << objectSingleton->getObject(gui.getObjectIndex())->getName();
-			}
-		}
-		else if (gui.getMode() == Mode::EDIT)
-		{
-			editModeBVHSingleton->getRoot()->Hit(CreateRay(window), gui.getVertexIndex());
-		}
-	}
-	if (  glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+}
+void Camera::ObjectMode(GLFWwindow* window, MyGUI& gui)
+{
+	// SELECT
+	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
 	{
-		gui.AddMenu();		
+		if (glfwGetTime() < 0.5)return;
+		glfwSetTime(0);
+
+		std::vector<int>& objectIndices = gui.getObjectIndex();
+		
+		int index = -1;
+		objectBVHSingleton->getRoot()->Hit(CreateRay(window), index);
+		
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		{
+			if (index == -1)return;
+			objectIndices.erase(std::remove_if(objectIndices.begin(), objectIndices.end(), [index](int a) {return a == index; }), objectIndices.end());
+			objectIndices.push_back(index);
+			gui.SelectObject();
+			std::cout << "\nMULTI SELECT ---> " << objectSingleton->getObject(index)->getName();
+		}
+		else if (index == -1)// -1 is the miss constant
+		{
+			//gui.getObjectIndex().assign({-1});
+			objectIndices.clear();
+
+		}
+		else	
+		{
+			
+			objectIndices.clear();
+			objectIndices.push_back(index);
+			std::cout << "\nSELECTED ---> " << objectSingleton->getObject(index)->getName();
+			gui.SelectObject();
+		}
+
+
+		std::cout << "\n indices ";
+		for (auto x : objectIndices)
+			std::cout << x << " ";
 	}
 
+	// ADD MENU
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+	{
+		gui.AddMenu();
+	}
 
+	// GIZMO OPERATION
 	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
 	{
 		gui.setGizmoOperation(ImGuizmo::OPERATION::TRANSLATE);
@@ -193,6 +207,84 @@ void Camera::Inputs(GLFWwindow* window, MyGUI& gui) {
 	{
 		gui.setGizmoOperation(ImGuizmo::OPERATION::SCALE);
 	}
+
+
+}
+void Camera::EditMode(GLFWwindow* window, MyGUI& gui)
+{
+	// SELECT
+	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+	{
+		if (glfwGetTime() < 0.5)return;
+		glfwSetTime(0);
+
+		std::vector<int>& vertexIndices = static_cast<Mesh*>(objectSingleton->getObject(gui.getObjectIndex()[gui.getObjectIndex().size()-1]))->getSelectedVertices();
+		int index = -1;
+			
+		editModeBVHSingleton->getRoot()->Hit(CreateRay(window),index);
+
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		{
+			if (index == -1)return;
+			vertexIndices.erase(std::remove_if(vertexIndices.begin(), vertexIndices.end(), [index](int a) {return a == index; }), vertexIndices.end());
+			vertexIndices.push_back(index);
+			std::cout << "\nMULTI SELECT ---> " << index;
+		}else if (index == -1)// -1 is the miss constant
+		{
+			vertexIndices.clear();
+		}
+		else
+		{
+			vertexIndices.clear();
+			vertexIndices.push_back(index);
+			std::cout << "\nSELECTED ---> " << index;
+		}
+		std::cout << "\nSelected vertices ";
+		for (auto x : vertexIndices)
+			std::cout << x << " ";
+		
+	}
+
+	// EXTRUDE
+	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS && glfwGetTime() > 1) {
+
+		if (glfwGetTime() < 0.5)return;
+		glfwSetTime(0);
+
+		Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(gui.getObjectIndex()[gui.getObjectIndex().size()-1]));
+		std::vector<int>& vertexIndices = mesh->getSelectedVertices();
+
+		std::vector<int> temp(0);
+		for (int i = 0; i < vertexIndices.size(); i++)
+		{
+			temp.push_back(mesh->extrudeVertex(vertexIndices[i]));
+		}
+		vertexIndices = temp;
+		glfwSetTime(0);
+		std::cout << "extrude vertex";
+	}
+
+}
+
+
+void Camera::Inputs(GLFWwindow* window, MyGUI& gui) {
+
+
+	Camera::Movement(window,gui);
+
+	if (gui.getMode() == Mode::OBJECT)
+		Camera::ObjectMode(window, gui);
+	else if (gui.getMode() == Mode::EDIT)
+		Camera::EditMode(window, gui);
+		
+
+
+
+
+
+	
+	
+
 
 
 }

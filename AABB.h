@@ -28,7 +28,8 @@ struct AABB {
 	AABB(glm::vec3 min, glm::vec3 max);
 	AABB(AABB& a, AABB& b);
 	AABB(Object& mesh);
-	AABB(glm::vec3& vertex);
+	
+	AABB(glm::vec3 vertex);
 
 	bool intersectRayAABB(const Ray& ray);
 

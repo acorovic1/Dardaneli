@@ -31,6 +31,8 @@ class Camera {
 	float speed =0.001f, sensitivity = 100.0f;
 
 	bool firstClick = true;
+
+	
 public:
 
 	Camera(int width, int height, glm::vec3 Position);
@@ -50,11 +52,14 @@ public:
 	void setWidth(int width);
 	void setHeight(int height);
 
-		
+	
 
 
 	Ray CreateRay(GLFWwindow* window);
 
+	void Movement(GLFWwindow* window, MyGUI& gui);
+	void ObjectMode(GLFWwindow* window, MyGUI& gui);
+	void EditMode(GLFWwindow* window, MyGUI& gui);
 	void Inputs(GLFWwindow* window,MyGUI &gui);
 };
 

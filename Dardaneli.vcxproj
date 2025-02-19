@@ -180,6 +180,10 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="activeEdit.frag" />
+    <None Include="activeEdit.vert" />
+    <None Include="activeObject.frag" />
+    <None Include="activeObject.vert" />
     <None Include="basic.frag" />
     <None Include="basic.vert" />
     <None Include="grid.frag" />

@@ -12,7 +12,7 @@ class Mesh :public Object{
 	EBO edgeEBO;
 	std::vector<Texture>textures;
 	std::vector<GLuint>edgeIndices;
-	
+	std::vector<int> vertexIndices = std::vector<int>(0);
 
 public:
 
@@ -36,7 +36,7 @@ public:
 	void Scale(glm::vec3 &scaleVector)override;
 	void Scale(float x, float y, float z)override;
 		
-	
+	std::vector<int>& getSelectedVertices(); //
 
 };
 

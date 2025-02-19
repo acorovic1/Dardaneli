@@ -26,14 +26,15 @@ void Renderer::Render(Window& window,MyGUI& gui)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     auto camera = window.getCamera();
-
+    auto& selectedObjects = gui.getObjectIndex();
     camera.Update();
 
     glStencilMask(0x00);
  
     for (int i = 0; i < objectSingleton->getNumberOfObjects(); i++)
     {
-        if (i == gui.getObjectIndex())
+        Object* object = objectSingleton->getObject(i);
+        if (std::any_of(selectedObjects.begin(), selectedObjects.end(), [i](int a) {return i == a; }))
         {
             if (gui.getMode() == Mode::OBJECT)
             {
@@ -41,12 +42,15 @@ void Renderer::Render(Window& window,MyGUI& gui)
                 glStencilFunc(GL_ALWAYS, 1, 0xFF);
                 glStencilMask(0xFF);
                 glPointSize(5.0f);
-                objectSingleton->getObject(i)->Draw(shaderSingleton->getShader("Basic"), camera);
+                object->Draw(shaderSingleton->getShader("Basic"), camera);
     
                 glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
                 glStencilMask(0x00);
                 glDisable(GL_DEPTH_TEST);
-                objectSingleton->getObject(i)->Draw(shaderSingleton->getShader("Select"), camera);
+                if(i == selectedObjects[selectedObjects.size()-1])
+                    object->Draw(shaderSingleton->getShader("ActiveSelect"), camera);//OUTLINE
+                else
+                    object->Draw(shaderSingleton->getShader("Select"), camera);//OUTLINE
     
                 glStencilMask(0xFF);
                 glStencilFunc(GL_ALWAYS, 1, 0xFF);
@@ -55,43 +59,45 @@ void Renderer::Render(Window& window,MyGUI& gui)
             }
             else if (gui.getMode() == Mode::EDIT)
             {
-                objectSingleton->getObject(i)->Draw(shaderSingleton->getShader("Basic"), camera);
+                object->Draw(shaderSingleton->getShader("Basic"), camera);
     
     
-                objectSingleton->getObject(i)->Draw(shaderSingleton->getShader("EditMode"), camera, GL_LINES);
-    
+                object->Draw(shaderSingleton->getShader("EditMode"), camera, GL_LINES);
+                
     
     
                 if (gui.getSelectMode() == SelectMode::VERTEX)
                 {
                     glPointSize(5.0f);
-                    objectSingleton->getObject(i)->Draw(shaderSingleton->getShader("EditMode"), camera, GL_POINTS);
-                    if (gui.getVertexIndex() != -1)
-                    {
-                       
-    
-                        shaderSingleton->getShader("SelectEdit").Activate();
-                        objectSingleton->getObject(i)->bindVAO();
-                        auto x = objectSingleton->getObject(i)->getModelReference();
-                        shaderSingleton->getShader("SelectEdit").setMat4(true,"model",x);
-                        
-                        camera.CameraUniform(shaderSingleton->getShader("SelectEdit"), "cameraMatrix");
-                        glDrawArrays(GL_POINTS, gui.getVertexIndex(), 1);
+                    object->Draw(shaderSingleton->getShader("EditMode"), camera, GL_POINTS);
+                    auto& selectedVertices = static_cast<Mesh*>(object)->getSelectedVertices();
 
- 
- 
-    
+                    shaderSingleton->getShader("SelectEdit").Activate();
+                    object->bindVAO();
+                    auto x = object->getModelReference();
+
+                    shaderSingleton->getShader("SelectEdit").setMat4(true, "model", x);
+                    camera.CameraUniform(shaderSingleton->getShader("SelectEdit"), "cameraMatrix");
+
+                    for(int j=0;j<selectedVertices.size();j++)
+                    {                       
+                        if (j == selectedVertices.size() - 1)
+                        {
+                            shaderSingleton->getShader("ActiveEdit").Activate();
+                            shaderSingleton->getShader("ActiveEdit").setMat4(true, "model", x);
+                            camera.CameraUniform(shaderSingleton->getShader("ActiveEdit"), "cameraMatrix");
+                        }
+                        glDrawArrays(GL_POINTS, selectedVertices[j], 1);
                     }
+
                     glPointSize(1.0f);
                 }
     
             }
     
         }
-        else
-        {
-        }
-        objectSingleton->getObject(i)->Draw(shaderSingleton->getShader("Basic"), camera);
+        
+        object->Draw(shaderSingleton->getShader("Basic"), camera);
     
     }
 

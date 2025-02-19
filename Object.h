@@ -46,7 +46,8 @@ public:
 	glm::mat4 getModelReference();
 	std::vector<Vertex>& getVerticesReference();
 	std::vector<Vertex> getVerticesCopy();
-	std::vector<glm::vec3> getVertexXmodel();
+	std::vector<glm::vec3> getVerticesXmodel();
+	glm::vec3 getVertexXmodel(GLuint vertexIndex);
 	void bindVAO();
 
 

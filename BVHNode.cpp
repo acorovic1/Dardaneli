@@ -57,7 +57,8 @@ void BVHNode::refitNodeVertex(Object&object)
 
 	if (!this->left && !this->right)
 	{
-		this->box = AABB(object.getVerticesReference().at(this->index).getPosition());
+
+		this->box = AABB(object.getVertexXmodel(this->index));
 
 	}
 	else

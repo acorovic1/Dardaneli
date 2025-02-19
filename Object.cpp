@@ -20,13 +20,19 @@ GLuint Object::getIndex()const
 int Object::getNumberOfVertices(){	return vertices.size();};
 std::vector<Vertex>& Object::getVerticesReference() { return vertices; }
 std::vector<Vertex> Object::getVerticesCopy() { return vertices; }
-std::vector<glm::vec3> Object::getVertexXmodel()
+std::vector<glm::vec3> Object::getVerticesXmodel()
 {
 	std::vector<glm::vec3>position(0);
 	for (const auto& x : vertices)
 		position.push_back(glm::vec3(model * glm::vec4(x.position, 1.0f) ));
 
 	return position;
+}
+glm::vec3 Object::getVertexXmodel(GLuint vertexIndex)
+{
+
+	return glm::vec3(model * glm::vec4(vertices[vertexIndex].position, 1.0f));
+
 }
 
 void Object::bindVAO()
@@ -51,5 +57,5 @@ void Object::addVertex(Vertex&vertex)
 }
 
 
-//!!!!!!!!!!!!!!!!!!!!1does not return a reference!!!!!!!!!!!!!1
+//!!!!!!!!!!!!!!!!!!!!does not return a reference!!!!!!!!!!!!!1
 glm::mat4 Object::getModelReference() { return model; }

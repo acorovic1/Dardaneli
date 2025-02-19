@@ -5,8 +5,9 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include <iostream>
 
+#include <iostream>
+#include <algorithm>
 #include "ImGUIZMO/ImGuizmo.h"
 
 #include <glad/glad.h>
@@ -46,8 +47,8 @@ class MyGUI /* :public Dardaneli...varijable pod protected staviti*/ {
 	 std::vector<GLuint> indices;
 	 VAO VAO;
 	
-	int objectIndex = 0;
-	int vertexIndex = 0;
+	std::vector<int> objectIndex = std::vector<int>(1);
+	
 
 	float translate[3] = { 0.0f, 0.0f, 0.0f };
 	float translatePrev[3] = { 0.0f, 0.0f, 0.0f };
@@ -75,8 +76,8 @@ public:
 	Mode getMode();
 	SelectMode getSelectMode();
 
-	int& getObjectIndex();
-	int& getVertexIndex();
+	std::vector<int>& getObjectIndex();
+	
 
 	void Add();
 	void AddMenu();
