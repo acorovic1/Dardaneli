@@ -1,3 +1,7 @@
-﻿  Renderer.cpp
-C:\VISUAL STUDIO PROJECTS\Dardaneli\Renderer.cpp(34,23): warning C4018: '<': signed/unsigned mismatch
+﻿  Camera.cpp
+C:\VISUAL STUDIO PROJECTS\Dardaneli\Camera.cpp(50,24): warning C4101: 'mouseZ': unreferenced local variable
+C:\VISUAL STUDIO PROJECTS\Dardaneli\Camera.cpp(150,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\VISUAL STUDIO PROJECTS\Dardaneli\Camera.cpp(151,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\VISUAL STUDIO PROJECTS\Dardaneli\Camera.cpp(247,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\VISUAL STUDIO PROJECTS\Dardaneli\Camera.cpp(248,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   Dardaneli.vcxproj -> C:\VISUAL STUDIO PROJECTS\Dardaneli\x64\Debug\Dardaneli.exe

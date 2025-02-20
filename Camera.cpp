@@ -4,21 +4,24 @@
 
 Camera::Camera(int width, int height, glm::vec3 Position) 
 {
-	this->width = width;
-	this->height = height;
-	this->Position = Position;
+	Camera::width = width;
+	Camera::height = height;
+	Camera::Position = Position;
+	
+	fov = 45.0,near=0.01f,far=100.0f;
+	posX=0, posY=0, previousX=0, previousY = 0;
 
 	cameraSingleton->addCamera(this);
 }
 
-void Camera::setProjectionMatrix(glm::mat4& projection)
+void Camera::setProjectionMatrix(float fov, float aspect, float near, float far)
 {
-	this->Projection = projection;
+	Camera::fov = fov;
+	Camera::near = near;
+	Camera::far = far;
+	this->Projection = glm::perspective(glm::radians(fov),aspect,near,far);
 }
-void Camera::setProjectionMatrix(glm::mat4 projection)
-{
-	this->Projection = projection;
-}
+
 glm::mat4 Camera::getViewMatrix()const {
 	return glm::lookAt(Position, Position + Orientation, Up);
 }
@@ -35,6 +38,7 @@ void Camera::CameraUniform(Shader& shader, const char* uniform) {
 int Camera::getWidth()const { return width; }
 int Camera::getHeight()const { return height; }
 glm::vec3 Camera::getPosition()const { return Position; }
+
 
 void Camera::setWidth(int width) { Camera::width = width; }
 void Camera::setHeight(int height) { Camera::height = height; }
@@ -61,44 +65,33 @@ Ray Camera::CreateRay(GLFWwindow* window)
 	return Ray(Position,glm::normalize(glm::vec3(A.x, A.y, A.z)));
 }
 
+void Camera::setFOV(float fov) 
+{
+	setProjectionMatrix(fov, float(getWidth()) / float(getHeight()), near, far);
+}
+float Camera::getFOV()const{ return fov; }
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+	// Retrieve the Camera instance stored in GLFW user pointer
+	float fov= cameraSingleton->getCamera(0)->getFOV();
+
+	
+	fov -= static_cast<float>(yoffset);  // Modify private fov
+	if (fov < 1.0f) fov = 1.0f;   // Clamp minimum zoom
+	if (fov > 90.0f) fov = 90.0f; // Clamp maximum zoom
+
+	cameraSingleton->getCamera(0)->setFOV(fov);
+	std::cout << "Updated FOV: " << fov << std::endl;
+}
+
+void Camera::setScrollCallback(GLFWwindow*window){ glfwSetScrollCallback(window, scroll_callback); }
+
+
 void Camera::Movement(GLFWwindow* window, MyGUI& gui)
 {
 
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { // Go forward
-		Position += speed * Orientation;
-		//std::cout << "W";
-		//Position += speed * glm::vec3(0.0f, 0.0f, -1.0f); //FPS camera
-	}
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		Position += speed * -glm::normalize(glm::cross(Orientation, Up));// Go left				//LAG
-	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {	// Go Backward
-		Position += speed * -Orientation;
-		//Position += speed * -glm::vec3(0.0f, 0.0f, -1.0f); //FPS camera
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {	// Go right
-		Position += speed * glm::normalize(glm::cross(Orientation, Up));
-	}
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) // Go up 
-	{
-		Position += speed * Up;
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) // Go down
-	{
-		Position += speed * -Up;
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) // Gotta go fast!
-	{
-		speed = 0.005f;
-	}
-	else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) // Go normal
-	{
-		speed = 0.001f;
-	}
-
-
 	if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS)
 	{
+		
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
 
@@ -136,7 +129,35 @@ void Camera::Movement(GLFWwindow* window, MyGUI& gui)
 			// Sets mouse cursor to the middle of the screen so that it doesn't end up roaming around
 			glfwSetCursorPos(window, (width / 2), (height / 2));
 		}
-		else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+		else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) 
+		{
+			
+
+			
+
+			// Fetches the coordinates of the cursor
+			glfwGetCursorPos(window, &posX, &posY);
+
+			// Prevents camera from jumping on the first click
+			if (firstClick)
+			{
+				//glfwSetCursorPos(window, (width / 2), (height / 2));
+				previousX = posX;
+				previousY = posY;
+				firstClick = false;
+				return;
+			}
+			float deltaX = (posX - previousX)/150;
+			float deltaY = (posY - previousY)/150;
+			
+			std::cout << deltaX << " " << posX <<" "<< previousX <<"\n";
+			Position += -deltaX * glm::normalize(glm::cross(Orientation, Up));
+			Position += deltaY * Up;
+
+			previousX = posX;
+			previousY = posY;
+		}
+		else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE || glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
 		{
 
 			// Makes sure the next time the camera looks around it doesn't jump
@@ -149,7 +170,7 @@ void Camera::Movement(GLFWwindow* window, MyGUI& gui)
 void Camera::ObjectMode(GLFWwindow* window, MyGUI& gui)
 {
 	// SELECT
-	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
 		if (glfwGetTime() < 0.5)return;
 		glfwSetTime(0);
@@ -209,11 +230,47 @@ void Camera::ObjectMode(GLFWwindow* window, MyGUI& gui)
 	}
 
 
+	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
+	{
+		// Fetches the coordinates of the cursor
+		glfwGetCursorPos(window, &posX, &posY);
+
+		// Prevents camera from jumping on the first click
+		if (firstClick)
+		{
+			//glfwSetCursorPos(window, (width / 2), (height / 2));
+			previousX = posX;
+			previousY = posY;
+			firstClick = false;
+			return;
+		}
+		float deltaX = (posX - previousX) / 150;
+		float deltaY = (posY - previousY) / 150;
+
+
+		/// FALI Y KRETNJA
+		std::cout << deltaX << " " << posX << " " << previousX << "\n";
+		auto offset = deltaX * glm::normalize(glm::cross(Orientation, Up));
+		if(glfwGetKey(window,GLFW_KEY_X)==GLFW_PRESS)
+			for (auto x : gui.getObjectIndex())
+				objectSingleton->getObject(x)->Translate(offset.x,0.0f,0.0f);
+		if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
+			for (auto x : gui.getObjectIndex())
+				objectSingleton->getObject(x)->Translate(0.0f,offset.y, 0.0f);
+		if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+			for (auto x : gui.getObjectIndex())
+				objectSingleton->getObject(x)->Translate( 0.0f, 0.0f, offset.z);
+		for (auto x : gui.getObjectIndex())
+			objectSingleton->getObject(x)->Translate(offset);
+
+		previousX = posX;
+		previousY = posY;
+	}
 }
 void Camera::EditMode(GLFWwindow* window, MyGUI& gui)
 {
 	// SELECT
-	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
 		if (glfwGetTime() < 0.5)return;
 		glfwSetTime(0);
@@ -269,22 +326,11 @@ void Camera::EditMode(GLFWwindow* window, MyGUI& gui)
 
 void Camera::Inputs(GLFWwindow* window, MyGUI& gui) {
 
-
 	Camera::Movement(window,gui);
 
 	if (gui.getMode() == Mode::OBJECT)
 		Camera::ObjectMode(window, gui);
 	else if (gui.getMode() == Mode::EDIT)
 		Camera::EditMode(window, gui);
-		
-
-
-
-
-
-	
-	
-
-
 
 }

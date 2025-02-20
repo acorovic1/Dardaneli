@@ -3,8 +3,9 @@
 
 
 Window::Window(int width, int height, const char* title)
-    : camera(width,height,glm::vec3(-2.0f,3.0f,6.0f)) {
+    : camera(width,height,glm::vec3(-2.0f,3.0f,6.0f)) {//-2,3,6
     window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+   
 }
 
 void Window::Init() {
@@ -12,6 +13,7 @@ void Window::Init() {
     gladLoadGL();
     glViewport(0, 0, camera.getWidth(),camera.getHeight());
 
+    camera.setScrollCallback(window);
   
 }
 
@@ -51,7 +53,7 @@ void Window::resizeWindow(int width, int height)
 {
     camera.setWidth(width);
     camera.setHeight(height);
-    camera.setProjectionMatrix(glm::perspective(glm::radians(45.0f), float(camera.getWidth()) / float(camera.getHeight()), 0.1f, 100.0f));
+    camera.setProjectionMatrix(45, float(camera.getWidth()) / float(camera.getHeight()),0.1f,100.0f);
     glViewport(0,0, width, height);
 }
 

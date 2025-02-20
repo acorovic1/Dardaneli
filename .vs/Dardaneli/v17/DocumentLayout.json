@@ -3,67 +3,28 @@
   "WorkspaceRootPath": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Renderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Renderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\activeEdit.frag||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:activeEdit.frag||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\MyGUI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:MyGUI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Camera.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Camera.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Mesh.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Mesh.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Mesh.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Mesh.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\MyGUI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:MyGUI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\activeObject.frag||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:activeObject.frag||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Application.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Application.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\selectObject.frag||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:selectObject.frag||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Camera.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Camera.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Camera.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Camera.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Object.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Object.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Object.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Object.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\activeObject.vert||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:activeObject.vert||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\activeEdit.vert||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:activeEdit.vert||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\include\\vector||{3B902123-F8A7-4915-9F01-361F908088D0}|"
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -73,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -85,198 +46,101 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Mesh.cpp",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Mesh.cpp",
-              "RelativeDocumentMoniker": "Mesh.cpp",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Mesh.cpp",
-              "RelativeToolTip": "Mesh.cpp",
-              "ViewState": "AQIAAGkAAAAAAAAAAAAAAIEAAAABAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-18T20:07:08.739Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Mesh.h",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Mesh.h",
-              "RelativeDocumentMoniker": "Mesh.h",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Mesh.h",
-              "RelativeToolTip": "Mesh.h",
-              "ViewState": "AQIAAAMAAAAAAAAAAAAAACYAAAABAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-18T20:05:29.74Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "vector",
-              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\include\\vector",
-              "RelativeDocumentMoniker": "..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\include\\vector",
-              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\include\\vector",
-              "RelativeToolTip": "..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\include\\vector",
-              "ViewState": "AQIAAFsHAAAAAAAAAAApwGQHAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-02-18T18:57:06.839Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Renderer.cpp",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Renderer.cpp",
-              "RelativeDocumentMoniker": "Renderer.cpp",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Renderer.cpp",
-              "RelativeToolTip": "Renderer.cpp",
-              "ViewState": "AQIAAD8AAAAAAAAAAAAQwEgAAABfAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-18T13:10:27.787Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 1,
               "Title": "MyGUI.h",
               "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\MyGUI.h",
               "RelativeDocumentMoniker": "MyGUI.h",
               "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\MyGUI.h",
               "RelativeToolTip": "MyGUI.h",
-              "ViewState": "AQIAAEQAAAAAAAAAAAAAwE8AAAABAAAA",
+              "ViewState": "AQIAABIAAAAAAAAAAAAAABkAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-18T11:07:44.453Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Scene.cpp",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Scene.cpp",
-              "RelativeDocumentMoniker": "Scene.cpp",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Scene.cpp",
-              "RelativeToolTip": "Scene.cpp",
-              "ViewState": "AQIAAA4AAAAAAAAAAAAmwBgAAAAYAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-18T11:02:00.114Z",
+              "WhenOpened": "2025-02-20T12:11:04.629Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "selectObject.frag",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\selectObject.frag",
-              "RelativeDocumentMoniker": "selectObject.frag",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\selectObject.frag",
-              "RelativeToolTip": "selectObject.frag",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAbAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-02-18T10:55:50.319Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "activeObject.frag",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\activeObject.frag",
-              "RelativeDocumentMoniker": "activeObject.frag",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\activeObject.frag",
-              "RelativeToolTip": "activeObject.frag",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-02-18T10:55:37.051Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "activeObject.vert",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\activeObject.vert",
-              "RelativeDocumentMoniker": "activeObject.vert",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\activeObject.vert",
-              "RelativeToolTip": "activeObject.vert",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAABAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-02-18T10:55:48.124Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "activeEdit.vert",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\activeEdit.vert",
-              "RelativeDocumentMoniker": "activeEdit.vert",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\activeEdit.vert",
-              "RelativeToolTip": "activeEdit.vert",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-02-18T10:55:33.551Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "activeEdit.frag",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\activeEdit.frag",
-              "RelativeDocumentMoniker": "activeEdit.frag",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\activeEdit.frag",
-              "RelativeToolTip": "activeEdit.frag",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-02-18T10:55:30.147Z",
+              "Title": "Application.h",
+              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Application.h",
+              "RelativeDocumentMoniker": "Application.h",
+              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Application.h",
+              "RelativeToolTip": "Application.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-02-20T12:06:31.282Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Object.cpp",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Object.cpp",
-              "RelativeDocumentMoniker": "Object.cpp",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Object.cpp",
-              "RelativeToolTip": "Object.cpp",
-              "ViewState": "AQIAABYAAAAAAAAAAAApwDIAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-17T17:43:07.136Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 4,
               "Title": "Object.h",
               "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Object.h",
               "RelativeDocumentMoniker": "Object.h",
               "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Object.h",
               "RelativeToolTip": "Object.h",
-              "ViewState": "AQIAAB0AAAAAAAAAAAAAADUAAAAQAAAA",
+              "ViewState": "AQIAAB4AAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-17T17:42:51.92Z"
+              "WhenOpened": "2025-02-19T23:15:53.553Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Camera.h",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Camera.h",
-              "RelativeDocumentMoniker": "Camera.h",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Camera.h",
-              "RelativeToolTip": "Camera.h",
-              "ViewState": "AQIAAA8AAAAAAAAAAAAAACIAAAABAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-16T23:04:47.041Z"
+              "DocumentIndex": 5,
+              "Title": "Main.cpp",
+              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Main.cpp",
+              "RelativeDocumentMoniker": "Main.cpp",
+              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Main.cpp",
+              "RelativeToolTip": "Main.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-02-19T22:57:58.176Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "Camera.cpp",
               "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Camera.cpp",
               "RelativeDocumentMoniker": "Camera.cpp",
               "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Camera.cpp",
               "RelativeToolTip": "Camera.cpp",
-              "ViewState": "AQIAANkAAAAAAAAAAAAwwOcAAAAyAAAA",
+              "ViewState": "AQIAAOsAAAAAAAAAAAAAAPoAAAAUAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-02T17:37:05.253Z"
-            },
+              "WhenOpened": "2025-01-02T17:37:05.253Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "FloatingWindowState": {
+        "Id": "7087122c-5b9f-4e83-ba94-e17cfbf564bf",
+        "Display": 1,
+        "X": -152,
+        "Y": 256,
+        "Width": 1101,
+        "Height": 670,
+        "WindowState": 2
+      },
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "MyGUI.cpp",
               "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\MyGUI.cpp",
               "RelativeDocumentMoniker": "MyGUI.cpp",
               "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\MyGUI.cpp",
               "RelativeToolTip": "MyGUI.cpp",
-              "ViewState": "AQIAAHMBAAAAAAAAAAAAAIcBAAAgAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-16T23:03:19.363Z",
+              "WhenOpened": "2025-02-20T12:11:31.568Z",
               "EditorCaption": ""
             }
           ]

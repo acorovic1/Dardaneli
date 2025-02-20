@@ -10,7 +10,7 @@ void Scene::Init()
 {
 	
 	auto camera = cameraSingleton->getCamera(0);
-	camera->setProjectionMatrix(glm::perspective(glm::radians(45.0f), float(camera->getWidth()) / float(camera->getHeight()), 0.1f, 100.0f));
+	camera->setProjectionMatrix(45, float(camera->getWidth()) / float(camera->getHeight()), 0.1f, 100.0f);
 	
 	new Shader ("EditMode", "editMode.vert", "editMode.frag");
 	new Shader ("AABB","BVH.vert", "BVH.frag");

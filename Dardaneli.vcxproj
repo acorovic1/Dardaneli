@@ -199,6 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
+    <ClInclude Include="Application.h" />
     <ClInclude Include="BasicObjects.h" />
     <ClInclude Include="BVHNode.h" />
     <ClInclude Include="Camera.h" />
