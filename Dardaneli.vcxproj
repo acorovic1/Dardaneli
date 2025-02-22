@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
+    <ClCompile Include="Application.cpp" />
     <ClCompile Include="BasicObjects.cpp" />
     <ClCompile Include="BVHNode.cpp" />
     <ClCompile Include="CamaraManager.cpp" />
@@ -178,6 +179,7 @@
     <ClCompile Include="VAO.cpp" />
     <ClCompile Include="VBO.cpp" />
     <ClCompile Include="Window.cpp" />
+    <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="activeEdit.frag" />
@@ -236,6 +238,7 @@
     <ClInclude Include="VBO.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Window.h" />
+    <ClInclude Include="WindowManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="planks.png" />

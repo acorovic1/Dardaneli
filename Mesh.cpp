@@ -35,14 +35,15 @@ Mesh::~Mesh () {}
 
 GLuint Mesh::extrudeVertex(GLuint vertex)
 {
-	this->addVertex(vertices.at(vertex));
+	this->addVertex(vertices[vertex]); // this duplicates the vertex
 		// recalculate normals potentialy
 
-	edgeIndices.push_back(vertex);
+	edgeIndices.push_back(vertex);				// makes a new edge
 	edgeIndices.push_back(vertices.size()-1);
 
-	edgeEBO.bufferData(edgeIndices);
-	editModeBVHSingleton->BuildBottomUp(*this);
+	edgeEBO.bufferData(edgeIndices);			// updates the edge buffer 
+
+	
 
 	return vertices.size() - 1;
 }

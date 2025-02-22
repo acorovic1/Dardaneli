@@ -16,6 +16,7 @@
 #include "Ray.h"
 
 class MyGUI;
+class Window;
 
 class Camera {
 
@@ -32,11 +33,9 @@ class Camera {
 	float fov,near,far;
 	float speed =0.001f, sensitivity = 100.0f;
 
-	bool firstClick = true;
-
 	double posX, posY;
 	double previousX, previousY;
-	
+	bool firstClick = true;
 public:
 
 	Camera(int width, int height, glm::vec3 Position);
@@ -52,23 +51,20 @@ public:
 	int getWidth()const;
 	int getHeight()const;
 	glm::vec3 getPosition() const;
+	glm::vec3 getOrientation()const;
 	float getFOV()const;
 
 	void setWidth(int width);
 	void setHeight(int height);
 
 	void setFOV(float fov);
+	void setPosition(glm::vec3 position);
 
 
 	Ray CreateRay(GLFWwindow* window);
 
-	void Movement(GLFWwindow* window, MyGUI& gui);
-	void ObjectMode(GLFWwindow* window, MyGUI& gui);
-	void EditMode(GLFWwindow* window, MyGUI& gui);
-	void Inputs(GLFWwindow* window,MyGUI &gui);
 
-	void setScrollCallback(GLFWwindow* window);
-	friend void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+	void Movement(GLFWwindow* window, MyGUI& gui);
 };
 
 

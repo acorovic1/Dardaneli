@@ -1,4 +1,5 @@
 C:\VISUAL STUDIO PROJECTS\Dardaneli\AABB.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\AABB.obj
+C:\VISUAL STUDIO PROJECTS\Dardaneli\Application.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\Application.obj
 C:\VISUAL STUDIO PROJECTS\Dardaneli\BasicObjects.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\BasicObjects.obj
 C:\VISUAL STUDIO PROJECTS\Dardaneli\BVHNode.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\BVHNode.obj
 C:\VISUAL STUDIO PROJECTS\Dardaneli\CamaraManager.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\CamaraManager.obj
@@ -34,3 +35,4 @@ C:\VISUAL STUDIO PROJECTS\Dardaneli\Texture.cpp;C:\VISUAL STUDIO PROJECTS\Dardan
 C:\VISUAL STUDIO PROJECTS\Dardaneli\VAO.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\VAO.obj
 C:\VISUAL STUDIO PROJECTS\Dardaneli\VBO.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\VBO.obj
 C:\VISUAL STUDIO PROJECTS\Dardaneli\Window.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\Window.obj
+C:\VISUAL STUDIO PROJECTS\Dardaneli\WindowManager.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\WindowManager.obj

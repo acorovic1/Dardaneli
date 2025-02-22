@@ -64,8 +64,8 @@ int main() {
 	Window window(800, 600, "Dardaneli");
 	window.Init();
 
-	MyGUI gui;
-	gui.Init(window.GetWindow());
+	MyGUI gui(&window);
+	gui.Init();
 
 	Scene scene;
 	scene.Init();
@@ -124,7 +124,7 @@ int main() {
 
 		if (!gui.getIO()->WantCaptureMouse) {
 
-			window.getCamera().Inputs(window.GetWindow(), gui);
+			app->Inputs(window.GetWindow(), gui);
 
 		}
 		gui.Grid();

@@ -1,17 +1,18 @@
 #include "MyGUI.h"
 #include <iomanip>
 #include "glad/glad.h"
+#include "Window.h"
 
-MyGUI::MyGUI():io(nullptr),gizmoIo(nullptr){}
+MyGUI::MyGUI(Window* window):io(nullptr),gizmoIo(nullptr),window(window){}
 
-void MyGUI::Init(GLFWwindow* window)
+void MyGUI::Init()
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	io = &ImGui::GetIO(); (void)io;
 	gizmoIo = &ImGui::GetIO(); 
 	ImGui::StyleColorsDark();
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplGlfw_InitForOpenGL(window->GetWindow(), true);
 	ImGui_ImplOpenGL3_Init("#version 460");
 
 	InitializeGrid();
@@ -41,13 +42,13 @@ void MyGUI::Shutdown()
 ImGuiIO* MyGUI::getIO() { return io; }
 Mode MyGUI::getMode()
 {
-	return mode;
+	return app->mode;
 }
 SelectMode MyGUI::getSelectMode()
 {
-	return selectMode;
+	return app->selectMode;
 }
-std::vector<int>& MyGUI::getObjectIndex() { return objectIndex; }
+std::vector<int>& MyGUI::getObjectIndex() { return app->objectIndex; }
 
 
 
@@ -60,7 +61,7 @@ void MyGUI::DrawUI()
 
 	static bool edit = true;
 
-	if(mode == Mode::OBJECT)
+	if(app->mode == Mode::OBJECT)
 	{
 		edit = true;
 		ImGui::Checkbox("BVHTree", &BVHTree);
@@ -75,20 +76,20 @@ void MyGUI::DrawUI()
 		if (BVHTree)
 			DrawBVH();
 
-		if(objectIndex.size())
-		if (ImGui::InputInt("Index", &objectIndex[objectIndex.size()-1]))
+		if(app->objectIndex.size())
+		if (ImGui::InputInt("Index", &app->objectIndex[app->objectIndex.size()-1]))
 			SelectObject();
 
 		Transformations();
 	}
-	else if (mode == Mode::EDIT)
+	else if (app->mode == Mode::EDIT)
 	{
 		ImGui::Checkbox("BVHTree", &BVHTree);
 		ImGui::InputInt("BVHTreeSubdivision", &eBVHSubd);
 
 		if (edit)
 		{
-			editModeBVHSingleton->BuildBottomUp(*objectSingleton->getObject(objectIndex[objectIndex.size()-1]));
+			editModeBVHSingleton->BuildBottomUp(*objectSingleton->getObject(app->objectIndex[app->objectIndex.size()-1]));
 			std::cout << "built";
 			edit = false;
 		}
@@ -96,7 +97,7 @@ void MyGUI::DrawUI()
 		if(BVHTree)
 			//editModeBVHSingleton->Draw(*cameraSingleton->getCamera(0),shaderSingleton->getShader("AABB"),eBVHSubd);
 			editModeBVHSingleton->DrawLeaves(editModeBVHSingleton->getRoot(),*cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
-		auto& vertexIndicesTemp = static_cast<Mesh*>(objectSingleton->getObject(objectIndex[objectIndex.size() - 1]))->getSelectedVertices();
+		auto& vertexIndicesTemp = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndex[app->objectIndex.size() - 1]))->getSelectedVertices();
 		if(vertexIndicesTemp.size())
 		(ImGui::InputInt("Index", &vertexIndicesTemp[vertexIndicesTemp.size()-1]));
 
@@ -106,9 +107,9 @@ void MyGUI::DrawUI()
 		ImGui::RadioButton("Edge select", &e, 1); ImGui::SameLine();
 		ImGui::RadioButton("Face select", &e, 2);
 
-		if (e == 0)selectMode = SelectMode::VERTEX;
-		else if (e == 1)selectMode = SelectMode::EDGE;
-		else if (e == 2)selectMode = SelectMode::FACE;
+		if (e == 0)app->selectMode = SelectMode::VERTEX;
+		else if (e == 1)app->selectMode = SelectMode::EDGE;
+		else if (e == 2)app->selectMode = SelectMode::FACE;
 
 
 		VertexTransform();
@@ -232,10 +233,13 @@ void MyGUI::Add() {
 			ImGui::EndMenu();
 		}
 
-		if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) && !ImGui::IsAnyItemHovered() && hoverTime> 0.4)
+		if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) && !ImGui::IsAnyItemHovered() && hoverTime> 1.4)
 		{
 			glfwSetTime(0);
 			hoverTime = 0;
+			
+			window->getKeys()[GLFW_KEY_Q] = 0;
+			std::cout << "HEHEHAHA ";
 			showAddMenu = false;
 			ImGui::CloseCurrentPopup();
 		}
@@ -263,9 +267,9 @@ void MyGUI::Gizmos()
 	glm::mat4 projMatrix = camera->getProjectionMatrix();
 	//OVDE
 	static glm::mat4 transform = glm::mat4(1.0f);
-	if(objectIndex.size())
-	if (objectIndex[objectIndex.size() - 1] != -1 && objectIndex[objectIndex.size() - 1] <objectSingleton->getNumberOfObjects())
-		transform = objectSingleton->getObject(objectIndex[objectIndex.size() - 1])->getModelReference();
+	if(app->objectIndex.size())
+	if (app->objectIndex[app->objectIndex.size() - 1] != -1 && app->objectIndex[app->objectIndex.size() - 1] <objectSingleton->getNumberOfObjects())
+		transform = objectSingleton->getObject(app->objectIndex[app->objectIndex.size() - 1])->getModelReference();
 	static glm::mat4 previousTransform = glm::mat4(1.0f);
 	
 	
@@ -281,17 +285,17 @@ void MyGUI::Gizmos()
 		if (operation == ImGuizmo::OPERATION::TRANSLATE)
 			if (previousTransform != transform) {
 
-				translatePrev[0] = translate[0];
-				translatePrev[1] = translate[1];
-				translatePrev[2] = translate[2];
+				app->translatePrev[0] = app->translate[0];
+				app->translatePrev[1] = app->translate[1];
+				app->translatePrev[2] = app->translate[2];
 
-				translate[0] = transform[3][0];
-				translate[1] = transform[3][1];
-				translate[2] = transform[3][2];
+				app->translate[0] = transform[3][0];
+				app->translate[1] = transform[3][1];
+				app->translate[2] = transform[3][2];
 				std::cout << "\n Translate ";
 				auto delta = glm::vec3(transform[3]) - glm::vec3(previousTransform[3]);
 
-				for(auto x:objectIndex)
+				for(auto x: app->objectIndex)
 					objectSingleton->getObject(x)->Translate(delta);
 			}
 
@@ -300,40 +304,40 @@ void MyGUI::Gizmos()
 
 				std::cout << "\n Rotate ";
 				
-				rotatePrev[0] = rotate[0];
-				rotatePrev[1] = rotate[1];
-				rotatePrev[2] = rotate[2];
+				app->rotatePrev[0] = app->rotate[0];
+				app->rotatePrev[1] = app->rotate[1];
+				app->rotatePrev[2] = app->rotate[2];
 
 				if (transform[2][1] != 1 && transform[2][1] != -1)
 				{
-					rotate[0] = -glm::asin(transform[2][1]);
+					app->rotate[0] = -glm::asin(transform[2][1]);
 				}
 
-				rotate[0] = std::atan2(-transform[2][1], transform[2][2]) * radian;
-				rotate[1] = std::atan2(transform[2][0], std::sqrt(transform[0][0] * transform[0][0] + transform[1][0] * transform[1][0])) * radian;
-				rotate[2] = std::atan2(-transform[1][0], transform[0][0]) * radian;
+				app->rotate[0] = std::atan2(-transform[2][1], transform[2][2]) * radian;
+				app->rotate[1] = std::atan2(transform[2][0], std::sqrt(transform[0][0] * transform[0][0] + transform[1][0] * transform[1][0])) * radian;
+				app->rotate[2] = std::atan2(-transform[1][0], transform[0][0]) * radian;
 
-				std::cout << rotate[0] << " " << rotate[1] << " " << rotate[2] << " ";
+				std::cout << app->rotate[0] << " " << app->rotate[1] << " " << app->rotate[2] << " ";
 
-				if (fabs(rotate[0])< epsilon)
-					rotate[0] = 0;
+				if (fabs(app->rotate[0])< epsilon)
+					app->rotate[0] = 0;
 				
-				if (fabs(rotate[1]) < epsilon)
-					rotate[1] = 0;
+				if (fabs(app->rotate[1]) < epsilon)
+					app->rotate[1] = 0;
 				
-				if (fabs(rotate[2]) < epsilon)
-					rotate[2] = 0;
-				for (auto x : objectIndex)
+				if (fabs(app->rotate[2]) < epsilon)
+					app->rotate[2] = 0;
+				for (auto x : app->objectIndex)
 				{
 
 					auto object = objectSingleton->getObject(x);
 					
-					if (fabs(rotate[0]) > epsilon)
-						object->Rotate(rotate[0] - rotatePrev[0], glm::vec3(1.0f, 0.0f, 0.0f));
-					if (fabs(rotate[1]) > epsilon)
-						object->Rotate(rotate[1] - rotatePrev[1], glm::vec3(0.0f, 1.0f, 0.0f));
-					if (fabs(rotate[2]) > epsilon)
-						object->Rotate(rotate[2] - rotatePrev[2], glm::vec3(0.0f, 0.0f, 1.0f));
+					if (fabs(app->rotate[0]) > epsilon)
+						object->Rotate(app->rotate[0] - app->rotatePrev[0], glm::vec3(1.0f, 0.0f, 0.0f));
+					if (fabs(app->rotate[1]) > epsilon)
+						object->Rotate(app->rotate[1] - app->rotatePrev[1], glm::vec3(0.0f, 1.0f, 0.0f));
+					if (fabs(app->rotate[2]) > epsilon)
+						object->Rotate(app->rotate[2] - app->rotatePrev[2], glm::vec3(0.0f, 0.0f, 1.0f));
 				}
 			}
 
@@ -342,19 +346,19 @@ void MyGUI::Gizmos()
 				
 				std::cout << "\n Scale ";
 				
-				scalePrev[0] = scale[0];
-				scalePrev[1] = scale[1];
-				scalePrev[2] = scale[2];
+				app->scalePrev[0] = app->scale[0];
+				app->scalePrev[1] = app->scale[1];
+				app->scalePrev[2] = app->scale[2];
 
-				scale[0] = transform[0][0];
-				scale[1] = transform[1][1];
-				scale[2] = transform[2][2];
-				if (scale[0] == 0)scale[0] == 1;
-				if (scale[1] == 0)scale[1] == 1;
-				if (scale[2] == 0)scale[2] == 1;
+				app->scale[0] = transform[0][0];
+				app->scale[1] = transform[1][1];
+				app->scale[2] = transform[2][2];
+				if (app->scale[0] == 0)app->scale[0] == 1;
+				if (app->scale[1] == 0)app->scale[1] == 1;
+				if (app->scale[2] == 0)app->scale[2] == 1;
 
 				auto delta = transform / previousTransform;
-				for (auto x : objectIndex)
+				for (auto x : app->objectIndex)
 					objectSingleton->getObject(x)->Scale(delta[0][0], delta[1][1], delta[2][2]);
 			}
 		objectBVHSingleton->Refit();
@@ -374,26 +378,26 @@ void MyGUI::VertexTransform()
 	 
 	static float offset[3];
 
-	Object* activeObject = objectSingleton->getObject(objectIndex[objectIndex.size() - 1]);
+	Object* activeObject = objectSingleton->getObject(app->objectIndex[app->objectIndex.size() - 1]);
 	std::vector<Vertex>& vertices = activeObject->getVerticesReference();
 	int numberOfVertices = activeObject->getNumberOfVertices();
 
 	std::vector<int>& selectedVertices = static_cast<Mesh*>(activeObject)->getSelectedVertices();
 	if (selectedVertices.size() == 0)return;
 
-	vertexPrevPosition[0] = vertexPosition[0] = vertices[selectedVertices[selectedVertices.size() - 1]].getPosition().x;
-	vertexPrevPosition[1] = vertexPosition[1] = vertices[selectedVertices[selectedVertices.size() - 1]].getPosition().y;
-	vertexPrevPosition[2] = vertexPosition[2] = vertices[selectedVertices[selectedVertices.size() - 1]].getPosition().z;
+	app->vertexPrevPosition[0] = app->vertexPosition[0] = vertices[selectedVertices[selectedVertices.size() - 1]].getPosition().x;
+	app->vertexPrevPosition[1] = app->vertexPosition[1] = vertices[selectedVertices[selectedVertices.size() - 1]].getPosition().y;
+	app->vertexPrevPosition[2] = app->vertexPosition[2] = vertices[selectedVertices[selectedVertices.size() - 1]].getPosition().z;
 
-	ImGui::InputFloat3("Vertex position", vertexPosition);
+	ImGui::InputFloat3("Vertex position", app->vertexPosition);
 	if (ImGui::IsItemDeactivatedAfterEdit())
 	{
 
 		std::cout << " Vertex moved ";
 		
-		offset[0] = vertexPosition[0] - vertexPrevPosition[0];
-		offset[1] = vertexPosition[1] - vertexPrevPosition[1];
-		offset[2] = vertexPosition[2] - vertexPrevPosition[2];
+		offset[0] = app->vertexPosition[0] - app->vertexPrevPosition[0];
+		offset[1] = app->vertexPosition[1] - app->vertexPrevPosition[1];
+		offset[2] = app->vertexPosition[2] - app->vertexPrevPosition[2];
 
 		for(int i = 0;i< selectedVertices.size();i++)
 		{
@@ -401,9 +405,9 @@ void MyGUI::VertexTransform()
 			activeObject->UpdateData(selectedVertices[i]);
 		}
 
-		vertexPrevPosition[0] = vertexPosition[0];
-		vertexPrevPosition[1] = vertexPosition[1];
-		vertexPrevPosition[2] = vertexPosition[2];
+		app->vertexPrevPosition[0] = app->vertexPosition[0];
+		app->vertexPrevPosition[1] = app->vertexPosition[1];
+		app->vertexPrevPosition[2] = app->vertexPosition[2];
 		//
 		editModeBVHSingleton->Refit(*activeObject);
 
@@ -412,63 +416,63 @@ void MyGUI::VertexTransform()
 
 void MyGUI::Transformations()
 {
-	if (!objectIndex.size())return;
-	Object* activeObject = objectSingleton->getObject(objectIndex[objectIndex.size() - 1]);
+	if (!app->objectIndex.size())return;
+	Object* activeObject = objectSingleton->getObject(app->objectIndex[app->objectIndex.size() - 1]);
 
-	ImGui::InputFloat3("Location", translate);
+	ImGui::InputFloat3("Location", app->translate);
 	if (ImGui::IsItemDeactivatedAfterEdit())
 	{
 	
 		std::cout << " Object moved ";
 
-		activeObject->Translate(translate[0]-translatePrev[0], translate[1]-translatePrev[1], translate[2]-translatePrev[2]);
+		activeObject->Translate(app->translate[0]- app->translatePrev[0], app->translate[1]- app->translatePrev[1], app->translate[2]- app->translatePrev[2]);
 
-		translatePrev[0] = translate[0];
-		translatePrev[1] = translate[1];
-		translatePrev[2] = translate[2];
+		app->translatePrev[0] = app->translate[0];
+		app->translatePrev[1] = app->translate[1];
+		app->translatePrev[2] = app->translate[2];
 
 		objectBVHSingleton->Refit();
 
 	}
 
-	ImGui::InputFloat3("Rotation", rotate);
+	ImGui::InputFloat3("Rotation", app->rotate);
 	if(ImGui::IsItemDeactivatedAfterEdit())
 	{
 		std::cout << " Object rotated ";
 
-		if(rotatePrev[0]!=rotate[0])
-			activeObject->Rotate(rotate[0] - rotatePrev[0], glm::vec3(1.0f, 0.0f, 0.0f));
-		else if (rotatePrev[1] != rotate[1])
-			activeObject->Rotate(rotate[1] - rotatePrev[1], glm::vec3(0.0f, 1.0f, 0.0f));
-		else if (rotatePrev[2] != rotate[2])
-			activeObject->Rotate(rotate[2] - rotatePrev[2], glm::vec3(0.0f, 0.0f, 1.0f));
+		if(app->rotatePrev[0]!= app->rotate[0])
+			activeObject->Rotate(app->rotate[0] - app->rotatePrev[0], glm::vec3(1.0f, 0.0f, 0.0f));
+		else if (app->rotatePrev[1] != app->rotate[1])
+			activeObject->Rotate(app->rotate[1] - app->rotatePrev[1], glm::vec3(0.0f, 1.0f, 0.0f));
+		else if (app->rotatePrev[2] != app->rotate[2])
+			activeObject->Rotate(app->rotate[2] - app->rotatePrev[2], glm::vec3(0.0f, 0.0f, 1.0f));
 
 		objectBVHSingleton->Refit();
 
-		rotatePrev[0] = rotate[0];
-		rotatePrev[1] = rotate[1];
-		rotatePrev[2] = rotate[2];
+		app->rotatePrev[0] = app->rotate[0];
+		app->rotatePrev[1] = app->rotate[1];
+		app->rotatePrev[2] = app->rotate[2];
 
 
 	}
 
-	ImGui::InputFloat3("Scale", scale);
+	ImGui::InputFloat3("Scale", app->scale);
 	if (ImGui::IsItemDeactivatedAfterEdit())
 	{
 		std::cout << " Object scaled ";
 
-		if (scalePrev[0] != scale[0])
-			activeObject->Scale(scale[0]/scalePrev[0], 1.0f, 1.0f);
-		else if (scalePrev[1] != scale[1])
-			activeObject->Scale(1.0f, scale[1]/scalePrev[1], 1.0f);
-		else if (scalePrev[2] != scale[2])
-			activeObject->Scale(1.0f, 1.0f, scale[2]/scalePrev[2]);
+		if (app->scalePrev[0] != app->scale[0])
+			activeObject->Scale(app->scale[0]/ app->scalePrev[0], 1.0f, 1.0f);
+		else if (app->scalePrev[1] != app->scale[1])
+			activeObject->Scale(1.0f, app->scale[1]/ app->scalePrev[1], 1.0f);
+		else if (app->scalePrev[2] != app->scale[2])
+			activeObject->Scale(1.0f, 1.0f, app->scale[2]/ app->scalePrev[2]);
 
 		objectBVHSingleton->Refit();
 
-		scalePrev[0] = scale[0];
-		scalePrev[1] = scale[1];
-		scalePrev[2] = scale[2];
+		app->scalePrev[0] = app->scale[0];
+		app->scalePrev[1] = app->scale[1];
+		app->scalePrev[2] = app->scale[2];
 
 
 	}
@@ -477,56 +481,56 @@ void MyGUI::Transformations()
 void MyGUI::SelectObject()
 {
 	
-	if (!objectIndex.size())return;
-		if (objectIndex[objectIndex.size()-1] < objectSingleton->getNumberOfObjects() && objectIndex[objectIndex.size() - 1] >= 0)
+	if (!app->objectIndex.size())return;
+		if (app->objectIndex[app->objectIndex.size()-1] < objectSingleton->getNumberOfObjects() && app->objectIndex[app->objectIndex.size() - 1] >= 0)
 		{
 			gizmo = true;
 			//std::cout << "\nSELECTED ---> " << objectSingleton->getObject(objectIndex[objectIndex.size()-1])->getName();
 
-			model = objectSingleton->getObject(objectIndex[objectIndex.size()-1])->getModelReference();
+			app->model = objectSingleton->getObject(app->objectIndex[app->objectIndex.size()-1])->getModelReference();
 
 
-			translate[0] = translatePrev[0] = model[3][0];
-			translate[1] = translatePrev[1] = model[3][1];
-			translate[2] = translatePrev[2] = model[3][2];
+			app->translate[0] = app->translatePrev[0] = app->model[3][0];
+			app->translate[1] = app->translatePrev[1] = app->model[3][1];
+			app->translate[2] = app->translatePrev[2] = app->model[3][2];
 
 
-			rotate[0] = std::atan2(-model[2][1], model[2][2]) * radian;
-			rotate[1] = std::atan2(model[2][0], std::sqrt(model[0][0] * model[0][0] + model[1][0] * model[1][0])) * radian;
-			rotate[2] = std::atan2(-model[1][0], model[0][0]) * radian;
+			app->rotate[0] = std::atan2(-app->model[2][1], app->model[2][2]) * radian;
+			app->rotate[1] = std::atan2(app->model[2][0], std::sqrt(app->model[0][0] * app->model[0][0] + app->model[1][0] * app->model[1][0])) * radian;
+			app->rotate[2] = std::atan2(-app->model[1][0], app->model[0][0]) * radian;
 
-			if (rotate[0] < epsilon)
-				rotate[0] = rotatePrev[0] = 0;
-			else rotatePrev[0] = rotate[0];
-			if (rotate[1] < epsilon)
-				rotate[1] = rotatePrev[1] = 0;
-			else rotatePrev[1] = rotate[1];
-			if (rotate[2] < epsilon)
-				rotate[2] = rotatePrev[2] = 0;
-			else rotatePrev[2] = rotate[2];
-
-
+			if (app->rotate[0] < epsilon)
+				app->rotate[0] = app->rotatePrev[0] = 0;
+			else app->rotatePrev[0] = app->rotate[0];
+			if (app->rotate[1] < epsilon)
+				app->rotate[1] = app->rotatePrev[1] = 0;
+			else app->rotatePrev[1] = app->rotate[1];
+			if (app->rotate[2] < epsilon)
+				app->rotate[2] = app->rotatePrev[2] = 0;
+			else app->rotatePrev[2] = app->rotate[2];
 
 
-			scale[0] = scalePrev[0] = sqrt(model[0][0] * model[0][0] + model[0][1] * model[0][1] + model[0][2] * model[0][2]  );
-			scale[1] = scalePrev[1] = sqrt(model[1][0] * model[1][0] + model[1][1] * model[1][1] + model[1][2] * model[1][2]  );
-			scale[2] = scalePrev[2] = sqrt(model[2][0] * model[2][0] + model[2][1] * model[2][1] + model[2][2] * model[2][2]  );
+
+
+			app->scale[0] = app->scalePrev[0] = sqrt(app->model[0][0] * app->model[0][0] + app->model[0][1] * app->model[0][1] + app->model[0][2] * app->model[0][2]);
+			app->scale[1] = app->scalePrev[1] = sqrt(app->model[1][0] * app->model[1][0] + app->model[1][1] * app->model[1][1] + app->model[1][2] * app->model[1][2]);
+			app->scale[2] = app->scalePrev[2] = sqrt(app->model[2][0] * app->model[2][0] + app->model[2][1] * app->model[2][1] + app->model[2][2] * app->model[2][2]);
 		}
 		else {
 			std::cout << "\nSELECTED ---> nothing";
 			gizmo = false;
 
-			translate[0] = translatePrev[0] = -1000000;
-			translate[1] = translatePrev[1] = -1000000;
-			translate[2] = translatePrev[2] = -1000000;
+			app->translate[0] = app->translatePrev[0] = -1000000;
+			app->translate[1] = app->translatePrev[1] = -1000000;
+			app->translate[2] = app->translatePrev[2] = -1000000;
 
-			rotate[0] = rotatePrev[0] = -1000000;
-			rotate[1] = rotatePrev[1] = -1000000;
-			rotate[2] = rotatePrev[2] = -1000000;
+			app->rotate[0] = app->rotatePrev[0] = -1000000;
+			app->rotate[1] = app->rotatePrev[1] = -1000000;
+			app->rotate[2] = app->rotatePrev[2] = -1000000;
 
-			scale[0] = scalePrev[0] = -1000000;
-			scale[1] = scalePrev[1] = -1000000;
-			scale[2] = scalePrev[2] = -1000000;
+			app->scale[0] = app->scalePrev[0] = -1000000;
+			app->scale[1] = app->scalePrev[1] = -1000000;
+			app->scale[2] = app->scalePrev[2] = -1000000;
 
 		}
 	
@@ -542,34 +546,34 @@ void MyGUI::InitializeGrid(int width)
 	int z = 0;
 	for (int i = 0; i <= width; i++)
 	{
-		vertices.push_back(glm::vec2(-width * 0.5, width * 0.5 - i));
-		vertices.push_back(glm::vec2(width * 0.5, width * 0.5 - i));
+		gridVertices.push_back(glm::vec2(-width * 0.5, width * 0.5 - i));
+		gridVertices.push_back(glm::vec2(width * 0.5, width * 0.5 - i));
 	
-		indices.push_back(z++);
-		indices.push_back(z++);
+		gridIndices.push_back(z++);
+		gridIndices.push_back(z++);
 	
 	}
 	for (int i = 1; i < width; i++)
 	{
-		vertices.push_back(glm::vec2(-width * 0.5 + i, width * 0.5));
-		vertices.push_back(glm::vec2(-width * 0.5 + i, -width * 0.5));
-		indices.push_back(z++);
-		indices.push_back(z++);
+		gridVertices.push_back(glm::vec2(-width * 0.5 + i, width * 0.5));
+		gridVertices.push_back(glm::vec2(-width * 0.5 + i, -width * 0.5));
+		gridIndices.push_back(z++);
+		gridIndices.push_back(z++);
 	}
 	
-	indices.push_back(0);
-	indices.push_back(width * 2);
+	gridIndices.push_back(0);
+	gridIndices.push_back(width * 2);
 	
-	indices.push_back(1);
-	indices.push_back(width * 2 + 1);
+	gridIndices.push_back(1);
+	gridIndices.push_back(width * 2 + 1);
 	
-	VAO.Bind();
-	VBO VBO(vertices);
-	EBO EBO(indices);
+	gridVAO.Bind();
+	VBO VBO(gridVertices);
+	EBO EBO(gridIndices);
 	
-	VAO.LinkAttribute(VBO, 0, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
+	gridVAO.LinkAttribute(VBO, 0, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
 	
-	VAO.Unbind();
+	gridVAO.Unbind();
 	VBO.Unbind();
 	EBO.Unbind();
 
@@ -583,11 +587,11 @@ void MyGUI::Grid()
 	
 	static auto &shader =shaderSingleton->getShader("Grid");
 	shader.Activate();
-	VAO.Bind();
+	gridVAO.Bind();
 	
 	cameraSingleton->getCamera(0)->CameraUniform(shader, "cameraMatrix");
 	
-	glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_LINES, gridIndices.size(), GL_UNSIGNED_INT, 0);
 
 
 }
@@ -601,14 +605,14 @@ void MyGUI::Modes()
 		ImGui::OpenPopup("Modes");
 
 	ImGui::SameLine();
-	ImGui::TextUnformatted(modes[int(mode)]);
+	ImGui::TextUnformatted(modes[int(app->mode)]);
 
 	if (ImGui::BeginPopup("Modes"))
 	{
 		ImGui::SeparatorText("Mode");
 		for (int i = 0; i < IM_ARRAYSIZE(modes); i++)
 			if (ImGui::Selectable(modes[i]))
-				mode = Mode(i);
+				app->mode = Mode(i);
 
 		ImGui::EndPopup();
 	}

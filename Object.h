@@ -51,7 +51,7 @@ public:
 	void bindVAO();
 
 
-	void UpdateData(int i);
+	void UpdateData(int i); 
 	void addVertex(Vertex& vertex);
 
 

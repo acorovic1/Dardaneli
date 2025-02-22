@@ -21,6 +21,13 @@ struct Vertex {
 		// calculateNormals();
 		};
 
+	void Translate(float x,float y,float z) {
+		position.x += x;
+		position.y += y;
+		position.z += z;
+		// calculateNormals();
+	};
+
 	void Translate(float* offset) {
 		position.x += offset[0];
 		position.y += offset[1];
