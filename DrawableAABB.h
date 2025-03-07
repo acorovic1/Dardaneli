@@ -18,8 +18,11 @@ class DrawableAABB {
 	std::vector<GLuint>indices;
 
 public :
+	
 	DrawableAABB() {};
 	DrawableAABB(glm::vec3 min, glm::vec3 max);
+	DrawableAABB(const DrawableAABB& a);
+	DrawableAABB operator=(const DrawableAABB& a);
 
 	void Draw(Camera& camera,Shader& shader);
 };

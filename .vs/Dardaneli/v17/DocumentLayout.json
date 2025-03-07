@@ -1,34 +1,38 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\",
+  "WorkspaceRootPath": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Application.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Application.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\DrawableAABB.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:DrawableAABB.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Window.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Window.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\VAO.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:VAO.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Window.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Window.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\DrawableAABB.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:DrawableAABB.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\MyGUI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:MyGUI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\VAO.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:VAO.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\AABB.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:AABB.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\AABB.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:AABB.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\BVHNode.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:BVHNode.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\WindowManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:WindowManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\WindowManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:WindowManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,103 +42,110 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 7,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "WindowManager.cpp",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\WindowManager.cpp",
-              "RelativeDocumentMoniker": "WindowManager.cpp",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\WindowManager.cpp",
-              "RelativeToolTip": "WindowManager.cpp",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAeAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-22T00:34:15.055Z"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "WindowManager.h",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\WindowManager.h",
-              "RelativeDocumentMoniker": "WindowManager.h",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\WindowManager.h",
-              "RelativeToolTip": "WindowManager.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB0AAAAlAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-22T00:31:52.299Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Window.h",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Window.h",
-              "RelativeDocumentMoniker": "Window.h",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Window.h",
-              "RelativeToolTip": "Window.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-22T00:22:25.829Z",
+              "Title": "BVHNode.cpp",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\BVHNode.cpp",
+              "RelativeDocumentMoniker": "BVHNode.cpp",
+              "ToolTip": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\BVHNode.cpp",
+              "RelativeToolTip": "BVHNode.cpp",
+              "ViewState": "AQIAABsAAAAAAAAAAAAAAAwAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-07T11:49:16.841Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Window.cpp",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Window.cpp",
-              "RelativeDocumentMoniker": "Window.cpp",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Window.cpp",
-              "RelativeToolTip": "Window.cpp",
-              "ViewState": "AQIAAGkAAAAAAAAAAAAwwCUAAAA2AAAA",
+              "DocumentIndex": 7,
+              "Title": "Main.cpp",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\Main.cpp",
+              "RelativeDocumentMoniker": "Main.cpp",
+              "ToolTip": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\Main.cpp",
+              "RelativeToolTip": "Main.cpp",
+              "ViewState": "AQIAAFEAAAAAAAAAAAAAAGEAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-20T20:08:12.708Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Application.cpp",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Application.cpp",
-              "RelativeDocumentMoniker": "Application.cpp",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Application.cpp",
-              "RelativeToolTip": "Application.cpp",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-21T20:51:33.681Z",
+              "WhenOpened": "2025-03-07T11:35:24.28Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "MyGUI.h",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\MyGUI.h",
-              "RelativeDocumentMoniker": "MyGUI.h",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\MyGUI.h",
-              "RelativeToolTip": "MyGUI.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAAAAAAA",
+              "Title": "VAO.h",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\VAO.h",
+              "RelativeDocumentMoniker": "VAO.h",
+              "ToolTip": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\VAO.h",
+              "RelativeToolTip": "VAO.h",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAA0AAAADAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-20T12:11:04.629Z",
+              "WhenOpened": "2025-03-07T11:12:35.276Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "VAO.cpp",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\VAO.cpp",
+              "RelativeDocumentMoniker": "VAO.cpp",
+              "ToolTip": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\VAO.cpp",
+              "RelativeToolTip": "VAO.cpp",
+              "ViewState": "AQIAABwAAAAAAAAAAAAawCwAAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-07T09:29:04.618Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "AABB.h",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\AABB.h",
+              "RelativeDocumentMoniker": "AABB.h",
+              "ToolTip": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\AABB.h",
+              "RelativeToolTip": "AABB.h",
+              "ViewState": "AQIAAAwAAAAAAAAAAAAAAB0AAAAUAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-03-07T10:53:51.842Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "Main.cpp",
-              "DocumentMoniker": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Main.cpp",
-              "RelativeDocumentMoniker": "Main.cpp",
-              "ToolTip": "C:\\VISUAL STUDIO PROJECTS\\Dardaneli\\Main.cpp",
-              "RelativeToolTip": "Main.cpp",
-              "ViewState": "AQIAAEUAAAAAAAAAAAAAAIMAAAAPAAAA",
+              "Title": "AABB.cpp",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\AABB.cpp",
+              "RelativeDocumentMoniker": "AABB.cpp",
+              "ToolTip": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\AABB.cpp",
+              "RelativeToolTip": "AABB.cpp",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAACoAAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-19T22:57:58.176Z",
+              "WhenOpened": "2025-03-07T10:53:18.807Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "DrawableAABB.h",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\DrawableAABB.h",
+              "RelativeDocumentMoniker": "DrawableAABB.h",
+              "ToolTip": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\DrawableAABB.h",
+              "RelativeToolTip": "DrawableAABB.h",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAAABcAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-03-07T09:23:28.018Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "DrawableAABB.cpp",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\DrawableAABB.cpp",
+              "RelativeDocumentMoniker": "DrawableAABB.cpp",
+              "ToolTip": "C:\\Users\\Korisnik\\OneDrive\\Radna povr\u0161ina\\Dardaneli\\Dardaneli\\DrawableAABB.cpp",
+              "RelativeToolTip": "DrawableAABB.cpp",
+              "ViewState": "AQIAAEQAAAAAAAAAAAAAAFMAAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-07T09:22:18.716Z",
               "EditorCaption": ""
             }
           ]

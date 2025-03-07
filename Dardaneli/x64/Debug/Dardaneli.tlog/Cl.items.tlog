@@ -1,38 +1,38 @@
-C:\VISUAL STUDIO PROJECTS\Dardaneli\AABB.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\AABB.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\Application.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\Application.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\BasicObjects.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\BasicObjects.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\BVHNode.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\BVHNode.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\CamaraManager.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\CamaraManager.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\Camera.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\Camera.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\DrawableAABB.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\DrawableAABB.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\EBO.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\EBO.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\EditModeBVH.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\EditModeBVH.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\glad.c;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\glad.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUIZMO\GraphEditor.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\GraphEditor.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUIZMO\ImCurveEdit.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\ImCurveEdit.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUIZMO\ImGradient.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\ImGradient.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUIZMO\ImGuizmo.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\ImGuizmo.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\imgui.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\imgui.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\imgui_demo.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\imgui_demo.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\imgui_draw.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\imgui_draw.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\imgui_impl_glfw.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\imgui_impl_glfw.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\imgui_impl_opengl3.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\imgui_impl_opengl3.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\imgui_tables.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\imgui_tables.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\ImGUI\imgui_widgets.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\imgui_widgets.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\Main.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\Main.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\Mesh.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\Mesh.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\MyGUI.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\Object.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\Object.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\ObjectManager.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\ObjectManager.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\ObjectModeBVH.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\ObjectModeBVH.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\Ray.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\Ray.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\Renderer.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\Renderer.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\Scene.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\Scene.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\Shader.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\Shader.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\ShaderManager.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\ShaderManager.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\stb.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\stb.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\Texture.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\Texture.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\VAO.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\VAO.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\VBO.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\VBO.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\Window.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\Window.obj
-C:\VISUAL STUDIO PROJECTS\Dardaneli\WindowManager.cpp;C:\VISUAL STUDIO PROJECTS\Dardaneli\Dardaneli\x64\Debug\WindowManager.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\AABB.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\AABB.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Application.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\Application.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\BasicObjects.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\BasicObjects.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\BVHNode.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\BVHNode.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\CamaraManager.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\CamaraManager.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Camera.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\Camera.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\DrawableAABB.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\DrawableAABB.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\EBO.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\EBO.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\EditModeBVH.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\EditModeBVH.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\glad.c;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\glad.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\ImGUIZMO\GraphEditor.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\GraphEditor.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\ImGUIZMO\ImCurveEdit.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\ImCurveEdit.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\ImGUIZMO\ImGradient.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\ImGradient.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\ImGUIZMO\ImGuizmo.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\ImGuizmo.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\ImGUI\imgui.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\imgui.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\ImGUI\imgui_demo.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\imgui_demo.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\ImGUI\imgui_draw.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\imgui_draw.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\ImGUI\imgui_impl_glfw.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\imgui_impl_glfw.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\ImGUI\imgui_impl_opengl3.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\imgui_impl_opengl3.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\ImGUI\imgui_tables.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\imgui_tables.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\ImGUI\imgui_widgets.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\imgui_widgets.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Main.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\Main.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Mesh.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\Mesh.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\MyGUI.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\MyGUI.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Object.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\Object.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\ObjectManager.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\ObjectManager.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\ObjectModeBVH.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\ObjectModeBVH.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Ray.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\Ray.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Renderer.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\Renderer.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Scene.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\Scene.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Shader.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\Shader.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\ShaderManager.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\ShaderManager.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\stb.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\stb.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Texture.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\Texture.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\VAO.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\VAO.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\VBO.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\VBO.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Window.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\Window.obj
+C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\WindowManager.cpp;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Dardaneli\x64\Debug\WindowManager.obj

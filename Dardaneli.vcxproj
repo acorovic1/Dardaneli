@@ -72,12 +72,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\VISUAL STUDIO PROJECTS\Dardaneli\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\VISUAL STUDIO PROJECTS\Dardaneli\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\VISUAL STUDIO PROJECTS\Dardaneli\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\VISUAL STUDIO PROJECTS\Dardaneli\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

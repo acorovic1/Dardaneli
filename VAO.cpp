@@ -1,9 +1,19 @@
 #include "VAO.h"
 
 
+VAO::~VAO()
+{
+	Unbind();
+	Delete();
+	std::cout << "VAO destructor\n";
+}
+
 VAO::VAO() {
 	glGenVertexArrays(1,&ID);
+	
+
 }
+
 
 void VAO::Bind() {
 	glBindVertexArray(ID);
@@ -11,11 +21,22 @@ void VAO::Bind() {
 
 
 void VAO :: Unbind() {
+	
 	glBindVertexArray(0);
 }
 
 void VAO::Delete() {
+	
 	glDeleteVertexArrays(1, &ID);
+}
+
+void VAO::Generate()
+{
+	
+	if (glIsVertexArray(ID))return;
+	glGenVertexArrays(1, &ID);
+	std::cout << "finish gen "<<ID<<"\n";
+
 }
 
 void VAO::LinkAttribute(VBO VBO,GLuint layout, GLint componentNumber, GLenum type ,

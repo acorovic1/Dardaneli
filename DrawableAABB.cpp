@@ -6,6 +6,9 @@
 
 
 DrawableAABB::DrawableAABB(glm::vec3 min, glm::vec3 max){
+	
+	
+	
 
 	DrawableAABB::vertices = std::vector<Vertex>{    //VRATI REFERENCE U MESH.H
 			Vertex{ glm::vec3(min.x, min.y, min.z),glm::vec3()},
@@ -23,6 +26,7 @@ DrawableAABB::DrawableAABB(glm::vec3 min, glm::vec3 max){
 			0, 4, 1, 5, 2, 6, 3, 7   // Vertical lines
 	};
 	
+	
 
 	VAO.Bind();
 	VBO VBO(vertices);
@@ -35,11 +39,67 @@ DrawableAABB::DrawableAABB(glm::vec3 min, glm::vec3 max){
 	VAO.Unbind();
 	VBO.Unbind();
 	EBO.Unbind();
+
+	VBO.Delete();
+	EBO.Delete();
+	
 }
+
+DrawableAABB::DrawableAABB(const DrawableAABB& a)
+{
+	
+	vertices = a.vertices;
+	indices = a.indices;
+
+	VAO.Bind();
+	VBO VBO(vertices);
+	EBO EBO(indices);
+
+	VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
+	VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
+
+
+	VAO.Unbind();
+	VBO.Unbind();
+	EBO.Unbind();
+
+	VBO.Delete();
+	EBO.Delete();
+
+}
+
+DrawableAABB DrawableAABB::operator=(const DrawableAABB& a)
+{
+	if (this == &a)return *this;
+
+	vertices = a.vertices;
+	indices = a.indices;
+	VAO.Generate();
+
+	VAO.Bind();
+	VBO VBO(vertices);
+	EBO EBO(indices);
+
+	VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
+	VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
+
+
+	VAO.Unbind();
+	VBO.Unbind();
+	EBO.Unbind();
+
+	VBO.Delete();
+	EBO.Delete();
+
+	return *this;
+}
+
+
 
 void DrawableAABB::Draw(Camera& camera,Shader&shader){
 
 	shader.Activate();
+
 	VAO.Bind();
 	camera.CameraUniform(shader, "cameraMatrix");
 	
