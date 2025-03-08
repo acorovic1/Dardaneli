@@ -48,6 +48,9 @@ public:
 	std::vector<Vertex> getVerticesCopy();
 	std::vector<glm::vec3> getVerticesXmodel();
 	glm::vec3 getVertexXmodel(GLuint vertexIndex);
+	glm::vec3 getPosition();
+
+
 	void bindVAO();
 
 

@@ -5,7 +5,7 @@ VAO::~VAO()
 {
 	Unbind();
 	Delete();
-	std::cout << "VAO destructor\n";
+	
 }
 
 VAO::VAO() {
@@ -35,7 +35,7 @@ void VAO::Generate()
 	
 	if (glIsVertexArray(ID))return;
 	glGenVertexArrays(1, &ID);
-	std::cout << "finish gen "<<ID<<"\n";
+	
 
 }
 

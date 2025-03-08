@@ -153,7 +153,7 @@ void Camera::Movement(GLFWwindow* glfwWindow, MyGUI& gui)
 			float deltaX = (posX - previousX) / 150;
 			float deltaY = (posY - previousY) / 150;
 
-			std::cout << deltaX << " " << posX << " " << previousX << "\n";
+			//std::cout << deltaX << " " << posX << " " << previousX << "\n";
 			Position += -deltaX * glm::normalize(glm::cross(Orientation, Up));
 			Position += deltaY * Up;
 

@@ -48,7 +48,7 @@ SelectMode MyGUI::getSelectMode()
 {
 	return app->selectMode;
 }
-std::vector<int>& MyGUI::getObjectIndex() { return app->objectIndex; }
+std::vector<int>& MyGUI::getObjectIndex() { return app->objectIndices; }
 
 
 
@@ -66,6 +66,7 @@ void MyGUI::DrawUI()
 		edit = true;
 		ImGui::Checkbox("BVHTree", &BVHTree);
 		ImGui::InputInt("BVHTreeSubdivision", &BVHSubd);
+		ImGui::Checkbox("Gizmo", &gizmo);
 
 		if (gizmo)
 			Gizmos();
@@ -76,8 +77,8 @@ void MyGUI::DrawUI()
 		if (BVHTree)
 			DrawBVH();
 
-		if(app->objectIndex.size())
-		if (ImGui::InputInt("Index", &app->objectIndex[app->objectIndex.size()-1]))
+		if(app->objectIndices.size())
+		if (ImGui::InputInt("Index", &app->objectIndices[app->objectIndices.size()-1]))
 			SelectObject();
 
 		Transformations();
@@ -89,7 +90,7 @@ void MyGUI::DrawUI()
 
 		if (edit)
 		{
-			editModeBVHSingleton->BuildBottomUp(*objectSingleton->getObject(app->objectIndex[app->objectIndex.size()-1]));
+			editModeBVHSingleton->BuildBottomUp(*objectSingleton->getObject(app->objectIndices[app->objectIndices.size()-1]));
 			std::cout << "built";
 			edit = false;
 		}
@@ -97,7 +98,7 @@ void MyGUI::DrawUI()
 		if(BVHTree)
 			//editModeBVHSingleton->Draw(*cameraSingleton->getCamera(0),shaderSingleton->getShader("AABB"),eBVHSubd);
 			editModeBVHSingleton->DrawLeaves(editModeBVHSingleton->getRoot(),*cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
-		auto& vertexIndicesTemp = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndex[app->objectIndex.size() - 1]))->getSelectedVertices();
+		auto& vertexIndicesTemp = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]))->getSelectedVertices();
 		if(vertexIndicesTemp.size())
 		(ImGui::InputInt("Index", &vertexIndicesTemp[vertexIndicesTemp.size()-1]));
 
@@ -267,9 +268,9 @@ void MyGUI::Gizmos()
 	glm::mat4 projMatrix = camera->getProjectionMatrix();
 	//OVDE
 	static glm::mat4 transform = glm::mat4(1.0f);
-	if(app->objectIndex.size())
-	if (app->objectIndex[app->objectIndex.size() - 1] != -1 && app->objectIndex[app->objectIndex.size() - 1] <objectSingleton->getNumberOfObjects())
-		transform = objectSingleton->getObject(app->objectIndex[app->objectIndex.size() - 1])->getModelReference();
+	if(app->objectIndices.size())
+	if (app->objectIndices[app->objectIndices.size() - 1] != -1 && app->objectIndices[app->objectIndices.size() - 1] <objectSingleton->getNumberOfObjects())
+		transform = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1])->getModelReference();
 	static glm::mat4 previousTransform = glm::mat4(1.0f);
 	
 	
@@ -292,17 +293,17 @@ void MyGUI::Gizmos()
 				app->translate[0] = transform[3][0];
 				app->translate[1] = transform[3][1];
 				app->translate[2] = transform[3][2];
-				std::cout << "\n Translate ";
+				//std::cout << "\n Translate ";
 				auto delta = glm::vec3(transform[3]) - glm::vec3(previousTransform[3]);
 
-				for(auto x: app->objectIndex)
+				for(auto x: app->objectIndices)
 					objectSingleton->getObject(x)->Translate(delta);
 			}
 
 		if (operation == ImGuizmo::OPERATION::ROTATE)
 			if (previousTransform != transform) {
 
-				std::cout << "\n Rotate ";
+				//std::cout << "\n Rotate ";
 				
 				app->rotatePrev[0] = app->rotate[0];
 				app->rotatePrev[1] = app->rotate[1];
@@ -327,7 +328,7 @@ void MyGUI::Gizmos()
 				
 				if (fabs(app->rotate[2]) < epsilon)
 					app->rotate[2] = 0;
-				for (auto x : app->objectIndex)
+				for (auto x : app->objectIndices)
 				{
 
 					auto object = objectSingleton->getObject(x);
@@ -344,7 +345,7 @@ void MyGUI::Gizmos()
 		if (operation == ImGuizmo::OPERATION::SCALE)
 			if (previousTransform != transform) {
 				
-				std::cout << "\n Scale ";
+				//std::cout << "\n Scale ";
 				
 				app->scalePrev[0] = app->scale[0];
 				app->scalePrev[1] = app->scale[1];
@@ -358,7 +359,7 @@ void MyGUI::Gizmos()
 				if (app->scale[2] == 0)app->scale[2] == 1;
 
 				auto delta = transform / previousTransform;
-				for (auto x : app->objectIndex)
+				for (auto x : app->objectIndices)
 					objectSingleton->getObject(x)->Scale(delta[0][0], delta[1][1], delta[2][2]);
 			}
 		objectBVHSingleton->Refit();
@@ -378,7 +379,7 @@ void MyGUI::VertexTransform()
 	 
 	static float offset[3];
 
-	Object* activeObject = objectSingleton->getObject(app->objectIndex[app->objectIndex.size() - 1]);
+	Object* activeObject = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]);
 	std::vector<Vertex>& vertices = activeObject->getVerticesReference();
 	int numberOfVertices = activeObject->getNumberOfVertices();
 
@@ -393,7 +394,7 @@ void MyGUI::VertexTransform()
 	if (ImGui::IsItemDeactivatedAfterEdit())
 	{
 
-		std::cout << " Vertex moved ";
+		//std::cout << " Vertex moved ";
 		
 		offset[0] = app->vertexPosition[0] - app->vertexPrevPosition[0];
 		offset[1] = app->vertexPosition[1] - app->vertexPrevPosition[1];
@@ -416,8 +417,8 @@ void MyGUI::VertexTransform()
 
 void MyGUI::Transformations()
 {
-	if (!app->objectIndex.size())return;
-	Object* activeObject = objectSingleton->getObject(app->objectIndex[app->objectIndex.size() - 1]);
+	if (!app->objectIndices.size())return;
+	Object* activeObject = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]);
 
 	ImGui::InputFloat3("Location", app->translate);
 	if (ImGui::IsItemDeactivatedAfterEdit())
@@ -481,13 +482,13 @@ void MyGUI::Transformations()
 void MyGUI::SelectObject()
 {
 	
-	if (!app->objectIndex.size())return;
-		if (app->objectIndex[app->objectIndex.size()-1] < objectSingleton->getNumberOfObjects() && app->objectIndex[app->objectIndex.size() - 1] >= 0)
+	if (!app->objectIndices.size())return;
+		if (app->objectIndices[app->objectIndices.size()-1] < objectSingleton->getNumberOfObjects() && app->objectIndices[app->objectIndices.size() - 1] >= 0)
 		{
-			gizmo = true;
+			gizmo = false;
 			//std::cout << "\nSELECTED ---> " << objectSingleton->getObject(objectIndex[objectIndex.size()-1])->getName();
 
-			app->model = objectSingleton->getObject(app->objectIndex[app->objectIndex.size()-1])->getModelReference();
+			app->model = objectSingleton->getObject(app->objectIndices[app->objectIndices.size()-1])->getModelReference();
 
 
 			app->translate[0] = app->translatePrev[0] = app->model[3][0];

@@ -70,30 +70,30 @@ DrawableAABB::DrawableAABB(const DrawableAABB& a)
 
 DrawableAABB DrawableAABB::operator=(const DrawableAABB& a)
 {
-	if (this == &a)return *this;
+	if (this != &a)
+	{
+		vertices = a.vertices;
+		indices = a.indices;
+		VAO.Generate();
 
-	vertices = a.vertices;
-	indices = a.indices;
-	VAO.Generate();
+		VAO.Bind();
+		VBO VBO(vertices);
+		EBO EBO(indices);
 
-	VAO.Bind();
-	VBO VBO(vertices);
-	EBO EBO(indices);
-
-	VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
-	VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
+		VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
+		VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
 
 
-	VAO.Unbind();
-	VBO.Unbind();
-	EBO.Unbind();
+		VAO.Unbind();
+		VBO.Unbind();
+		EBO.Unbind();
 
-	VBO.Delete();
-	EBO.Delete();
+		VBO.Delete();
+		EBO.Delete();
+	}
 
 	return *this;
 }
-
 
 
 void DrawableAABB::Draw(Camera& camera,Shader&shader){

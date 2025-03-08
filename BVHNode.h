@@ -14,7 +14,7 @@ struct  BVHNode
 
 	AABB box;
 	BVHNode* left, *right;
-
+	
 	GLuint index = -123;	// moze se izbaciti kada se izbaci  Mesh iz AABB.h , prije toga ne moze zbog kruznih dependencija tj. #include "xyz.h"
 							// tada u konstruktoru objekta/mesha napravi AABB, to ce zamijeniti konstrukciju leaf nodeova
 							// kasnije kada se dodje do leaf node-a samo izvuci index
@@ -27,7 +27,7 @@ struct  BVHNode
 	BVHNode(glm::vec3 &vertex, int index);
 	BVHNode(BVHNode* a, BVHNode* b);
 
-	bool Hit(const Ray& ray, int& index);
+	bool Hit(const Ray& ray, std::vector<int>& index);
 	void refitNode();
 	void refitNodeVertex(Object& object);
 

@@ -25,8 +25,7 @@ void Scene::Init()
 	new Shader ("ActiveEdit","activeEdit.vert", "activeEdit.frag");
 	
 	addCube();
-
-
+	
 
 
 }

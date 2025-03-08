@@ -34,7 +34,7 @@ class Application {
 	Mode mode = Mode::OBJECT;
 	SelectMode selectMode = SelectMode::VERTEX;
 
-	std::vector<int> objectIndex = std::vector<int>(1);
+	std::vector<int> objectIndices = std::vector<int>(1);
 	
 	float translate[3] = { 0.0f, 0.0f, 0.0f };
 	float translatePrev[3] = { 0.0f, 0.0f, 0.0f };

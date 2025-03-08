@@ -35,6 +35,11 @@ glm::vec3 Object::getVertexXmodel(GLuint vertexIndex)
 
 }
 
+glm::vec3 Object::getPosition()
+{
+	return glm::vec3(model[3][0],model[3][1],model[3][2]);
+}
+
 void Object::bindVAO()
 {
 	VAO.Bind();

@@ -76,6 +76,7 @@ AABB::AABB(glm::vec3 vertex)
 
 bool AABB::intersectRayAABB(const Ray &ray)
 {
+
     Ray division(ray.origin,glm::vec3(1/ray.direction.x,1/ray.direction.y,1/ray.direction.z));
 
     float tx1 = (min.x - ray.origin.x) * division.direction.x, tx2 = (max.x - ray.origin.x) * division.direction.x;
