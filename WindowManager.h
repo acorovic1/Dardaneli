@@ -2,13 +2,10 @@
 #include "Window.h"
 
 class WindowManager {
-
 	std::vector<Window*> windows;
 	static WindowManager* instancePtr;
 
 	WindowManager() :windows(0) {}
-
-
 
 public:
 
@@ -21,10 +18,6 @@ public:
 	void deleteWindow(GLuint index);
 
 	Window* getWindow(std::string name);
-
-
-
 };
-
 
 extern WindowManager* windowSingleton;

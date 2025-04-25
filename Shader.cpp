@@ -1,7 +1,5 @@
 #include "Shader.h"
 
-
-
 std::string get_file_contents(const char* filename) {
 	std::ifstream in(filename, std::ios::binary);
 
@@ -15,14 +13,13 @@ std::string get_file_contents(const char* filename) {
 		return (contents);
 	}
 	throw (errno);
-}	   
+}
 
-
-Shader::Shader(std::string name,const char* vertexFile, const char* fragmentFile)
+Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFile)
 {
 	std::string vertexCode = get_file_contents(vertexFile);
 	std::string fragmentCode = get_file_contents(fragmentFile);
-	const char* vertexSource =vertexCode.c_str();
+	const char* vertexSource = vertexCode.c_str();
 	const char* fragmentSource = fragmentCode.c_str();
 
 	GLuint vertexShader, fragmentShader;
@@ -37,20 +34,17 @@ Shader::Shader(std::string name,const char* vertexFile, const char* fragmentFile
 	glCompileShader(fragmentShader);
 	compileErrors(fragmentShader, "FRAGMENT");
 
-	
-
 	ID = glCreateProgram();
-	glAttachShader(ID, vertexShader);		
+	glAttachShader(ID, vertexShader);
 	glAttachShader(ID, fragmentShader);
 	glLinkProgram(ID);
-	
+
 	compileErrors(ID, "PROGRAM");
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	
-	shaderSingleton->addShader(name,this);
+	shaderSingleton->addShader(name, this);
 };
 
 void Shader::Activate() {
@@ -67,67 +61,60 @@ void Shader::Delete() {
 
 GLuint Shader::getID() { return ID; }
 
-
-
-
-
-
-void Shader::setFloat(bool activated,const char* uniform, float value)
-{	
+void Shader::setFloat(bool activated, const char* uniform, float value)
+{
 	if (!activated)
 		this->Activate();
 	glUniform1f(glGetUniformLocation(this->ID, uniform), value);
 }
-void Shader::setInteger(bool activated,const char* uniform, int value)
+void Shader::setInteger(bool activated, const char* uniform, int value)
 {
 	if (!activated)
 		this->Activate();
 	glUniform1i(glGetUniformLocation(this->ID, uniform), value);
 }
-void Shader::setVector2f(bool activated,const char* uniform, float x, float y)
+void Shader::setVector2f(bool activated, const char* uniform, float x, float y)
 {
 	if (!activated)
 		this->Activate();
-	glUniform2f(glGetUniformLocation(this->ID, uniform), x,y);
+	glUniform2f(glGetUniformLocation(this->ID, uniform), x, y);
 }
-void Shader::setVector2f(bool activated,const char* uniform, glm::vec2& vec) 
+void Shader::setVector2f(bool activated, const char* uniform, glm::vec2& vec)
 {
 	if (!activated)
 		this->Activate();
 	glUniform2f(glGetUniformLocation(this->ID, uniform), vec.x, vec.y);
 }
-void Shader::setVector3f(bool activated,const char* uniform, float x, float y, float z)
+void Shader::setVector3f(bool activated, const char* uniform, float x, float y, float z)
 {
 	if (!activated)
 		this->Activate();
 	glUniform3f(glGetUniformLocation(this->ID, uniform), x, y, z);
 }
-void Shader::setVector3f(bool activated,const char* uniform, glm::vec3& vec)
+void Shader::setVector3f(bool activated, const char* uniform, glm::vec3& vec)
 {
 	if (!activated)
 		this->Activate();
-	glUniform3f(glGetUniformLocation(this->ID, uniform), vec.x,vec.y,vec.z);
+	glUniform3f(glGetUniformLocation(this->ID, uniform), vec.x, vec.y, vec.z);
 }
-void Shader::setVector4f(bool activated,const char* uniform, float x, float y, float z, float w)
+void Shader::setVector4f(bool activated, const char* uniform, float x, float y, float z, float w)
 {
 	if (!activated)
 		this->Activate();
 	glUniform4f(glGetUniformLocation(this->ID, uniform), x, y, z, w);
 }
-void Shader::setVector4f(bool activated,const char* uniform, glm::vec4& vec)
+void Shader::setVector4f(bool activated, const char* uniform, glm::vec4& vec)
 {
 	if (!activated)
 		this->Activate();
-	glUniform4f(glGetUniformLocation(this->ID, uniform), vec.x, vec.y, vec.z,vec.w);
+	glUniform4f(glGetUniformLocation(this->ID, uniform), vec.x, vec.y, vec.z, vec.w);
 }
-void Shader::setMat4(bool activated,const char* uniform, glm::mat4& mat)
+void Shader::setMat4(bool activated, const char* uniform, glm::mat4& mat)
 {
 	if (!activated)
 		this->Activate();
-	glUniformMatrix4fv(glGetUniformLocation(this->ID, uniform), 1, false, glm::value_ptr(mat)); 
+	glUniformMatrix4fv(glGetUniformLocation(this->ID, uniform), 1, false, glm::value_ptr(mat));
 }
-
-
 
 void Shader::compileErrors(unsigned int shader, const char* type)
 {
@@ -143,7 +130,7 @@ void Shader::compileErrors(unsigned int shader, const char* type)
 			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
 			std::cout << "SHADER_COMPILATION_ERROR for:" << type << "\n" << infoLog;
 			std::cout << "Shader.cpp Error: " << glGetError() << std::endl;
-			std::cout << "Shaders created: "<<shaderSingleton->getNumberOfShaders() << std::endl;
+			std::cout << "Shaders created: " << shaderSingleton->getNumberOfShaders() << std::endl;
 		}
 	}
 	else
@@ -154,22 +141,15 @@ void Shader::compileErrors(unsigned int shader, const char* type)
 		{
 			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
 			std::cout << "SHADER_LINKING_ERROR for:" << type << "\n" << infoLog;
-			std::cout << "Shaders created: "<<shaderSingleton->getNumberOfShaders() << std::endl;
+			std::cout << "Shaders created: " << shaderSingleton->getNumberOfShaders() << std::endl;
 		}
 	}
 }
 
-
-
-
 void DeleteAllShaders()
 {
-
-
-	for (auto it = shaderSingleton->shaders.begin(); it != shaderSingleton->shaders.end();++it )
+	for (auto it = shaderSingleton->shaders.begin(); it != shaderSingleton->shaders.end(); ++it)
 		it->second->Del();
-	
-	shaderSingleton->shaders.clear();
 
-	
+	shaderSingleton->shaders.clear();
 }

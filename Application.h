@@ -11,31 +11,23 @@
 
 #include "Window.h"
 
-
 #define radian 180/3.14159265358979323846f
 #define epsilon 0.00001
-
-
-
 
 enum class Mode { OBJECT, EDIT, SCULPT, WEIGHT_PAINT, TEXTURE_PAINT };
 enum class SelectMode { VERTEX, EDGE, FACE };
 
 class MyGUI;
 
-
 class Application {
-
-
 	static Application* instance;
 	Application() {};
 
-
-	Mode mode = Mode::OBJECT;
+	Mode mode = Mode::EDIT;
 	SelectMode selectMode = SelectMode::VERTEX;
 
 	std::vector<int> objectIndices = std::vector<int>(1);
-	
+
 	float translate[3] = { 0.0f, 0.0f, 0.0f };
 	float translatePrev[3] = { 0.0f, 0.0f, 0.0f };
 	float rotate[3] = { 0.0f, 0.0f, 0.0f };
@@ -57,10 +49,7 @@ public:
 
 	void updateTranslate(glm::vec3 offset);//Updates translate for gui
 
-
 	void updateVertexPosition(glm::vec3 offset);
-
-
 
 	void Inputs(GLFWwindow* window, MyGUI& gui); //Inputs
 	void ObjectMode(GLFWwindow* window, MyGUI& gui); //Inputs
@@ -68,6 +57,5 @@ public:
 
 	friend class MyGUI;
 };
-
 
 extern Application* app;

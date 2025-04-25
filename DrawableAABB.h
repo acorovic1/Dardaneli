@@ -9,20 +9,17 @@
 #include"Camera.h"
 #include"Texture.h"
 
-
-
 class DrawableAABB {
-
 	VAO VAO;
 	std::vector<Vertex>vertices;
 	std::vector<GLuint>indices;
 
-public :
-	
+public:
+
 	DrawableAABB() {};
 	DrawableAABB(glm::vec3 min, glm::vec3 max);
 	DrawableAABB(const DrawableAABB& a);
 	DrawableAABB operator=(const DrawableAABB& a);
 
-	void Draw(Camera& camera,Shader& shader);
+	void Draw(Camera& camera, Shader& shader);
 };

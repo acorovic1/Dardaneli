@@ -1,45 +1,73 @@
 #include "BasicObjects.h"
+#include <set>
 
-
-
+#include "Face.h"
 
 void addPlane()
 {
 	// Plane vertex data (positions, normals, colors, and UVs)
-	std::vector<Vertex> cubeVertices{
+	std::vector<Vertex>* planeVertices=new std::vector<Vertex> {
 		Vertex{glm::vec3(-0.5f, 0.0f, 0.5f),glm::vec3(-0.5f, 0.0f, 0.5f)},
 		Vertex{glm::vec3(0.5f, 0.0f, 0.5f), glm::vec3(0.5f, 0.0f, 0.5f)},
 		Vertex{glm::vec3(0.5f, 0.0f, -0.5f), glm::vec3(0.5f, 0.0f, -0.5f)},
 		Vertex{glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(-0.5f, 0.0f, -0.5f)}
 	};
-	std::vector<GLuint> cubeIndices{
+	std::vector<GLuint> planeIndices{
 		0, 1, 2,
 		2, 3, 0
 	};
 
-		new Mesh(
-			"Plane",
-			cubeVertices,
-			cubeIndices	
-	
-		);
-	
+	Face* face = new Face();
 
+	Edge* e1 = new Edge();
+	Edge* e2 = new Edge();
+	Edge* e3 = new Edge();
+	Edge* e4 = new Edge();
+
+	e1->next = e2;
+	e2->next = e3;
+	e3->next = e4;
+	e4->next = e1;
+
+	e1->face = face;
+	e2->face = face;
+	e3->face = face;
+	e4->face = face;
+
+	e1->tip = &(*planeVertices)[1];
+	e2->tip = &(*planeVertices)[2];
+	e3->tip = &(*planeVertices)[3];
+	e4->tip = &(*planeVertices)[0];
+
+	(*planeVertices)[0].edge = e1;
+	(*planeVertices)[1].edge = e2;
+	(*planeVertices)[2].edge = e3;
+	(*planeVertices)[3].edge = e4;
+
+	face->edge = e1;
+
+
+	new Mesh(
+		"Plane",
+		*planeVertices,
+		planeIndices
+
+	);
 }
 
 void addCube()
 {
-	std::vector<Vertex> cubeVertices{ 
-		Vertex{ glm::vec3(-0.5f, -0.5f, 0.5f) ,glm::vec3(-0.5f, -0.5f, 0.5f) }, // V0
-		Vertex{ glm::vec3(0.5f,  -0.5f, 0.5f) ,glm::vec3(0.5f,  -0.5f, 0.5f) }, // V1
-		Vertex{ glm::vec3(0.5f,  0.5f,  0.5f) ,glm::vec3(0.5f,  0.5f,  0.5f) }, // V2
-		Vertex{ glm::vec3(-0.5f, 0.5f,  0.5f) ,glm::vec3(-0.5f, 0.5f,  0.5f) }, // V3
+	std::vector<Vertex>* cubeVertices = new std::vector<Vertex>{
+	Vertex{ glm::vec3(-0.5f, -0.5f, 0.5f) ,glm::vec3(-0.5f, -0.5f, 0.5f) }, // V0
+	Vertex{ glm::vec3(0.5f,  -0.5f, 0.5f) ,glm::vec3(0.5f,  -0.5f, 0.5f) }, // V1
+	Vertex{ glm::vec3(0.5f,  0.5f,  0.5f) ,glm::vec3(0.5f,  0.5f,  0.5f) }, // V2
+	Vertex{ glm::vec3(-0.5f, 0.5f,  0.5f) ,glm::vec3(-0.5f, 0.5f,  0.5f) }, // V3
 
-		// Back face
-		Vertex{ glm::vec3(-0.5f, -0.5f, -0.5f) , glm::vec3(-0.5f, -0.5f, -0.5f) }, // V4
-		Vertex{ glm::vec3(0.5f,  -0.5f, -0.5f) , glm::vec3(0.5f,  -0.5f, -0.5f) }, // V5
-		Vertex{ glm::vec3(0.5f,  0.5f,  -0.5f) , glm::vec3(0.5f,  0.5f,  -0.5f) }, // V6
-		Vertex{ glm::vec3(-0.5f, 0.5f,  -0.5f) , glm::vec3(-0.5f, 0.5f,  -0.5f) }, // V7
+	// Back face
+	Vertex{ glm::vec3(-0.5f, -0.5f, -0.5f) , glm::vec3(-0.5f, -0.5f, -0.5f) }, // V4
+	Vertex{ glm::vec3(0.5f,  -0.5f, -0.5f) , glm::vec3(0.5f,  -0.5f, -0.5f) }, // V5
+	Vertex{ glm::vec3(0.5f,  0.5f,  -0.5f) , glm::vec3(0.5f,  0.5f,  -0.5f) }, // V6
+	Vertex{ glm::vec3(-0.5f, 0.5f,  -0.5f) , glm::vec3(-0.5f, 0.5f,  -0.5f) }, // V7
 	};
 	std::vector<GLuint> cubeIndices{
 		// Front face
@@ -62,6 +90,149 @@ void addCube()
 		5, 4, 0
 	};
 
+	std::cout << "\n NEW  OBJECT\n";
+	Edge* old = nullptr;
+	Edge* start = nullptr;
+	Face* face = nullptr;
+	std::vector<Edge*> listOfEdges{};
+	for (int i = 0; i < cubeIndices.size()-1; i++)
+	{
+				
+		if (i % 6 == 5 && i!=0) // so it doesnt make a non existing edge
+		{
+			old->next = start;
+			std::cout << "Skipped " << i+1 << ". iteration\n";
+			continue;
+		
+		}
+		if (cubeIndices[i] == cubeIndices[i + 1])
+		{
+			std::cout << "Skipped " << i+1 << ". iteration\n";
+			continue; // start and end vertices are the same vertex
+		}
+
+		Edge* e = new Edge();
+		listOfEdges.push_back(e);
+		if (i % 6 == 0)
+		{
+			start = e;
+			old = nullptr;
+
+			face = new Face();
+			face->edge = e;
+		}
+
+		e->tip = &(*cubeVertices)[cubeIndices[i + 1]];
+		e->face = face;
+
+		if (!(*cubeVertices)[cubeIndices[i]].edge)
+			(*cubeVertices)[cubeIndices[i]].edge = e;
+
+		if (i % 6 != 0 && i != 0)
+			old->next = e;
+		old = e;
+	}
+	old->next = start;
+
+	std::cout << "\nList of Edges size: " << listOfEdges.size()<<"\n";
+
+	for (int i =0;i<listOfEdges.size() ; i++)
+	{
+		if (i % 4 == 0)std::cout << "\n";
+		auto start = listOfEdges[i]->next->next->next->tip;
+		auto it = std::find((*cubeVertices).begin(), (*cubeVertices).end(), *listOfEdges[i]->tip);
+		auto it1 = std::find((*cubeVertices).begin(), (*cubeVertices).end(), *start);
+
+		std::cout << it1 - (*cubeVertices).begin() << " " << it - (*cubeVertices).begin() << "\n";
+
+
+
+
+	}
+		//std::cout << " " << x->tip->position.x << " " << x->tip->position.y << " " << x->tip->position.z << "\n";
+
+	int j = 0;
+	while (j<listOfEdges.size())
+	{ 
+		//std::cout <<"\nCurrent edge "<<j<<"\n";
+		Vertex* vertexEnd = listOfEdges[0]->tip;
+		//std::cout << "Vertex tip " << vertexEnd->position.x << " " << vertexEnd->position.y << " " << vertexEnd->position.z << "\n";
+		
+		auto temp = listOfEdges[0]->next->next;
+		while (temp->next != listOfEdges[0])
+		{
+			temp = temp->next;
+			//std::cout << "first while loop\n";
+		} 
+		//std::cout << "\nfirst while loop ended " <<j++<<"\n";
+		j++;
+		Vertex* vertexStart = temp->tip;
+
+		for (int i = 1; i < listOfEdges.size(); i++)
+		{
+			if (listOfEdges[i]->tip != vertexStart)
+			{
+				
+				std::cout << j<< "different start vertex		";
+
+				std::cout << "listOfEdges->tip Position: "
+					<< listOfEdges[i]->tip->position.x << ", "
+					<< listOfEdges[i]->tip->position.y << ", "
+					<< listOfEdges[i]->tip->position.z;
+
+				std::cout << "		vertexStart Position: "
+					<< vertexStart->position.x << ", "
+					<< vertexStart->position.y << ", "
+					<< vertexStart->position.z << std::endl;
+
+				continue;
+			}
+
+			temp = listOfEdges[i]->next->next;
+			while (temp->next != listOfEdges[i])
+			{
+				temp = temp->next;
+			}
+			if (temp->tip != listOfEdges[0]->tip)
+			{
+				
+				std::cout <<j<< "different end vertex		";
+
+				std::cout << "temp->tip Position: "
+					<< temp->tip->position.x << ", "
+					<< temp->tip->position.y << ", "
+					<< temp->tip->position.z;
+
+				std::cout << "		vertexEnd Position: "
+					<< listOfEdges[0]->tip->position.x << ", "
+					<< listOfEdges[0]->tip->position.y << ", "
+					<< listOfEdges[0]->tip->position.z << std::endl;
+
+				continue;
+			}
+
+
+			
+
+
+			std::cout << "Now we here\n";
+
+			listOfEdges[0]->pair = listOfEdges[i];
+			listOfEdges[i]->pair = listOfEdges[0];
+
+			listOfEdges.erase(listOfEdges.begin()+i);
+			listOfEdges.erase(listOfEdges.begin());
+
+		}
+			std::cout << "BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n";
+	
+	//std::cout << "\nList of Edges size: " << listOfEdges.size()<<"  current edge "<<++j<<"\n";
+
+	}
+
+	std::cout << "\n\n";
+
+
 	std::vector<GLuint>edgeIndices{
 		0,1,
 		1,2,
@@ -74,22 +245,21 @@ void addCube()
 		7,4,
 
 		0,4,
-		3,7,
 		1,5,
 		2,6,
+		3,7,
 	};
 
-	 new Mesh (
+
+	new Mesh(
 		"Cube",
-		cubeVertices,
+		*cubeVertices,
 		cubeIndices,
 		edgeIndices
-		);
-
-	
+	);
 }
 
-void addCircle(int numSegments,float radius)
+void addCircle(int numSegments, float radius)
 {
 	std::vector<Vertex> circleVertices;
 	std::vector<GLuint> circleIndices;
@@ -98,20 +268,18 @@ void addCircle(int numSegments,float radius)
 	float angle, x, z;
 
 	for (int i = 0; i < numSegments; ++i) {
-		 angle = angleStep * i;
-		 x = cos(angle) * radius; 
-		 z = sin(angle) * radius;
+		angle = angleStep * i;
+		x = cos(angle) * radius;
+		z = sin(angle) * radius;
 
 		// Add vertex for this point
 		circleVertices.push_back(Vertex{
 			glm::vec3(x, 0.0f, z),   // Position
 			glm::normalize(glm::vec3(x, 0.0f, z))  // Normal pointing up
-			
 			});
-		std::cout << "x = " << x << "   z = "<<z<<"\n";
-
+		std::cout << "x = " << x << "   z = " << z << "\n";
 	}
-		std::cout << "indices\n";
+	std::cout << "indices\n";
 
 	for (int i = 0; i < numSegments - 2; ++i) {
 		circleIndices.push_back(0);           // Anchor point (first vertex)
@@ -120,31 +288,38 @@ void addCircle(int numSegments,float radius)
 		std::cout << 0 << " " << i + 1 << " " << i + 2 << "\n";
 	}
 
+	std::cout << "\n NEW  OBJECT\n";
+	for (int i = 0; i < circleIndices.size(); i++)
+	{
+		if (i % 3 == 0)std::cout << "\n";
+		if (i % 6 == 0)std::cout << "\n";
+		std::cout << circleIndices[i] << " ";
+	}
+
 	new Mesh(
 		"Circle",
 		circleVertices,
 		circleIndices
 	);
-	 
 };
 
-void addSphere(int longitude , int latitude , float radius )
+void addSphere(int longitude, int latitude, float radius)
 {
 	std::vector<Vertex> sphereVertices;
 	std::vector<GLuint> sphereIndices;
 
-	float divLongitude = PI/longitude;
-	float divLatitude = PI/latitude;
+	float divLongitude = PI / longitude;
+	float divLatitude = PI / latitude;
 	float latAngle;
 
 	for (int i = 0; i <= longitude; ++i) {
-		 latAngle = 3.14159265358979323846f / 2 - i * divLongitude; // starting from pi/2 to -pi/2
+		latAngle = 3.14159265358979323846f / 2 - i * divLongitude; // starting from pi/2 to -pi/2
 		float xy = radius * cosf(latAngle);  // r * cos(u)
 		float z = radius * sinf(latAngle);   // r * sin(u)
 
 		// Add vertices per sector
 		for (int j = 0; j <= latitude; ++j) {
-			float longAngle = j * 2.0f *  divLongitude; // 0 to 2pi
+			float longAngle = j * 2.0f * divLongitude; // 0 to 2pi
 
 			// Vertex position
 			float x = xy * cosf(longAngle); // x = r * cos(u) * cos(v)
@@ -154,7 +329,6 @@ void addSphere(int longitude , int latitude , float radius )
 			sphereVertices.push_back(Vertex{
 				glm::vec3(x, y, z),   // Position
 				glm::normalize(glm::vec3(x, y, z))  // Normal
-
 				});
 		}
 	}
@@ -179,14 +353,18 @@ void addSphere(int longitude , int latitude , float radius )
 			}
 		}
 	}
-
+	std::cout << "\n NEW  OBJECT\n";
+	for (int i = 0; i < sphereIndices.size(); i++)
+	{
+		if (i % 3 == 0)std::cout << "\n";
+		if (i % 6 == 0)std::cout << "\n";
+		std::cout << sphereIndices[i] << " ";
+	}
 	new Mesh(
 		"Sphere",
 		sphereVertices,
 		sphereIndices
 	);
-
-	
 }
 
 void addCylinder(int numSegments, float height, float radius)
@@ -202,20 +380,18 @@ void addCylinder(int numSegments, float height, float radius)
 	// Bottom circle vertices
 	for (int i = 0; i < numSegments; ++i) {
 		angle = angleStep * float(i);
-		 x = cos(angle) * radius;
-		 z = sin(angle) * radius;
+		x = cos(angle) * radius;
+		z = sin(angle) * radius;
 
 		cylinderVertices.push_back(Vertex{
 			glm::vec3(x, -height , z),    // Position
 			glm::normalize(glm::vec3(x, -height, z))   // Normal for bottom
-
 			});
 
 		// Top circle vertices
 		cylinderVertices.push_back(Vertex{
 			glm::vec3(x, height , z),   // Top circle position
 			glm::normalize(glm::vec3(x,height,z))     // Normal pointing up
-
 			});
 	}
 
@@ -246,16 +422,22 @@ void addCylinder(int numSegments, float height, float radius)
 		cylinderIndices.push_back((i + 2) * 2 + 1); // Next top vertex
 	}
 
+	std::cout << "\n NEW  OBJECT\n";
+	for (int i = 0; i < cylinderIndices.size(); i++)
+	{
+		if (i % 3 == 0)std::cout << "\n";
+		if (i % 6 == 0)std::cout << "\n";
+		std::cout << cylinderIndices[i] << " ";
+	}
+
 	new Mesh(
 		"Cylinder",
 		cylinderVertices,
 		cylinderIndices
 	);
-
-	 
 };
 
-void addCone(int numSegments , float height , float radius )
+void addCone(int numSegments, float height, float radius)
 {
 	std::vector<Vertex> coneVertices;
 	std::vector<GLuint> coneIndices;
@@ -264,14 +446,13 @@ void addCone(int numSegments , float height , float radius )
 	float angle, x, z;
 	// Base circle vertices
 	for (int i = 0; i < numSegments; ++i) {
-		 angle = angleStep * float(i) ;
-		 x = cos(angle) * radius;
-		 z = sin(angle) * radius;
+		angle = angleStep * float(i);
+		x = cos(angle) * radius;
+		z = sin(angle) * radius;
 
 		coneVertices.push_back(Vertex{
 			glm::vec3(x, 0.0f, z),    // Position
 			glm::normalize(glm::vec3(x,0.0f,z))  // Normal
-
 			});
 	}
 
@@ -280,13 +461,10 @@ void addCone(int numSegments , float height , float radius )
 	coneVertices.push_back(Vertex{
 		apexPos,   // Position
 		glm::normalize(apexPos)  // Normal
-
 		});
 
 	// Create the side faces of the cone
 	for (int i = 0; i < numSegments; ++i) {
-		 
-
 		// Side triangles (apex and base vertices)
 		coneIndices.push_back(coneVertices.size() - 1); // Apex
 		coneIndices.push_back((i + 1) % numSegments);   // Next base vertex
@@ -300,16 +478,21 @@ void addCone(int numSegments , float height , float radius )
 		coneIndices.push_back(i + 1);          // Current base vertex
 	}
 
-	 new Mesh (
+	std::cout << "\n NEW  OBJECT\n";
+	for (int i = 0; i < coneIndices.size(); i++)
+	{
+		if (i % 3 == 0)std::cout << "\n";
+		if (i % 6 == 0)std::cout << "\n";
+		std::cout << coneIndices[i] << " ";
+	}
+	new Mesh(
 		"Cone",
 		coneVertices,
 		coneIndices
 	);
-
-	 
 };
 
-void addDoughnut(int numSegmentsU , int numSegmentsV,
+void addDoughnut(int numSegmentsU, int numSegmentsV,
 	float majorRadius, float minorRadius)
 {
 	std::vector<Vertex> torusVertices;
@@ -317,26 +500,26 @@ void addDoughnut(int numSegmentsU , int numSegmentsV,
 
 	float uStep = 2 * PI / numSegmentsU;
 	float vStep = 2 * PI / numSegmentsV;
-	
+
 	float u, cosU, sinU;
 	float v, cosV, sinV;
 	float x, y, z;
 
 	// Generate vertices for the torus
 	for (int i = 0; i <= numSegmentsU; ++i) {
-		 u = uStep * float(i) ;
-		 cosU = cos(u);
-		 sinU = sin(u);
+		u = uStep * float(i);
+		cosU = cos(u);
+		sinU = sin(u);
 
 		for (int j = 0; j <= numSegmentsV; ++j) {
-			 v = vStep * float(j) ;
-			 cosV = cos(v);
-			 sinV = sin(v);
+			v = vStep * float(j);
+			cosV = cos(v);
+			sinV = sin(v);
 
 			// Calculate the vertex position
-			 x = (majorRadius + minorRadius * cosV) * cosU;
-			 y = minorRadius * sinV;
-			 z = (majorRadius + minorRadius * cosV) * sinU;
+			x = (majorRadius + minorRadius * cosV) * cosU;
+			y = minorRadius * sinV;
+			z = (majorRadius + minorRadius * cosV) * sinU;
 
 			// Normal for the torus (pointing outwards)
 			glm::vec3 normal = glm::normalize(glm::vec3(cosU * cosV, sinV, sinU * cosV));
@@ -348,7 +531,6 @@ void addDoughnut(int numSegmentsU , int numSegmentsV,
 			torusVertices.push_back(Vertex{
 				glm::vec3(x, y, z),   // Position
 				normal             // Normal
-
 				});
 		}
 	}
@@ -369,11 +551,16 @@ void addDoughnut(int numSegmentsU , int numSegmentsV,
 			torusIndices.push_back(first + 1);
 		}
 	}
-
-	 new Mesh (
+	std::cout << "\n NEW  OBJECT\n";
+	for (int i = 0; i < torusIndices.size(); i++)
+	{
+		if (i % 3 == 0)std::cout << "\n";
+		if (i % 6 == 0)std::cout << "\n";
+		std::cout << torusIndices[i] << " ";
+	}
+	new Mesh(
 		"Doughnut",
 		torusVertices,
 		torusIndices
 	);
-	
 };

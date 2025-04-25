@@ -1,20 +1,16 @@
 #pragma once
 
-
-
 #include "BVHNode.h"
 
 struct BVHNode;
 
 class ObjectModeBVH {
-
-	BVHNode* root ;
+	BVHNode* root;
 	static ObjectModeBVH* instancePtr;
 
-	ObjectModeBVH():root(nullptr) {};
+	ObjectModeBVH() :root(nullptr) {};
 
 	void DrawTree(BVHNode* node, Camera& camera, Shader& shader, int subdivision);
-
 
 public:
 
@@ -23,14 +19,13 @@ public:
 	ObjectModeBVH(const ObjectModeBVH& copy) = delete;
 	void operator=(const ObjectModeBVH& copy) = delete;
 
-
 	BVHNode* getRoot();
-	void BuildBottomUp(std::vector<Object*> objects, int numObjects); 
+	void BuildBottomUp(std::vector<Object*> objects, int numObjects);
 	// pokusati staviti default vrijednosti kroz objectManager
 
 	void Refit();
 
-	void Draw(Camera& camera, Shader& shader,int subdivision);
+	void Draw(Camera& camera, Shader& shader, int subdivision);
 };
 
 extern ObjectModeBVH* objectBVHSingleton;

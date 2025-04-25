@@ -1,33 +1,24 @@
 #include "Scene.h"
 
-
-
 Scene::Scene() {}
-
-
 
 void Scene::Init()
 {
-	
 	auto camera = cameraSingleton->getCamera(0);
 	camera->setProjectionMatrix(45, float(camera->getWidth()) / float(camera->getHeight()), 0.1f, 100.0f);
-	
-	new Shader ("EditMode", "editMode.vert", "editMode.frag");
-	new Shader ("AABB","BVH.vert", "BVH.frag");
-	new Shader ("Grid", "grid.vert", "grid.frag");
 
-	new Shader ("Basic","basic.vert", "basic.frag");
+	new Shader("EditMode", "editMode.vert", "editMode.frag");
+	new Shader("AABB", "BVH.vert", "BVH.frag");
+	new Shader("Grid", "grid.vert", "grid.frag");
 
-	new Shader ("Select","selectObject.vert", "selectObject.frag");
-	new Shader ("ActiveSelect","activeObject.vert", "activeObject.frag");
+	new Shader("Basic", "basic.vert", "basic.frag");
 
-	new Shader ("SelectEdit","selectEdit.vert", "selectEdit.frag");
-	new Shader ("ActiveEdit","activeEdit.vert", "activeEdit.frag");
-	
+	new Shader("Select", "selectObject.vert", "selectObject.frag");
+	new Shader("ActiveSelect", "activeObject.vert", "activeObject.frag");
+
+	new Shader("SelectEdit", "selectEdit.vert", "selectEdit.frag");
+	new Shader("ActiveEdit", "activeEdit.vert", "activeEdit.frag");
+
 	addCube();
 	
-
-
 }
-
-

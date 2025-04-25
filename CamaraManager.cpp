@@ -10,18 +10,14 @@ CameraManager* CameraManager::getInstance() {
 	return instancePtr;
 }
 
-
-
 void CameraManager::addCamera(Camera* object)
 {
 	cameras.push_back(object);
-
 }
 
 void CameraManager::deleteCamera(GLuint index)
 {
 	cameras.erase(cameras.begin() + index);
-
 };
 
 Camera* CameraManager::getCamera(GLuint index)
