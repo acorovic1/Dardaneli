@@ -3,14 +3,14 @@
 #include "CameraManager.h"
 #include "Window.h"
 
-Camera::Camera(int width, int height, glm::vec3 Position) 
+Camera::Camera(int width, int height, glm::vec3 Position)
 {
 	Camera::width = width;
 	Camera::height = height;
 	Camera::Position = Position;
-	
-	fov = 45.0,near=0.01f,far=100.0f;
-	posX=0, posY=0, previousX=0, previousY = 0;
+
+	fov = 45.0, near = 0.01f, far = 100.0f;
+	posX = 0, posY = 0, previousX = 0, previousY = 0;
 
 	cameraSingleton->addCamera(this);
 }
@@ -20,7 +20,7 @@ void Camera::setProjectionMatrix(float fov, float aspect, float near, float far)
 	Camera::fov = fov;
 	Camera::near = near;
 	Camera::far = far;
-	this->Projection = glm::perspective(glm::radians(fov),aspect,near,far);
+	this->Projection = glm::perspective(glm::radians(fov), aspect, near, far);
 }
 
 glm::mat4 Camera::getViewMatrix()const {
@@ -45,15 +45,12 @@ glm::vec3 Camera::getOrientation() const
 	return Orientation;
 }
 
-
 void Camera::setWidth(int width) { Camera::width = width; }
 void Camera::setHeight(int height) { Camera::height = height; }
 
-
-
 Ray Camera::CreateRay(GLFWwindow* window)
 {
-	double mouseX, mouseY,mouseZ;
+	double mouseX, mouseY, mouseZ;
 
 	glfwGetCursorPos(window, &mouseX, &mouseY); // Viewport Coordinates
 	//std::cout << "VIEWPORT COORDINATES   x = " << mouseX << " y = " << mouseY << "\n";
@@ -61,17 +58,17 @@ Ray Camera::CreateRay(GLFWwindow* window)
 	mouseX = 2.0 * mouseX / width - 1.0;
 	mouseY = 1.0 - 2.0 * mouseY / height;  // NDC
 
-	glm::vec4 temp(mouseX, mouseY, -1.0,1.0); // Homogeneous Clip Coordinates
+	glm::vec4 temp(mouseX, mouseY, -1.0, 1.0); // Homogeneous Clip Coordinates
 
 	temp = glm::inverse(Projection) * temp;
 	temp = glm::vec4(temp.x, temp.y, -1.0, 0.0);	// Camera coordinates
 
 	glm::vec4 A = (glm::inverse(glm::inverse(Projection) * cameraMatrix) * temp); // World coordinates
 
-	return Ray(Position,glm::normalize(glm::vec3(A.x, A.y, A.z)));
+	return Ray(Position, glm::normalize(glm::vec3(A.x, A.y, A.z)));
 }
 
-void Camera::setFOV(float fov) 
+void Camera::setFOV(float fov)
 {
 	setProjectionMatrix(fov, float(getWidth()) / float(getHeight()), near, far);
 }
@@ -79,11 +76,7 @@ void Camera::setPosition(glm::vec3 position)
 {
 	Position = position;
 }
-float Camera::getFOV()const{ return fov; }
-
-
-
-
+float Camera::getFOV()const { return fov; }
 
 void Camera::Movement(GLFWwindow* glfwWindow, MyGUI& gui)
 {
@@ -115,7 +108,7 @@ void Camera::Movement(GLFWwindow* glfwWindow, MyGUI& gui)
 			glfwGetCursorPos(window->GetWindow(), &mouseX, &mouseY);
 
 			// Normalizes and shifts the coordinates of the cursor such that they begin in the middle of the screen
-			// and then "transforms" them into degrees 
+			// and then "transforms" them into degrees
 			float rotX = sensitivity * (float)(mouseY - (height / 2)) / height;
 			float rotY = sensitivity * (float)(mouseX - (width / 2)) / width;
 
@@ -132,11 +125,9 @@ void Camera::Movement(GLFWwindow* glfwWindow, MyGUI& gui)
 			Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
 
 			glfwSetCursorPos(window->GetWindow(), (width / 2), (height / 2)); //NEKADA IZBACITI OVO I STAVITI ROTXPREVIOUS I ROTYPREVIOUS
-
 		}
 		else if (buttons[GLFW_MOUSE_BUTTON_RIGHT])
 		{
-
 			// Fetches the coordinates of the cursor
 			glfwGetCursorPos(window->GetWindow(), &posX, &posY);
 
@@ -160,7 +151,6 @@ void Camera::Movement(GLFWwindow* glfwWindow, MyGUI& gui)
 			previousX = posX;
 			previousY = posY;
 		}
-
 	}
 
 	//RESET
@@ -176,9 +166,6 @@ void Camera::Movement(GLFWwindow* glfwWindow, MyGUI& gui)
 			keys[GLFW_KEY_LEFT_ALT] = 0;
 			buttonsProcessed[GLFW_MOUSE_BUTTON_LEFT] = 0; // makes it so that this if only goes through 1 iteration
 			buttonsProcessed[GLFW_MOUSE_BUTTON_RIGHT] = 0; // makes it so that this if only goes through 1 iteration
-
 		}
-
 	}
-
 }

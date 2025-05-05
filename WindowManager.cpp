@@ -1,6 +1,5 @@
 #include "WindowManager.h"
 
-
 WindowManager* WindowManager::instancePtr = nullptr;
 
 WindowManager* windowSingleton = WindowManager::getInstance();
@@ -11,18 +10,14 @@ WindowManager* WindowManager::getInstance() {
 	return instancePtr;
 }
 
-
-
 void WindowManager::addWindow(Window* object)
 {
 	windows.push_back(object);
-
 }
 
 void WindowManager::deleteWindow(GLuint index)
 {
 	windows.erase(windows.begin() + index);
-
 };
 
 Window* WindowManager::getWindow(std::string name)
@@ -34,4 +29,3 @@ Window* WindowManager::getWindow(std::string name)
 	std::cout << "\nINVALID NAME ... getWindow() function\n";
 	return nullptr;
 }
-

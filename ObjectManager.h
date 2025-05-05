@@ -1,35 +1,23 @@
 #pragma once
 
-
-
 #include "glad/glad.h"
-
-
 
 #include <vector>
 class Object;
 
-
 class ObjectManager {
-
 	std::vector<Object*> objects;
 
-	static ObjectManager* instancePtr ;
+	static ObjectManager* instancePtr;
 
-	
-	ObjectManager():objects(0) {};
-
+	ObjectManager() :objects(0) {};
 
 public:
 
 	static ObjectManager* getInstance();
-	
-	
 
 	ObjectManager(const ObjectManager& copy) = delete;
 	void operator=(const ObjectManager& copy) = delete;
-
-
 
 	GLuint getNumberOfObjects()const;
 	GLuint getAvailableIndex();
@@ -40,8 +28,6 @@ public:
 	Object* getObject(GLuint index);
 
 	std::vector<Object*>& getAllObjects();
-
 };
-
 
 extern ObjectManager* objectSingleton;

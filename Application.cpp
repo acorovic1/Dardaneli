@@ -17,7 +17,6 @@ void Application::updateTranslate(glm::vec3 offset)
 	translate[0] += offset.x;
 	translate[1] += offset.y;
 	translate[2] += offset.z;
-
 }
 
 void Application::updateVertexPosition(glm::vec3 offset)
@@ -26,24 +25,6 @@ void Application::updateVertexPosition(glm::vec3 offset)
 	vertexPosition[1] += offset.y;
 	vertexPosition[2] += offset.z;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void Application::ObjectMode(GLFWwindow* window, MyGUI& gui)
 {
@@ -59,7 +40,7 @@ void Application::ObjectMode(GLFWwindow* window, MyGUI& gui)
 	double& posY = classWindow->getPosY();
 	double& previousX = classWindow->getPreviousX();
 	double& previousY = classWindow->getPreviousY();
-	
+
 	// SELECT
 	if (mouseButtons[GLFW_MOUSE_BUTTON_LEFT])
 	{
@@ -71,43 +52,32 @@ void Application::ObjectMode(GLFWwindow* window, MyGUI& gui)
 
 			return;
 		}
-		
 
 		std::vector<int> indexVec;
 		objectBVHSingleton->getRoot()->Hit(camera->CreateRay(window), indexVec);
 
-
 		int index = indexVec[0];
-		if(indexVec.size()>1) // if size == 1 it is a miss
+		if (indexVec.size() > 1) // if size == 1 it is a miss
 		{
 			indexVec.erase(std::remove(indexVec.begin(), indexVec.end(), -1), indexVec.end());
 
 			index = indexVec[0];
 			if (indexVec.size() > 1)
 			{
-
 				auto cameraPosition = cameraSingleton->getCamera(0)->getPosition();
 				auto closestPosition = glm::distance(cameraPosition, objectSingleton->getObject(indexVec[0])->getPosition());
-					
 
 				for (int i = 1; i < indexVec.size(); i++)
 				{
 					auto position = glm::distance(cameraPosition, objectSingleton->getObject(indexVec[i])->getPosition());
 					if (position < closestPosition)
 					{
-						 closestPosition = position;
-						 index = indexVec[i];
+						closestPosition = position;
+						index = indexVec[i];
 					}
-
 				}
 			}
 		}
-		
-		
-
-
-		
-
 
 		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		{
@@ -123,22 +93,18 @@ void Application::ObjectMode(GLFWwindow* window, MyGUI& gui)
 		}
 		else
 		{
-
 			objectIndices.clear();
 			objectIndices.push_back(index);
 			std::cout << "\nSELECTED ---> " << objectSingleton->getObject(index)->getName();
 			gui.SelectObject();
 		}
 
-
 		//std::cout << "\n indices ";
 		//for (auto x : objectIndices)
 		//	std::cout << x << " ";
 
-
 		mouseButtons[GLFW_MOUSE_BUTTON_LEFT] = 0;
 
-		
 		firstClick = true;
 		keys[GLFW_KEY_X] = 0;
 		keys[GLFW_KEY_Y] = 0;
@@ -149,7 +115,6 @@ void Application::ObjectMode(GLFWwindow* window, MyGUI& gui)
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
 		gui.AddMenu();
-
 	}
 
 	// GIZMO OPERATION
@@ -192,12 +157,8 @@ void Application::ObjectMode(GLFWwindow* window, MyGUI& gui)
 		float deltaX = (posX - previousX) / 150;
 		float deltaY = (previousY - posY) / 150;
 
-
 		/// FALI Y KRETNJA
 		auto offset = deltaX * glm::normalize(glm::cross(camera->getOrientation(), glm::vec3(0.0f, 1.0f, 0.0f))) + deltaY * glm::vec3(0.0f, 1.0f, 0.0f);
-
-
-		
 
 		if (keys[GLFW_KEY_X] == 1)
 		{
@@ -228,14 +189,12 @@ void Application::ObjectMode(GLFWwindow* window, MyGUI& gui)
 			app->updateTranslate(offset);
 		}
 
-		
 		previousX = posX;
 		previousY = posY;
 	}
 }
 void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 {
-
 	Window* classWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
 	std::vector<int>& mouseButtons = classWindow->getMouseButtons();
 	std::vector<int>& mouseButtonsProcessed = classWindow->getMouseButtonsProcessed();
@@ -270,25 +229,22 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		{
 			indexVec.erase(std::remove(indexVec.begin(), indexVec.end(), -1), indexVec.end());
 
-			
-			if (indexVec.size()) 
+			if (indexVec.size())
 			{
 				index = indexVec[0];
 
 				auto cameraPosition = cameraSingleton->getCamera(0)->getPosition();
 				const auto& v = mesh->getVerticesCopy();
-				auto closestPosition = glm::distance(cameraPosition,v[index].position);
-
+				auto closestPosition = glm::distance(cameraPosition, v[index].getPositionCopy());
 
 				for (int i = 1; i < indexVec.size(); i++)
 				{
-					auto position = glm::distance(cameraPosition, v[indexVec[i]].position);
+					auto position = glm::distance(cameraPosition, v[indexVec[i]].getPositionCopy());
 					if (position < closestPosition)
 					{
 						closestPosition = position;
 						index = indexVec[i];
 					}
-
 				}
 			}
 		}
@@ -314,29 +270,25 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		for (auto x : vertexIndices)
 			std::cout << x << " ";
 
-
 		mouseButtons[GLFW_MOUSE_BUTTON_LEFT] = 0;
 		keys[GLFW_KEY_E] = 0;
-
 	}
 
 	// TRANSLATE
 	if (keys[GLFW_KEY_G] == 1)
 	{
-
 		if (!mesh->getSelectedVertices().size())
 		{
 			keys[GLFW_KEY_G] = 0;
 			return;
 		}
 		// Fetches the coordinates of the cursor
-		
+
 		glfwGetCursorPos(window, &posX, &posY);
 
 		// Prevents  jumping on the first click
 		if (firstClick)
 		{
-
 			previousX = posX;
 			previousY = posY;
 			firstClick = false;
@@ -345,12 +297,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		float deltaX = (posX - previousX) / 150;
 		float deltaY = (previousY - posY) / 150;
 
-
-
 		auto offset = deltaX * glm::normalize(glm::cross(camera->getOrientation(), glm::vec3(0.0f, 1.0f, 0.0f))) + deltaY * glm::vec3(0.0f, 1.0f, 0.0f);
-
-
-		
 
 		std::vector<Vertex>& vertices = mesh->getVerticesReference();
 		if (keys[GLFW_KEY_X] == 1)
@@ -395,15 +342,12 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 			app->updateVertexPosition(offset);
 		}
 
-		
-
 		previousX = posX;
 		previousY = posY;
 	}
 
 	// EXTRUDE
 	if (keys[GLFW_KEY_E]) {
-
 		std::vector<int>& vertexIndices = mesh->getSelectedVertices();
 
 		std::vector<int> temp(0);
@@ -420,12 +364,9 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		keys[GLFW_KEY_E] = 0;
 		keys[GLFW_KEY_G] = 1;
 	}
-
 }
 
-
 void Application::Inputs(GLFWwindow* window, MyGUI& gui) {
-
 	static Camera* camera = cameraSingleton->getCamera(0);
 	camera->Movement(window, gui);
 
@@ -433,8 +374,4 @@ void Application::Inputs(GLFWwindow* window, MyGUI& gui) {
 		Application::ObjectMode(window, gui);
 	else if (gui.getMode() == Mode::EDIT)
 		Application::EditMode(window, gui);
-
 }
-
-
-

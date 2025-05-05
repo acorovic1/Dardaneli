@@ -17,33 +17,29 @@
 #include "BasicObjects.h"
 #include "Application.h"
 
-
 class MyGUI /* :public Dardaneli...varijable pod protected staviti*/ {
-
 	ImGuiIO* io;
 	ImGuiIO* gizmoIo;
 	Window* window;
 	ImGuizmo::OPERATION operation = ImGuizmo::OPERATION::TRANSLATE;
-	
 
-	 float hoverTime = 0.0f;	 
+	float hoverTime = 0.0f;
 
-	 bool BVHTree = false;
-	 int BVHSubd = 0;
-	 int eBVHSubd = 0;
+	bool BVHTree = false;
+	int BVHSubd = 0;
+	int eBVHSubd = 0;
 
-	 char searchText[32] = "Search";
+	char searchText[32] = "Search";
 
-	 bool gizmo = true;
+	bool gizmo = true;
 
-	 std::vector<glm::vec2> gridVertices;
-	 std::vector<GLuint> gridIndices;
-	 
-	 VAO gridVAO;
-	
+	Edge* selectedEdge = nullptr;
+	Face* selectedFace = nullptr;
 
+	std::vector<glm::vec2> gridVertices;
+	std::vector<GLuint> gridIndices;
 
-
+	VAO gridVAO;
 
 public:
 	bool showAddMenu = false;
@@ -58,7 +54,6 @@ public:
 	SelectMode getSelectMode();
 
 	std::vector<int>& getObjectIndex();
-	
 
 	void Add();
 	void AddMenu();
@@ -66,7 +61,6 @@ public:
 	void DrawBVH();
 
 	void Gizmos();
-	
 
 	void VertexTransform();
 	void Transformations();
@@ -77,7 +71,4 @@ public:
 	void setGizmoOperation(ImGuizmo::OPERATION op);
 
 	void Modes();
-	
-
 };
-

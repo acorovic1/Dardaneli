@@ -3,7 +3,6 @@
 #include "MyGUI.h"
 #include "Scene.h"
 
-
 // Debug message callback function
 void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
@@ -49,12 +48,7 @@ void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severi
 	std::cout << std::endl;
 }
 
-
 int main() {
-
-
-
-
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -82,13 +76,12 @@ int main() {
 	glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
 	if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
 	{
-		std::cout << "Debug context enabled." << std::endl;
+		std::cout << "\n\nDebug context enabled." << std::endl;
 	}
 	else
 	{
 		std::cout << "Debug context not enabled." << std::endl;
 	}
-
 
 	glfwSetTime(0);
 	glEnable(GL_DEBUG_OUTPUT);
@@ -97,8 +90,11 @@ int main() {
 	const GLubyte* version = glGetString(GL_VERSION);
 	std::cout << "OpenGL Version: " << version << std::endl;
 
-	while (!window.ShouldClose()) {
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
 
+	while (!window.ShouldClose()) {
 		crntTime = glfwGetTime();
 		timeDiff = crntTime - prevTime;
 		counter++;
@@ -111,7 +107,6 @@ int main() {
 
 			prevTime = crntTime;
 			counter = 0;
-
 		}
 
 		gui.NewFrame();
@@ -120,12 +115,8 @@ int main() {
 
 		renderer.Render(window, gui);
 
-
-
 		if (!gui.getIO()->WantCaptureMouse) {
-
 			app->Inputs(window.GetWindow(), gui);
-
 		}
 		gui.Grid();
 		gui.DrawUI();
@@ -143,8 +134,5 @@ int main() {
 	window.Terminate();
 	glfwTerminate();
 
-
 	return 0;
 }
-
-

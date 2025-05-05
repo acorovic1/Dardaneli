@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -11,7 +9,6 @@
 #include <glm/gtx/vector_angle.hpp>
 #include <glm/detail/_swizzle.hpp>
 
-
 #include "Shader.h"
 #include "Ray.h"
 
@@ -19,19 +16,17 @@ class MyGUI;
 class Window;
 
 class Camera {
-
-
 	glm::vec3 Position;
-	glm::vec3 Up = glm::vec3(0.0f,1.0f,0.0f);
-	glm::vec3 Orientation = glm::vec3(0.3f,-0.3f,-1.0f); // orientation is reversed
+	glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 Orientation = glm::vec3(0.3f, -0.3f, -1.0f); // orientation is reversed
 	//glm::vec3 Orientation = glm::vec3(0.0f,-0.5f,0.0f); // orientation is reversed
 
 	glm::mat4 Projection;
 
 	glm::mat4 cameraMatrix = glm::mat4(1.0f); // projection * view
 	int width, height;
-	float fov,near,far;
-	float speed =0.001f, sensitivity = 100.0f;
+	float fov, near, far;
+	float speed = 0.001f, sensitivity = 100.0f;
 
 	double posX, posY;
 	double previousX, previousY;
@@ -42,8 +37,7 @@ public:
 	void Update();
 	void CameraUniform(Shader& shader, const char* uniform);
 
-	void setProjectionMatrix(float fovy,float aspect,float near,float far);
-	
+	void setProjectionMatrix(float fovy, float aspect, float near, float far);
 
 	glm::mat4  getViewMatrix()const;
 	glm::mat4  getProjectionMatrix()const;
@@ -60,14 +54,7 @@ public:
 	void setFOV(float fov);
 	void setPosition(glm::vec3 position);
 
-
 	Ray CreateRay(GLFWwindow* window);
-
 
 	void Movement(GLFWwindow* window, MyGUI& gui);
 };
-
-
-
-
-

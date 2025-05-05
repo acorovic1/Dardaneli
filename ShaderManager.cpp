@@ -9,32 +9,27 @@ ShaderManager* ShaderManager::getInstance() {
 	return instancePtr;
 }
 
-
 GLuint ShaderManager::getNumberOfShaders()const
 {
 	return shaders.size();
 };
 
-
-void ShaderManager::addShader(std::string name,Shader* shader)
+void ShaderManager::addShader(std::string name, Shader* shader)
 {
-	shaders.insert({name, shader});
+	shaders.insert({ name, shader });
 }
 
-std::unordered_map<std::string,Shader*>::iterator ShaderManager::deleteShader(Shader* shader)
+std::unordered_map<std::string, Shader*>::iterator ShaderManager::deleteShader(Shader* shader)
 {
 	for (auto it = shaderSingleton->shaders.begin(); it != shaderSingleton->shaders.end(); )
 	{
-		
 		std::cout << "\nPassing " << it->first;
 		if (it->second == shader)
 		{
 			std::cout << "...we here";
 			return shaders.erase(it);
-			
-			
 		}
-		else { it++; }		
+		else { it++; }
 	}
 };
 
@@ -44,4 +39,3 @@ Shader& ShaderManager::getShader(std::string name)
 		return *(shaders[name]);
 	else std::cout << "Shader '" << name << "' does not exist.\n";
 }
-

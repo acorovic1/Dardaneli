@@ -72,12 +72,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\adnan\Desktop\Dardaneli\Libraries\include;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\adnan\Desktop\Dardaneli\Libraries\lib;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\adnan\Radna povrsina\VISUAL STUDIO PROJECTS\Dardaneli\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\adnan\Radna povrsina\VISUAL STUDIO PROJECTS\Dardaneli\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\adnan\Desktop\Dardaneli\Libraries\include;C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\adnan\Desktop\Dardaneli\Libraries\lib;C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -208,7 +208,9 @@
     <ClInclude Include="CameraManager.h" />
     <ClInclude Include="DrawableAABB.h" />
     <ClInclude Include="EBO.h" />
+    <ClInclude Include="Edge.h" />
     <ClInclude Include="EditModeBVH.h" />
+    <ClInclude Include="Face.h" />
     <ClInclude Include="ImGUIZMO\GraphEditor.h" />
     <ClInclude Include="ImGUIZMO\ImCurveEdit.h" />
     <ClInclude Include="ImGUIZMO\ImGradient.h" />

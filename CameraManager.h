@@ -2,15 +2,12 @@
 
 #include "Camera.h"
 
-
 class CameraManager {
-
 	std::vector<Camera*> cameras;
 	static CameraManager* instancePtr;
 
 	CameraManager() :cameras(0) {};
 
-	
 public:
 
 	static CameraManager* getInstance();
@@ -24,7 +21,6 @@ public:
 	Camera* getCamera(GLuint index);
 
 	std::vector<Camera*>& getAllCameras();
-
 };
 
 extern CameraManager* cameraSingleton;
