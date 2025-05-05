@@ -1,69 +1,133 @@
-﻿  Application.cpp
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\Application.cpp(157,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\Application.cpp(158,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\Application.cpp(297,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\Application.cpp(298,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  Camera.cpp
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\Camera.cpp(53,25): warning C4101: 'mouseZ': unreferenced local variable
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\Camera.cpp(144,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\Camera.cpp(145,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  Main.cpp
-  MyGUI.cpp
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(146,35): warning C4244: 'argument': conversion from '__int64' to '_Ty', possible loss of data
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(146,35): warning C4244:         with
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(146,35): warning C4244:         [
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(146,35): warning C4244:             _Ty=int
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(146,35): warning C4244:         ]
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(147,10): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(172,30): warning C4244: '=': conversion from '__int64' to '_Ty', possible loss of data
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(172,30): warning C4244:         with
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(172,30): warning C4244:         [
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(172,30): warning C4244:             _Ty=int
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(172,30): warning C4244:         ]
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(182,30): warning C4244: '=': conversion from '__int64' to '_Ty', possible loss of data
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(182,30): warning C4244:         with
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(182,30): warning C4244:         [
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(182,30): warning C4244:             _Ty=int
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(182,30): warning C4244:         ]
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(206,30): warning C4244: '=': conversion from '__int64' to '_Ty', possible loss of data
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(206,30): warning C4244:         with
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(206,30): warning C4244:         [
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(206,30): warning C4244:             _Ty=int
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(206,30): warning C4244:         ]
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(216,30): warning C4244: '=': conversion from '__int64' to '_Ty', possible loss of data
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(216,30): warning C4244:         with
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(216,30): warning C4244:         [
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(216,30): warning C4244:             _Ty=int
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(216,30): warning C4244:         ]
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(236,28): warning C4244: '=': conversion from '__int64' to '_Ty', possible loss of data
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(236,28): warning C4244:         with
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(236,28): warning C4244:         [
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(236,28): warning C4244:             _Ty=int
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(236,28): warning C4244:         ]
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(255,36): warning C4244: 'argument': conversion from '__int64' to '_Ty', possible loss of data
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(255,36): warning C4244:         with
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(255,36): warning C4244:         [
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(255,36): warning C4244:             _Ty=int
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(255,36): warning C4244:         ]
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(285,30): warning C4244: '=': conversion from '__int64' to '_Ty', possible loss of data
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(285,30): warning C4244:         with
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(285,30): warning C4244:         [
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(285,30): warning C4244:             _Ty=int
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(285,30): warning C4244:         ]
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(295,30): warning C4244: '=': conversion from '__int64' to '_Ty', possible loss of data
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(295,30): warning C4244:         with
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(295,30): warning C4244:         [
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(295,30): warning C4244:             _Ty=int
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(295,30): warning C4244:         ]
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(308,25): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(442,116): warning C4018: '<': signed/unsigned mismatch
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(519,42): warning C4553: '==': result of expression not used; did you intend '='?
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(520,42): warning C4553: '==': result of expression not used; did you intend '='?
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(521,42): warning C4553: '==': result of expression not used; did you intend '='?
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(632,56): warning C4018: '<': signed/unsigned mismatch
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\MyGUI.cpp(728,43): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-  Renderer.cpp
-C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\Renderer.cpp(30,20): warning C4018: '<': signed/unsigned mismatch
-  Scene.cpp
-  Generating Code...
-  Dardaneli.vcxproj -> C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\x64\Debug\Dardaneli.exe
+﻿  BasicObjects.cpp
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(367,21): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(371,46): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(373,25): warning C4244: 'argument': conversion from 'float' to '_Ty', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(373,25): warning C4244:         with
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(373,25): warning C4244:         [
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(373,25): warning C4244:             _Ty=GLuint
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(373,25): warning C4244:         ]
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(374,25): warning C4244: 'argument': conversion from 'float' to '_Ty', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(374,25): warning C4244:         with
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(374,25): warning C4244:         [
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(374,25): warning C4244:             _Ty=GLuint
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(374,25): warning C4244:         ]
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(378,25): warning C4244: 'argument': conversion from 'float' to '_Ty', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(378,25): warning C4244:         with
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(378,25): warning C4244:         [
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(378,25): warning C4244:             _Ty=GLuint
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(378,25): warning C4244:         ]
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(382,36): warning C4244: 'argument': conversion from 'float' to '_Ty', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(382,36): warning C4244:         with
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(382,36): warning C4244:         [
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(382,36): warning C4244:             _Ty=GLuint
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(382,36): warning C4244:         ]
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(383,40): warning C4244: 'argument': conversion from 'float' to '_Ty', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(383,40): warning C4244:         with
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(383,40): warning C4244:         [
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(383,40): warning C4244:             _Ty=GLuint
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(383,40): warning C4244:         ]
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(392,40): warning C4244: 'argument': conversion from 'float' to '_Ty', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(392,40): warning C4244:         with
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(392,40): warning C4244:         [
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(392,40): warning C4244:             _Ty=GLuint
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(392,40): warning C4244:         ]
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(393,36): warning C4244: 'argument': conversion from 'float' to '_Ty', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(393,36): warning C4244:         with
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(393,36): warning C4244:         [
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(393,36): warning C4244:             _Ty=GLuint
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(393,36): warning C4244:         ]
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(396,21): warning C4244: 'argument': conversion from 'float' to '_Ty', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(396,21): warning C4244:         with
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(396,21): warning C4244:         [
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(396,21): warning C4244:             _Ty=GLuint
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(396,21): warning C4244:         ]
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(397,21): warning C4244: 'argument': conversion from 'float' to '_Ty', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(397,21): warning C4244:         with
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(397,21): warning C4244:         [
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(397,21): warning C4244:             _Ty=GLuint
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(397,21): warning C4244:         ]
+C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(852,14): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4244: 'initializing': conversion from 'float' to '_Ty1', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4244:         with
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4244:         [
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4244:             _Ty1=int
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4244:         ]
+  (compiling source file 'BasicObjects.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16):
+      the template instantiation context (the oldest one first) is
+          C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(375,11):
+          see reference to function template instantiation 'std::pair<int,int>::pair<float&,float&,0>(_Other1,_Other2) noexcept' being compiled
+          with
+          [
+              _Other1=float &,
+              _Other2=float &
+          ]
+              C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(375,42):
+              see the first reference to 'std::pair<int,int>::pair' in 'addSphere'
+  
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4244: 'initializing': conversion from 'float' to '_Ty2', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4244:         with
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4244:         [
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4244:             _Ty2=int
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4244:         ]
+  (compiling source file 'BasicObjects.cpp')
+  
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4244: 'initializing': conversion from '_Ty' to '_Ty2', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4244:         with
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4244:         [
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4244:             _Ty=float
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4244:         ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4244:         and
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4244:         [
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4244:             _Ty2=int
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4244:         ]
+  (compiling source file 'BasicObjects.cpp')
+  
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4244: 'initializing': conversion from '_Ty' to '_Ty1', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4244:         with
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4244:         [
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4244:             _Ty=float
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4244:         ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4244:         and
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4244:         [
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4244:             _Ty1=int
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4244:         ]
+  (compiling source file 'BasicObjects.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16):
+      the template instantiation context (the oldest one first) is
+          C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(386,12):
+          see reference to function template instantiation 'std::pair<int,int>::pair<float,float&,0>(_Other1 &&,_Other2) noexcept' being compiled
+          with
+          [
+              _Other1=float,
+              _Other2=float &
+          ]
+              C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(386,48):
+              see the first reference to 'std::pair<int,int>::pair' in 'addSphere'
+  
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4267: 'initializing': conversion from 'size_t' to '_Ty1', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4267:         with
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4267:         [
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4267:             _Ty1=int
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16): warning C4267:         ]
+  (compiling source file 'BasicObjects.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,16):
+      the template instantiation context (the oldest one first) is
+          C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(520,51):
+          see reference to function template instantiation 'std::pair<int,int>::pair<unsigned __int64,unsigned __int64,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+          with
+          [
+              _Other1=unsigned __int64,
+              _Other2=unsigned __int64
+          ]
+              C:\Users\adnan\Desktop\Dardaneli\BasicObjects.cpp(520,41):
+              see the first reference to 'std::pair<int,int>::pair' in 'addSphere'
+  
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4267: 'initializing': conversion from 'size_t' to '_Ty2', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4267:         with
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4267:         [
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4267:             _Ty2=int
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include\utility(274,54): warning C4267:         ]
+  (compiling source file 'BasicObjects.cpp')
+  
+  Dardaneli.vcxproj -> C:\Users\adnan\Desktop\Dardaneli\x64\Debug\Dardaneli.exe

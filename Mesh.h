@@ -1,20 +1,24 @@
 #pragma once
 
 #include"Object.h"
+#include "unordered_set"
 
 class Mesh :public Object {
 
 	std::vector<Texture>textures;
 
 	EBO edgeEBO;
-	std::vector<GLuint>edgeIndices;
-	std::vector<int> vertexIndices = std::vector<int>(0);
+	std::vector<GLuint>edgeIndices; // used for drawing edges
+	std::vector<int> vertexIndices = std::vector<int>(0); // selected vertices
 
 public:
 
-	Mesh(std::string&& name, std::vector <Vertex>& vertices, std::vector <GLuint>& indices, const std::vector<GLuint>& edgeIndices = std::vector<GLuint>(), const  std::vector <Texture>& textures = std::vector<Texture>());
+	Mesh(std::string&& name, std::vector <Vertex>* vertices, std::vector <GLuint>& indices, const std::vector<GLuint>& edgeIndices = std::vector<GLuint>(), const  std::vector <Texture>& textures = std::vector<Texture>());
 
 	~Mesh();
+
+	std::vector<Face*> getFaces(); // logic can/needs to be improved
+	std::vector<Edge*> getEdges();
 
 	GLuint extrudeVertex(GLuint vertex);
 

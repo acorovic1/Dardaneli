@@ -19,6 +19,15 @@ void Scene::Init()
 	new Shader("SelectEdit", "selectEdit.vert", "selectEdit.frag");
 	new Shader("ActiveEdit", "activeEdit.vert", "activeEdit.frag");
 
-	addCube();
+
 	
+	addCylinder();
+	
+	
+
+	//Mesh* m1=static_cast<Mesh*>(objectSingleton->getObject(0));
+
+
+
+
 }

@@ -1,20 +1,32 @@
 #include "BasicObjects.h"
-#include <set>
+#include <map>
 
 #include "Face.h"
 
+// Vertex vector (or the vertices themselves) need to be dinamically allocated due to the edge.tip being a pointer
+// otherwise the vector is destroyed after the function ends and the vector(and its contents) no longer exist so the tip 
+// becomes a dangling pointer
+
+
 void addPlane()
 {
-	// Plane vertex data (positions, normals, colors, and UVs)
-	std::vector<Vertex>* planeVertices=new std::vector<Vertex> {
+
+	std::vector<Vertex>* vertices = new std::vector<Vertex>{
 		Vertex{glm::vec3(-0.5f, 0.0f, 0.5f),glm::vec3(-0.5f, 0.0f, 0.5f)},
 		Vertex{glm::vec3(0.5f, 0.0f, 0.5f), glm::vec3(0.5f, 0.0f, 0.5f)},
 		Vertex{glm::vec3(0.5f, 0.0f, -0.5f), glm::vec3(0.5f, 0.0f, -0.5f)},
 		Vertex{glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(-0.5f, 0.0f, -0.5f)}
 	};
-	std::vector<GLuint> planeIndices{
+	std::vector<GLuint> indices{
 		0, 1, 2,
 		2, 3, 0
+	};
+	std::vector<GLuint>edgeVertices
+	{
+		0,1,
+		1,2,
+		2,3,
+		3,0
 	};
 
 	Face* face = new Face();
@@ -34,216 +46,77 @@ void addPlane()
 	e3->face = face;
 	e4->face = face;
 
-	e1->tip = &(*planeVertices)[1];
-	e2->tip = &(*planeVertices)[2];
-	e3->tip = &(*planeVertices)[3];
-	e4->tip = &(*planeVertices)[0];
+	e1->tip = &(*vertices)[1];
+	e2->tip = &(*vertices)[2];
+	e3->tip = &(*vertices)[3];
+	e4->tip = &(*vertices)[0];
 
-	(*planeVertices)[0].edge = e1;
-	(*planeVertices)[1].edge = e2;
-	(*planeVertices)[2].edge = e3;
-	(*planeVertices)[3].edge = e4;
+	(*vertices)[0].edge = e1;
+	(*vertices)[1].edge = e2;
+	(*vertices)[2].edge = e3;
+	(*vertices)[3].edge = e4;
 
 	face->edge = e1;
 
 
 	new Mesh(
 		"Plane",
-		*planeVertices,
-		planeIndices
+		vertices,
+		indices,
+		edgeVertices
 
 	);
 }
 
 void addCube()
 {
-	std::vector<Vertex>* cubeVertices = new std::vector<Vertex>{
-	Vertex{ glm::vec3(-0.5f, -0.5f, 0.5f) ,glm::vec3(-0.5f, -0.5f, 0.5f) }, // V0
-	Vertex{ glm::vec3(0.5f,  -0.5f, 0.5f) ,glm::vec3(0.5f,  -0.5f, 0.5f) }, // V1
-	Vertex{ glm::vec3(0.5f,  0.5f,  0.5f) ,glm::vec3(0.5f,  0.5f,  0.5f) }, // V2
-	Vertex{ glm::vec3(-0.5f, 0.5f,  0.5f) ,glm::vec3(-0.5f, 0.5f,  0.5f) }, // V3
+	std::vector<Vertex>* vertices = new std::vector<Vertex>{
+	Vertex{ glm::vec3(0.5f, 0.5f, 0.5f) ,glm::vec3(0.5f, 0.5f, 0.5f) }, // V0
+	Vertex{ glm::vec3(0.5f, 0.5f, -0.5f) ,glm::vec3(0.5f,  0.5f, -0.5f) }, // V1
+	Vertex{ glm::vec3(0.5f, -0.5f,  0.5f) ,glm::vec3(0.5f,  -0.5f,  0.5f) }, // V2
+	Vertex{ glm::vec3(0.5f, -0.5f,  -0.5f) ,glm::vec3(0.5f, -0.5f,  -0.5f) }, // V3
 
 	// Back face
-	Vertex{ glm::vec3(-0.5f, -0.5f, -0.5f) , glm::vec3(-0.5f, -0.5f, -0.5f) }, // V4
-	Vertex{ glm::vec3(0.5f,  -0.5f, -0.5f) , glm::vec3(0.5f,  -0.5f, -0.5f) }, // V5
-	Vertex{ glm::vec3(0.5f,  0.5f,  -0.5f) , glm::vec3(0.5f,  0.5f,  -0.5f) }, // V6
-	Vertex{ glm::vec3(-0.5f, 0.5f,  -0.5f) , glm::vec3(-0.5f, 0.5f,  -0.5f) }, // V7
+	Vertex{ glm::vec3(-0.5f, 0.5f, 0.5f) , glm::vec3(-0.5f, 0.5f, 0.5f) }, // V4
+	Vertex{ glm::vec3(-0.5f, 0.5f, -0.5f) , glm::vec3(-0.5f,  0.5f, -0.5f) }, // V5
+	Vertex{ glm::vec3(-0.5f, -0.5f,  0.5f) , glm::vec3(-0.5f,  -0.5f,  0.5f) }, // V6
+	Vertex{ glm::vec3(-0.5f, -0.5f,  -0.5f) , glm::vec3(-0.5f, -0.5f,  -0.5f) }, // V7
 	};
-	std::vector<GLuint> cubeIndices{
-		// Front face
-		0, 1, 2,
-		2, 3, 0,
-		// Back face
-		4, 5, 6,
-		6, 7, 4,
-		// Left face
-		0, 3, 7,
-		7, 4, 0,
+	std::vector<GLuint> indices{
 		// Right face
-		1, 2, 6,
-		6, 5, 1,
+		0, 2, 1,
+		1, 2, 3,
+		// Left face
+		5, 7, 4,
+		4, 7, 6,
+		// Front face
+		4, 6, 0,
+		0, 6, 2,
+		// Back face
+		1, 3, 5,
+		5, 3, 7,
 		// Top face
-		3, 2, 6,
-		6, 7, 3,
+		5, 4, 1,
+		1, 4, 0,
 		// Bottom face
-		0, 1, 5,
-		5, 4, 0
+		6, 7, 2,
+		2, 7, 3
 	};
-
-	std::cout << "\n NEW  OBJECT\n";
-	Edge* old = nullptr;
-	Edge* start = nullptr;
-	Face* face = nullptr;
-	std::vector<Edge*> listOfEdges{};
-	for (int i = 0; i < cubeIndices.size()-1; i++)
-	{
-				
-		if (i % 6 == 5 && i!=0) // so it doesnt make a non existing edge
-		{
-			old->next = start;
-			std::cout << "Skipped " << i+1 << ". iteration\n";
-			continue;
-		
-		}
-		if (cubeIndices[i] == cubeIndices[i + 1])
-		{
-			std::cout << "Skipped " << i+1 << ". iteration\n";
-			continue; // start and end vertices are the same vertex
-		}
-
-		Edge* e = new Edge();
-		listOfEdges.push_back(e);
-		if (i % 6 == 0)
-		{
-			start = e;
-			old = nullptr;
-
-			face = new Face();
-			face->edge = e;
-		}
-
-		e->tip = &(*cubeVertices)[cubeIndices[i + 1]];
-		e->face = face;
-
-		if (!(*cubeVertices)[cubeIndices[i]].edge)
-			(*cubeVertices)[cubeIndices[i]].edge = e;
-
-		if (i % 6 != 0 && i != 0)
-			old->next = e;
-		old = e;
-	}
-	old->next = start;
-
-	std::cout << "\nList of Edges size: " << listOfEdges.size()<<"\n";
-
-	for (int i =0;i<listOfEdges.size() ; i++)
-	{
-		if (i % 4 == 0)std::cout << "\n";
-		auto start = listOfEdges[i]->next->next->next->tip;
-		auto it = std::find((*cubeVertices).begin(), (*cubeVertices).end(), *listOfEdges[i]->tip);
-		auto it1 = std::find((*cubeVertices).begin(), (*cubeVertices).end(), *start);
-
-		std::cout << it1 - (*cubeVertices).begin() << " " << it - (*cubeVertices).begin() << "\n";
-
-
-
-
-	}
-		//std::cout << " " << x->tip->position.x << " " << x->tip->position.y << " " << x->tip->position.z << "\n";
-
-	int j = 0;
-	while (j<listOfEdges.size())
-	{ 
-		//std::cout <<"\nCurrent edge "<<j<<"\n";
-		Vertex* vertexEnd = listOfEdges[0]->tip;
-		//std::cout << "Vertex tip " << vertexEnd->position.x << " " << vertexEnd->position.y << " " << vertexEnd->position.z << "\n";
-		
-		auto temp = listOfEdges[0]->next->next;
-		while (temp->next != listOfEdges[0])
-		{
-			temp = temp->next;
-			//std::cout << "first while loop\n";
-		} 
-		//std::cout << "\nfirst while loop ended " <<j++<<"\n";
-		j++;
-		Vertex* vertexStart = temp->tip;
-
-		for (int i = 1; i < listOfEdges.size(); i++)
-		{
-			if (listOfEdges[i]->tip != vertexStart)
-			{
-				
-				std::cout << j<< "different start vertex		";
-
-				std::cout << "listOfEdges->tip Position: "
-					<< listOfEdges[i]->tip->position.x << ", "
-					<< listOfEdges[i]->tip->position.y << ", "
-					<< listOfEdges[i]->tip->position.z;
-
-				std::cout << "		vertexStart Position: "
-					<< vertexStart->position.x << ", "
-					<< vertexStart->position.y << ", "
-					<< vertexStart->position.z << std::endl;
-
-				continue;
-			}
-
-			temp = listOfEdges[i]->next->next;
-			while (temp->next != listOfEdges[i])
-			{
-				temp = temp->next;
-			}
-			if (temp->tip != listOfEdges[0]->tip)
-			{
-				
-				std::cout <<j<< "different end vertex		";
-
-				std::cout << "temp->tip Position: "
-					<< temp->tip->position.x << ", "
-					<< temp->tip->position.y << ", "
-					<< temp->tip->position.z;
-
-				std::cout << "		vertexEnd Position: "
-					<< listOfEdges[0]->tip->position.x << ", "
-					<< listOfEdges[0]->tip->position.y << ", "
-					<< listOfEdges[0]->tip->position.z << std::endl;
-
-				continue;
-			}
-
-
-			
-
-
-			std::cout << "Now we here\n";
-
-			listOfEdges[0]->pair = listOfEdges[i];
-			listOfEdges[i]->pair = listOfEdges[0];
-
-			listOfEdges.erase(listOfEdges.begin()+i);
-			listOfEdges.erase(listOfEdges.begin());
-
-		}
-			std::cout << "BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n";
-	
-	//std::cout << "\nList of Edges size: " << listOfEdges.size()<<"  current edge "<<++j<<"\n";
-
-	}
-
-	std::cout << "\n\n";
-
 
 	std::vector<GLuint>edgeIndices{
+		//left face
 		0,1,
-		1,2,
-		2,3,
-		3,0,
+		1,3,
+		2,0,
+		3,2,
 
+		//right face
 		4,5,
-		5,6,
-		6,7,
-		7,4,
+		5,7,
+		6,4,
+		7,6,
 
+		// X-axis edges (leftovers)
 		0,4,
 		1,5,
 		2,6,
@@ -251,20 +124,67 @@ void addCube()
 	};
 
 
+	std::map<std::pair<int, int>, Edge*> edgeMap{};
+
+	for (int i = 0;i < edgeIndices.size();i += 2)
+	{
+		Edge* e1 = new Edge();
+		Edge* e2 = new Edge();
+
+		edgeMap[{edgeIndices[i], edgeIndices[i + 1]}] = e1;
+		edgeMap[{edgeIndices[i + 1], edgeIndices[i]}] = e2;
+
+		e1->tip = &(*vertices)[edgeIndices[i + 1]];
+		e2->tip = &(*vertices)[edgeIndices[i]];
+
+		e1->pair = e2;
+		e2->pair = e1;
+
+		if (!(*vertices)[edgeIndices[i]].edge)
+			(*vertices)[edgeIndices[i]].edge = e1;
+
+
+	}
+
+	for (int i = 0;i < indices.size();i += 6)
+	{
+		Face* face = new Face();
+
+		Edge* e1 = edgeMap[{indices[i], indices[i + 1]}];
+		Edge* e2 = edgeMap[{indices[i + 1], indices[i + 5]}];
+		Edge* e3 = edgeMap[{indices[i + 5], indices[i + 2]}];
+		Edge* e4 = edgeMap[{indices[i + 2], indices[i]}];
+
+		e1->next = e2;
+		e2->next = e3;
+		e3->next = e4;
+		e4->next = e1;
+
+		e1->face = face;
+		e2->face = face;
+		e3->face = face;
+		e4->face = face;
+
+		face->edge = e1;
+
+
+	}
+
 	new Mesh(
 		"Cube",
-		*cubeVertices,
-		cubeIndices,
+		vertices,
+		indices,
 		edgeIndices
 	);
 }
 
 void addCircle(int numSegments, float radius)
 {
-	std::vector<Vertex> circleVertices;
-	std::vector<GLuint> circleIndices;
+	std::vector<Vertex>* vertices = new std::vector<Vertex>();
+	std::vector<GLuint> indices;
+	std::vector<GLuint> edgeIndices;
 
-	float angleStep = 2.0f * PI / float(numSegments);
+	float angleStep = 2.0f * PI / numSegments;
 	float angle, x, z;
 
 	for (int i = 0; i < numSegments; ++i) {
@@ -272,295 +192,887 @@ void addCircle(int numSegments, float radius)
 		x = cos(angle) * radius;
 		z = sin(angle) * radius;
 
-		// Add vertex for this point
-		circleVertices.push_back(Vertex{
+		vertices->push_back(Vertex{
 			glm::vec3(x, 0.0f, z),   // Position
 			glm::normalize(glm::vec3(x, 0.0f, z))  // Normal pointing up
 			});
-		std::cout << "x = " << x << "   z = " << z << "\n";
 	}
-	std::cout << "indices\n";
-
+	Face* face = new Face();
+	Edge* old = nullptr;
+	std::map<std::pair<int, int>, Edge*> edgeMap{};
 	for (int i = 0; i < numSegments - 2; ++i) {
-		circleIndices.push_back(0);           // Anchor point (first vertex)
-		circleIndices.push_back(i + 1);       // Current vertex
-		circleIndices.push_back(i + 2);       // Next vertex
-		std::cout << 0 << " " << i + 1 << " " << i + 2 << "\n";
+		indices.push_back(i + 2);       // left most
+		indices.push_back(i + 1);       // middle
+		indices.push_back(0);           // Anchor 
+
+		edgeIndices.push_back(i);
+		edgeIndices.push_back(i + 1);
+
+		Edge* e = new Edge();
+		edgeMap[{i, i + 1}] = e;
+
+		(*vertices)[i].edge = e;
+
+		e->tip = &(*vertices)[i + 1];
+		e->face = face;
+		e->pair = nullptr;
+
+		if (i)
+		{
+			old->next = e;
+		}
+		old = e;
+
 	}
 
-	std::cout << "\n NEW  OBJECT\n";
-	for (int i = 0; i < circleIndices.size(); i++)
-	{
-		if (i % 3 == 0)std::cout << "\n";
-		if (i % 6 == 0)std::cout << "\n";
-		std::cout << circleIndices[i] << " ";
-	}
+	// second to last vertex
+	edgeIndices.push_back(numSegments - 2);
+	edgeIndices.push_back(numSegments - 1);
+
+	Edge* e = new Edge();
+	edgeMap[{numSegments - 2, numSegments - 1}] = e;
+
+	(*vertices)[numSegments - 2].edge = e;
+
+	e->tip = &(*vertices)[numSegments - 1];
+	e->face = face;
+	e->pair = nullptr;
+	old->next = e;
+
+	old = e;
+
+	// last vertex
+	edgeIndices.push_back(numSegments - 1);
+	edgeIndices.push_back(0);
+
+	e = new Edge();
+	edgeMap[{numSegments - 1, 0}] = e;
+
+	(*vertices)[numSegments - 1].edge = e;
+
+	e->tip = &(*vertices)[0];
+	e->face = face;
+	e->pair = nullptr;
+	old->next = e;
+
+	e->next = edgeMap[{0, 1}];
+	face->edge = edgeMap[{0, 1}];
+
+
 
 	new Mesh(
 		"Circle",
-		circleVertices,
-		circleIndices
+		vertices,
+		indices,
+		edgeIndices
 	);
 };
 
-void addSphere(int longitude, int latitude, float radius)
+void addSphere(int segments, int rings, float radius)
 {
-	std::vector<Vertex> sphereVertices;
-	std::vector<GLuint> sphereIndices;
+	std::vector<Vertex>* vertices = new std::vector<Vertex>();
+	std::vector<GLuint> indices;
+	std::vector<GLuint> edgeIndices;
 
-	float divLongitude = PI / longitude;
-	float divLatitude = PI / latitude;
-	float latAngle;
+	float segmentStep = 2 * PI / segments;
+	float ringStep = PI / rings;
 
-	for (int i = 0; i <= longitude; ++i) {
-		latAngle = 3.14159265358979323846f / 2 - i * divLongitude; // starting from pi/2 to -pi/2
-		float xy = radius * cosf(latAngle);  // r * cos(u)
-		float z = radius * sinf(latAngle);   // r * sin(u)
+	float x, y, z;
+	float radiusStep;
+	int topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner;
+	std::map<std::pair<int, int>, Edge*> edgeMap;
 
-		// Add vertices per sector
-		for (int j = 0; j <= latitude; ++j) {
-			float longAngle = j * 2.0f * divLongitude; // 0 to 2pi
+	// top vertex
+	vertices->push_back(Vertex{ glm::vec3(0.0f,radius,0.0f),glm::normalize(glm::vec3(0.0f,radius,0.0f)) });
 
-			// Vertex position
-			float x = xy * cosf(longAngle); // x = r * cos(u) * cos(v)
-			float y = xy * sinf(longAngle); // y = r * cos(u) * sin(v)
-
-			// Add vertex data
-			sphereVertices.push_back(Vertex{
-				glm::vec3(x, y, z),   // Position
-				glm::normalize(glm::vec3(x, y, z))  // Normal
-				});
-		}
-	}
-
-	// Indices for sphere (triangles)
-	for (int i = 0; i < longitude; ++i) {
-		int k1 = i * (latitude + 1); // Beginning of current stack
-		int k2 = k1 + latitude + 1;  // Beginning of next stack
-
-		for (int j = 0; j < latitude; ++j, ++k1, ++k2) {
-			// Two triangles per quad on sphere
-			if (i != 0) {
-				sphereIndices.push_back(k1);
-				sphereIndices.push_back(k2);
-				sphereIndices.push_back(k1 + 1);
-			}
-
-			if (i != (longitude - 1)) {
-				sphereIndices.push_back(k1 + 1);
-				sphereIndices.push_back(k2);
-				sphereIndices.push_back(k2 + 1);
-			}
-		}
-	}
-	std::cout << "\n NEW  OBJECT\n";
-	for (int i = 0; i < sphereIndices.size(); i++)
+	for (int i = 0;i < rings - 1;i++)
 	{
-		if (i % 3 == 0)std::cout << "\n";
-		if (i % 6 == 0)std::cout << "\n";
-		std::cout << sphereIndices[i] << " ";
+		y = radius * sinf(halfPI - ringStep * (i + 1)); // found from the XY/ZY plane (side view)
+
+		radiusStep = radius * cosf(halfPI - ringStep * (i + 1));  // found from the XY/ZY plane (side view)
+
+
+		for (int j = 0;j < segments;j++)
+		{
+
+			x = radiusStep * cosf(segmentStep * j); // found from the XZ plane (top down view)
+			z = radiusStep * sinf(segmentStep * j);
+
+			vertices->push_back(Vertex{ glm::vec3(x,y,z),glm::normalize(glm::vec3(x,y,z)) });
+
+			if (i == 0) // 1st ring of faces (triangles)
+			{
+				edgeIndices.push_back(0);
+				edgeIndices.push_back(j + 1);
+
+				edgeMap[{0, j + 1}] = new Edge();
+				edgeMap[{j + 1, 0}] = new Edge();
+
+				if (j == segments - 1)
+				{
+					indices.push_back(1);
+				}
+				else
+				{
+					indices.push_back(j + 2); // next vertex
+				}
+
+				indices.push_back(j + 1); // current vertex
+				indices.push_back(0);     // top vertex
+
+
+
+			}
+			else // middle part of the sphere (quads)
+			{
+				topLeftCorner = (i - 1) * segments + 1 + j + 1;
+				topRightCorner = (i - 1) * segments + 1 + j;
+				bottomLeftCorner = i * segments + 1 + j + 1;
+				bottomRightCorner = i * segments + 1 + j;
+
+				if (j == segments - 1) // on the last face, left side vertices are the start of the ring
+				{
+					topLeftCorner = (i - 1) * segments + 1;
+					bottomLeftCorner = i * segments + 1;
+				}
+
+
+				indices.push_back(topLeftCorner);
+				indices.push_back(bottomLeftCorner);
+				indices.push_back(topRightCorner);
+
+				indices.push_back(topRightCorner);
+				indices.push_back(bottomLeftCorner);
+				indices.push_back(bottomRightCorner);
+
+				edgeIndices.push_back(topRightCorner);
+				edgeIndices.push_back(topLeftCorner);
+
+				edgeIndices.push_back(topRightCorner);
+				edgeIndices.push_back(bottomRightCorner);
+
+
+				edgeMap[{topRightCorner, topLeftCorner}] = new Edge();
+				edgeMap[{topLeftCorner, topRightCorner}] = new Edge();
+
+				edgeMap[{topRightCorner, bottomRightCorner}] = new Edge();
+				edgeMap[{bottomRightCorner, topRightCorner}] = new Edge();
+
+
+			}
+
+		}
+
 	}
+	float bottomVertex = (rings - 1) * segments + 1;
+	float currentVertex;
+	for (int j = 0;j < segments;j++)// last ring of faces (triangles)
+	{
+		currentVertex = (rings - 2) * (segments)+1 + j;
+
+		edgeIndices.push_back(bottomVertex);
+		edgeIndices.push_back(currentVertex);
+		edgeMap[{bottomVertex, currentVertex}] = new Edge();
+		edgeMap[{currentVertex, bottomVertex}] = new Edge();
+
+		edgeIndices.push_back(currentVertex);
+
+		if (j == segments - 1)
+		{
+			indices.push_back(currentVertex - j);
+			edgeIndices.push_back(currentVertex - j);
+
+			edgeMap[{currentVertex, currentVertex - j}] = new Edge();
+			edgeMap[{currentVertex - j, currentVertex}] = new Edge();
+		}
+		else
+		{
+			edgeMap[{currentVertex, currentVertex + 1}] = new Edge();
+			edgeMap[{currentVertex + 1, currentVertex}] = new Edge();
+			edgeIndices.push_back(currentVertex + 1);
+			indices.push_back(currentVertex + 1); // next vertex
+		}
+
+		indices.push_back(bottomVertex);
+		indices.push_back(currentVertex);
+
+	}
+
+	vertices->push_back(Vertex{ glm::vec3(0.0f,-radius,0.0f),glm::normalize(glm::vec3(0.0f,-radius,0.0f)) });
+
+	(*vertices)[0].edge = edgeMap[{0, 2}];
+
+
+	for (int i = 0;i < indices.size();)
+	{
+		Face* face = new Face();
+		if (i < 3 * segments) // triangles
+		{
+			// indices[i] left vertex
+			// indices[i+1] right vertex
+			// indices[i+2]  top vertex
+			//std::cout << indices[i] << " " << indices[i + 1] << " " << indices[i + 2] << "\n";
+
+			Edge* e1 = edgeMap[{indices[i], indices[i + 1]}];
+			Edge* e2 = edgeMap[{indices[i + 1], indices[i + 2]}];
+			Edge* e3 = edgeMap[{indices[i + 2], indices[i]}];
+
+
+			if (!(*vertices)[indices[i + 1]].edge)
+				(*vertices)[indices[i + 1]].edge = e2;
+
+			e1->tip = &(*vertices)[indices[i + 1]];
+			e2->tip = &(*vertices)[indices[i + 2]];
+			e3->tip = &(*vertices)[indices[i]];
+
+			e1->next = e2;
+			e2->next = e3;
+			e3->next = e1;
+
+			e1->pair = edgeMap[{indices[i + 1], indices[i]}];
+			e2->pair = edgeMap[{indices[i + 2], indices[i + 1]}];
+			e3->pair = edgeMap[{indices[i], indices[i + 2]}];
+
+			e1->face = face;
+			e2->face = face;
+			e3->face = face;
+
+
+			face->edge = e1;
+
+			i += 3;
+		}
+		else if (i < 3 * segments + 6 * segments * (rings - 2)) // 3 * segments = number of indices for the top tris + 6*segments*(rings-2) = number of indices for the quads
+		{
+			// indices[i] is the top left index
+			// indices[i+2] is the top right index
+			// indices[i+1] is the bottom left index
+			// indices[i+5] is the bottom right index
+
+			//std::cout << indices[i] << " " << indices[i + 1] << " " << indices[i + 2]<<"\n";
+
+			Edge* e1 = edgeMap[{indices[i + 2], indices[i]}];     // <--
+			Edge* e2 = edgeMap[{indices[i], indices[i + 1]}];	  // |
+			Edge* e3 = edgeMap[{indices[i + 1], indices[i + 5]}]; // -->
+			Edge* e4 = edgeMap[{indices[i + 5], indices[i + 2]}]; //	|
+
+
+			if (!(*vertices)[indices[i + 5]].edge)
+				(*vertices)[indices[i + 5]].edge = e4;
+
+			e1->tip = &(*vertices)[indices[i]];
+			e2->tip = &(*vertices)[indices[i + 1]];
+			e3->tip = &(*vertices)[indices[i + 5]];
+			e4->tip = &(*vertices)[indices[i + 2]];
+
+			e1->next = e2;
+			e2->next = e3;
+			e3->next = e4;
+			e4->next = e1;
+
+			e1->pair = edgeMap[{indices[i], indices[i + 2]}];
+			e2->pair = edgeMap[{indices[i + 1], indices[i]}];
+			e3->pair = edgeMap[{indices[i + 5], indices[i + 1]}];
+			e4->pair = edgeMap[{indices[i + 2], indices[i + 5]}];
+
+			e1->face = face;
+			e2->face = face;
+			e3->face = face;
+			e4->face = face;
+
+			face->edge = e1;
+
+			i += 6;
+		}
+		else
+		{
+			// indices[i] left vertex
+			// indices[i+1] bottom vertex
+			// indices[i+2]  right vertex
+			//std::cout << indices[i] << " " << indices[i + 1] << " " << indices[i + 2] << "\n";
+
+			Edge* e1 = edgeMap[{indices[i], indices[i + 1]}];
+			Edge* e2 = edgeMap[{indices[i + 1], indices[i + 2]}];
+			Edge* e3 = edgeMap[{indices[i + 2], indices[i]}];
+
+			e1->tip = &(*vertices)[indices[i + 1]];
+			e2->tip = &(*vertices)[indices[i + 2]];
+			e3->tip = &(*vertices)[indices[i]];
+
+			e1->next = e2;
+			e2->next = e3;
+			e3->next = e1;
+
+			e1->pair = edgeMap[{indices[i + 1], indices[i]}];
+			e2->pair = edgeMap[{indices[i + 2], indices[i + 1]}];
+			e3->pair = edgeMap[{indices[i], indices[i + 2]}];
+
+			e1->face = face;
+			e2->face = face;
+			e3->face = face;
+
+			face->edge = e1;
+
+			i += 3;
+		}
+	}
+
+	(*vertices)[vertices->size() - 1].edge = edgeMap[{vertices->size() - 1, vertices->size() - 2}];
+
+	//std::cout << "\n\n Number of indices = " << indices.size()<<"\n";
+
 	new Mesh(
 		"Sphere",
-		sphereVertices,
-		sphereIndices
+		vertices,
+		indices,
+		edgeIndices
 	);
+
 }
 
 void addCylinder(int numSegments, float height, float radius)
 {
-	std::vector<Vertex> cylinderVertices;
-	std::vector<GLuint> cylinderIndices;
+	std::vector<Vertex>* vertices = new std::vector<Vertex>();
+	std::vector<GLuint> indices;
+	std::vector<GLuint> edgeIndices;
+
+	std::map<std::pair<int, int>, Edge*> edgeMap;
 
 	float angleStep = 2.0f * PI / numSegments;
 	float angle, x, z;
 
 	height /= 2;
 
-	// Bottom circle vertices
+
 	for (int i = 0; i < numSegments; ++i) {
 		angle = angleStep * float(i);
 		x = cos(angle) * radius;
 		z = sin(angle) * radius;
 
-		cylinderVertices.push_back(Vertex{
-			glm::vec3(x, -height , z),    // Position
-			glm::normalize(glm::vec3(x, -height, z))   // Normal for bottom
+		// Bottom circle vertices
+		vertices->push_back(Vertex{
+			glm::vec3(x, -height , z),
+			glm::normalize(glm::vec3(x, -height, z))
 			});
 
 		// Top circle vertices
-		cylinderVertices.push_back(Vertex{
-			glm::vec3(x, height , z),   // Top circle position
-			glm::normalize(glm::vec3(x,height,z))     // Normal pointing up
+		vertices->push_back(Vertex{
+			glm::vec3(x, height , z),
+			glm::normalize(glm::vec3(x,height,z))
 			});
 	}
 
-	// Create the sides of the cylinder
-	for (int i = 0; i < numSegments; ++i) {
-		int next = (i + 1) % numSegments;
-
-		// Side triangles
-		cylinderIndices.push_back(i * 2);          // Bottom vertex i
-		cylinderIndices.push_back(i * 2 + 1);      // Top vertex i
-		cylinderIndices.push_back(next * 2 + 1);   // Top vertex next
-
-		cylinderIndices.push_back(i * 2);          // Bottom vertex i
-		cylinderIndices.push_back(next * 2 + 1);   // Top vertex next
-		cylinderIndices.push_back(next * 2);       // Bottom vertex next
-	}
-
-	// Create the top and bottom caps (without center vertex)
-	for (int i = 0; i < numSegments - 2; ++i) {
-		// Bottom cap
-		cylinderIndices.push_back(0);              // First bottom vertex (anchor)
-		cylinderIndices.push_back((i + 2) * 2);    // Next bottom vertex
-		cylinderIndices.push_back((i + 1) * 2);    // Current bottom vertex
-
-		// Top cap
-		cylinderIndices.push_back(1);               // First top vertex (anchor)
-		cylinderIndices.push_back((i + 1) * 2 + 1); // Current top vertex
-		cylinderIndices.push_back((i + 2) * 2 + 1); // Next top vertex
-	}
-
-	std::cout << "\n NEW  OBJECT\n";
-	for (int i = 0; i < cylinderIndices.size(); i++)
+	int topLeft;
+	int topRight;
+	int bottomLeft;
+	int bottomRight;
+	// quads
+	for (int i = 0; i < numSegments; i++)
 	{
-		if (i % 3 == 0)std::cout << "\n";
-		if (i % 6 == 0)std::cout << "\n";
-		std::cout << cylinderIndices[i] << " ";
+		topLeft = (i * 2 + 3) % (numSegments * 2);
+		bottomLeft = (i * 2 + 2) % (numSegments * 2);
+		topRight = i * 2 + 1;
+		bottomRight = i * 2;
+
+		std::cout << topLeft << " " << topRight<< " " << bottomLeft<< " " << bottomRight<< "\n";
+
+		indices.push_back(topLeft);
+		indices.push_back(bottomLeft);
+		indices.push_back(topRight);
+
+		indices.push_back(topRight);
+		indices.push_back(bottomLeft);
+		indices.push_back(bottomRight);
+
+
+
+		edgeIndices.push_back(topLeft);			// |   left edge
+		edgeIndices.push_back(bottomLeft);		// V
+
+		edgeMap[{topLeft, bottomLeft}] = new Edge();
+		edgeMap[{bottomLeft, topLeft}] = new Edge();
+
+
+		edgeIndices.push_back(topRight);		// <--
+		edgeIndices.push_back(topLeft);			// top edge	
+
+		edgeMap[{topRight, topLeft }] = new Edge();
+		edgeMap[{topLeft, topRight}] = new Edge();
+
+
+		edgeIndices.push_back(bottomRight);			//  bottom edge
+		edgeIndices.push_back(bottomLeft);			//  <--
+
+		edgeMap[{bottomRight, bottomLeft}] = new Edge();
+		edgeMap[{bottomLeft, bottomRight }] = new Edge();
 	}
+
+
+
+	// circles
+	for (int i = 0; i < numSegments - 2; i++)
+	{
+		//// top cap
+		indices.push_back((i + 2) * 2 + 1);			 // left most
+		indices.push_back((i + 1) * 2 + 1);			 // middle
+		indices.push_back(1);						 // anchor
+
+
+		// bottom cap
+		indices.push_back((i + 1) * 2);				 // middle
+		indices.push_back((i + 2) * 2);				 // left most
+		indices.push_back(0);						 // anchor
+
+
+	}
+
+	//std::cout << "\n NEW  OBJECT\n";
+	//for (int i = 0; i < indices.size(); i++)
+	//{
+	//	if (i % 3 == 0)std::cout << "\n";
+	//	if (i % 6 == 0)std::cout << "\n";
+	//	//if (i == 54)std::cout << "*";
+	//	std::cout << indices[i] << " ";
+	//}
+	//std::cout << "\n\n size of vector: " << indices.size() << " map size = " << edgeMap.size();
+
+	Face* top = new Face();
+	Face* bottom = new Face();
+
+	for (auto x : edgeMap)
+	{
+		if (x.second)
+		{
+			std::cout << "\nFollowing edge HAS an edge!!!! " << x.first.first << " --> " << x.first.second;
+			continue;
+		}
+		else std::cout << "\nFollowing edge doesnt have an EDGE!!!! " << x.first.first << " --> " << x.first.second;
+		/*if (x.second->pair)
+			continue;
+
+		std::cout << "\nFollowing edge has no pair " << x.first.first << " --> " << x.first.second;*/
+	}
+
+	for (int i = 0;i < indices.size();i += 6)
+	{
+		
+
+
+		// quads
+		if (i < 6 * numSegments)
+		{
+
+			Face* face = new Face();
+
+			Edge* e1 = edgeMap[{indices[i], indices[i + 1]}];
+			Edge* e2 = edgeMap[{indices[i + 1], indices[i + 5]}];
+			Edge* e3 = edgeMap[{indices[i + 5], indices[i + 2]}];
+			Edge* e4 = edgeMap[{indices[i + 2], indices[i]}];
+
+			if (e3==nullptr)
+				std::cout << "\n e3 " << indices[i + 5] << " " << indices[i + 2];
+
+			e1->tip = &(*vertices)[indices[i + 1]];
+			e2->tip = &(*vertices)[indices[i + 5]];
+			e3->tip = &(*vertices)[indices[i + 2]];
+			e4->tip = &(*vertices)[indices[i]];
+
+			e1->next = e2;
+			e2->next = e3;
+			e3->next = e4;
+			e4->next = e1;
+
+			e1->pair = edgeMap[{indices[i + 1], indices[i]}];
+			e2->pair = edgeMap[{indices[i + 5], indices[i + 1]}];
+			
+			e3->pair = edgeMap[{indices[i + 2], indices[i + 5] }]; // jebem ti mater 
+			e4->pair = edgeMap[{indices[i], indices[i + 2]}];
+
+			if (!e3->pair)
+				std::cout << "\n pair " << indices[i + 2] << " " << indices[i + 5];
+
+			e1->face = face;
+			e2->face = face;
+			e3->face = face;
+			e4->face = face;
+
+			face->edge = e1;
+
+		}
+		else
+		{
+			// top circle 
+			Edge* e1 = edgeMap[{indices[i], indices[i + 1]}];
+
+
+			(*vertices)[indices[i]].edge = e1;
+
+			e1->tip = &(*vertices)[indices[i + 1]];
+			if (i == 6 * numSegments)
+				e1->next = edgeMap[{indices[i + 1], indices[i + 2]}];
+			else e1->next = edgeMap[{indices[i + 1], indices[i - 5]}];
+			e1->pair = edgeMap[{indices[i + 1], indices[i]}];
+			e1->face = top;
+
+			// bottom circle
+			e1 = edgeMap[{indices[i + 3], indices[i + 4]}];
+
+			(*vertices)[indices[i + 3]].edge = e1;
+
+			e1->tip = &(*vertices)[indices[i + 4]];
+			if (i == indices.size() - 6)
+			{
+				e1->next = edgeMap[{indices[indices.size() - 2], 0}];
+				//std::cout << " \n\n Edge " << indices[i + 3] << " " << indices[i + 4] << " .next" << indices.size() - 2 << " 0\n";
+			}
+			if (i != 6 * numSegments)
+			{
+				edgeMap[{indices[i - 3], indices[i - 2]}]->next = e1;
+				
+			}
+			e1->pair = edgeMap[{indices[i + 4], indices[i + 3]}];
+			e1->face = bottom;
+
+		}
+
+		if (edgeMap[{0, 1}]->pair)
+		{
+			std::cout << "\n\n its there  in iteration " << i;
+		}
+		else std::cout << "\n\n its MISSING  in iteration " << i;
+	}
+
+	// finishing up the top circle
+	Edge* e31 = edgeMap[{3, 1}];
+	Edge* e1last = edgeMap[{1, vertices->size() - 1}];
+
+
+	(*vertices)[3].edge = e31;
+
+	e31->tip = &(*vertices)[1];
+	e31->next = e1last;
+	e31->pair = edgeMap[{1, 3}];
+	e31->face = top;
+
+
+	(*vertices)[1].edge = e1last;
+
+	e1last->tip = &(*vertices)[vertices->size() - 1];
+	e1last->next = edgeMap[{vertices->size() - 1, vertices->size() - 3}];
+	e1last->pair = edgeMap[{vertices->size() - 1, 1}];
+	e1last->face = top;
+
+	top->edge = e1last;
+
+	// finishing up the bottom circle
+
+	Edge* e02 = edgeMap[{0, 2}];
+	Edge* elast0 = edgeMap[{vertices->size() - 2, 0}];
+
+	(*vertices)[0].edge = e02;
+
+	e02->tip = &(*vertices)[2];
+	e02->next = edgeMap[{2, 4}];
+	e02->pair = edgeMap[{2, 0}];
+	e02->face = bottom;
+
+
+	(*vertices)[vertices->size() - 2].edge = elast0;
+
+	elast0->tip = &(*vertices)[0];
+	elast0->next = e02;
+	elast0->pair = edgeMap[{0, vertices->size() - 2}];
+	elast0->face = bottom;
+
+	bottom->edge = elast0;
+
+
+	//std::cout << "\n NEW  OBJECT\n";
+	//for (int i = 0; i < indices.size(); i++)
+	//{
+	//	if (i % 3 == 0)std::cout << "\n";
+	//	if (i % 6 == 0)std::cout << "\n";
+	//	if (i == 54)std::cout << "*";
+	//	std::cout << indices[i] << " ";
+	//}
+	//std::cout << "\n\n size of vector: " << indices.size() << " map size = " << edgeMap.size();
+
+	for (auto x : edgeMap)
+	{
+		if (!x.second)
+		{
+			std::cout << "\nFollowing edge has no EDGE!!!! " << x.first.first << " --> " << x.first.second;
+			continue;
+		}
+		if (x.second->pair)
+			continue;
+
+		std::cout << "\nFollowing edge has no pair " << x.first.first << " --> " << x.first.second;
+	}
+
 
 	new Mesh(
 		"Cylinder",
-		cylinderVertices,
-		cylinderIndices
+		vertices,
+		indices,
+		edgeIndices
 	);
 };
 
 void addCone(int numSegments, float height, float radius)
 {
-	std::vector<Vertex> coneVertices;
-	std::vector<GLuint> coneIndices;
+	std::vector<Vertex>* vertices = new std::vector<Vertex>();
+	std::vector<GLuint> indices;
+	std::vector<GLuint> edgeIndices;
+
+	std::map<std::pair<int, int>, Edge*> edgeMap;
 
 	float angleStep = 2.0f * PI / numSegments;
 	float angle, x, z;
-	// Base circle vertices
+	height /= 2;
+
 	for (int i = 0; i < numSegments; ++i) {
 		angle = angleStep * float(i);
 		x = cos(angle) * radius;
 		z = sin(angle) * radius;
 
-		coneVertices.push_back(Vertex{
-			glm::vec3(x, 0.0f, z),    // Position
-			glm::normalize(glm::vec3(x,0.0f,z))  // Normal
+		vertices->push_back(Vertex{
+			glm::vec3(x, -height, z),
+			glm::normalize(glm::vec3(x,height,z))
 			});
 	}
 
-	// Apex vertex (top point of the cone)
-	glm::vec3 apexPos = glm::vec3(0.0f, height, 0.0f);  // Apex position
-	coneVertices.push_back(Vertex{
-		apexPos,   // Position
-		glm::normalize(apexPos)  // Normal
+	// top vertex
+	vertices->push_back(Vertex{
+		glm::vec3(0.0f, height, 0.0f),
+		glm::normalize(glm::vec3(0.0f, height, 0.0f))
 		});
 
-	// Create the side faces of the cone
-	for (int i = 0; i < numSegments; ++i) {
-		// Side triangles (apex and base vertices)
-		coneIndices.push_back(coneVertices.size() - 1); // Apex
-		coneIndices.push_back((i + 1) % numSegments);   // Next base vertex
-		coneIndices.push_back(i);                       // Current base vertex
+	// Tris
+	int topVert = vertices->size() - 1;
+	for (int i = 0; i < numSegments; i++) {
+
+		indices.push_back(topVert);					// top
+		indices.push_back((i + 1) % numSegments);   // left
+		indices.push_back(i);                       // right
+
+		edgeIndices.push_back(topVert);
+		edgeIndices.push_back(i);
+
+		edgeMap[{topVert, i}] = new Edge(); // vertical edges
+		edgeMap[{i, topVert}] = new Edge();
+
+		edgeIndices.push_back((i + 1) % numSegments);
+		edgeIndices.push_back(i);
+
+		edgeMap[{(i + 1) % numSegments, i}] = new Edge(); // base edges
+		edgeMap[{i, (i + 1) % numSegments}] = new Edge();
 	}
 
-	// Create the bottom cap (without center vertex)
+	// bottom circle
 	for (int i = 0; i < numSegments - 2; ++i) {
-		coneIndices.push_back(0);              // First base vertex (anchor)
-		coneIndices.push_back(i + 2);          // Next base vertex
-		coneIndices.push_back(i + 1);          // Current base vertex
+		indices.push_back(i + 1);          // middle
+		indices.push_back(i + 2);          // left most
+		indices.push_back(0);              // anchor
 	}
 
-	std::cout << "\n NEW  OBJECT\n";
-	for (int i = 0; i < coneIndices.size(); i++)
+	(*vertices)[vertices->size() - 1].edge = edgeMap[{vertices->size() - 1, 1}];
+
+	Face* bottom = new Face();
+	for (int i = 0;i < indices.size();i += 3)
+	{
+		if (i < numSegments * 3)
+		{
+			Face* face = new Face();
+			Edge* e1 = edgeMap[{indices[i], indices[i + 1]}];
+			Edge* e2 = edgeMap[{indices[i + 1], indices[i + 2]}];
+			Edge* e3 = edgeMap[{indices[i + 2], indices[i]}];
+
+			(*vertices)[indices[i + 1]].edge = e2;
+
+			e1->tip = &(*vertices)[indices[i + 1]];
+			e2->tip = &(*vertices)[indices[i + 2]];
+			e3->tip = &(*vertices)[indices[i]];
+
+			e1->next = e2;
+			e2->next = e3;
+			e3->next = e1;
+
+			e1->pair = edgeMap[{indices[i + 1], indices[i]}];
+			e2->pair = edgeMap[{indices[i + 2], indices[i + 1]}];
+			e3->pair = edgeMap[{indices[i], indices[i + 2]}];
+
+			e1->face = face;
+			e2->face = face;
+			e3->face = face;
+
+			face->edge = e1;
+
+		}
+		else
+		{
+			// bottom circle
+			Edge* e1 = edgeMap[{indices[i], indices[i + 1]}];
+
+			//(*vertices)[indices[i]].edge = e1;
+
+			e1->tip = &(*vertices)[indices[i + 1]];
+			if (i == indices.size() - 3)
+				e1->next = edgeMap[{indices[indices.size() - 2], 0}];
+
+			if (i != 3 * numSegments)
+				edgeMap[{indices[i - 3], indices[i - 2]}]->next = e1;
+			e1->pair = edgeMap[{indices[i + 1], indices[i]}];
+			e1->face = bottom;
+		}
+	}
+	//finishing the circle
+	Edge* elast0 = edgeMap[{vertices->size() - 2, 0}];
+	Edge* e01 = edgeMap[{0, 1}];
+
+	elast0->tip = &(*vertices)[0];
+	elast0->next = e01;
+	elast0->pair = edgeMap[{0, vertices->size() - 2}];
+	elast0->face = bottom;
+
+	e01->tip = &(*vertices)[1];
+	e01->next = edgeMap[{1, 2}];
+	e01->pair = edgeMap[{1, 0}];
+	e01->face = bottom;
+
+	bottom->edge = e01;
+
+	/*std::cout << "\n NEW  OBJECT\n";
+	for (int i = 0; i < indices.size(); i++)
 	{
 		if (i % 3 == 0)std::cout << "\n";
 		if (i % 6 == 0)std::cout << "\n";
-		std::cout << coneIndices[i] << " ";
-	}
+		std::cout << indices[i] << " ";
+	}*/
+
 	new Mesh(
 		"Cone",
-		coneVertices,
-		coneIndices
+		vertices,
+		indices,
+		edgeIndices
 	);
 };
 
-void addDoughnut(int numSegmentsU, int numSegmentsV,
-	float majorRadius, float minorRadius)
+void addDoughnut(int majorSegments, int minorSegments, float majorRadius, float minorRadius)
 {
-	std::vector<Vertex> torusVertices;
-	std::vector<GLuint> torusIndices;
+	std::vector<Vertex>* vertices = new std::vector<Vertex>();
+	std::vector<GLuint> indices;
+	std::vector<GLuint> edgeIndices;
 
-	float uStep = 2 * PI / numSegmentsU;
-	float vStep = 2 * PI / numSegmentsV;
-
-	float u, cosU, sinU;
-	float v, cosV, sinV;
 	float x, y, z;
+	int topLeft, topRight, bottomLeft, bottomRight;
 
-	// Generate vertices for the torus
-	for (int i = 0; i <= numSegmentsU; ++i) {
-		u = uStep * float(i);
-		cosU = cos(u);
-		sinU = sin(u);
+	float majorStep = 2 * PI / majorSegments;
+	float minorStep = 2 * PI / minorSegments;
 
-		for (int j = 0; j <= numSegmentsV; ++j) {
-			v = vStep * float(j);
-			cosV = cos(v);
-			sinV = sin(v);
+	float dirX, dirZ;
 
-			// Calculate the vertex position
-			x = (majorRadius + minorRadius * cosV) * cosU;
-			y = minorRadius * sinV;
-			z = (majorRadius + minorRadius * cosV) * sinU;
+	std::map < std::pair<int, int>, Edge* > edgeMap;
 
-			// Normal for the torus (pointing outwards)
-			glm::vec3 normal = glm::normalize(glm::vec3(cosU * cosV, sinV, sinU * cosV));
+	for (int i = 0;i < majorSegments;i++)
+	{
+		dirX = cosf(majorStep * i);
+		dirZ = sinf(majorStep * i);
 
-			// UV coordinates
-			glm::vec2 uv = glm::vec2(float(i) / float(numSegmentsU), float(j) / float(numSegmentsV));
+		for (int j = 0;j < minorSegments;j++)
+		{
+			y = minorRadius * sinf(minorStep * j);
 
-			// Add the vertex
-			torusVertices.push_back(Vertex{
-				glm::vec3(x, y, z),   // Position
-				normal             // Normal
-				});
+			x = (majorRadius + minorRadius * cosf(minorStep * j)) * dirX; // glup sam za medalje ... scalar * dirVector ...
+			z = (majorRadius + minorRadius * cosf(minorStep * j)) * dirZ; // x is found throught front view (XY/ZY plane) .. z is found through top view (XZ plane)
+
+
+
+			vertices->push_back(Vertex{ glm::vec3(x,y,z),glm::normalize(glm::vec3(x,y,z)) });
+
+			bottomRight = i * minorSegments + j;
+			topRight = (bottomRight + 1) % (minorSegments * majorSegments);
+			bottomLeft = ((i + 1) % majorSegments) * minorSegments + j;
+			topLeft = (bottomLeft + 1) % (minorSegments * majorSegments);
+
+
+			if (j == minorSegments - 1)
+			{
+				topRight = i * minorSegments;
+				topLeft = (i + 1) % majorSegments * minorSegments;
+			}
+
+			indices.push_back(topLeft);
+			indices.push_back(bottomLeft);
+			indices.push_back(topRight);
+
+			indices.push_back(topRight);
+			indices.push_back(bottomLeft);
+			indices.push_back(bottomRight);
+
+			edgeIndices.push_back(bottomRight);
+			edgeIndices.push_back(topRight);
+
+			edgeMap[{bottomRight, topRight}] = new Edge();
+			edgeMap[{topRight, bottomRight }] = new Edge();
+
+			edgeIndices.push_back(topRight);
+			edgeIndices.push_back(topLeft);
+
+			edgeMap[{topLeft, topRight}] = new Edge();
+			edgeMap[{topRight, topLeft }] = new Edge();
+
+
 		}
+
 	}
-
-	// Generate indices for the torus
-	for (int i = 0; i < numSegmentsU; ++i) {
-		for (int j = 0; j < numSegmentsV; ++j) {
-			int first = i * (numSegmentsV + 1) + j;
-			int second = first + numSegmentsV + 1;
-
-			// Two triangles per quad
-			torusIndices.push_back(first);
-			torusIndices.push_back(second);
-			torusIndices.push_back(first + 1);
-
-			torusIndices.push_back(second);
-			torusIndices.push_back(second + 1);
-			torusIndices.push_back(first + 1);
-		}
-	}
-	std::cout << "\n NEW  OBJECT\n";
-	for (int i = 0; i < torusIndices.size(); i++)
+	/*std::cout << "\n NEW  OBJECT\n";
+	for (int i = 0; i < indices.size(); i++)
 	{
 		if (i % 3 == 0)std::cout << "\n";
 		if (i % 6 == 0)std::cout << "\n";
-		std::cout << torusIndices[i] << " ";
+		std::cout << indices[i] << " ";
 	}
+	std::cout << "number of indices " << edgeMap.size();*/
+	for (int i = 0;i < indices.size();i += 6)
+	{
+		Face* face = new Face();
+
+		Edge* e1 = edgeMap[{indices[i], indices[i + 1]}];
+		Edge* e2 = edgeMap[{indices[i + 1], indices[i + 5]}];
+		Edge* e3 = edgeMap[{indices[i + 5], indices[i + 2]}];
+		Edge* e4 = edgeMap[{indices[i + 2], indices[i]}];
+
+		(*vertices)[indices[i]].edge = e1;
+
+		e1->tip = &(*vertices)[indices[i + 1]];
+		e2->tip = &(*vertices)[indices[i + 5]];
+		e3->tip = &(*vertices)[indices[i + 2]];
+		e4->tip = &(*vertices)[indices[i]];
+
+		e1->next = e2;
+		e2->next = e3;
+		e3->next = e4;
+		e4->next = e1;
+
+		e1->pair = edgeMap[{indices[i + 1], indices[i]}];
+		e2->pair = edgeMap[{indices[i + 5], indices[i + 1]}];
+		e3->pair = edgeMap[{indices[i + 2], indices[i + 5]}];
+		e4->pair = edgeMap[{indices[i], indices[i + 2]}];
+
+		e1->face = face;
+		e2->face = face;
+		e3->face = face;
+		e4->face = face;
+
+		face->edge = e4;
+
+	}
+
 	new Mesh(
 		"Doughnut",
-		torusVertices,
-		torusIndices
+		vertices,
+		indices,
+		edgeIndices
 	);
 };

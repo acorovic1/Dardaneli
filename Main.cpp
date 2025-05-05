@@ -76,7 +76,7 @@ int main() {
 	glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
 	if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
 	{
-		std::cout << "Debug context enabled." << std::endl;
+		std::cout << "\n\nDebug context enabled." << std::endl;
 	}
 	else
 	{
@@ -89,6 +89,10 @@ int main() {
 	glDebugMessageCallback(glDebugOutput, nullptr);
 	const GLubyte* version = glGetString(GL_VERSION);
 	std::cout << "OpenGL Version: " << version << std::endl;
+
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
 
 	while (!window.ShouldClose()) {
 		crntTime = glfwGetTime();

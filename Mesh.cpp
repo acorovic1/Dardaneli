@@ -2,7 +2,7 @@
 #include "ObjectModeBVH.h"
 #include "EditModeBVH.h"
 
-Mesh::Mesh(std::string&& name, std::vector <Vertex>& vertices,
+Mesh::Mesh(std::string&& name, std::vector <Vertex>* vertices,
 	std::vector <GLuint>& indices, const std::vector<GLuint>& edgeIndices, const  std::vector <Texture>& textures) :Object(name) {
 	Mesh::vertices = vertices;
 	Mesh::indices = indices;
@@ -10,7 +10,7 @@ Mesh::Mesh(std::string&& name, std::vector <Vertex>& vertices,
 	Mesh::textures = textures;
 
 	VAO.Bind();
-	VBO.bufferData(Mesh::vertices);
+	VBO.bufferData(*Mesh::vertices);
 	ebo.bufferData(Mesh::indices);
 	edgeEBO.bufferData(Mesh::edgeIndices);
 
@@ -28,17 +28,59 @@ Mesh::Mesh(std::string&& name, std::vector <Vertex>& vertices,
 
 Mesh::~Mesh() {}
 
+std::vector<Face*> Mesh::getFaces()
+{
+	std::unordered_set<Face*> faceSet;
+
+	for (auto& x : *vertices)
+	{
+		for (auto y : x.getAdjecentFaces())
+			faceSet.insert(y);
+
+	}
+
+	return std::vector<Face*>(faceSet.begin(), faceSet.end());
+
+};
+std::vector<Edge*> Mesh::getEdges()
+{
+	std::vector<Edge*> edges;
+	for (int i = 0;i < edgeIndices.size();i += 2)
+	{
+		Edge* arbitraryEdge = (*vertices)[edgeIndices[i]].edge;
+		Edge* temp = arbitraryEdge;
+		if (temp->tip != &(*vertices)[edgeIndices[i + 1]])
+			while (temp->tip != &(*vertices)[edgeIndices[i]] && temp->next->tip != &(*vertices)[edgeIndices[i + 1]])
+			{
+				if (temp->next == arbitraryEdge)
+				{
+					temp = temp->pair;
+					arbitraryEdge = temp;
+				}
+
+				temp = temp->next;
+
+				// if its the same edge just different pair
+			/*	if (temp->tip != &(*vertices)[edgeIndices[i + 1]])
+					temp = temp->next->pair;*/
+			}
+		edges.push_back(temp->next);
+	}
+
+	return edges;
+};
+
 GLuint Mesh::extrudeVertex(GLuint vertex)
 {
-	this->addVertex(vertices[vertex]); // this duplicates the vertex
+	this->addVertex((*vertices)[vertex]); // this duplicates the vertex
 	// recalculate normals potentialy
 
 	edgeIndices.push_back(vertex);				// makes a new edge
-	edgeIndices.push_back(vertices.size() - 1);
+	edgeIndices.push_back(vertices->size() - 1);
 
 	edgeEBO.bufferData(edgeIndices);			// updates the edge buffer
 
-	return vertices.size() - 1;
+	return vertices->size() - 1;
 }
 
 void Mesh::Draw(Shader& shader, Camera& camera, GLenum mode) {
@@ -82,7 +124,7 @@ void Mesh::Draw(Shader& shader, Camera& camera, GLenum mode) {
 	else if (mode == GL_POINTS)
 	{
 		VBO.Bind();
-		glDrawArrays(mode, 0, vertices.size());
+		glDrawArrays(mode, 0, vertices->size());
 	}
 
 	VAO.Unbind();

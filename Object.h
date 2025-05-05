@@ -24,7 +24,7 @@ protected:
 	glm::mat4 model;
 
 	std::string name;
-	std::vector<Vertex>vertices;
+	std::vector<Vertex>*vertices;
 	std::vector<GLuint>indices;
 
 public:

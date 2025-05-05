@@ -13,7 +13,7 @@ void Renderer::Init() {
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 	//glStencilFunc(GL_ALWAYS, 1, 0xFF);
 
-	std::cout << "NUMBER OF SHADERS " << shaderSingleton->getNumberOfShaders();
+	//std::cout << "NUMBER OF SHADERS " << shaderSingleton->getNumberOfShaders();
 }
 
 void Renderer::Render(Window& window, MyGUI& gui)
@@ -37,13 +37,16 @@ void Renderer::Render(Window& window, MyGUI& gui)
 				glStencilFunc(GL_ALWAYS, 1, 0xFF);
 				glStencilMask(0xFF);
 				glPointSize(5.0f);
-				object->Draw(shaderSingleton->getShader("Basic"), camera);
+
+				//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+				object->Draw(shaderSingleton->getShader("Basic"), camera,GL_LINES);
 
 				glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 				glStencilMask(0x00);
 				glDisable(GL_DEPTH_TEST);
 				if (i == selectedObjects[selectedObjects.size() - 1])
-					object->Draw(shaderSingleton->getShader("ActiveSelect"), camera);//OUTLINE
+					object->Draw(shaderSingleton->getShader("ActiveSelect"), camera,GL_LINES);//OUTLINE
 				else
 					object->Draw(shaderSingleton->getShader("Select"), camera);//OUTLINE
 
