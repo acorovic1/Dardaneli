@@ -1,6 +1,6 @@
 #include "Mesh.h"
 #include "ObjectModeBVH.h"
-#include "EditModeBVH.h"
+#include "VertexBVH.h"
 
 Mesh::Mesh(std::string&& name, std::vector <Vertex>* vertices,
 	std::vector <GLuint>& indices, const std::vector<GLuint>& edgeIndices, const  std::vector <Texture>& textures) :Object(name) {
@@ -155,3 +155,5 @@ void Mesh::Scale(float x, float y, float z) {
 std::vector<int>& Mesh::getSelectedVertices() {
 	return vertexIndices;
 }
+
+

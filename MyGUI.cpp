@@ -86,14 +86,31 @@ void MyGUI::DrawUI()
 
 		if (edit)
 		{
-			editModeBVHSingleton->BuildBottomUp(*objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]));
+			Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]));
+			VertexBVHSingleton->BuildBottomUp(*objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]));
+			EdgeBVHSingleton->BuildBottomUp(*mesh);
 			std::cout << "built";
 			edit = false;
 		}
 
 		if (BVHTree)
-			//editModeBVHSingleton->Draw(*cameraSingleton->getCamera(0),shaderSingleton->getShader("AABB"),eBVHSubd);
-			editModeBVHSingleton->DrawLeaves(editModeBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
+		{
+			//VertexBVHSingleton->Draw(*cameraSingleton->getCamera(0),shaderSingleton->getShader("AABB"),eBVHSubd);
+			if(app->selectMode==SelectMode::VERTEX)
+			{
+				VertexBVHSingleton->DrawLeaves(VertexBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
+				
+			}
+			if(app->selectMode==SelectMode::EDGE)
+			{
+				EdgeBVHSingleton->DrawLeaves(EdgeBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
+				
+			}
+			//if(app->selectMode==SelectMode::FACE)EdgeBVHSingleton->DrawLeaves(VertexBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
+			
+		}
+
+
 		auto& vertexIndicesTemp = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]))->getSelectedVertices();
 		if (vertexIndicesTemp.size())
 			(ImGui::InputInt("Index", &vertexIndicesTemp[vertexIndicesTemp.size() - 1]));
@@ -642,7 +659,7 @@ void MyGUI::Gizmos()
 					objectSingleton->getObject(x)->Scale(delta[0][0], delta[1][1], delta[2][2]);
 			}
 		objectBVHSingleton->Refit();
-		//editModeBVHSingleton->Refit();
+		//VertexBVHSingleton->Refit();
 	}
 	previousTransform = transform;
 }
@@ -681,7 +698,7 @@ void MyGUI::VertexTransform()
 		app->vertexPrevPosition[1] = app->vertexPosition[1];
 		app->vertexPrevPosition[2] = app->vertexPosition[2];
 		//
-		editModeBVHSingleton->Refit(*activeObject);
+		VertexBVHSingleton->Refit(*activeObject);
 	}
 }
 

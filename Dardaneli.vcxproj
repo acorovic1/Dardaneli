@@ -150,7 +150,8 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DrawableAABB.cpp" />
     <ClCompile Include="EBO.cpp" />
-    <ClCompile Include="EditModeBVH.cpp" />
+    <ClCompile Include="EdgeBVH.cpp" />
+    <ClCompile Include="VertexBVH.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="ImGUIZMO\GraphEditor.cpp" />
     <ClCompile Include="ImGUIZMO\ImCurveEdit.cpp" />
@@ -209,7 +210,8 @@
     <ClInclude Include="DrawableAABB.h" />
     <ClInclude Include="EBO.h" />
     <ClInclude Include="Edge.h" />
-    <ClInclude Include="EditModeBVH.h" />
+    <ClInclude Include="EdgeBVH.h" />
+    <ClInclude Include="VertexBVH.h" />
     <ClInclude Include="Face.h" />
     <ClInclude Include="ImGUIZMO\GraphEditor.h" />
     <ClInclude Include="ImGUIZMO\ImCurveEdit.h" />

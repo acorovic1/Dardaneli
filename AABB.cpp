@@ -9,6 +9,24 @@ AABB::AABB(glm::vec3 min, glm::vec3 max)
 
 	aabb = DrawableAABB(min, max);
 }
+AABB::AABB(Edge* e)
+{
+	auto a = e->tip->getPositionCopy();
+	auto b = e->pair->tip->getPositionCopy();
+	std::cout << "Vertex pos: ";
+	std::cout << a.x << " " << a.y << " " << a.z << "\n";
+
+
+	min.x = ffmin(a.x, b.x);
+	min.y = ffmin(a.y, b.y);
+	min.z = ffmin(a.z, b.z);
+
+	max.x = ffmax(a.x, b.x);
+	max.y = ffmax(a.y, b.y);
+	max.z = ffmax(a.z, b.z);
+
+	aabb = DrawableAABB(min, max);
+}
 AABB::AABB(Object& object) {
 	for (const auto& a : object.getVerticesReference()) {
 		glm::vec4 x = object.getModelReference() * glm::vec4(a.getPositionCopy(), 1.0f);

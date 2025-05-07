@@ -6,7 +6,8 @@ C:\Users\adnan\Desktop\Dardaneli\CamaraManager.cpp;C:\Users\adnan\Desktop\Dardan
 C:\Users\adnan\Desktop\Dardaneli\Camera.cpp;C:\Users\adnan\Desktop\Dardaneli\Dardaneli\x64\Debug\Camera.obj
 C:\Users\adnan\Desktop\Dardaneli\DrawableAABB.cpp;C:\Users\adnan\Desktop\Dardaneli\Dardaneli\x64\Debug\DrawableAABB.obj
 C:\Users\adnan\Desktop\Dardaneli\EBO.cpp;C:\Users\adnan\Desktop\Dardaneli\Dardaneli\x64\Debug\EBO.obj
-C:\Users\adnan\Desktop\Dardaneli\EditModeBVH.cpp;C:\Users\adnan\Desktop\Dardaneli\Dardaneli\x64\Debug\EditModeBVH.obj
+C:\Users\adnan\Desktop\Dardaneli\EdgeBVH.cpp;C:\Users\adnan\Desktop\Dardaneli\Dardaneli\x64\Debug\EdgeBVH.obj
+C:\Users\adnan\Desktop\Dardaneli\VertexBVH.cpp;C:\Users\adnan\Desktop\Dardaneli\Dardaneli\x64\Debug\VertexBVH.obj
 C:\Users\adnan\Desktop\Dardaneli\glad.c;C:\Users\adnan\Desktop\Dardaneli\Dardaneli\x64\Debug\glad.obj
 C:\Users\adnan\Desktop\Dardaneli\ImGUIZMO\GraphEditor.cpp;C:\Users\adnan\Desktop\Dardaneli\Dardaneli\x64\Debug\GraphEditor.obj
 C:\Users\adnan\Desktop\Dardaneli\ImGUIZMO\ImCurveEdit.cpp;C:\Users\adnan\Desktop\Dardaneli\Dardaneli\x64\Debug\ImCurveEdit.obj

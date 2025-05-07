@@ -159,7 +159,7 @@
     <ClCompile Include="ImGUIZMO\ImGuizmo.cpp">
       <Filter>Source Files\GUI\ImGUIZMO</Filter>
     </ClCompile>
-    <ClCompile Include="EditModeBVH.cpp">
+    <ClCompile Include="VertexBVH.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
     <ClCompile Include="MyGUI.cpp">
@@ -170,6 +170,9 @@
     </ClCompile>
     <ClCompile Include="WindowManager.cpp">
       <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="EdgeBVH.cpp">
+      <Filter>Source Files\Picking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -328,7 +331,7 @@
     <ClInclude Include="ImGUI\imstb_truetype.h">
       <Filter>Header Files\GUI\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="EditModeBVH.h">
+    <ClInclude Include="VertexBVH.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
     <ClInclude Include="Application.h">
@@ -345,6 +348,9 @@
     </ClInclude>
     <ClInclude Include="Face.h">
       <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="EdgeBVH.h">
+      <Filter>Header Files\Picking</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

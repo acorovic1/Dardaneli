@@ -33,4 +33,6 @@ public:
 	void Scale(float x, float y, float z)override;
 
 	std::vector<int>& getSelectedVertices(); //
+
+
 };

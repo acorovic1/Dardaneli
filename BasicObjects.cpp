@@ -574,8 +574,6 @@ void addCylinder(int numSegments, float height, float radius)
 		topRight = i * 2 + 1;
 		bottomRight = i * 2;
 
-		std::cout << topLeft << " " << topRight<< " " << bottomLeft<< " " << bottomRight<< "\n";
-
 		indices.push_back(topLeft);
 		indices.push_back(bottomLeft);
 		indices.push_back(topRight);
@@ -639,19 +637,6 @@ void addCylinder(int numSegments, float height, float radius)
 	Face* top = new Face();
 	Face* bottom = new Face();
 
-	for (auto x : edgeMap)
-	{
-		if (x.second)
-		{
-			std::cout << "\nFollowing edge HAS an edge!!!! " << x.first.first << " --> " << x.first.second;
-			continue;
-		}
-		else std::cout << "\nFollowing edge doesnt have an EDGE!!!! " << x.first.first << " --> " << x.first.second;
-		/*if (x.second->pair)
-			continue;
-
-		std::cout << "\nFollowing edge has no pair " << x.first.first << " --> " << x.first.second;*/
-	}
 
 	for (int i = 0;i < indices.size();i += 6)
 	{
@@ -687,9 +672,6 @@ void addCylinder(int numSegments, float height, float radius)
 			
 			e3->pair = edgeMap[{indices[i + 2], indices[i + 5] }]; // jebem ti mater 
 			e4->pair = edgeMap[{indices[i], indices[i + 2]}];
-
-			if (!e3->pair)
-				std::cout << "\n pair " << indices[i + 2] << " " << indices[i + 5];
 
 			e1->face = face;
 			e2->face = face;
@@ -734,12 +716,6 @@ void addCylinder(int numSegments, float height, float radius)
 			e1->face = bottom;
 
 		}
-
-		if (edgeMap[{0, 1}]->pair)
-		{
-			std::cout << "\n\n its there  in iteration " << i;
-		}
-		else std::cout << "\n\n its MISSING  in iteration " << i;
 	}
 
 	// finishing up the top circle
@@ -797,18 +773,7 @@ void addCylinder(int numSegments, float height, float radius)
 	//}
 	//std::cout << "\n\n size of vector: " << indices.size() << " map size = " << edgeMap.size();
 
-	for (auto x : edgeMap)
-	{
-		if (!x.second)
-		{
-			std::cout << "\nFollowing edge has no EDGE!!!! " << x.first.first << " --> " << x.first.second;
-			continue;
-		}
-		if (x.second->pair)
-			continue;
 
-		std::cout << "\nFollowing edge has no pair " << x.first.first << " --> " << x.first.second;
-	}
 
 
 	new Mesh(

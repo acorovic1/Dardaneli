@@ -1,10 +1,13 @@
 #include "BVHNode.h"
 
 BVHNode::BVHNode() :box(), left(nullptr), right(nullptr), index(-1) {}
-BVHNode::BVHNode(Object& object) :box(object), left(nullptr), right(nullptr), index(object.getIndex()) {}
-BVHNode::BVHNode(glm::vec3& vertex, int i) :box(vertex), left(nullptr), right(nullptr), index(i) {}
 
-BVHNode::BVHNode(BVHNode* a, BVHNode* b) :box(a->box, b->box), left(a), right(b), index(-1) {}
+BVHNode::BVHNode(Object& object) :box(object), left(nullptr), right(nullptr), index{ object.getIndex() } {}
+BVHNode::BVHNode(glm::vec3& vertex,unsigned int i) :box(vertex), left(nullptr), right(nullptr), index{i} {}
+BVHNode::BVHNode(Edge* e,GLuint start,GLuint end):box(e),left(nullptr),right(nullptr),index{start,end}{}
+
+
+BVHNode::BVHNode(BVHNode* a, BVHNode* b) :box(a->box, b->box), left(a), right(b), index{std::numeric_limits<unsigned int>::max()} {}
 
 bool BVHNode::Hit(const Ray& ray, std::vector<int>& index)
 {
@@ -15,19 +18,20 @@ bool BVHNode::Hit(const Ray& ray, std::vector<int>& index)
 	if (this->left)
 		if (this->left->box.intersectRayAABB(ray))
 		{
-			index.push_back(this->index);
+			index.insert(index.end(), this->index.begin(), this->index.end());
+			
 			this->left->Hit(ray, index);
 		}
-	if (this->right)//
+	if (this->right)
 		if (this->right->box.intersectRayAABB(ray))
 		{
-			index.push_back(this->index);
+			index.insert(index.end(), this->index.begin(), this->index.end());
 			this->right->Hit(ray, index);
 		}
 
 	if (!this->left && !this->right)  // stavljeno da pokrije slucaj kada je samo jedan objekat na sceni...
 		if (this->box.intersectRayAABB(ray)) //znaci bvh root je upravo taj objekat a on sam nema djece tako da left i right su nullptr
-			index.push_back(this->index);
+			index.push_back(this->index[0]);
 	if (!index.size())index.push_back(-1);
 
 	return false;
@@ -37,7 +41,7 @@ void BVHNode::refitNode()
 {
 	if (!this->left && !this->right)
 	{
-		this->box = AABB(*objectSingleton->getObject(this->index));
+		this->box = AABB(*objectSingleton->getObject(this->index[0]));
 	}
 	else
 	{
@@ -53,9 +57,9 @@ void BVHNode::refitNode()
 }
 void BVHNode::refitNodeVertex(Object& object)
 {
-	if (!this->left && !this->right)
+	if (!this->left && !this->right) // if its a leaf node
 	{
-		this->box = AABB(object.getVertexXmodel(this->index));
+		this->box = AABB(object.getVertexXmodel(this->index[0]));
 	}
 	else
 	{
@@ -69,7 +73,24 @@ void BVHNode::refitNodeVertex(Object& object)
 		else this->box = AABB(this->right->box);
 	}
 }
+void BVHNode::refitNodeEdge(Mesh& mesh)
+{
+	if (!this->left && !this->right)
+	{
+		this->box = AABB(mesh.getVertexXmodel(this->index[0]), mesh.getVertexXmodel(this->index[0]));
+	}
+	else
+	{
+		this->left->refitNodeEdge(mesh);
+		this->right->refitNodeEdge(mesh);
 
+		if (this->left && this->right)
+			this->box = AABB(this->left->box, this->right->box);
+		else if (this->left)
+			this->box = AABB(this->left->box);
+		else this->box = AABB(this->right->box);
+	}
+}
 void BVHNode::Draw(Camera& camera, Shader& shader) {
 	box.Draw(camera, shader);
 }

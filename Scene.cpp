@@ -21,7 +21,7 @@ void Scene::Init()
 
 
 	
-	addCylinder();
+	addCube();
 	
 	
 

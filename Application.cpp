@@ -214,7 +214,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		if (keys[GLFW_KEY_LEFT_ALT])return;
 		if (keys[GLFW_KEY_G])
 		{
-			editModeBVHSingleton->Refit(*mesh);
+			VertexBVHSingleton->Refit(*mesh);
 			keys[GLFW_KEY_G] = 0;
 			return;
 		}
@@ -222,14 +222,17 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		std::vector<int>& vertexIndices = mesh->getSelectedVertices();
 		std::vector<int> indexVec;
 
-		editModeBVHSingleton->getRoot()->Hit(camera->CreateRay(window), indexVec);
-
+		if (selectMode == SelectMode::VERTEX)
+			VertexBVHSingleton->getRoot()->Hit(camera->CreateRay(window), indexVec);
+		if(selectMode==SelectMode::EDGE)
+			EdgeBVHSingleton->getRoot()->Hit(camera->CreateRay(window), indexVec);
 		int index = -1;
 		if (indexVec.size() > 1) // if size == 1 it is a miss
 		{
 			indexVec.erase(std::remove(indexVec.begin(), indexVec.end(), -1), indexVec.end());
+			indexVec.erase(std::remove(indexVec.begin(), indexVec.end(), std::numeric_limits<unsigned int>::max()), indexVec.end());
 
-			if (indexVec.size())
+			if (indexVec.size()) // discards all the "hits" that are beyond the first one.. makes it so the ray "stops after the first hit"
 			{
 				index = indexVec[0];
 
@@ -357,7 +360,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		}
 		vertexIndices = temp;
 
-		editModeBVHSingleton->BuildBottomUp(*mesh);
+		VertexBVHSingleton->BuildBottomUp(*mesh);
 
 		std::cout << "extrude vertex";
 
