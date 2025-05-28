@@ -10,6 +10,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "Window.h"
+#include "FaceBVH.h"
 
 #define radian 180/3.14159265358979323846f
 #define epsilon 0.00001
@@ -24,7 +25,7 @@ class Application {
 	Application() {};
 
 	Mode mode = Mode::EDIT;
-	SelectMode selectMode = SelectMode::VERTEX;
+	SelectMode selectMode = SelectMode::FACE;
 
 	std::vector<int> objectIndices = std::vector<int>(1);
 

@@ -25,6 +25,7 @@ void EdgeBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 		startIndex =  std::find(vertices.begin(), vertices.end(), *edges[i]->pair->tip) - vertices.begin();
 		endIndex =  std::find(vertices.begin(), vertices.end(), *edges[i]->tip) - vertices.begin();
 		BVHNode* leaf = new BVHNode(edges[i],startIndex,endIndex);
+		//std::cout << i << " " << startIndex << " " << endIndex<<"		";
 		bvhNodes.push_back(leaf); 
 	}
 
@@ -65,10 +66,11 @@ void EdgeBVH::DrawLeaves(BVHNode* node, Camera& camera, Shader& shader)
 	if (!node->left && !node->right)
 	{
 		
-		std::cout <<" Hello\n";
+		
 		node->Draw(camera, shader);
 	}
 	else {
+		
 		DrawLeaves(node->left, camera, shader);
 		DrawLeaves(node->right, camera, shader);
 	}

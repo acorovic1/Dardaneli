@@ -3,11 +3,16 @@
 BVHNode::BVHNode() :box(), left(nullptr), right(nullptr), index(-1) {}
 
 BVHNode::BVHNode(Object& object) :box(object), left(nullptr), right(nullptr), index{ object.getIndex() } {}
-BVHNode::BVHNode(glm::vec3& vertex,unsigned int i) :box(vertex), left(nullptr), right(nullptr), index{i} {}
-BVHNode::BVHNode(Edge* e,GLuint start,GLuint end):box(e),left(nullptr),right(nullptr),index{start,end}{}
+BVHNode::BVHNode(glm::vec3& vertex, unsigned int i) :box(vertex), left(nullptr), right(nullptr), index{ i } {}
+BVHNode::BVHNode(Edge* e, GLuint start, GLuint end) :box(e), left(nullptr), right(nullptr), index{ start,end } {}
+
+BVHNode::BVHNode(Face* f, std::vector<int>& vec) :box(f), left(nullptr), right(nullptr)
+{
+	index.insert(index.end(), vec.begin(), vec.end());
+}
 
 
-BVHNode::BVHNode(BVHNode* a, BVHNode* b) :box(a->box, b->box), left(a), right(b), index{std::numeric_limits<unsigned int>::max()} {}
+BVHNode::BVHNode(BVHNode* a, BVHNode* b) :box(a->box, b->box), left(a), right(b), index{ std::numeric_limits<unsigned int>::max() } {}
 
 bool BVHNode::Hit(const Ray& ray, std::vector<int>& index)
 {
@@ -15,24 +20,21 @@ bool BVHNode::Hit(const Ray& ray, std::vector<int>& index)
 
 	// trenutno--> napraviti da ne ubacujem -1 u index vec samo listove.. i izbaciti erase iz application.cpp.. tada manuelno postaviti -1 ako je vector prazan
 
-	if (this->left)
-		if (this->left->box.intersectRayAABB(ray))
-		{
-			index.insert(index.end(), this->index.begin(), this->index.end());
-			
-			this->left->Hit(ray, index);
-		}
-	if (this->right)
-		if (this->right->box.intersectRayAABB(ray))
-		{
-			index.insert(index.end(), this->index.begin(), this->index.end());
-			this->right->Hit(ray, index);
-		}
+	// kako je lijepo biti glup
+	if (this->box.intersectRayAABB(ray))
+	{
+		if (this->index.size() > 2) // for face selection
+			index.push_back(this->index.size()); // this vector input represents the number of vertices of a face
 
-	if (!this->left && !this->right)  // stavljeno da pokrije slucaj kada je samo jedan objekat na sceni...
-		if (this->box.intersectRayAABB(ray)) //znaci bvh root je upravo taj objekat a on sam nema djece tako da left i right su nullptr
-			index.push_back(this->index[0]);
-	if (!index.size())index.push_back(-1);
+		index.insert(index.end(), this->index.begin(), this->index.end());
+
+		if (this->left)
+			this->left->Hit(ray, index);
+		if (this->right)
+			this->right->Hit(ray, index);
+	}
+
+	if (!index.size())index.push_back(-1); // miss
 
 	return false;
 }

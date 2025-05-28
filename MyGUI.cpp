@@ -89,6 +89,7 @@ void MyGUI::DrawUI()
 			Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]));
 			VertexBVHSingleton->BuildBottomUp(*objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]));
 			EdgeBVHSingleton->BuildBottomUp(*mesh);
+			FaceBVHSingleton->BuildBottomUp(*mesh);
 			std::cout << "built";
 			edit = false;
 		}
@@ -105,6 +106,11 @@ void MyGUI::DrawUI()
 			{
 				EdgeBVHSingleton->DrawLeaves(EdgeBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
 				
+			}
+			if (app->selectMode == SelectMode::FACE)
+			{
+				FaceBVHSingleton->DrawLeaves(FaceBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
+
 			}
 			//if(app->selectMode==SelectMode::FACE)EdgeBVHSingleton->DrawLeaves(VertexBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
 			

@@ -1,7 +1,6 @@
-﻿  AABB.cpp
-  EdgeBVH.cpp
-C:\Users\adnan\Desktop\Dardaneli\EdgeBVH.cpp(18,17): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\adnan\Desktop\Dardaneli\EdgeBVH.cpp(25,83): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-C:\Users\adnan\Desktop\Dardaneli\EdgeBVH.cpp(26,75): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-  Generating Code...
+﻿  Application.cpp
+C:\Users\adnan\Desktop\Dardaneli\Application.cpp(158,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\Application.cpp(159,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\Application.cpp(453,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\Application.cpp(454,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   Dardaneli.vcxproj -> C:\Users\adnan\Desktop\Dardaneli\x64\Debug\Dardaneli.exe

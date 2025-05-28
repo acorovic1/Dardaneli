@@ -45,30 +45,48 @@ std::vector<Face*> Mesh::getFaces()
 std::vector<Edge*> Mesh::getEdges()
 {
 	std::vector<Edge*> edges;
-	for (int i = 0;i < edgeIndices.size();i += 2)
+
+	for (int i = 0; i < edgeIndices.size(); i += 2)
 	{
-		Edge* arbitraryEdge = (*vertices)[edgeIndices[i]].edge;
-		Edge* temp = arbitraryEdge;
-		if (temp->tip != &(*vertices)[edgeIndices[i + 1]])
-			while (temp->tip != &(*vertices)[edgeIndices[i]] && temp->next->tip != &(*vertices)[edgeIndices[i + 1]])
-			{
-				if (temp->next == arbitraryEdge)
-				{
-					temp = temp->pair;
-					arbitraryEdge = temp;
-				}
+		Vertex* v_start = &(*vertices)[edgeIndices[i]];
+		Vertex* v_end = &(*vertices)[edgeIndices[i + 1]];
+		Edge* e = v_start->edge;
+		Edge* found = nullptr;
 
-				temp = temp->next;
+		if (!e) continue; // safety check
 
-				// if its the same edge just different pair
-			/*	if (temp->tip != &(*vertices)[edgeIndices[i + 1]])
-					temp = temp->next->pair;*/
+		Edge* start = e;
+		do {
+			if (e->tip == v_end) {
+				found = e;
+				break;
 			}
-		edges.push_back(temp->next);
+			e = e->pair ? e->pair->next : nullptr;
+		} while (e && e != start);
+
+
+		if (!found && v_end->edge) {
+			// Try in the reverse direction
+			e = v_end->edge;
+			start = e;
+			do {
+				if (e->tip == v_start) {
+					found = e->pair; // get the actual edge from v_start to v_end
+					break;
+				}
+				e = e->pair ? e->pair->next : nullptr;
+			} while (e && e != start);
+		}
+
+		if (found)
+			edges.push_back(found);
+		else
+			std::cerr << "Warning: Edge between " << edgeIndices[i] << " and " << edgeIndices[i + 1] << " not found in half-edge structure.\n";
 	}
 
 	return edges;
-};
+}
+
 
 GLuint Mesh::extrudeVertex(GLuint vertex)
 {

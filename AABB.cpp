@@ -1,4 +1,5 @@
 #include "AABB.h"
+#include "Face.h"
 
 AABB::AABB() { aabb = DrawableAABB(min, max); };
 AABB::AABB(glm::vec3 min, glm::vec3 max)
@@ -13,8 +14,6 @@ AABB::AABB(Edge* e)
 {
 	auto a = e->tip->getPositionCopy();
 	auto b = e->pair->tip->getPositionCopy();
-	std::cout << "Vertex pos: ";
-	std::cout << a.x << " " << a.y << " " << a.z << "\n";
 
 
 	min.x = ffmin(a.x, b.x);
@@ -24,6 +23,77 @@ AABB::AABB(Edge* e)
 	max.x = ffmax(a.x, b.x);
 	max.y = ffmax(a.y, b.y);
 	max.z = ffmax(a.z, b.z);
+
+	if (min.x == max.x) max.x += 0.1f;
+	else
+	{
+		min.x -= 0.1f;
+		max.x += 0.1f;
+	}
+
+	if (min.y == max.y) max.y += 0.1f;
+	else
+	{
+		min.y -= 0.1f;
+		max.y += 0.1f;
+	}
+
+	if (min.z == max.z) max.z += 0.1f;
+	else {
+		min.z -= 0.1f;
+		max.z += 0.1f;
+	}
+
+	//std::cout << "MIN - MAX pos: ";
+	//std::cout << min.x << " " << min.y << " " << min.z << "		-	 ";
+	//std::cout << max.x << " " << max.y << " " << max.z << "\n";
+
+
+	aabb = DrawableAABB(min, max);
+}
+AABB::AABB(Face* f)
+{
+	std::vector<Vertex*> vertices = f->getVertices();
+
+	auto it = std::min_element(vertices.begin(), vertices.end(), [](const Vertex* a, const Vertex* b) {return a->getPositionCopy().x < b->getPositionCopy().x;});
+	min.x = (**it).getPositionCopy().x;
+	it = std::min_element(vertices.begin(), vertices.end(), [](const Vertex* a, const Vertex* b) {return a->getPositionCopy().y < b->getPositionCopy().y;});
+	min.y = (**it).getPositionCopy().y;
+	it = std::min_element(vertices.begin(), vertices.end(), [](const Vertex* a, const Vertex* b) {return a->getPositionCopy().z < b->getPositionCopy().z;});
+	min.z = (**it).getPositionCopy().z;
+
+	it = std::max_element(vertices.begin(), vertices.end(), [](const Vertex* a, const Vertex* b) {return a->getPositionCopy().x  < b->getPositionCopy().x;});
+	max.x = (**it).getPositionCopy().x;
+	it = std::max_element(vertices.begin(), vertices.end(), [](const Vertex* a, const Vertex* b) {return a->getPositionCopy().y < b->getPositionCopy().y;});
+	max.y = (**it).getPositionCopy().y;
+	it = std::max_element(vertices.begin(), vertices.end(), [](const Vertex* a, const Vertex* b) {return a->getPositionCopy().z < b->getPositionCopy().z;});
+	max.z = (**it).getPositionCopy().z;
+
+	if (min.x == max.x) max.x += 0.1f;
+	else
+	{
+		min.x -= 0.1f;
+		max.x += 0.1f;
+	}
+
+	if (min.y == max.y) max.y += 0.1f;
+	else
+	{
+		min.y -= 0.1f;
+		max.y += 0.1f;
+	}
+
+	if (min.z == max.z) max.z += 0.1f;
+	else {
+		min.z -= 0.1f;
+		max.z += 0.1f;
+	}
+
+	
+
+	std::cout << "HOLA MIN - MAX pos: ";
+	std::cout << min.x << " " << min.y << " " << min.z << "		-	 ";
+	std::cout << max.x << " " << max.y << " " << max.z << "\n";
 
 	aabb = DrawableAABB(min, max);
 }
