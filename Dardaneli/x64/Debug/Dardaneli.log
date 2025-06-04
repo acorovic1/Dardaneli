@@ -1,11 +1,5 @@
-﻿  Mesh.cpp
-C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(102,41): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
-C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(102,41): warning C4267:         with
-C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(102,41): warning C4267:         [
-C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(102,41): warning C4267:             _Ty=GLuint
-C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(102,41): warning C4267:         ]
-C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(106,26): warning C4267: 'return': conversion from 'size_t' to 'GLuint', possible loss of data
-C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(140,36): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(145,40): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(150,39): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-  Dardaneli.vcxproj -> C:\Users\adnan\Desktop\Dardaneli\x64\Debug\Dardaneli.exe
+﻿  Renderer.cpp
+C:\Users\corov\OneDrive\Radna površina\Dardaneli\Renderer.cpp(30,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\corov\OneDrive\Radna površina\Dardaneli\Renderer.cpp(109,45): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\corov\OneDrive\Radna površina\Dardaneli\Renderer.cpp(151,56): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  Dardaneli.vcxproj -> C:\Users\corov\OneDrive\Radna površina\Dardaneli\x64\Debug\Dardaneli.exe

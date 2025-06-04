@@ -182,9 +182,10 @@ std::vector<int>& Mesh::getSelectedVertices() {
 std::vector<GLuint> Mesh::formTrianglesForDrawing()
 {
 	std::vector<GLuint> returnVec = std::vector<GLuint>();
-
+	//std::cout<<"\n";
 	for (int i = 0;i < selectedFaces.size();i += selectedFaces[i] + 1)
 	{
+		//std::cout << selectedFaces[i] << " ---- number of vertices of face\n";
 		if (selectedFaces[i] == 3)
 		{
 			returnVec.push_back(selectedFaces[i + 1]);
@@ -198,8 +199,8 @@ std::vector<GLuint> Mesh::formTrianglesForDrawing()
 			returnVec.push_back(selectedFaces[i + 3]);
 
 			returnVec.push_back(selectedFaces[i + 3]);
-			returnVec.push_back(selectedFaces[i + 2]);
 			returnVec.push_back(selectedFaces[i + 4]);
+			returnVec.push_back(selectedFaces[i + 1]);
 		}
 		else if (selectedFaces[i] > 4)
 		{

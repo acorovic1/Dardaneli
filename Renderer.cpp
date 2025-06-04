@@ -113,14 +113,15 @@ void Renderer::Render(Window& window, MyGUI& gui)
 						activeShader.setMat4(true, "model", x);
 						camera.CameraUniform(activeShader, "cameraMatrix");
 						glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, (void*)((edges.size() - 2) * sizeof(GLuint))); // draw orange
-
+						
 					}
 				}
 				else // SelectMode::FACE
 				{
 					auto selectedFaces = static_cast<Mesh*>(object)->formTrianglesForDrawing();
 
-
+					auto temp = static_cast<Mesh*>(object)->getSelectedFaces();
+					
 
 					object->bindVAO();
 					auto x = object->getModelReference();
@@ -135,17 +136,25 @@ void Renderer::Render(Window& window, MyGUI& gui)
 					ebo.Bind();
 					if (selectedFaces.size())
 					{
+						int lastFace = temp[0];
+						for (int i = lastFace + 1; i < temp.size(); i += temp[i] + 1)
+						{
+							lastFace = temp[i];
+						}
+
+						lastFace = (lastFace - 2) * 3; // actual number of indices used to make that face
+
 						auto temp = static_cast<Mesh*>(object)->getSelectedFaces().back();
 
 
 
-						glDrawElements(GL_TRIANGLES, selectedFaces.size(), GL_UNSIGNED_INT, 0); // draw red
+						glDrawElements(GL_TRIANGLES, selectedFaces.size()- lastFace, GL_UNSIGNED_INT, 0); // draw red
 
 						Shader activeShader = shaderSingleton->getShader("ActiveEdit"); // orange color
 						activeShader.Activate();
 						activeShader.setMat4(true, "model", x);
 						camera.CameraUniform(activeShader, "cameraMatrix");
-						glDrawElements(GL_TRIANGLES, temp, GL_UNSIGNED_INT, (void*)((selectedFaces.size() - temp) * sizeof(GLuint))); // draw orange
+						glDrawElements(GL_TRIANGLES, lastFace, GL_UNSIGNED_INT, (void*)((selectedFaces.size() - lastFace) * sizeof(GLuint))); // draw orange
 
 					}
 				}

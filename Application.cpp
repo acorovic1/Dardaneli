@@ -432,10 +432,11 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 			else
 			{
 				vertexIndices.clear();
+				selectedFaces.clear();
 				vertexIndices = index;
 
 				selectedFaces.push_back(numberOfVerticesInLastFace);
-				selectedFaces = index;
+				selectedFaces.insert(selectedFaces.end(),index.begin(),index.end());
 
 				std::cout << "\nSELECTED ---> " ;
 				for (auto x : index)
