@@ -40,13 +40,13 @@ void Renderer::Render(Window& window, MyGUI& gui)
 
 				//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-				object->Draw(shaderSingleton->getShader("Basic"), camera,GL_LINES);
+				object->Draw(shaderSingleton->getShader("Basic"), camera, GL_LINES);
 
 				glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 				glStencilMask(0x00);
 				glDisable(GL_DEPTH_TEST);
 				if (i == selectedObjects[selectedObjects.size() - 1])
-					object->Draw(shaderSingleton->getShader("ActiveSelect"), camera,GL_LINES);//OUTLINE
+					object->Draw(shaderSingleton->getShader("ActiveSelect"), camera, GL_LINES);//OUTLINE
 				else
 					object->Draw(shaderSingleton->getShader("Select"), camera);//OUTLINE
 
@@ -56,35 +56,98 @@ void Renderer::Render(Window& window, MyGUI& gui)
 			}
 			else if (gui.getMode() == Mode::EDIT)
 			{
-				object->Draw(shaderSingleton->getShader("Basic"), camera);
+				object->Draw(shaderSingleton->getShader("Basic"), camera, GL_TRIANGLES);
 
 				object->Draw(shaderSingleton->getShader("EditMode"), camera, GL_LINES);
 
 				if (gui.getSelectMode() == SelectMode::VERTEX)
 				{
 					glPointSize(5.0f);
-					object->Draw(shaderSingleton->getShader("EditMode"), camera, GL_POINTS);
+					object->Draw(shaderSingleton->getShader("EditMode"), camera, GL_POINTS); // black color
+
 					auto& selectedVertices = static_cast<Mesh*>(object)->getSelectedVertices();
 
-					shaderSingleton->getShader("SelectEdit").Activate();
 					object->bindVAO();
 					auto x = object->getModelReference();
 
-					shaderSingleton->getShader("SelectEdit").setMat4(true, "model", x);
-					camera.CameraUniform(shaderSingleton->getShader("SelectEdit"), "cameraMatrix");
+					Shader selectShader = shaderSingleton->getShader("SelectEdit"); // orange color
+					selectShader.Activate();
+					selectShader.setMat4(true, "model", x);
+					camera.CameraUniform(selectShader, "cameraMatrix");
 
 					for (int j = 0; j < selectedVertices.size(); j++)
 					{
 						if (j == selectedVertices.size() - 1)
 						{
-							shaderSingleton->getShader("ActiveEdit").Activate();
-							shaderSingleton->getShader("ActiveEdit").setMat4(true, "model", x);
-							camera.CameraUniform(shaderSingleton->getShader("ActiveEdit"), "cameraMatrix");
+							Shader activeShader = shaderSingleton->getShader("ActiveEdit"); // red color
+							activeShader.Activate();
+							activeShader.setMat4(true, "model", x);
+							camera.CameraUniform(activeShader, "cameraMatrix");
 						}
 						glDrawArrays(GL_POINTS, selectedVertices[j], 1);
 					}
 
 					glPointSize(1.0f);
+				}
+				else if (gui.getSelectMode() == SelectMode::EDGE)
+				{
+					auto& selectedEdges = static_cast<Mesh*>(object)->getSelectedEdges();
+					std::vector<GLuint> edges = std::vector<GLuint>();
+					edges.insert(edges.end(), selectedEdges.begin(), selectedEdges.end());
+					object->bindVAO();
+					auto x = object->getModelReference();
+
+					Shader selectShader = shaderSingleton->getShader("SelectEdit"); // red color
+					selectShader.Activate();
+					selectShader.setMat4(true, "model", x);
+					camera.CameraUniform(selectShader, "cameraMatrix");
+
+					EBO ebo(edges);
+					ebo.Bind();
+					if (edges.size())
+					{
+						glDrawElements(GL_LINES, edges.size() - 2, GL_UNSIGNED_INT, 0); // draw red
+
+						Shader activeShader = shaderSingleton->getShader("ActiveEdit"); // orange color
+						activeShader.Activate();
+						activeShader.setMat4(true, "model", x);
+						camera.CameraUniform(activeShader, "cameraMatrix");
+						glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, (void*)((edges.size() - 2) * sizeof(GLuint))); // draw orange
+
+					}
+				}
+				else // SelectMode::FACE
+				{
+					auto selectedFaces = static_cast<Mesh*>(object)->formTrianglesForDrawing();
+
+
+
+					object->bindVAO();
+					auto x = object->getModelReference();
+
+
+					Shader selectShader = shaderSingleton->getShader("SelectEdit"); // red color
+					selectShader.Activate();
+					selectShader.setMat4(true, "model", x);
+					camera.CameraUniform(selectShader, "cameraMatrix");
+
+					EBO ebo(selectedFaces);
+					ebo.Bind();
+					if (selectedFaces.size())
+					{
+						auto temp = static_cast<Mesh*>(object)->getSelectedFaces().back();
+
+
+
+						glDrawElements(GL_TRIANGLES, selectedFaces.size(), GL_UNSIGNED_INT, 0); // draw red
+
+						Shader activeShader = shaderSingleton->getShader("ActiveEdit"); // orange color
+						activeShader.Activate();
+						activeShader.setMat4(true, "model", x);
+						camera.CameraUniform(activeShader, "cameraMatrix");
+						glDrawElements(GL_TRIANGLES, temp, GL_UNSIGNED_INT, (void*)((selectedFaces.size() - temp) * sizeof(GLuint))); // draw orange
+
+					}
 				}
 			}
 		}

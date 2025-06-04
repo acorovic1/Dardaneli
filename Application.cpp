@@ -277,6 +277,8 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		{
 			EdgeBVHSingleton->getRoot()->Hit(camera->CreateRay(window), indexVec);
 
+			auto& edgeIndices = mesh->getSelectedEdges();
+
 			if (indexVec.size() > 1) // if size == 1 it is a miss
 			{
 				indexVec.erase(std::remove(indexVec.begin(), indexVec.end(), -1), indexVec.end());
@@ -307,23 +309,33 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 							index = { indexVec[i],indexVec[i + 1] };
 						}
 					}
+					
 				}
 			}
 
-
+			
 			if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) // shift select
 			{
 				if (index[0] == -1)return;
+
+				edgeIndices.push_back(index[0]);
+				edgeIndices.push_back(index[1]);
+
+
 				vertexIndices.erase(std::remove_if(vertexIndices.begin(), vertexIndices.end(), [index](int a) {return a == index[0]; }), vertexIndices.end());
 				vertexIndices.erase(std::remove_if(vertexIndices.begin(), vertexIndices.end(), [index](int a) {return a == index[1]; }), vertexIndices.end());
 
 				vertexIndices.push_back(index[0]);
 				vertexIndices.push_back(index[1]);
+				
+				
 				std::cout << "\nMULTI SELECT ---> " << index[0] << " " << index[1];
+
 			}
 			else if (index[0] == -1)// normal select .............		-1 is the miss constant
 			{
 				vertexIndices.clear();
+				edgeIndices.clear();
 			}
 			else
 			{
@@ -331,12 +343,15 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 				vertexIndices.push_back(index[0]);
 				vertexIndices.push_back(index[1]);
 				std::cout << "\nSELECTED ---> " << index[0] << " " << index[1];
+				edgeIndices = index;
 			}
 		}
 
 		if (selectMode == SelectMode::FACE)
 		{
 			FaceBVHSingleton->getRoot()->Hit(camera->CreateRay(window), indexVec);
+			auto& selectedFaces = mesh->getSelectedFaces();
+			int numberOfVerticesInLastFace = 0;
 
 			/*for (auto x : indexVec)
 				std::cout << " " << x;
@@ -389,6 +404,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 								index.push_back(indexVec[j]);
 
 							};
+							numberOfVerticesInLastFace = indexVec[i];
 						}
 					}
 				}
@@ -398,6 +414,8 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 			if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) // shift select
 			{
 				if (index[0] == -1)return;
+				selectedFaces.push_back(numberOfVerticesInLastFace);
+				selectedFaces.insert(selectedFaces.end(), index.begin(), index.end());
 				for(auto x: index)
 					vertexIndices.erase(std::remove_if(vertexIndices.begin(), vertexIndices.end(), [x](int a) {return a == x; }), vertexIndices.end());
 
@@ -409,11 +427,16 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 			else if (index[0] == -1)// normal select .............		-1 is the miss constant
 			{
 				vertexIndices.clear();
+				selectedFaces.clear();
 			}
 			else
 			{
 				vertexIndices.clear();
 				vertexIndices = index;
+
+				selectedFaces.push_back(numberOfVerticesInLastFace);
+				selectedFaces = index;
+
 				std::cout << "\nSELECTED ---> " ;
 				for (auto x : index)
 					std::cout<< x << " ";

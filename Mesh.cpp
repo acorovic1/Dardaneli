@@ -28,6 +28,11 @@ Mesh::Mesh(std::string&& name, std::vector <Vertex>* vertices,
 
 Mesh::~Mesh() {}
 
+void Mesh::bindEBO()
+{
+	ebo.Bind();
+}
+
 std::vector<Face*> Mesh::getFaces()
 {
 	std::unordered_set<Face*> faceSet;
@@ -172,6 +177,50 @@ void Mesh::Scale(float x, float y, float z) {
 
 std::vector<int>& Mesh::getSelectedVertices() {
 	return vertexIndices;
+}
+
+std::vector<GLuint> Mesh::formTrianglesForDrawing()
+{
+	std::vector<GLuint> returnVec = std::vector<GLuint>();
+
+	for (int i = 0;i < selectedFaces.size();i += selectedFaces[i] + 1)
+	{
+		if (selectedFaces[i] == 3)
+		{
+			returnVec.push_back(selectedFaces[i + 1]);
+			returnVec.push_back(selectedFaces[i + 2]);
+			returnVec.push_back(selectedFaces[i + 3]);
+		}
+		else if (selectedFaces[i] == 4)
+		{
+			returnVec.push_back(selectedFaces[i + 1]);
+			returnVec.push_back(selectedFaces[i + 2]);
+			returnVec.push_back(selectedFaces[i + 3]);
+
+			returnVec.push_back(selectedFaces[i + 3]);
+			returnVec.push_back(selectedFaces[i + 2]);
+			returnVec.push_back(selectedFaces[i + 4]);
+		}
+		else if (selectedFaces[i] > 4)
+		{
+
+			for (int j = i + 2;j <i+ selectedFaces[i]-1;j++)
+			{
+				returnVec.push_back(selectedFaces[i + 1]); // anchor
+				returnVec.push_back(selectedFaces[j]); // 2nd
+				returnVec.push_back(selectedFaces[j + 1]); // 3rd
+
+
+			}
+
+
+		}
+		else std::cout << "\n\n MISTAKE Mesh::formTrianglesForDrawing() \n\n";
+
+	}
+
+
+	return returnVec;
 }
 
 

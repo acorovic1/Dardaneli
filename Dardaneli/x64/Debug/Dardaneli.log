@@ -1,6 +1,11 @@
-﻿  Application.cpp
-C:\Users\adnan\Desktop\Dardaneli\Application.cpp(158,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\adnan\Desktop\Dardaneli\Application.cpp(159,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\adnan\Desktop\Dardaneli\Application.cpp(453,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\adnan\Desktop\Dardaneli\Application.cpp(454,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+﻿  Mesh.cpp
+C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(102,41): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(102,41): warning C4267:         with
+C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(102,41): warning C4267:         [
+C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(102,41): warning C4267:             _Ty=GLuint
+C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(102,41): warning C4267:         ]
+C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(106,26): warning C4267: 'return': conversion from 'size_t' to 'GLuint', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(140,36): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(145,40): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\adnan\Desktop\Dardaneli\Mesh.cpp(150,39): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
   Dardaneli.vcxproj -> C:\Users\adnan\Desktop\Dardaneli\x64\Debug\Dardaneli.exe

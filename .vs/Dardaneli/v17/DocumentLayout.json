@@ -3,52 +3,43 @@
   "WorkspaceRootPath": "C:\\Users\\adnan\\Desktop\\Dardaneli\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\Application.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Application.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\include\\vector||{3B902123-F8A7-4915-9F01-361F908088D0}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\Scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\Mesh.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Mesh.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\Renderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Renderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\Mesh.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Mesh.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\FaceBVH.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:FaceBVH.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\BVHNode.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:BVHNode.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\Application.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Application.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\AABB.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:AABB.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\activeEdit.frag||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:activeEdit.frag||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\FaceBVH.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:FaceBVH.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\Application.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Application.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\BasicObjects.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:BasicObjects.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\BVHNode.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:BVHNode.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\EdgeBVH.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:EdgeBVH.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\MyGUI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:MyGUI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\Face.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:Face.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|C:\\Users\\adnan\\Desktop\\Dardaneli\\AABB.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E828CCC7-5C62-47E2-8989-D6038346F780}|Dardaneli.vcxproj|solutionrelative:AABB.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -58,7 +49,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -66,119 +57,67 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Scene.cpp",
-              "DocumentMoniker": "C:\\Users\\adnan\\Desktop\\Dardaneli\\Scene.cpp",
-              "RelativeDocumentMoniker": "Scene.cpp",
-              "ToolTip": "C:\\Users\\adnan\\Desktop\\Dardaneli\\Scene.cpp",
-              "RelativeToolTip": "Scene.cpp",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAABMAAABAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-28T22:14:25.888Z",
+              "DocumentIndex": 0,
+              "Title": "vector",
+              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\include\\vector",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\include\\vector",
+              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\include\\vector",
+              "RelativeToolTip": "..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\include\\vector",
+              "ViewState": "AgIAAG8HAAAAAAAAAAAAAHoHAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-06-04T01:25:55.167Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "Application.h",
-              "DocumentMoniker": "C:\\Users\\adnan\\Desktop\\Dardaneli\\Application.h",
-              "RelativeDocumentMoniker": "Application.h",
-              "ToolTip": "C:\\Users\\adnan\\Desktop\\Dardaneli\\Application.h",
-              "RelativeToolTip": "Application.h",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAAAsAAAATAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-28T18:25:41.098Z",
+              "Title": "activeEdit.frag",
+              "DocumentMoniker": "C:\\Users\\adnan\\Desktop\\Dardaneli\\activeEdit.frag",
+              "RelativeDocumentMoniker": "activeEdit.frag",
+              "ToolTip": "C:\\Users\\adnan\\Desktop\\Dardaneli\\activeEdit.frag",
+              "RelativeToolTip": "activeEdit.frag",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-06-03T23:58:16.489Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "EdgeBVH.cpp",
-              "DocumentMoniker": "C:\\Users\\adnan\\Desktop\\Dardaneli\\EdgeBVH.cpp",
-              "RelativeDocumentMoniker": "EdgeBVH.cpp",
-              "ToolTip": "C:\\Users\\adnan\\Desktop\\Dardaneli\\EdgeBVH.cpp",
-              "RelativeToolTip": "EdgeBVH.cpp",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAABsAAAAEAAAAAAAAAA==",
+              "DocumentIndex": 7,
+              "Title": "BasicObjects.cpp",
+              "DocumentMoniker": "C:\\Users\\adnan\\Desktop\\Dardaneli\\BasicObjects.cpp",
+              "RelativeDocumentMoniker": "BasicObjects.cpp",
+              "ToolTip": "C:\\Users\\adnan\\Desktop\\Dardaneli\\BasicObjects.cpp",
+              "RelativeToolTip": "BasicObjects.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-27T23:01:29.289Z",
+              "WhenOpened": "2025-06-03T22:15:40.568Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Face.h",
-              "DocumentMoniker": "C:\\Users\\adnan\\Desktop\\Dardaneli\\Face.h",
-              "RelativeDocumentMoniker": "Face.h",
-              "ToolTip": "C:\\Users\\adnan\\Desktop\\Dardaneli\\Face.h",
-              "RelativeToolTip": "Face.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-27T20:40:50.416Z",
+              "DocumentIndex": 2,
+              "Title": "Renderer.cpp",
+              "DocumentMoniker": "C:\\Users\\adnan\\Desktop\\Dardaneli\\Renderer.cpp",
+              "RelativeDocumentMoniker": "Renderer.cpp",
+              "ToolTip": "C:\\Users\\adnan\\Desktop\\Dardaneli\\Renderer.cpp",
+              "RelativeToolTip": "Renderer.cpp",
+              "ViewState": "AgIAAHYAAAAAAAAAAAAIwIkAAABIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-06-03T21:56:50.425Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
-              "Title": "FaceBVH.h",
-              "DocumentMoniker": "C:\\Users\\adnan\\Desktop\\Dardaneli\\FaceBVH.h",
-              "RelativeDocumentMoniker": "FaceBVH.h",
-              "ToolTip": "C:\\Users\\adnan\\Desktop\\Dardaneli\\FaceBVH.h",
-              "RelativeToolTip": "FaceBVH.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-27T20:31:21.587Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
               "Title": "Application.cpp",
               "DocumentMoniker": "C:\\Users\\adnan\\Desktop\\Dardaneli\\Application.cpp",
               "RelativeDocumentMoniker": "Application.cpp",
               "ToolTip": "C:\\Users\\adnan\\Desktop\\Dardaneli\\Application.cpp",
               "RelativeToolTip": "Application.cpp",
-              "ViewState": "AgIAAM0AAAAAAAAAAADwv90AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAJgBAAAAAAAAAAAIwLYBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-05-27T17:11:40.678Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "AABB.cpp",
-              "DocumentMoniker": "C:\\Users\\adnan\\Desktop\\Dardaneli\\AABB.cpp",
-              "RelativeDocumentMoniker": "AABB.cpp",
-              "ToolTip": "C:\\Users\\adnan\\Desktop\\Dardaneli\\AABB.cpp",
-              "RelativeToolTip": "AABB.cpp",
-              "ViewState": "AgIAAEUAAAAAAAAAAAAAAFsAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-06T00:03:39.213Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "AABB.h",
-              "DocumentMoniker": "C:\\Users\\adnan\\Desktop\\Dardaneli\\AABB.h",
-              "RelativeDocumentMoniker": "AABB.h",
-              "ToolTip": "C:\\Users\\adnan\\Desktop\\Dardaneli\\AABB.h",
-              "RelativeToolTip": "AABB.h",
-              "ViewState": "AgIAAAIAAAAAAAAAAAD4vxkAAAAEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-06T00:02:37.008Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "BVHNode.cpp",
-              "DocumentMoniker": "C:\\Users\\adnan\\Desktop\\Dardaneli\\BVHNode.cpp",
-              "RelativeDocumentMoniker": "BVHNode.cpp",
-              "ToolTip": "C:\\Users\\adnan\\Desktop\\Dardaneli\\BVHNode.cpp",
-              "RelativeToolTip": "BVHNode.cpp",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAIwBYAAAAcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-05T23:30:22.327Z",
               "EditorCaption": ""
             }
           ]
@@ -212,12 +151,11 @@
               "RelativeToolTip": "MyGUI.cpp",
               "ViewState": "AgIAADwAAAAAAAAAAAAAAFsAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-03T18:31:28.225Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-03T18:31:28.225Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "BVHNode.h",
               "DocumentMoniker": "C:\\Users\\adnan\\Desktop\\Dardaneli\\BVHNode.h",
               "RelativeDocumentMoniker": "BVHNode.h",
@@ -225,12 +163,24 @@
               "RelativeToolTip": "BVHNode.h",
               "ViewState": "AgIAAAYAAAAAAAAAAAAAAB0AAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-05T22:30:19.431Z",
+              "WhenOpened": "2025-05-05T22:30:19.431Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Mesh.cpp",
+              "DocumentMoniker": "C:\\Users\\adnan\\Desktop\\Dardaneli\\Mesh.cpp",
+              "RelativeDocumentMoniker": "Mesh.cpp",
+              "ToolTip": "C:\\Users\\adnan\\Desktop\\Dardaneli\\Mesh.cpp",
+              "RelativeToolTip": "Mesh.cpp",
+              "ViewState": "AgIAAL0AAAAAAAAAAAAAANIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-06-03T22:13:58.395Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "FaceBVH.cpp",
               "DocumentMoniker": "C:\\Users\\adnan\\Desktop\\Dardaneli\\FaceBVH.cpp",
               "RelativeDocumentMoniker": "FaceBVH.cpp",
@@ -239,6 +189,19 @@
               "ViewState": "AgIAABQAAAAAAAAAAAAjwCUAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-05-27T20:32:41.896Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Mesh.h",
+              "DocumentMoniker": "C:\\Users\\adnan\\Desktop\\Dardaneli\\Mesh.h",
+              "RelativeDocumentMoniker": "Mesh.h",
+              "ToolTip": "C:\\Users\\adnan\\Desktop\\Dardaneli\\Mesh.h",
+              "RelativeToolTip": "Mesh.h",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAAC0AAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-06-03T22:13:48.354Z",
               "EditorCaption": ""
             }
           ]
