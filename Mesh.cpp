@@ -204,8 +204,12 @@ std::vector<GLuint> Mesh::formTrianglesForDrawing()
 		}
 		else if (selectedFaces[i] > 4)
 		{
+			/*for (auto x : selectedFaces)
+				std::cout << " " << x;
+				std::cout << "\n" ;*/
 
-			for (int j = i + 2;j <i+ selectedFaces[i]-1;j++)
+			//for (int j = i + 2;j <i+ selectedFaces[i]-1;j++)
+			for (int j = i + 2;j <i+ selectedFaces[i];j++)
 			{
 				returnVec.push_back(selectedFaces[i + 1]); // anchor
 				returnVec.push_back(selectedFaces[j]); // 2nd

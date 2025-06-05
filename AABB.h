@@ -22,8 +22,7 @@ struct AABB {
 	AABB();
 	AABB(glm::vec3 vertex);
 	AABB(glm::vec3 min, glm::vec3 max);
-	AABB(Edge* e);
-	AABB(Face* f);
+	AABB(std::vector<glm::vec3> vertices);
 	AABB(AABB& a, AABB& b);
 	AABB(Object& mesh);
 

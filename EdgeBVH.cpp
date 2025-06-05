@@ -24,7 +24,7 @@ void EdgeBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 	{
 		startIndex =  std::find(vertices.begin(), vertices.end(), *edges[i]->pair->tip) - vertices.begin();
 		endIndex =  std::find(vertices.begin(), vertices.end(), *edges[i]->tip) - vertices.begin();
-		BVHNode* leaf = new BVHNode(edges[i],startIndex,endIndex);
+		BVHNode* leaf = new BVHNode(mesh.getVertexXmodel(startIndex),mesh.getVertexXmodel(endIndex), startIndex, endIndex);
 		//std::cout << i << " " << startIndex << " " << endIndex<<"		";
 		bvhNodes.push_back(leaf); 
 	}

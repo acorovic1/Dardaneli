@@ -36,10 +36,20 @@ void addPlane()
 	Edge* e3 = new Edge();
 	Edge* e4 = new Edge();
 
+	Edge* e5 = new Edge();
+	Edge* e6 = new Edge();
+	Edge* e7 = new Edge();
+	Edge* e8 = new Edge();
+
 	e1->next = e2;
 	e2->next = e3;
 	e3->next = e4;
 	e4->next = e1;
+
+	e1->pair = e5;
+	e2->pair = e6;
+	e3->pair = e7;
+	e4->pair = e8;
 
 	e1->face = face;
 	e2->face = face;
@@ -57,6 +67,23 @@ void addPlane()
 	(*vertices)[3].edge = e4;
 
 	face->edge = e1;
+
+	// outside loop of non-manifold face
+
+	e5->pair = e1;
+	e6->pair = e2;
+	e7->pair = e3;
+	e8->pair = e4;
+
+	e5->tip = &(*vertices)[0];
+	e6->tip = &(*vertices)[3];
+	e7->tip = &(*vertices)[2];
+	e8->tip = &(*vertices)[1];
+
+	e5->next = e6;
+	e6->next = e7;
+	e7->next = e8;
+	e8->next = e5;
 
 
 	new Mesh(
@@ -258,7 +285,40 @@ void addCircle(int numSegments, float radius)
 	e->next = edgeMap[{0, 1}];
 	face->edge = edgeMap[{0, 1}];
 
+	// this part can probably be optimized by removing the loop and placing the contents somewhere else
+	// creating the outer Half-Edge loop for the circle
 
+	old = nullptr;
+	for (int i = 0;i < numSegments - 1;i++)
+	{
+		Edge* pair = new Edge();
+
+		edgeMap[{i, i + 1}]->pair = pair;
+		pair->pair = edgeMap[{i, i + 1}];
+
+		pair->tip = &(*vertices)[i];
+
+		if (i == 0)
+		{
+			old = pair;
+			continue;
+		}
+
+		pair->next = old;
+		old = pair;
+
+	}
+
+	// last edge
+	Edge* pair = new Edge();
+
+	edgeMap[{numSegments - 1, 0}]->pair = pair;
+	pair->pair = edgeMap[{numSegments - 1, 0}];
+	pair->tip = &(*vertices)[numSegments - 1];
+	pair->next = old;
+
+	// finishing the first edge
+	edgeMap[{0, 1}]->pair->next = pair;
 
 	new Mesh(
 		"Circle",
@@ -640,7 +700,7 @@ void addCylinder(int numSegments, float height, float radius)
 
 	for (int i = 0;i < indices.size();i += 6)
 	{
-		
+
 
 
 		// quads
@@ -654,7 +714,7 @@ void addCylinder(int numSegments, float height, float radius)
 			Edge* e3 = edgeMap[{indices[i + 5], indices[i + 2]}];
 			Edge* e4 = edgeMap[{indices[i + 2], indices[i]}];
 
-			if (e3==nullptr)
+			if (e3 == nullptr)
 				std::cout << "\n e3 " << indices[i + 5] << " " << indices[i + 2];
 
 			e1->tip = &(*vertices)[indices[i + 1]];
@@ -669,7 +729,7 @@ void addCylinder(int numSegments, float height, float radius)
 
 			e1->pair = edgeMap[{indices[i + 1], indices[i]}];
 			e2->pair = edgeMap[{indices[i + 5], indices[i + 1]}];
-			
+
 			e3->pair = edgeMap[{indices[i + 2], indices[i + 5] }]; // jebem ti mater 
 			e4->pair = edgeMap[{indices[i], indices[i + 2]}];
 
@@ -710,7 +770,7 @@ void addCylinder(int numSegments, float height, float radius)
 			if (i != 6 * numSegments)
 			{
 				edgeMap[{indices[i - 3], indices[i - 2]}]->next = e1;
-				
+
 			}
 			e1->pair = edgeMap[{indices[i + 4], indices[i + 3]}];
 			e1->face = bottom;

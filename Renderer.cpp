@@ -27,6 +27,8 @@ void Renderer::Render(Window& window, MyGUI& gui)
 
 	glStencilMask(0x00);
 
+
+
 	for (int i = 0; i < objectSingleton->getNumberOfObjects(); i++)
 	{
 		Object* object = objectSingleton->getObject(i);
@@ -113,29 +115,34 @@ void Renderer::Render(Window& window, MyGUI& gui)
 						activeShader.setMat4(true, "model", x);
 						camera.CameraUniform(activeShader, "cameraMatrix");
 						glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, (void*)((edges.size() - 2) * sizeof(GLuint))); // draw orange
-						
+
 					}
 				}
 				else // SelectMode::FACE
 				{
-					auto selectedFaces = static_cast<Mesh*>(object)->formTrianglesForDrawing();
+					auto drawFaces = static_cast<Mesh*>(object)->formTrianglesForDrawing();
+					/*for (int i = 0;i < drawFaces.size();i++)
+					{
+						std::cout << drawFaces[i]<<" ";
+						if (i % 3 == 2 && i)std::cout << "\n";
+					}*/
 
 					auto temp = static_cast<Mesh*>(object)->getSelectedFaces();
-					
 
-					object->bindVAO();
-					auto x = object->getModelReference();
-
-
-					Shader selectShader = shaderSingleton->getShader("SelectEdit"); // red color
-					selectShader.Activate();
-					selectShader.setMat4(true, "model", x);
-					camera.CameraUniform(selectShader, "cameraMatrix");
-
-					EBO ebo(selectedFaces);
-					ebo.Bind();
-					if (selectedFaces.size())
+					if (drawFaces.size())
 					{
+						object->bindVAO();
+						auto x = object->getModelReference();
+
+
+						Shader selectShader = shaderSingleton->getShader("SelectEdit"); // red color
+						selectShader.Activate();
+						selectShader.setMat4(true, "model", x);
+						camera.CameraUniform(selectShader, "cameraMatrix");
+
+						EBO ebo(drawFaces);
+						ebo.Bind();
+
 						int lastFace = temp[0];
 						for (int i = lastFace + 1; i < temp.size(); i += temp[i] + 1)
 						{
@@ -144,18 +151,20 @@ void Renderer::Render(Window& window, MyGUI& gui)
 
 						lastFace = (lastFace - 2) * 3; // actual number of indices used to make that face
 
-						auto temp = static_cast<Mesh*>(object)->getSelectedFaces().back();
 
+						std::cout << "\nvec.size " <<drawFaces.size() << " --- lastFace = " << lastFace << "\n";
 
+						glDisable(GL_CULL_FACE);
 
-						glDrawElements(GL_TRIANGLES, selectedFaces.size()- lastFace, GL_UNSIGNED_INT, 0); // draw red
+						glDrawElements(GL_TRIANGLES, drawFaces.size() - lastFace, GL_UNSIGNED_INT, 0); // draw red
 
 						Shader activeShader = shaderSingleton->getShader("ActiveEdit"); // orange color
 						activeShader.Activate();
 						activeShader.setMat4(true, "model", x);
 						camera.CameraUniform(activeShader, "cameraMatrix");
-						glDrawElements(GL_TRIANGLES, lastFace, GL_UNSIGNED_INT, (void*)((selectedFaces.size() - lastFace) * sizeof(GLuint))); // draw orange
+						glDrawElements(GL_TRIANGLES, lastFace, GL_UNSIGNED_INT, (void*)((drawFaces.size() - lastFace) * sizeof(GLuint))); // draw orange
 
+						glEnable(GL_CULL_FACE);
 					}
 				}
 			}

@@ -1,5 +1,5 @@
 #include "Scene.h"
-
+#include "Face.h"
 Scene::Scene() {}
 
 void Scene::Init()
@@ -20,12 +20,16 @@ void Scene::Init()
 	new Shader("ActiveEdit", "activeEdit.vert", "activeEdit.frag");
 
 
-	
-	addCube();
-	
-	
 
-	//Mesh* m1=static_cast<Mesh*>(objectSingleton->getObject(0));
+	addCircle(8);
+
+
+
+	Mesh* m1 = static_cast<Mesh*>(objectSingleton->getObject(0));
+
+	auto faces = m1->getVerticesReference()[0].getAdjecentFaces()[0]->getVertices();
+
+
 
 
 

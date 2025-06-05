@@ -24,8 +24,8 @@ class Application {
 	static Application* instance;
 	Application() {};
 
-	Mode mode = Mode::EDIT;
-	SelectMode selectMode = SelectMode::FACE;
+	Mode mode = Mode::OBJECT;
+	SelectMode selectMode = SelectMode::VERTEX;
 
 	std::vector<int> objectIndices = std::vector<int>(1);
 

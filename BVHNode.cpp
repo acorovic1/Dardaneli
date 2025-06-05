@@ -4,9 +4,9 @@ BVHNode::BVHNode() :box(), left(nullptr), right(nullptr), index(-1) {}
 
 BVHNode::BVHNode(Object& object) :box(object), left(nullptr), right(nullptr), index{ object.getIndex() } {}
 BVHNode::BVHNode(glm::vec3& vertex, unsigned int i) :box(vertex), left(nullptr), right(nullptr), index{ i } {}
-BVHNode::BVHNode(Edge* e, GLuint start, GLuint end) :box(e), left(nullptr), right(nullptr), index{ start,end } {}
+BVHNode::BVHNode(glm::vec3 a, glm::vec3 b, GLuint start, GLuint end) :box(a,b), left(nullptr), right(nullptr), index{ start,end } {}
 
-BVHNode::BVHNode(Face* f, std::vector<int>& vec) :box(f), left(nullptr), right(nullptr)
+BVHNode::BVHNode(std::vector<glm::vec3> vertices, std::vector<int>& vec) :box(vertices), left(nullptr), right(nullptr)
 {
 	index.insert(index.end(), vec.begin(), vec.end());
 }

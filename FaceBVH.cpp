@@ -20,21 +20,25 @@ void FaceBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 	std::vector<BVHNode*> bvhNodes(0);
 
 	std::vector<int>vertexIndices;
+	std::vector<glm::vec3>vertexLocations;
 	//form leaf nodes
 	for (int i = 0; i < numObjects; i++)
 	{
+		std::cout << "\n\n NUMBER OF FACES " << faces.size()<<"\n\n";
 		std::vector<Vertex*> temp = faces[i]->getVertices();
 		for (int j = 0;j < temp.size();j++)
 		{
 			vertexIndices.push_back(std::find(vertices.begin(), vertices.end(), *temp[j]) - vertices.begin());
+			vertexLocations.push_back(mesh.getVertexXmodel(vertexIndices.back()));
 		}
 
-		BVHNode* leaf = new BVHNode(faces[i], vertexIndices);
+		BVHNode* leaf = new BVHNode(vertexLocations, vertexIndices);
 		for (auto x : vertexIndices)
 			std::cout << x << " ";
 		std::cout << "\n";
 		//std::cout << i << " " << startIndex << " " << endIndex << "		";
 		vertexIndices.clear();
+		vertexLocations.clear();
 		bvhNodes.push_back(leaf);
 	}
 

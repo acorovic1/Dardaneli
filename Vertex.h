@@ -33,8 +33,15 @@ struct Vertex {
 			{
 				temp = temp->next;
 			} while (temp->next != temp2);
+
 			if (temp->pair)
-				temp = temp->pair;
+			{
+				if (!temp->pair->face) // if the object is a plane/circle like structure
+				{
+					break;
+				}
+					temp = temp->pair;
+			}
 			else break;
 		} while (temp != edge);
 		return faces;
@@ -63,7 +70,7 @@ struct Vertex {
 		} while (temp != edge);
 		return edges;
 	}
-	
+
 	// the algorithm is the same as for the method 'getAdjecentFaces' aside from the return value
 	std::vector<Vertex*> getAdjecentVertices()const {
 		if (!edge) return std::vector<Vertex*>();

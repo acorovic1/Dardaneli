@@ -5,24 +5,29 @@ AABB::AABB() { aabb = DrawableAABB(min, max); };
 AABB::AABB(glm::vec3 min, glm::vec3 max)
 
 {
-	this->min = min;
-	this->max = max;
+	this->min = min - glm::vec3(0.05f, 0.05f, 0.05f);
+	this->max = max + glm::vec3(0.05f, 0.05f, 0.05f);
 
-	aabb = DrawableAABB(min, max);
+	aabb = DrawableAABB(this->min,this->max);
 }
-AABB::AABB(Edge* e)
+
+AABB::AABB(std::vector<glm::vec3>vertices)
 {
-	auto a = e->tip->getPositionCopy();
-	auto b = e->pair->tip->getPositionCopy();
 
 
-	min.x = ffmin(a.x, b.x);
-	min.y = ffmin(a.y, b.y);
-	min.z = ffmin(a.z, b.z);
+	auto it = std::min_element(vertices.begin(), vertices.end(), [](const glm::vec3 a, const glm::vec3 b) {return a.x < b.x;});
+	min.x = it->x;
+	it = std::min_element(vertices.begin(), vertices.end(), [](const glm::vec3 a, const glm::vec3 b) {return a.y < b.y;});
+	min.y = it->y;
+	it = std::min_element(vertices.begin(), vertices.end(), [](const glm::vec3 a, const glm::vec3 b) {return a.z < b.z;});
+	min.z = it->z;
 
-	max.x = ffmax(a.x, b.x);
-	max.y = ffmax(a.y, b.y);
-	max.z = ffmax(a.z, b.z);
+	it = std::max_element(vertices.begin(), vertices.end(), [](const glm::vec3 a, const glm::vec3 b) {return a.x < b.x;});
+	max.x = it->x;
+	it = std::max_element(vertices.begin(), vertices.end(), [](const glm::vec3 a, const glm::vec3 b) {return a.y < b.y;});
+	max.y = it->y;
+	it = std::max_element(vertices.begin(), vertices.end(), [](const glm::vec3 a, const glm::vec3 b) {return a.z < b.z;});
+	max.z = it->z;
 
 	if (min.x == max.x) max.x += 0.1f;
 	else
@@ -44,52 +49,7 @@ AABB::AABB(Edge* e)
 		max.z += 0.1f;
 	}
 
-	//std::cout << "MIN - MAX pos: ";
-	//std::cout << min.x << " " << min.y << " " << min.z << "		-	 ";
-	//std::cout << max.x << " " << max.y << " " << max.z << "\n";
 
-
-	aabb = DrawableAABB(min, max);
-}
-AABB::AABB(Face* f)
-{
-	std::vector<Vertex*> vertices = f->getVertices();
-
-	auto it = std::min_element(vertices.begin(), vertices.end(), [](const Vertex* a, const Vertex* b) {return a->getPositionCopy().x < b->getPositionCopy().x;});
-	min.x = (**it).getPositionCopy().x;
-	it = std::min_element(vertices.begin(), vertices.end(), [](const Vertex* a, const Vertex* b) {return a->getPositionCopy().y < b->getPositionCopy().y;});
-	min.y = (**it).getPositionCopy().y;
-	it = std::min_element(vertices.begin(), vertices.end(), [](const Vertex* a, const Vertex* b) {return a->getPositionCopy().z < b->getPositionCopy().z;});
-	min.z = (**it).getPositionCopy().z;
-
-	it = std::max_element(vertices.begin(), vertices.end(), [](const Vertex* a, const Vertex* b) {return a->getPositionCopy().x  < b->getPositionCopy().x;});
-	max.x = (**it).getPositionCopy().x;
-	it = std::max_element(vertices.begin(), vertices.end(), [](const Vertex* a, const Vertex* b) {return a->getPositionCopy().y < b->getPositionCopy().y;});
-	max.y = (**it).getPositionCopy().y;
-	it = std::max_element(vertices.begin(), vertices.end(), [](const Vertex* a, const Vertex* b) {return a->getPositionCopy().z < b->getPositionCopy().z;});
-	max.z = (**it).getPositionCopy().z;
-
-	if (min.x == max.x) max.x += 0.1f;
-	else
-	{
-		min.x -= 0.1f;
-		max.x += 0.1f;
-	}
-
-	if (min.y == max.y) max.y += 0.1f;
-	else
-	{
-		min.y -= 0.1f;
-		max.y += 0.1f;
-	}
-
-	if (min.z == max.z) max.z += 0.1f;
-	else {
-		min.z -= 0.1f;
-		max.z += 0.1f;
-	}
-
-	
 
 	std::cout << "HOLA MIN - MAX pos: ";
 	std::cout << min.x << " " << min.y << " " << min.z << "		-	 ";
