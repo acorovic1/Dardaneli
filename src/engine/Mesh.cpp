@@ -1,0 +1,231 @@
+#include "Mesh.h"
+#include "ObjectModeBVH.h"
+#include "VertexBVH.h"
+
+Mesh::Mesh(std::string&& name, std::vector <Vertex>* vertices,
+	std::vector <GLuint>& indices, const std::vector<GLuint>& edgeIndices, const  std::vector <Texture>& textures) :Object(name) {
+	Mesh::vertices = vertices;
+	Mesh::indices = indices;
+	Mesh::edgeIndices = edgeIndices;
+	Mesh::textures = textures;
+
+	VAO.Bind();
+	VBO.bufferData(*Mesh::vertices);
+	ebo.bufferData(Mesh::indices);
+	edgeEBO.bufferData(Mesh::edgeIndices);
+
+	VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
+	VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
+	VAO.LinkAttribute(VBO, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
+	VAO.LinkAttribute(VBO, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));
+
+	VAO.Unbind();
+	VBO.Unbind();
+	ebo.Unbind();
+
+	objectBVHSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
+}
+
+Mesh::~Mesh() {}
+
+void Mesh::bindEBO()
+{
+	ebo.Bind();
+}
+
+std::vector<Face*> Mesh::getFaces()
+{
+	std::unordered_set<Face*> faceSet;
+
+	for (auto& x : *vertices)
+	{
+		for (auto y : x.getAdjecentFaces())
+			faceSet.insert(y);
+
+	}
+
+	return std::vector<Face*>(faceSet.begin(), faceSet.end());
+
+};
+std::vector<Edge*> Mesh::getEdges()
+{
+	std::vector<Edge*> edges;
+
+	for (int i = 0; i < edgeIndices.size(); i += 2)
+	{
+		Vertex* v_start = &(*vertices)[edgeIndices[i]];
+		Vertex* v_end = &(*vertices)[edgeIndices[i + 1]];
+		Edge* e = v_start->edge;
+		Edge* found = nullptr;
+
+		if (!e) continue; // safety check
+
+		Edge* start = e;
+		do {
+			if (e->tip == v_end) {
+				found = e;
+				break;
+			}
+			e = e->pair ? e->pair->next : nullptr;
+		} while (e && e != start);
+
+
+		if (!found && v_end->edge) {
+			// Try in the reverse direction
+			e = v_end->edge;
+			start = e;
+			do {
+				if (e->tip == v_start) {
+					found = e->pair; // get the actual edge from v_start to v_end
+					break;
+				}
+				e = e->pair ? e->pair->next : nullptr;
+			} while (e && e != start);
+		}
+
+		if (found)
+			edges.push_back(found);
+		else
+			std::cerr << "Warning: Edge between " << edgeIndices[i] << " and " << edgeIndices[i + 1] << " not found in half-edge structure.\n";
+	}
+
+	return edges;
+}
+
+
+GLuint Mesh::extrudeVertex(GLuint vertex)
+{
+	this->addVertex((*vertices)[vertex]); // this duplicates the vertex
+	// recalculate normals potentialy
+
+	edgeIndices.push_back(vertex);				// makes a new edge
+	edgeIndices.push_back(vertices->size() - 1);
+
+	edgeEBO.bufferData(edgeIndices);			// updates the edge buffer
+
+	return vertices->size() - 1;
+}
+
+void Mesh::Draw(Shader& shader, Camera& camera, GLenum mode) {
+	shader.Activate();
+	VAO.Bind();
+
+	unsigned int numDiffuse = 0;
+	unsigned int numSpecular = 0;
+
+	for (unsigned int i = 0; i < textures.size(); i++) {
+		std::string num;
+		std::string type = textures[i].type;
+
+		if (type == "diffuse")
+		{
+			num = std::to_string(numDiffuse++);
+		}
+		else if (type == "specular")
+		{
+			num = std::to_string(numSpecular++);
+		}
+
+		textures[i].textureUniform(shader, (type + num).c_str(), i);
+		textures[i].Bind();
+	}
+	//shader.setVector3f(false, "camPos", camera.Position);
+	camera.CameraUniform(shader, "cameraMatrix");
+	shader.setVector3f(true, "camPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+	shader.setMat4(true, "model", model);
+
+	if (mode == GL_TRIANGLES)
+	{
+		ebo.Bind();
+		glDrawElements(mode, indices.size(), GL_UNSIGNED_INT, 0);
+	}
+	else if (mode == GL_LINES)
+	{
+		edgeEBO.Bind();
+		glDrawElements(mode, edgeIndices.size(), GL_UNSIGNED_INT, 0);
+	}
+	else if (mode == GL_POINTS)
+	{
+		VBO.Bind();
+		glDrawArrays(mode, 0, vertices->size());
+	}
+
+	VAO.Unbind();
+}
+
+void Mesh::Translate(glm::vec3& translateVector)
+{
+	model = glm::translate(model, translateVector);
+}
+void Mesh::Translate(float x, float y, float z)
+{
+	model = glm::translate(model, glm::vec3(x, y, z));
+}
+
+void Mesh::Rotate(float degrees, const glm::vec3& axisVector)
+{
+	model = glm::rotate(model, glm::radians(degrees), axisVector);
+}
+
+void Mesh::Scale(glm::vec3& scaleVector)
+{
+	model = glm::scale(model, scaleVector);
+}
+void Mesh::Scale(float x, float y, float z) {
+	model = glm::scale(model, glm::vec3(x, y, z));
+}
+
+std::vector<int>& Mesh::getSelectedVertices() {
+	return vertexIndices;
+}
+
+std::vector<GLuint> Mesh::formTrianglesForDrawing()
+{
+	std::vector<GLuint> returnVec = std::vector<GLuint>();
+	//std::cout<<"\n";
+	for (int i = 0;i < selectedFaces.size();i += selectedFaces[i] + 1)
+	{
+		//std::cout << selectedFaces[i] << " ---- number of vertices of face\n";
+		if (selectedFaces[i] == 3)
+		{
+			returnVec.push_back(selectedFaces[i + 1]);
+			returnVec.push_back(selectedFaces[i + 2]);
+			returnVec.push_back(selectedFaces[i + 3]);
+		}
+		else if (selectedFaces[i] == 4)
+		{
+			returnVec.push_back(selectedFaces[i + 1]);
+			returnVec.push_back(selectedFaces[i + 2]);
+			returnVec.push_back(selectedFaces[i + 3]);
+
+			returnVec.push_back(selectedFaces[i + 3]);
+			returnVec.push_back(selectedFaces[i + 4]);
+			returnVec.push_back(selectedFaces[i + 1]);
+		}
+		else if (selectedFaces[i] > 4)
+		{
+			/*for (auto x : selectedFaces)
+				std::cout << " " << x;
+				std::cout << "\n" ;*/
+
+			//for (int j = i + 2;j <i+ selectedFaces[i]-1;j++)
+			for (int j = i + 2;j <i+ selectedFaces[i];j++)
+			{
+				returnVec.push_back(selectedFaces[i + 1]); // anchor
+				returnVec.push_back(selectedFaces[j]); // 2nd
+				returnVec.push_back(selectedFaces[j + 1]); // 3rd
+
+
+			}
+
+
+		}
+		else std::cout << "\n\n MISTAKE Mesh::formTrianglesForDrawing() \n\n";
+
+	}
+
+
+	return returnVec;
+}
+
+
