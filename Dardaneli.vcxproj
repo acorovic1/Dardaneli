@@ -72,12 +72,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\corov\OneDrive\Radna površina\Dardaneli\Libraries\include;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\corov\OneDrive\Radna površina\Dardaneli\Libraries\lib;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)include\;$(ProjectDir)libraries\include;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)libraries\lib;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\corov\OneDrive\Radna površina\Dardaneli\Libraries\include;C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\corov\OneDrive\Radna površina\Dardaneli\Libraries\lib;C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)include\;$(ProjectDir)libraries\include;C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)libraries\lib;C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -85,7 +85,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>ImGUI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -115,7 +115,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>ImGUI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
@@ -142,113 +142,113 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AABB.cpp" />
-    <ClCompile Include="Application.cpp" />
-    <ClCompile Include="BasicObjects.cpp" />
-    <ClCompile Include="BVHNode.cpp" />
-    <ClCompile Include="CamaraManager.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="DrawableAABB.cpp" />
-    <ClCompile Include="EBO.cpp" />
-    <ClCompile Include="EdgeBVH.cpp" />
-    <ClCompile Include="FaceBVH.cpp" />
-    <ClCompile Include="VertexBVH.cpp" />
-    <ClCompile Include="glad.c" />
-    <ClCompile Include="ImGUIZMO\GraphEditor.cpp" />
-    <ClCompile Include="ImGUIZMO\ImCurveEdit.cpp" />
-    <ClCompile Include="ImGUIZMO\ImGradient.cpp" />
-    <ClCompile Include="ImGUIZMO\ImGuizmo.cpp" />
-    <ClCompile Include="ImGUI\imgui.cpp" />
-    <ClCompile Include="ImGUI\imgui_demo.cpp" />
-    <ClCompile Include="ImGUI\imgui_draw.cpp" />
-    <ClCompile Include="ImGUI\imgui_impl_glfw.cpp" />
-    <ClCompile Include="ImGUI\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="ImGUI\imgui_tables.cpp" />
-    <ClCompile Include="ImGUI\imgui_widgets.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="MyGUI.cpp" />
-    <ClCompile Include="Object.cpp" />
-    <ClCompile Include="ObjectManager.cpp" />
-    <ClCompile Include="ObjectModeBVH.cpp" />
-    <ClCompile Include="Ray.cpp" />
-    <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="ShaderManager.cpp" />
-    <ClCompile Include="stb.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="VAO.cpp" />
-    <ClCompile Include="VBO.cpp" />
-    <ClCompile Include="Window.cpp" />
-    <ClCompile Include="WindowManager.cpp" />
+    <ClCompile Include="src\engine\AABB.cpp" />
+    <ClCompile Include="src\engine\Application.cpp" />
+    <ClCompile Include="src\engine\BasicObjects.cpp" />
+    <ClCompile Include="src\engine\BVHNode.cpp" />
+    <ClCompile Include="src\engine\CamaraManager.cpp" />
+    <ClCompile Include="src\engine\Camera.cpp" />
+    <ClCompile Include="src\engine\DrawableAABB.cpp" />
+    <ClCompile Include="src\engine\EBO.cpp" />
+    <ClCompile Include="src\engine\EdgeBVH.cpp" />
+    <ClCompile Include="src\engine\FaceBVH.cpp" />
+    <ClCompile Include="src\engine\VertexBVH.cpp" />
+    <ClCompile Include="src\engine\glad.c" />
+    <ClCompile Include="libraries\include\ImGUIZMO\GraphEditor.cpp" />
+    <ClCompile Include="libraries\include\ImGUIZMO\ImCurveEdit.cpp" />
+    <ClCompile Include="libraries\include\ImGUIZMO\ImGradient.cpp" />
+    <ClCompile Include="libraries\include\ImGUIZMO\ImGuizmo.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\imgui.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\imgui_demo.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\imgui_draw.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\imgui_impl_glfw.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\imgui_tables.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\imgui_widgets.cpp" />
+    <ClCompile Include="src\engine\Main.cpp" />
+    <ClCompile Include="src\engine\Mesh.cpp" />
+    <ClCompile Include="src\engine\MyGUI.cpp" />
+    <ClCompile Include="src\engine\Object.cpp" />
+    <ClCompile Include="src\engine\ObjectManager.cpp" />
+    <ClCompile Include="src\engine\ObjectModeBVH.cpp" />
+    <ClCompile Include="src\engine\Ray.cpp" />
+    <ClCompile Include="src\engine\Renderer.cpp" />
+    <ClCompile Include="src\engine\Scene.cpp" />
+    <ClCompile Include="src\engine\Shader.cpp" />
+    <ClCompile Include="src\engine\ShaderManager.cpp" />
+    <ClCompile Include="src\engine\stb.cpp" />
+    <ClCompile Include="src\engine\Texture.cpp" />
+    <ClCompile Include="src\engine\VAO.cpp" />
+    <ClCompile Include="src\engine\VBO.cpp" />
+    <ClCompile Include="src\engine\Window.cpp" />
+    <ClCompile Include="src\engine\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="activeEdit.frag" />
-    <None Include="activeEdit.vert" />
-    <None Include="activeObject.frag" />
-    <None Include="activeObject.vert" />
-    <None Include="basic.frag" />
-    <None Include="basic.vert" />
-    <None Include="grid.frag" />
-    <None Include="grid.vert" />
-    <None Include="editMode.frag" />
-    <None Include="editMode.vert" />
-    <None Include="BVH.frag" />
-    <None Include="BVH.vert" />
-    <None Include="selectEdit.frag" />
-    <None Include="selectEdit.vert" />
-    <None Include="selectObject.frag" />
-    <None Include="selectObject.vert" />
+    <None Include="src\shaders\activeEdit.frag" />
+    <None Include="src\shaders\activeEdit.vert" />
+    <None Include="src\shaders\activeObject.frag" />
+    <None Include="src\shaders\activeObject.vert" />
+    <None Include="src\shaders\basic.frag" />
+    <None Include="src\shaders\basic.vert" />
+    <None Include="src\shaders\grid.frag" />
+    <None Include="src\shaders\grid.vert" />
+    <None Include="src\shaders\editMode.frag" />
+    <None Include="src\shaders\editMode.vert" />
+    <None Include="src\shaders\BVH.frag" />
+    <None Include="src\shaders\BVH.vert" />
+    <None Include="src\shaders\selectEdit.frag" />
+    <None Include="src\shaders\selectEdit.vert" />
+    <None Include="src\shaders\selectObject.frag" />
+    <None Include="src\shaders\selectObject.vert" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AABB.h" />
-    <ClInclude Include="Application.h" />
-    <ClInclude Include="BasicObjects.h" />
-    <ClInclude Include="BVHNode.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="CameraManager.h" />
-    <ClInclude Include="DrawableAABB.h" />
-    <ClInclude Include="EBO.h" />
-    <ClInclude Include="Edge.h" />
-    <ClInclude Include="EdgeBVH.h" />
-    <ClInclude Include="FaceBVH.h" />
-    <ClInclude Include="VertexBVH.h" />
-    <ClInclude Include="Face.h" />
-    <ClInclude Include="ImGUIZMO\GraphEditor.h" />
-    <ClInclude Include="ImGUIZMO\ImCurveEdit.h" />
-    <ClInclude Include="ImGUIZMO\ImGradient.h" />
-    <ClInclude Include="ImGUIZMO\ImGuizmo.h" />
-    <ClInclude Include="ImGUIZMO\ImZoomSlider.h" />
-    <ClInclude Include="ImGUI\imconfig.h" />
-    <ClInclude Include="ImGUI\imgui.h" />
-    <ClInclude Include="ImGUI\imgui_impl_glfw.h" />
-    <ClInclude Include="ImGUI\imgui_impl_opengl3.h" />
-    <ClInclude Include="ImGUI\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="ImGUI\imgui_internal.h" />
-    <ClInclude Include="ImGUI\imstb_rectpack.h" />
-    <ClInclude Include="ImGUI\imstb_textedit.h" />
-    <ClInclude Include="ImGUI\imstb_truetype.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MyGUI.h" />
-    <ClInclude Include="Object.h" />
-    <ClInclude Include="ObjectManager.h" />
-    <ClInclude Include="ObjectModeBVH.h" />
-    <ClInclude Include="Ray.h" />
-    <ClInclude Include="Renderer.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="ShaderManager.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="VAO.h" />
-    <ClInclude Include="VBO.h" />
-    <ClInclude Include="Vertex.h" />
-    <ClInclude Include="Window.h" />
-    <ClInclude Include="WindowManager.h" />
+    <ClInclude Include="include\AABB.h" />
+    <ClInclude Include="include\Application.h" />
+    <ClInclude Include="include\BasicObjects.h" />
+    <ClInclude Include="include\BVHNode.h" />
+    <ClInclude Include="include\Camera.h" />
+    <ClInclude Include="include\CameraManager.h" />
+    <ClInclude Include="include\DrawableAABB.h" />
+    <ClInclude Include="include\EBO.h" />
+    <ClInclude Include="include\Edge.h" />
+    <ClInclude Include="include\EdgeBVH.h" />
+    <ClInclude Include="include\FaceBVH.h" />
+    <ClInclude Include="include\VertexBVH.h" />
+    <ClInclude Include="include\Face.h" />
+    <ClInclude Include="libraries\include\ImGUIZMO\GraphEditor.h" />
+    <ClInclude Include="libraries\include\ImGUIZMO\ImCurveEdit.h" />
+    <ClInclude Include="libraries\include\ImGUIZMO\ImGradient.h" />
+    <ClInclude Include="libraries\include\ImGUIZMO\ImGuizmo.h" />
+    <ClInclude Include="libraries\include\ImGUIZMO\ImZoomSlider.h" />
+    <ClInclude Include="libraries\include\ImGUI\imconfig.h" />
+    <ClInclude Include="libraries\include\ImGUI\imgui.h" />
+    <ClInclude Include="libraries\include\ImGUI\imgui_impl_glfw.h" />
+    <ClInclude Include="libraries\include\ImGUI\imgui_impl_opengl3.h" />
+    <ClInclude Include="libraries\include\ImGUI\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="libraries\include\ImGUI\imgui_internal.h" />
+    <ClInclude Include="libraries\include\ImGUI\imstb_rectpack.h" />
+    <ClInclude Include="libraries\include\ImGUI\imstb_textedit.h" />
+    <ClInclude Include="libraries\include\ImGUI\imstb_truetype.h" />
+    <ClInclude Include="include\Mesh.h" />
+    <ClInclude Include="include\MyGUI.h" />
+    <ClInclude Include="include\Object.h" />
+    <ClInclude Include="include\ObjectManager.h" />
+    <ClInclude Include="include\ObjectModeBVH.h" />
+    <ClInclude Include="include\Ray.h" />
+    <ClInclude Include="include\Renderer.h" />
+    <ClInclude Include="include\Scene.h" />
+    <ClInclude Include="include\Shader.h" />
+    <ClInclude Include="include\ShaderManager.h" />
+    <ClInclude Include="include\Texture.h" />
+    <ClInclude Include="include\VAO.h" />
+    <ClInclude Include="include\VBO.h" />
+    <ClInclude Include="include\Vertex.h" />
+    <ClInclude Include="include\Window.h" />
+    <ClInclude Include="include\WindowManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="planks.png" />
-    <Image Include="planksSpec.png" />
+    <Image Include="assets\planks.png" />
+    <Image Include="assets\planksSpec.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

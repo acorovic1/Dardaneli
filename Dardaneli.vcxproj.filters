@@ -57,313 +57,313 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="src\engine\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
+    <ClCompile Include="src\engine\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImGUI\imgui_widgets.cpp">
+    <ClCompile Include="libraries\include\ImGUI\imgui_widgets.cpp">
       <Filter>Source Files\GUI\ImGUI</Filter>
     </ClCompile>
-    <ClCompile Include="ImGUI\imgui.cpp">
+    <ClCompile Include="libraries\include\ImGUI\imgui.cpp">
       <Filter>Source Files\GUI\ImGUI</Filter>
     </ClCompile>
-    <ClCompile Include="ImGUI\imgui_demo.cpp">
+    <ClCompile Include="libraries\include\ImGUI\imgui_demo.cpp">
       <Filter>Source Files\GUI\ImGUI</Filter>
     </ClCompile>
-    <ClCompile Include="ImGUI\imgui_draw.cpp">
+    <ClCompile Include="libraries\include\ImGUI\imgui_draw.cpp">
       <Filter>Source Files\GUI\ImGUI</Filter>
     </ClCompile>
-    <ClCompile Include="ImGUI\imgui_impl_glfw.cpp">
+    <ClCompile Include="libraries\include\ImGUI\imgui_impl_glfw.cpp">
       <Filter>Source Files\GUI\ImGUI</Filter>
     </ClCompile>
-    <ClCompile Include="ImGUI\imgui_impl_opengl3.cpp">
+    <ClCompile Include="libraries\include\ImGUI\imgui_impl_opengl3.cpp">
       <Filter>Source Files\GUI\ImGUI</Filter>
     </ClCompile>
-    <ClCompile Include="ImGUI\imgui_tables.cpp">
+    <ClCompile Include="libraries\include\ImGUI\imgui_tables.cpp">
       <Filter>Source Files\GUI\ImGUI</Filter>
     </ClCompile>
-    <ClCompile Include="AABB.cpp">
+    <ClCompile Include="src\engine\AABB.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
-    <ClCompile Include="BVHNode.cpp">
+    <ClCompile Include="src\engine\BVHNode.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
-    <ClCompile Include="EBO.cpp">
+    <ClCompile Include="src\engine\EBO.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="glad.c">
+    <ClCompile Include="src\engine\glad.c">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
+    <ClCompile Include="src\engine\Mesh.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Object.cpp">
+    <ClCompile Include="src\engine\Object.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectManager.cpp">
+    <ClCompile Include="src\engine\ObjectManager.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Ray.cpp">
+    <ClCompile Include="src\engine\Ray.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
-    <ClCompile Include="Shader.cpp">
+    <ClCompile Include="src\engine\Shader.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
+    <ClCompile Include="src\engine\Texture.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="VAO.cpp">
+    <ClCompile Include="src\engine\VAO.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="VBO.cpp">
+    <ClCompile Include="src\engine\VBO.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="stb.cpp">
+    <ClCompile Include="src\engine\stb.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
+    <ClCompile Include="src\engine\Window.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer.cpp">
+    <ClCompile Include="src\engine\Renderer.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
+    <ClCompile Include="src\engine\Scene.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="BasicObjects.cpp">
+    <ClCompile Include="src\engine\BasicObjects.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderManager.cpp">
+    <ClCompile Include="src\engine\ShaderManager.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectModeBVH.cpp">
+    <ClCompile Include="src\engine\ObjectModeBVH.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
-    <ClCompile Include="DrawableAABB.cpp">
+    <ClCompile Include="src\engine\DrawableAABB.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
-    <ClCompile Include="CamaraManager.cpp">
+    <ClCompile Include="src\engine\CamaraManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImGUIZMO\GraphEditor.cpp">
+    <ClCompile Include="libraries\include\ImGUIZMO\GraphEditor.cpp">
       <Filter>Source Files\GUI\ImGUIZMO</Filter>
     </ClCompile>
-    <ClCompile Include="ImGUIZMO\ImCurveEdit.cpp">
+    <ClCompile Include="libraries\include\ImGUIZMO\ImCurveEdit.cpp">
       <Filter>Source Files\GUI\ImGUIZMO</Filter>
     </ClCompile>
-    <ClCompile Include="ImGUIZMO\ImGradient.cpp">
+    <ClCompile Include="libraries\include\ImGUIZMO\ImGradient.cpp">
       <Filter>Source Files\GUI\ImGUIZMO</Filter>
     </ClCompile>
-    <ClCompile Include="ImGUIZMO\ImGuizmo.cpp">
+    <ClCompile Include="libraries\include\ImGUIZMO\ImGuizmo.cpp">
       <Filter>Source Files\GUI\ImGUIZMO</Filter>
     </ClCompile>
-    <ClCompile Include="VertexBVH.cpp">
+    <ClCompile Include="src\engine\VertexBVH.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
-    <ClCompile Include="MyGUI.cpp">
+    <ClCompile Include="src\engine\MyGUI.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="Application.cpp">
+    <ClCompile Include="src\engine\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WindowManager.cpp">
+    <ClCompile Include="src\engine\WindowManager.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="EdgeBVH.cpp">
+    <ClCompile Include="src\engine\EdgeBVH.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
-    <ClCompile Include="FaceBVH.cpp">
+    <ClCompile Include="src\engine\FaceBVH.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="basic.vert">
+    <None Include="src\shaders\basic.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="basic.frag">
+    <None Include="src\shaders\basic.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="editMode.vert">
+    <None Include="src\shaders\editMode.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="editMode.frag">
+    <None Include="src\shaders\editMode.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="BVH.vert">
+    <None Include="src\shaders\BVH.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="BVH.frag">
+    <None Include="src\shaders\BVH.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="selectObject.frag">
+    <None Include="src\shaders\selectObject.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="selectObject.vert">
+    <None Include="src\shaders\selectObject.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="grid.frag">
+    <None Include="src\shaders\grid.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="grid.vert">
+    <None Include="src\shaders\grid.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="selectEdit.vert">
+    <None Include="src\shaders\selectEdit.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="selectEdit.frag">
+    <None Include="src\shaders\selectEdit.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="activeObject.vert">
+    <None Include="src\shaders\activeObject.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="activeEdit.frag">
+    <None Include="src\shaders\activeEdit.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="activeEdit.vert">
+    <None Include="src\shaders\activeEdit.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="activeObject.frag">
+    <None Include="src\shaders\activeObject.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h">
+    <ClInclude Include="include\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EBO.h">
+    <ClInclude Include="include\EBO.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
+    <ClInclude Include="include\Shader.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
+    <ClInclude Include="include\Texture.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="VAO.h">
+    <ClInclude Include="include\VAO.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="VBO.h">
+    <ClInclude Include="include\VBO.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="AABB.h">
+    <ClInclude Include="include\AABB.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
-    <ClInclude Include="Ray.h">
+    <ClInclude Include="include\Ray.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
-    <ClInclude Include="BVHNode.h">
+    <ClInclude Include="include\BVHNode.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
-    <ClInclude Include="Object.h">
+    <ClInclude Include="include\Object.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
+    <ClInclude Include="include\Mesh.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectManager.h">
+    <ClInclude Include="include\ObjectManager.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Vertex.h">
+    <ClInclude Include="include\Vertex.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h">
+    <ClInclude Include="include\Renderer.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Window.h">
+    <ClInclude Include="include\Window.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
+    <ClInclude Include="include\Scene.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="BasicObjects.h">
+    <ClInclude Include="include\BasicObjects.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderManager.h">
+    <ClInclude Include="include\ShaderManager.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectModeBVH.h">
+    <ClInclude Include="include\ObjectModeBVH.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
-    <ClInclude Include="DrawableAABB.h">
+    <ClInclude Include="include\DrawableAABB.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
-    <ClInclude Include="CameraManager.h">
+    <ClInclude Include="include\CameraManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ImGUIZMO\ImCurveEdit.h">
+    <ClInclude Include="libraries\include\ImGUIZMO\ImCurveEdit.h">
       <Filter>Header Files\GUI\ImGUIZMO</Filter>
     </ClInclude>
-    <ClInclude Include="ImGUIZMO\ImGradient.h">
+    <ClInclude Include="libraries\include\ImGUIZMO\ImGradient.h">
       <Filter>Header Files\GUI\ImGUIZMO</Filter>
     </ClInclude>
-    <ClInclude Include="ImGUIZMO\ImGuizmo.h">
+    <ClInclude Include="libraries\include\ImGUIZMO\ImGuizmo.h">
       <Filter>Header Files\GUI\ImGUIZMO</Filter>
     </ClInclude>
-    <ClInclude Include="ImGUIZMO\ImZoomSlider.h">
+    <ClInclude Include="libraries\include\ImGUIZMO\ImZoomSlider.h">
       <Filter>Header Files\GUI\ImGUIZMO</Filter>
     </ClInclude>
-    <ClInclude Include="ImGUIZMO\GraphEditor.h">
+    <ClInclude Include="libraries\include\ImGUIZMO\GraphEditor.h">
       <Filter>Header Files\GUI\ImGUIZMO</Filter>
     </ClInclude>
-    <ClInclude Include="ImGUI\imconfig.h">
+    <ClInclude Include="libraries\include\ImGUI\imconfig.h">
       <Filter>Header Files\GUI\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="ImGUI\imgui.h">
+    <ClInclude Include="libraries\include\ImGUI\imgui.h">
       <Filter>Header Files\GUI\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="ImGUI\imgui_impl_glfw.h">
+    <ClInclude Include="libraries\include\ImGUI\imgui_impl_glfw.h">
       <Filter>Header Files\GUI\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="ImGUI\imgui_impl_opengl3.h">
+    <ClInclude Include="libraries\include\ImGUI\imgui_impl_opengl3.h">
       <Filter>Header Files\GUI\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="ImGUI\imgui_impl_opengl3_loader.h">
+    <ClInclude Include="libraries\include\ImGUI\imgui_impl_opengl3_loader.h">
       <Filter>Header Files\GUI\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="ImGUI\imgui_internal.h">
+    <ClInclude Include="libraries\include\ImGUI\imgui_internal.h">
       <Filter>Header Files\GUI\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="ImGUI\imstb_rectpack.h">
+    <ClInclude Include="libraries\include\ImGUI\imstb_rectpack.h">
       <Filter>Header Files\GUI\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="ImGUI\imstb_textedit.h">
+    <ClInclude Include="libraries\include\ImGUI\imstb_textedit.h">
       <Filter>Header Files\GUI\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="ImGUI\imstb_truetype.h">
+    <ClInclude Include="libraries\include\ImGUI\imstb_truetype.h">
       <Filter>Header Files\GUI\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="VertexBVH.h">
+    <ClInclude Include="include\VertexBVH.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
-    <ClInclude Include="Application.h">
+    <ClInclude Include="include\Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MyGUI.h">
+    <ClInclude Include="include\MyGUI.h">
       <Filter>Header Files\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="WindowManager.h">
+    <ClInclude Include="include\WindowManager.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Edge.h">
+    <ClInclude Include="include\Edge.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Face.h">
+    <ClInclude Include="include\Face.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="EdgeBVH.h">
+    <ClInclude Include="include\EdgeBVH.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
-    <ClInclude Include="FaceBVH.h">
+    <ClInclude Include="include\FaceBVH.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="planksSpec.png">
+    <Image Include="assets\planksSpec.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
-    <Image Include="planks.png">
+    <Image Include="assets\planks.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
   </ItemGroup>
