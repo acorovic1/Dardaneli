@@ -1,5 +1,0 @@
-﻿  Renderer.cpp
-C:\Users\corov\OneDrive\Radna površina\Dardaneli\Renderer.cpp(30,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\corov\OneDrive\Radna površina\Dardaneli\Renderer.cpp(109,45): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\corov\OneDrive\Radna površina\Dardaneli\Renderer.cpp(151,56): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-  Dardaneli.vcxproj -> C:\Users\corov\OneDrive\Radna površina\Dardaneli\x64\Debug\Dardaneli.exe
