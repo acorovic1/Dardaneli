@@ -27,6 +27,7 @@ class MyGUI /* :public Dardaneli...varijable pod protected staviti*/ {
 	float hoverTime = 0.0f;
 
 	bool BVHTree = false;
+	bool faceCulling = true;
 	int BVHSubd = 0;
 	int eBVHSubd = 0;
 
@@ -41,9 +42,11 @@ class MyGUI /* :public Dardaneli...varijable pod protected staviti*/ {
 	std::vector<GLuint> gridIndices;
 
 	VAO gridVAO;
+	EBO gridEBO;
 
 public:
 	bool showAddMenu = false;
+	bool showDeleteMenu = false;
 	MyGUI(Window* window);
 	void Init();
 	void NewFrame();
@@ -53,11 +56,14 @@ public:
 	ImGuiIO* getIO();
 	Mode getMode();
 	SelectMode getSelectMode();
+	bool getFaceCulling() { return faceCulling; }
 
 	std::vector<int>& getObjectIndex();
 
 	void Add();
+	void DeleteEdit();
 	void AddMenu();
+	void DeleteMenu();
 
 	void DrawBVH();
 

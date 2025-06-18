@@ -1,17 +1,17 @@
 #pragma once
 
-#include "BVHNode.h"
+#include "FaceBVHNode.h"
 #include "Mesh.h"
 
-struct BVHNode;
+struct FaceBVHNode;
 
 class FaceBVH {
-	BVHNode* root;
+	FaceBVHNode* root;
 	static FaceBVH* instancePtr;
 
 	FaceBVH() :root(nullptr) {};
 
-	void DrawTree(BVHNode* node, Camera& camera, Shader& shader, int subdivision);
+	void DrawTree(FaceBVHNode* node, Camera& camera, Shader& shader, int subdivision);
 
 public:
 
@@ -20,14 +20,14 @@ public:
 	FaceBVH(const FaceBVH& copy) = delete;
 	void operator=(const FaceBVH& copy) = delete;
 
-	BVHNode* getRoot();
+	FaceBVHNode* getRoot();
 	void BuildBottomUp(Mesh& mesh);
 	// pokusati staviti default vrijednosti kroz objectManager
 
 	void Refit(Mesh& mesh);
 
 	void Draw(Camera& camera, Shader& shader, int subdivision);
-	void DrawLeaves(BVHNode* node, Camera& camera, Shader& shader);
+	void DrawLeaves(FaceBVHNode* node, Camera& camera, Shader& shader);
 };
 
 extern FaceBVH* FaceBVHSingleton;

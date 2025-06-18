@@ -42,8 +42,17 @@ void main()
 {
 
 	
-	FragColor = vec4(0.83f, 0.83f, 0.83f, 1.0f)  ;
-	//FragColor = vec4(Normal,1.0f)  ;
+	if (gl_FrontFacing)
+    {
+        // Front face color
+        FragColor = vec4(0.83f, 0.83f, 0.83f, 1.0f);
+    }
+    else
+    {
+        // Back face color
+        FragColor = vec4(0.75f, 0.0f, 0.0f, 1.0f); 
+    }
+	
 
 
 

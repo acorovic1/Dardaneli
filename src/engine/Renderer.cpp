@@ -2,6 +2,7 @@
 
 #include "ShaderManager.h"
 #include "MyGUI.h"
+#include "Face.h"
 
 Renderer::Renderer() {}
 
@@ -27,7 +28,10 @@ void Renderer::Render(Window& window, MyGUI& gui)
 
 	glStencilMask(0x00);
 
-
+	if (gui.getFaceCulling())
+		glEnable(GL_CULL_FACE);
+	else
+		glDisable(GL_CULL_FACE);
 
 	for (int i = 0; i < objectSingleton->getNumberOfObjects(); i++)
 	{
@@ -93,9 +97,16 @@ void Renderer::Render(Window& window, MyGUI& gui)
 				}
 				else if (gui.getSelectMode() == SelectMode::EDGE)
 				{
-					auto& selectedEdges = static_cast<Mesh*>(object)->getSelectedEdges();
-					std::vector<GLuint> edges = std::vector<GLuint>();
-					edges.insert(edges.end(), selectedEdges.begin(), selectedEdges.end());
+					Mesh* mesh = dynamic_cast<Mesh*>(object);
+					if (!mesh)return;
+					std::vector<Edge*>& selectedEdges = mesh->getSelectedEdges();
+					std::vector<GLuint> edgeVerts = std::vector<GLuint>();
+					for (auto& x : selectedEdges)
+					{
+						std::pair<int, int>edgeVertices = mesh->getEdgeIndices(x);
+						edgeVerts.push_back(edgeVertices.first);
+						edgeVerts.push_back(edgeVertices.second);
+					}
 					object->bindVAO();
 					auto x = object->getModelReference();
 
@@ -104,30 +115,46 @@ void Renderer::Render(Window& window, MyGUI& gui)
 					selectShader.setMat4(true, "model", x);
 					camera.CameraUniform(selectShader, "cameraMatrix");
 
-					EBO ebo(edges);
+					EBO ebo(edgeVerts);
 					ebo.Bind();
-					if (edges.size())
+					if (edgeVerts.size())
 					{
-						glDrawElements(GL_LINES, edges.size() - 2, GL_UNSIGNED_INT, 0); // draw red
+						glDrawElements(GL_LINES, edgeVerts.size() - 2, GL_UNSIGNED_INT, 0); // draw red
 
 						Shader activeShader = shaderSingleton->getShader("ActiveEdit"); // orange color
 						activeShader.Activate();
 						activeShader.setMat4(true, "model", x);
 						camera.CameraUniform(activeShader, "cameraMatrix");
-						glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, (void*)((edges.size() - 2) * sizeof(GLuint))); // draw orange
+						glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, (void*)((edgeVerts.size() - 2) * sizeof(GLuint))); // draw orange
 
 					}
 				}
 				else // SelectMode::FACE
 				{
-					auto drawFaces = static_cast<Mesh*>(object)->formTrianglesForDrawing();
+					Mesh* mesh = dynamic_cast<Mesh*>(object);
+					if (!mesh)return;
+					auto drawFaces = mesh->formTrianglesForDrawing();
 					/*for (int i = 0;i < drawFaces.size();i++)
 					{
 						std::cout << drawFaces[i]<<" ";
 						if (i % 3 == 2 && i)std::cout << "\n";
 					}*/
 
-					auto temp = static_cast<Mesh*>(object)->getSelectedFaces();
+					std::vector<int> selectedVerts;
+					std::vector<Face*>& selectedFaces = mesh->getSelectedFaces();
+
+					
+					for (auto& x : selectedFaces)
+					{
+						std::vector<int> temp = mesh->getFaceIndices(x);
+						selectedVerts.push_back(x->getVertices().size());
+						selectedVerts.insert(selectedVerts.end(), temp.begin(), temp.end());
+					}
+
+					/*for (auto x : selectedVerts)
+						std::cout << x << " XXX";*/
+						
+
 
 					if (drawFaces.size())
 					{
@@ -143,16 +170,16 @@ void Renderer::Render(Window& window, MyGUI& gui)
 						EBO ebo(drawFaces);
 						ebo.Bind();
 
-						int lastFace = temp[0];
-						for (int i = lastFace + 1; i < temp.size(); i += temp[i] + 1)
+						int lastFace = selectedVerts[0];
+						for (int i = lastFace + 1; i < selectedVerts.size(); i += selectedVerts[i] + 1)
 						{
-							lastFace = temp[i];
+							lastFace = selectedVerts[i];
 						}
 
 						lastFace = (lastFace - 2) * 3; // actual number of indices used to make that face
 
 
-						std::cout << "\nvec.size " <<drawFaces.size() << " --- lastFace = " << lastFace << "\n";
+						//std::cout << "\nvec.size " <<drawFaces.size() << " --- lastFace = " << lastFace << "\n";
 
 						glDisable(GL_CULL_FACE);
 

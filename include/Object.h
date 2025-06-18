@@ -25,7 +25,7 @@ protected:
 
 	std::string name;
 	std::vector<Vertex>*vertices;
-	std::vector<GLuint>indices;
+	
 
 public:
 
@@ -42,7 +42,7 @@ public:
 
 	void bindVAO();
 
-	void UpdateData(int i);
+	void UpdateVertexBuffer(int i);
 	void addVertex(Vertex& vertex);
 
 	virtual void Draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES) = 0;

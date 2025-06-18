@@ -13,30 +13,25 @@ EdgeBVH* EdgeBVH::getInstance()
 
 void EdgeBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 {
-	std::vector<Edge*>edges= mesh.getEdges();
+	std::vector<Edge*>edges= mesh.getAllEdges();
 	std::vector<Vertex>vertices= mesh.getVerticesCopy();
-	int numObjects = edges.size();
-	std::vector<BVHNode*> bvhNodes(0);
+	std::vector<EdgeBVHNode*> bvhNodes;
 
 	//form leaf nodes
-	int startIndex, endIndex;
+	int numObjects = edges.size();
 	for (int i = 0; i < numObjects; i++)
 	{
-		startIndex =  std::find(vertices.begin(), vertices.end(), *edges[i]->pair->tip) - vertices.begin();
-		endIndex =  std::find(vertices.begin(), vertices.end(), *edges[i]->tip) - vertices.begin();
-		BVHNode* leaf = new BVHNode(mesh.getVertexXmodel(startIndex),mesh.getVertexXmodel(endIndex), startIndex, endIndex);
-		//std::cout << i << " " << startIndex << " " << endIndex<<"		";
-		bvhNodes.push_back(leaf); 
+		bvhNodes.push_back(new EdgeBVHNode(edges[i]));
 	}
 
 	while (numObjects > 1) {
 		int axis = rand() % 3;
 
-		if (axis == 0)	std::sort(bvhNodes.begin(), bvhNodes.begin() + numObjects, [](BVHNode* a, BVHNode* b) {return a->box.min.x < b->box.min.x; });
-		else if (axis == 1) std::sort(bvhNodes.begin(), bvhNodes.begin() + numObjects, [](BVHNode* a, BVHNode* b) {return a->box.min.y < b->box.min.y; });
-		else if (axis == 2) std::sort(bvhNodes.begin(), bvhNodes.begin() + numObjects, [](BVHNode* a, BVHNode* b) {return a->box.min.z < b->box.min.z; });
+		if (axis == 0)	std::sort(bvhNodes.begin(), bvhNodes.begin() + numObjects, [](EdgeBVHNode* a, EdgeBVHNode* b) {return a->box.min.x < b->box.min.x; });
+		else if (axis == 1) std::sort(bvhNodes.begin(), bvhNodes.begin() + numObjects, [](EdgeBVHNode* a, EdgeBVHNode* b) {return a->box.min.y < b->box.min.y; });
+		else if (axis == 2) std::sort(bvhNodes.begin(), bvhNodes.begin() + numObjects, [](EdgeBVHNode* a, EdgeBVHNode* b) {return a->box.min.z < b->box.min.z; });
 
-		BVHNode* newNode = new BVHNode(bvhNodes[0], bvhNodes[1]);
+		EdgeBVHNode* newNode = new EdgeBVHNode(bvhNodes[0], bvhNodes[1]);
 
 		bvhNodes[0] = newNode;
 		bvhNodes.erase(bvhNodes.begin() + 1);
@@ -45,10 +40,10 @@ void EdgeBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 	root = bvhNodes[0];
 }
 
-BVHNode* EdgeBVH::getRoot() { return root; }
+EdgeBVHNode* EdgeBVH::getRoot() { return root; }
 
 void EdgeBVH::Refit(Mesh& mesh) {
-	getRoot()->refitNodeEdge(mesh);
+	getRoot()->refitNode(mesh);
 }
 
 void EdgeBVH::Draw(Camera& camera, Shader& shader, int subdivision)
@@ -60,7 +55,7 @@ void EdgeBVH::Draw(Camera& camera, Shader& shader, int subdivision)
 	DrawTree(root, camera, shader, subdivision);
 }
 
-void EdgeBVH::DrawLeaves(BVHNode* node, Camera& camera, Shader& shader)
+void EdgeBVH::DrawLeaves(EdgeBVHNode* node, Camera& camera, Shader& shader)
 {
 	
 	if (!node->left && !node->right)
@@ -76,7 +71,7 @@ void EdgeBVH::DrawLeaves(BVHNode* node, Camera& camera, Shader& shader)
 	}
 }
 
-void EdgeBVH::DrawTree(BVHNode* node, Camera& camera, Shader& shader, int subdivision) {
+void EdgeBVH::DrawTree(EdgeBVHNode* node, Camera& camera, Shader& shader, int subdivision) {
 	if (subdivision == 0) return;
 	subdivision--;
 

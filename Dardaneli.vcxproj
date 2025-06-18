@@ -151,7 +151,9 @@
     <ClCompile Include="src\engine\DrawableAABB.cpp" />
     <ClCompile Include="src\engine\EBO.cpp" />
     <ClCompile Include="src\engine\EdgeBVH.cpp" />
+    <ClCompile Include="src\engine\EdgeBVHNode.cpp" />
     <ClCompile Include="src\engine\FaceBVH.cpp" />
+    <ClCompile Include="src\engine\FaceBVHNode.cpp" />
     <ClCompile Include="src\engine\VertexBVH.cpp" />
     <ClCompile Include="src\engine\glad.c" />
     <ClCompile Include="libraries\include\ImGUIZMO\GraphEditor.cpp" />
@@ -212,7 +214,9 @@
     <ClInclude Include="include\EBO.h" />
     <ClInclude Include="include\Edge.h" />
     <ClInclude Include="include\EdgeBVH.h" />
+    <ClInclude Include="include\EdgeBVHNode.h" />
     <ClInclude Include="include\FaceBVH.h" />
+    <ClInclude Include="include\FaceBVHNode.h" />
     <ClInclude Include="include\VertexBVH.h" />
     <ClInclude Include="include\Face.h" />
     <ClInclude Include="libraries\include\ImGUIZMO\GraphEditor.h" />

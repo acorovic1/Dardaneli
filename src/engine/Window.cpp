@@ -3,6 +3,8 @@
 Window::Window(int width, int height, const char* title)
 	: camera(width, height, glm::vec3(-2.0f, 3.0f, 6.0f)), name(title)
 {
+	glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+
 	window = glfwCreateWindow(width, height, title, nullptr, nullptr);
 	glfwSetWindowUserPointer(window, reinterpret_cast<void*>(this));
 }

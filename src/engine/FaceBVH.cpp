@@ -1,4 +1,5 @@
 #include "FaceBVH.h"
+#include "FaceBVHNode.h"
 #include "Face.h"
 
 FaceBVH* FaceBVH::instancePtr = nullptr;
@@ -14,17 +15,17 @@ FaceBVH* FaceBVH::getInstance()
 
 void FaceBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 {
-	std::vector<Face*>faces = mesh.getFaces();
+	std::vector<Face*>faces = mesh.getAllFaces();
 	std::vector<Vertex>vertices = mesh.getVerticesCopy();
 	int numObjects = faces.size();
-	std::vector<BVHNode*> bvhNodes(0);
+	std::vector<FaceBVHNode*> bvhNodes(0);
 
 	std::vector<int>vertexIndices;
 	std::vector<glm::vec3>vertexLocations;
 	//form leaf nodes
 	for (int i = 0; i < numObjects; i++)
 	{
-		std::cout << "\n\n NUMBER OF FACES " << faces.size()<<"\n\n";
+		//std::cout << "\n\n NUMBER OF FACES " << faces.size()<<"\n\n";
 		std::vector<Vertex*> temp = faces[i]->getVertices();
 		for (int j = 0;j < temp.size();j++)
 		{
@@ -32,10 +33,10 @@ void FaceBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 			vertexLocations.push_back(mesh.getVertexXmodel(vertexIndices.back()));
 		}
 
-		BVHNode* leaf = new BVHNode(vertexLocations, vertexIndices);
-		for (auto x : vertexIndices)
-			std::cout << x << " ";
-		std::cout << "\n";
+		FaceBVHNode* leaf = new FaceBVHNode(vertexLocations, faces[i]);
+		//for (auto x : vertexIndices)
+		//	std::cout << x << " ";
+		//std::cout << "\n";
 		//std::cout << i << " " << startIndex << " " << endIndex << "		";
 		vertexIndices.clear();
 		vertexLocations.clear();
@@ -45,11 +46,11 @@ void FaceBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 	while (numObjects > 1) {
 		int axis = rand() % 3;
 
-		if (axis == 0)	std::sort(bvhNodes.begin(), bvhNodes.begin() + numObjects, [](BVHNode* a, BVHNode* b) {return a->box.min.x < b->box.min.x; });
-		else if (axis == 1) std::sort(bvhNodes.begin(), bvhNodes.begin() + numObjects, [](BVHNode* a, BVHNode* b) {return a->box.min.y < b->box.min.y; });
-		else if (axis == 2) std::sort(bvhNodes.begin(), bvhNodes.begin() + numObjects, [](BVHNode* a, BVHNode* b) {return a->box.min.z < b->box.min.z; });
+		if (axis == 0)	std::sort(bvhNodes.begin(), bvhNodes.begin() + numObjects, [](FaceBVHNode* a, FaceBVHNode* b) {return a->box.min.x < b->box.min.x; });
+		else if (axis == 1) std::sort(bvhNodes.begin(), bvhNodes.begin() + numObjects, [](FaceBVHNode* a, FaceBVHNode* b) {return a->box.min.y < b->box.min.y; });
+		else if (axis == 2) std::sort(bvhNodes.begin(), bvhNodes.begin() + numObjects, [](FaceBVHNode* a, FaceBVHNode* b) {return a->box.min.z < b->box.min.z; });
 
-		BVHNode* newNode = new BVHNode(bvhNodes[0], bvhNodes[1]);
+		FaceBVHNode* newNode = new FaceBVHNode(bvhNodes[0], bvhNodes[1]);
 
 		bvhNodes[0] = newNode;
 		bvhNodes.erase(bvhNodes.begin() + 1);
@@ -58,10 +59,10 @@ void FaceBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 	root = bvhNodes[0];
 }
 
-BVHNode* FaceBVH::getRoot() { return root; }
+FaceBVHNode* FaceBVH::getRoot() { return root; }
 
 void FaceBVH::Refit(Mesh& mesh) {
-	getRoot()->refitNodeEdge(mesh);
+	//getRoot()->refitNodeEdge(mesh);
 }
 
 void FaceBVH::Draw(Camera& camera, Shader& shader, int subdivision)
@@ -73,7 +74,7 @@ void FaceBVH::Draw(Camera& camera, Shader& shader, int subdivision)
 	DrawTree(root, camera, shader, subdivision);
 }
 
-void FaceBVH::DrawLeaves(BVHNode* node, Camera& camera, Shader& shader)
+void FaceBVH::DrawLeaves(FaceBVHNode* node, Camera& camera, Shader& shader)
 {
 
 	if (!node->left && !node->right)
@@ -89,7 +90,7 @@ void FaceBVH::DrawLeaves(BVHNode* node, Camera& camera, Shader& shader)
 	}
 }
 
-void FaceBVH::DrawTree(BVHNode* node, Camera& camera, Shader& shader, int subdivision) {
+void FaceBVH::DrawTree(FaceBVHNode* node, Camera& camera, Shader& shader, int subdivision) {
 	if (subdivision == 0) return;
 	subdivision--;
 

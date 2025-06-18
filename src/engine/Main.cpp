@@ -2,6 +2,7 @@
 #include "Renderer.h"
 #include "MyGUI.h"
 #include "Scene.h"
+#include "windows.h"
 
 // Debug message callback function
 void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)

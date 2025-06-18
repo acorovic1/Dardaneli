@@ -7,12 +7,20 @@ class Mesh :public Object {
 
 	std::vector<Texture>textures;
 
+	std::vector<GLuint>indices; // used for drawing faces
 	EBO edgeEBO;
 	std::vector<GLuint>edgeIndices; // used for drawing edges
-	std::vector<int> vertexIndices = std::vector<int>(0); // selected vertices
 
-	std::vector<int>selectedEdges = std::vector<int>(0); // indices of selected edges !!! includes duplicate indices !!!
-	std::vector<int>selectedFaces = std::vector<int>(0); // indices of selected faces !!! includes duplicate indices !!!
+	std::vector<int> selectedVertexIndices = std::vector<int>(0);
+	std::vector<Face*>selectedFaces;
+	std::vector<Edge*>selectedEdges;
+
+	// !!! needs an EBO update !!!
+// erases indices of the face inside the mesh
+	void eraseFace(Face* face);
+	// !!! needs an EBO update !!!
+	// erases indices of the edge inside the mesh
+	void eraseEdge(Edge* edge);
 
 public:
 
@@ -20,10 +28,20 @@ public:
 
 	~Mesh();
 
-	void bindEBO();
+	std::vector<GLuint>& getIndices() { return indices; }
 
-	std::vector<Face*> getFaces(); // logic can/needs to be improved
-	std::vector<Edge*> getEdges();
+	void bindEBO();
+	void updateEBO();
+	void updateEdgeEBO();
+
+	// gets all faces
+	std::vector<Face*> getAllFaces(); // logic can/needs to be improved
+	// gets all edges
+	std::vector<Edge*> getAllEdges();
+
+	Face* getFace(std::vector<int> indices); // returns the common face of indices 
+
+	Edge* getEdge(int start, int end);
 
 	GLuint extrudeVertex(GLuint vertex);
 
@@ -37,11 +55,31 @@ public:
 	void Scale(glm::vec3& scaleVector)override;
 	void Scale(float x, float y, float z)override;
 
+
+	void deleteVertices();
+	void deleteEdges();
+	void deleteFaces();
+	void deleteOnlyEdgesAndFaces();
+	void deleteOnlyFaces();
+	void dissolveVertices();
+	void dissolveEdges();
+	void dissolveFaces();
+
+
+
+
 	std::vector<int>& getSelectedVertices(); //
-	std::vector<int>& getSelectedEdges() { return selectedEdges; }; //
-	std::vector<int>& getSelectedFaces() { return selectedFaces; }; //
-	void setSelectedEdges(std::vector<int>& vec) { selectedEdges = vec; }
-	void setSelectedFaces(std::vector<int>& vec) { selectedFaces = vec; }
+//	std::vector<int>& getSelectedEdgeIndices() { return selectedEdges; }; //
+//	std::vector<int>& getSelectedFaceIndices() { return selectedFaces; };  //in the form of n1 xyz n2 abcd n3 klmn | where n = number of vertices of the face 
+//	void setSelectedEdges(std::vector<int>& vec) { selectedEdges = vec; }
+//	void setSelectedFaces(std::vector<int>& vec) { selectedFaces = vec; } //in the form of n1 xyz n2 abcd n3 klmn | where n = number of vertices of the face 
+
+	std::vector<Edge*>& getSelectedEdges();
+	std::vector<Face*>& getSelectedFaces();
+
+	int getVertexIndex(Vertex* v);
+	std::vector<int> getFaceIndices(Face* face);
+	std::pair<int,int> getEdgeIndices(Edge* edge);
 
 	std::vector<GLuint> formTrianglesForDrawing();
 

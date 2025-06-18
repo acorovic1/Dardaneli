@@ -1,6 +1,8 @@
 #include "Application.h"
 #include "CameraManager.h"
 #include "MyGUI.h"
+#include "Face.h"
+#include "Edge.h"
 
 
 Application* Application::instance = nullptr;
@@ -11,6 +13,11 @@ Application* Application::getInstance() {
 	if (!instance)
 		instance = new Application();
 	return instance;
+}
+
+void Application::setSelectMode(SelectMode mode)
+{
+	selectMode = mode;
 }
 
 void Application::updateTranslate(glm::vec3 offset)
@@ -118,6 +125,13 @@ void Application::ObjectMode(GLFWwindow* window, MyGUI& gui)
 		gui.AddMenu();
 	}
 
+	if (keys[GLFW_KEY_TAB])
+	{
+		keys[GLFW_KEY_TAB] = 0;
+		if (!objectIndices.size())
+			return;
+		mode = Mode::EDIT;
+	}
 	// GIZMO OPERATION
 	if (keys[GLFW_KEY_1])
 	{
@@ -221,6 +235,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		}
 
 		std::vector<int>& vertexIndices = mesh->getSelectedVertices();
+		std::vector<Vertex>& verticesReference = mesh->getVerticesReference();
 		std::vector<int> indexVec;
 		std::vector<int> index = { -1 };
 
@@ -275,148 +290,194 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 
 		if (selectMode == SelectMode::EDGE)
 		{
-			EdgeBVHSingleton->getRoot()->Hit(camera->CreateRay(window), indexVec);
+			index.clear();
 
-			auto& edgeIndices = mesh->getSelectedEdges();
+			std::vector<Edge*> edgesHit;
+			EdgeBVHSingleton->getRoot()->Hit(camera->CreateRay(window), edgesHit);
 
-			if (indexVec.size() > 1) // if size == 1 it is a miss
+			for (auto& edge : edgesHit)
 			{
-				indexVec.erase(std::remove(indexVec.begin(), indexVec.end(), -1), indexVec.end());
-				indexVec.erase(std::remove(indexVec.begin(), indexVec.end(), std::numeric_limits<unsigned int>::max()), indexVec.end());
+				if (!edge)continue;
+				auto temp = mesh->getEdgeIndices(edge);
+				indexVec.push_back(temp.first);
+				indexVec.push_back(temp.second);
 
-				// discards all the "hits" beyond the first one.. makes it so the ray "stops after the first hit"
-				if (indexVec.size())
-				{
-					//std::cout << "\n\n\nVEC SIZE " << indexVec.size();
-					index = { indexVec[0],indexVec[1] };
-
-					auto cameraPosition = cameraSingleton->getCamera(0)->getPosition();
-					const auto& v = mesh->getVerticesCopy();
-					auto v0 = v[indexVec[0]].getPositionCopy();
-					auto v1 = v[indexVec[1]].getPositionCopy();
-					auto midPoint = glm::vec3((v0.x + v1.x) / 2, (v0.y + v1.y) / 2, (v0.z - v1.z) / 2);
-					auto closestPosition = glm::distance(cameraPosition, midPoint);
-
-					for (int i = 2; i < indexVec.size(); i += 2)
-					{
-						v0 = v[indexVec[i]].getPositionCopy();
-						v1 = v[indexVec[i + 1]].getPositionCopy();
-						midPoint = glm::vec3(fabs(v0.x - v1.x), fabs(v0.y - v1.y), fabs(v0.z - v1.z));
-						auto position = glm::distance(cameraPosition, midPoint);
-						if (position < closestPosition)
-						{
-							closestPosition = position;
-							index = { indexVec[i],indexVec[i + 1] };
-						}
-					}
-					
-				}
 			}
 
-			
+			std::vector<Edge*>& selectedEdges = mesh->getSelectedEdges();
+			Edge* selectedEdge;
+
+			if (indexVec.size())
+			{
+
+				// discards all the "hits" beyond the first one.. makes it so the ray "stops after the first hit"
+
+					//std::cout << "\n\n\nVEC SIZE " << indexVec.size();
+				index = { indexVec[0],indexVec[1] };
+
+				auto cameraPosition = cameraSingleton->getCamera(0)->getPosition();
+				const auto& v = mesh->getVerticesCopy();
+				auto v0 = v[indexVec[0]].getPositionCopy();
+				auto v1 = v[indexVec[1]].getPositionCopy();
+				auto midPoint = glm::vec3((v0.x + v1.x) / 2, (v0.y + v1.y) / 2, (v0.z - v1.z) / 2);
+				auto closestPosition = glm::distance(cameraPosition, midPoint);
+
+				for (int i = 2; i < indexVec.size(); i += 2)
+				{
+					v0 = v[indexVec[i]].getPositionCopy();
+					v1 = v[indexVec[i + 1]].getPositionCopy();
+					midPoint = glm::vec3(fabs(v0.x - v1.x), fabs(v0.y - v1.y), fabs(v0.z - v1.z));
+					auto position = glm::distance(cameraPosition, midPoint);
+					if (position < closestPosition)
+					{
+						closestPosition = position;
+						index = { indexVec[i],indexVec[i + 1] };
+					}
+				}
+
+
+				selectedEdge = mesh->getEdge(index[0], index[1]);
+			}
+
 			if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) // shift select
 			{
-				if (index[0] == -1)return;
+				if (!indexVec.size())return;
 
-				edgeIndices.push_back(index[0]);
-				edgeIndices.push_back(index[1]);
+				auto it = std::find(selectedEdges.begin(), selectedEdges.end(), selectedEdge);
+				if (it != selectedEdges.end())
+					selectedEdges.erase(it);
 
+				selectedEdges.push_back(selectedEdge);
 
 				vertexIndices.erase(std::remove_if(vertexIndices.begin(), vertexIndices.end(), [index](int a) {return a == index[0]; }), vertexIndices.end());
 				vertexIndices.erase(std::remove_if(vertexIndices.begin(), vertexIndices.end(), [index](int a) {return a == index[1]; }), vertexIndices.end());
 
 				vertexIndices.push_back(index[0]);
 				vertexIndices.push_back(index[1]);
-				
-				
+
+
 				std::cout << "\nMULTI SELECT ---> " << index[0] << " " << index[1];
 
 			}
-			else if (index[0] == -1)// normal select .............		-1 is the miss constant
+			else if (!indexVec.size())// normal select ..... miss 
 			{
 				vertexIndices.clear();
-				edgeIndices.clear();
+				selectedEdges.clear();
 			}
 			else
 			{
 				vertexIndices.clear();
 				vertexIndices.push_back(index[0]);
 				vertexIndices.push_back(index[1]);
+
 				std::cout << "\nSELECTED ---> " << index[0] << " " << index[1];
-				edgeIndices = index;
+
+				selectedEdges.push_back(selectedEdge);
 			}
 		}
 
 		if (selectMode == SelectMode::FACE)
 		{
-			FaceBVHSingleton->getRoot()->Hit(camera->CreateRay(window), indexVec);
-			auto& selectedFaces = mesh->getSelectedFaces();
+			index.clear();
+
+			std::vector<Face*>facesHit;
+			FaceBVHSingleton->getRoot()->Hit(camera->CreateRay(window), facesHit);
+			std::vector<Face*>& selectedFaces = mesh->getSelectedFaces();
 			int numberOfVerticesInLastFace = 0;
 
-			/*for (auto x : indexVec)
+			Face* selectedFace=nullptr;
+
+			for (auto& face : facesHit)
+			{
+				if (!face)continue;
+
+				auto temp = mesh->getFaceIndices(face);
+
+				indexVec.push_back(face->getVertices().size());
+				indexVec.insert(indexVec.end(), temp.begin(), temp.end());
+
+			}
+			/*std::cout << "\n\n ";
+			for (auto x : indexVec)
 				std::cout << " " << x;
 				std::cout << "\n\n ";*/
 
-			if (indexVec.size() > 1) // if size == 1 it is a miss
+			if (indexVec.size()) // if size == 1 it is a miss
 			{
-				indexVec.erase(std::remove(indexVec.begin(), indexVec.end(), -1), indexVec.end());
-				indexVec.erase(std::remove(indexVec.begin(), indexVec.end(), std::numeric_limits<unsigned int>::max()), indexVec.end());
+				//indexVec.erase(std::remove(indexVec.begin(), indexVec.end(), -1), indexVec.end());
+				//indexVec.erase(std::remove(indexVec.begin(), indexVec.end(), std::numeric_limits<unsigned int>::max()), indexVec.end());
 				/*for (auto x : indexVec)
 					std::cout << " " << x;
 				std::cout << "\n ";*/
+
 				// discards all the "hits" beyond the first one.. makes it so the ray "stops after the first hit"
-				if (indexVec.size())
+
+				for (int i = 1;i <= indexVec[0];i++)
+					index.push_back(indexVec[i]);
+
+
+				auto cameraPosition = cameraSingleton->getCamera(0)->getPosition();
+
+				const auto& v = mesh->getVerticesCopy();
+
+				auto midPoint = glm::vec3(0.0f, 0.0f, 0.0f);
+				for (int i = 1;i < indexVec[0];i++)
 				{
-					for (int i = 1;i <= indexVec[0];i++)
-						index.push_back(indexVec[i]);
-					
+					midPoint = midPoint + v[indexVec[i]].getPositionCopy();
+				}
+				midPoint = midPoint / float(indexVec[0]);
 
-					auto cameraPosition = cameraSingleton->getCamera(0)->getPosition();
 
-					const auto& v = mesh->getVerticesCopy();
+				auto closestPosition = glm::distance(cameraPosition, midPoint);
 
-					auto midPoint = glm::vec3(0.0f, 0.0f, 0.0f);
-					for (int i = 1;i < indexVec[0];i++)
+				for (int i = 0; i < indexVec.size(); i += indexVec[i] + 1)
+				{
+					midPoint = glm::vec3(0.0f, 0.0f, 0.0f);
+					for (int j = i + 1;j <= i + indexVec[i];j++)
 					{
-						midPoint = midPoint + v[indexVec[i]].getPositionCopy();
+						midPoint = midPoint + v[indexVec[j]].getPositionCopy();
+
 					}
-					midPoint = midPoint / float(indexVec[0]);
-
-
-					auto closestPosition = glm::distance(cameraPosition, midPoint);
-
-					for (int i = 0; i < indexVec.size(); i += indexVec[i] + 1)
+					midPoint = midPoint / float(indexVec[i]);
+					auto position = glm::distance(cameraPosition, midPoint);
+					if (position < closestPosition)
 					{
-						midPoint = glm::vec3(0.0f, 0.0f, 0.0f);
+						closestPosition = position;
+						index.clear();
 						for (int j = i + 1;j <= i + indexVec[i];j++)
 						{
-							midPoint = midPoint + v[indexVec[j]].getPositionCopy();
+							index.push_back(indexVec[j]);
 
-						}
-						midPoint = midPoint / float(indexVec[i]);
-						auto position = glm::distance(cameraPosition, midPoint);
-						if (position < closestPosition)
-						{
-							closestPosition = position;
-							index.clear();
-							for (int j = i + 1;j <= i + indexVec[i];j++)
-							{
-								index.push_back(indexVec[j]);
-
-							};
-							numberOfVerticesInLastFace = indexVec[i];
-						}
+						};
+						numberOfVerticesInLastFace = indexVec[i];
 					}
 				}
+
+				selectedFace = mesh->getFace(std::vector<int>(index.begin(), index.end()));
 			}
 
 
+			std::vector<Edge*>& selectedEdges = mesh->getSelectedEdges();
+
 			if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) // shift select
 			{
-				if (index[0] == -1)return;
-				selectedFaces.push_back(numberOfVerticesInLastFace);
-				selectedFaces.insert(selectedFaces.end(), index.begin(), index.end());
-				for(auto x: index)
+				if (!selectedFace)return;
+
+				//add the face to selectedFaces atribute
+				auto it = std::find(selectedFaces.begin(), selectedFaces.end(), selectedFace);
+				if (it != selectedFaces.end())
+					selectedFaces.erase(it);
+				selectedFaces.push_back(selectedFace);
+
+				for (auto& x : selectedFace->getEdges())
+				{
+					auto edgeIt = std::find(selectedEdges.begin(), selectedEdges.end(), x);
+					if (edgeIt != selectedEdges.end())
+						selectedEdges.erase(edgeIt);
+					selectedEdges.push_back(x);
+				}
+
+				for (auto x : index)
 					vertexIndices.erase(std::remove_if(vertexIndices.begin(), vertexIndices.end(), [x](int a) {return a == x; }), vertexIndices.end());
 
 				vertexIndices.insert(vertexIndices.end(), index.begin(), index.end());
@@ -424,23 +485,27 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 				for (auto x : index)
 					std::cout << x << " ";
 			}
-			else if (index[0] == -1)// normal select .............		-1 is the miss constant
+			else if (!selectedFace)// miss
 			{
 				vertexIndices.clear();
 				selectedFaces.clear();
+				selectedEdges.clear();
 			}
 			else
 			{
 				vertexIndices.clear();
 				selectedFaces.clear();
+				selectedEdges.clear();
 				vertexIndices = index;
 
-				selectedFaces.push_back(numberOfVerticesInLastFace);
-				selectedFaces.insert(selectedFaces.end(),index.begin(),index.end());
+				selectedFaces.push_back(selectedFace);
+				for (auto& x : selectedFace->getEdges())
+					selectedEdges.push_back(x);
 
-				std::cout << "\nSELECTED ---> " ;
+
+				std::cout << "\nSELECTED ---> ";
 				for (auto x : index)
-					std::cout<< x << " ";
+					std::cout << x << " ";
 			}
 		}
 
@@ -451,6 +516,30 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 
 		mouseButtons[GLFW_MOUSE_BUTTON_LEFT] = 0;
 		keys[GLFW_KEY_E] = 0;
+	}
+
+
+	// SELECT MODE
+	if (keys[GLFW_KEY_1])
+	{
+		selectMode = SelectMode::VERTEX;
+		keys[GLFW_KEY_1] = 0;
+	}
+	if (keys[GLFW_KEY_2])
+	{
+		selectMode = SelectMode::EDGE;
+		keys[GLFW_KEY_2] = 0;
+	}
+	if (keys[GLFW_KEY_3])
+	{
+		selectMode = SelectMode::FACE;
+		keys[GLFW_KEY_3] = 0;
+	}
+
+	if (keys[GLFW_KEY_TAB])
+	{
+		keys[GLFW_KEY_TAB] = 0;
+		mode = Mode::OBJECT;
 	}
 
 	// TRANSLATE
@@ -485,7 +574,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 			for (auto x : mesh->getSelectedVertices())
 			{
 				vertices[x].Translate(offset.x, 0.0f, 0.0f);
-				mesh->UpdateData(x);
+				mesh->UpdateVertexBuffer(x);
 			}
 
 			app->updateVertexPosition(glm::vec3(offset.x, 0.0f, 0.0f));
@@ -497,7 +586,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 			for (auto x : mesh->getSelectedVertices())
 			{
 				vertices[x].Translate(0.0f, offset.y, 0.0f);
-				mesh->UpdateData(x);
+				mesh->UpdateVertexBuffer(x);
 			}
 			app->updateVertexPosition(glm::vec3(0.0f, offset.y, 0.0f));
 		}
@@ -507,7 +596,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 			for (auto x : mesh->getSelectedVertices())
 			{
 				vertices[x].Translate(0.0f, 0.0f, offset.z);
-				mesh->UpdateData(x);
+				mesh->UpdateVertexBuffer(x);
 			}
 			app->updateVertexPosition(glm::vec3(0.0f, 0.0f, offset.z));
 		}
@@ -516,13 +605,21 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 			for (auto x : mesh->getSelectedVertices())
 			{
 				vertices[x].Translate(offset);
-				mesh->UpdateData(x);
+				mesh->UpdateVertexBuffer(x);
 			}
 			app->updateVertexPosition(offset);
 		}
 
 		previousX = posX;
 		previousY = posY;
+	}
+
+	// DELETE
+	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+	{
+
+		gui.DeleteMenu();
+
 	}
 
 	// EXTRUDE
@@ -544,7 +641,6 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		keys[GLFW_KEY_G] = 1;
 	}
 }
-
 void Application::Inputs(GLFWwindow* window, MyGUI& gui) {
 	static Camera* camera = cameraSingleton->getCamera(0);
 	camera->Movement(window, gui);
@@ -554,3 +650,5 @@ void Application::Inputs(GLFWwindow* window, MyGUI& gui) {
 	else if (gui.getMode() == Mode::EDIT)
 		Application::EditMode(window, gui);
 }
+
+void Application::deleteObjects() {}

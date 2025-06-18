@@ -61,6 +61,8 @@ void MyGUI::DrawUI()
 	{
 		edit = true;
 		ImGui::Checkbox("BVHTree", &BVHTree);
+		ImGui::SameLine();
+		ImGui::Checkbox("FaceCulling", &faceCulling);
 		ImGui::InputInt("BVHTreeSubdivision", &BVHSubd);
 		ImGui::Checkbox("Gizmo", &gizmo);
 
@@ -69,6 +71,8 @@ void MyGUI::DrawUI()
 
 		if (showAddMenu)
 			Add();
+
+
 
 		if (BVHTree)
 			DrawBVH();
@@ -82,8 +86,9 @@ void MyGUI::DrawUI()
 	else if (app->mode == Mode::EDIT)
 	{
 		ImGui::Checkbox("BVHTree", &BVHTree);
+		ImGui::SameLine();
 		ImGui::InputInt("BVHTreeSubdivision", &eBVHSubd);
-
+		ImGui::Checkbox("FaceCulling", &faceCulling);
 		if (edit)
 		{
 			Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]));
@@ -122,7 +127,7 @@ void MyGUI::DrawUI()
 			(ImGui::InputInt("Index", &vertexIndicesTemp[vertexIndicesTemp.size() - 1]));
 
 		static int e = 0;
-
+		e = (int)app->selectMode;
 		ImGui::RadioButton("Vertex select", &e, 0); ImGui::SameLine();
 		ImGui::RadioButton("Edge select", &e, 1); ImGui::SameLine();
 		ImGui::RadioButton("Face select", &e, 2);
@@ -132,6 +137,10 @@ void MyGUI::DrawUI()
 		else if (e == 2)app->selectMode = SelectMode::FACE;
 
 		VertexTransform();
+
+
+		if (showDeleteMenu)
+			DeleteEdit();
 	}
 
 	ImGui::End();
@@ -157,7 +166,7 @@ void MyGUI::DrawUI()
 			{
 				clicked = 0;
 
-				vertexIndicesTemp = std::vector<int>{ vertexIndicesTemp[vertexIndicesTemp.size() - 1] };
+				vertexIndicesTemp = std::vector<int>{ vertexIndicesTemp.back() };
 
 				auto vertices = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1])->getVerticesCopy();
 
@@ -167,6 +176,7 @@ void MyGUI::DrawUI()
 					ImGui::End();
 					return;
 				}
+				//std::cout << " \n\n " << vertices[vertexIndicesTemp[0]].edge;
 				selectedEdge = vertices[vertexIndicesTemp[0]].edge;
 
 				auto it = std::find(vertices.begin(), vertices.end(), *selectedEdge->tip);
@@ -219,6 +229,11 @@ void MyGUI::DrawUI()
 			{
 				clicked = 0;
 
+				if (!selectedEdge)
+				{
+					ImGui::End();
+					return;
+				}
 				if (selectedEdge->next == nullptr)
 				{
 					std::cout << "\nSelected edge is nullptr..edge.next\n";
@@ -287,7 +302,11 @@ void MyGUI::DrawUI()
 			{
 				clicked = 0;
 
-
+				if (!selectedEdge)
+				{
+					ImGui::End();
+					return;
+				}
 				if (selectedEdge->pair == nullptr)
 				{
 					std::cout << "\nSelected edge is nullptr..edge.pair\n";
@@ -353,6 +372,11 @@ void MyGUI::DrawUI()
 			if (clicked)
 			{
 				clicked = 0;
+				if (!selectedEdge)
+				{
+					ImGui::End();
+					return;
+				}
 				if (selectedEdge->tip == nullptr)
 				{
 					std::cout << "\nSelected tip is nullptr..edge.tip\n";
@@ -376,9 +400,14 @@ void MyGUI::DrawUI()
 			if (clicked)
 			{
 				clicked = 0;
+				if (!selectedEdge)
+				{
+					ImGui::End();
+					return;
+				}
 				if (selectedEdge->face == nullptr)
 				{
-					std::cout << "\nSelected face is nullptr..edge.tip\n";
+					std::cout << "\nSelected face is nullptr..edge.face\n";
 					ImGui::End();
 					return;
 				}
@@ -408,6 +437,11 @@ void MyGUI::DrawUI()
 			if (clicked)
 			{
 				clicked = 0;
+				if (!selectedFace)
+				{
+					ImGui::End();
+					return;
+				}
 				if (selectedFace->edge == nullptr)
 				{
 					std::cout << "\nSelected edge is nullptr..face.edge\n";
@@ -567,7 +601,79 @@ void MyGUI::Add() {
 		ImGui::EndPopup();
 	}
 }
+void MyGUI::DeleteEdit()
+{
+
+	hoverTime = glfwGetTime();
+	static int selected_option = -1;
+	const char* options[] = { "Vertices", "Edges", "Faces", "Only Edges & Faces", "Only Faces", "Dissolve Vertices","Dissolve Edges","Dissolve Faces" };
+
+	ImGui::OpenPopup("Delete popup");
+
+	if (ImGui::BeginPopup("Delete popup"))
+	{
+		ImGui::SeparatorText("Delete");
+		ImGui::Separator();
+
+		Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()));
+		if (!mesh)return;
+
+		for (int i = 0; i < 8; ++i) {
+			if (i == 5) {
+				ImGui::Separator();
+			}
+
+			if (ImGui::Selectable(options[i])) {
+				selected_option = i;
+			}
+		}
+
+
+		if (selected_option == 0)
+			mesh->deleteVertices();
+		else if (selected_option == 1)
+			mesh->deleteEdges();
+		else if (selected_option == 2)
+			mesh->deleteFaces();
+		else if (selected_option == 3)
+			mesh->deleteOnlyEdgesAndFaces();
+		else if (selected_option == 4)
+		{
+			mesh->deleteOnlyFaces();
+			std::cout << "\n\n grid indices " << gridIndices.size();
+
+		}
+		else if (selected_option == 5)
+			mesh->dissolveVertices();
+		else if (selected_option == 6)
+			mesh->dissolveEdges();
+		else if (selected_option == 7)
+			mesh->dissolveFaces();
+
+		selected_option = -1;
+
+		if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) && !ImGui::IsAnyItemHovered() && hoverTime > 1.4)
+		{
+			glfwSetTime(0);
+			hoverTime = 0;
+
+			window->getKeys()[GLFW_KEY_X] = 0;
+			std::cout << "HEHEHAHA ";
+			showDeleteMenu = false;
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+}
 void MyGUI::AddMenu() { showAddMenu = true; }
+
+void MyGUI::DeleteMenu()
+{
+	showDeleteMenu = true;
+
+
+}
 
 void MyGUI::Gizmos()
 {
@@ -700,7 +806,7 @@ void MyGUI::VertexTransform()
 		for (int i = 0; i < selectedVertices.size(); i++)
 		{
 			vertices[selectedVertices[i]].Translate(offset);
-			activeObject->UpdateData(selectedVertices[i]);
+			activeObject->UpdateVertexBuffer(selectedVertices[i]);
 		}
 
 		app->vertexPrevPosition[0] = app->vertexPosition[0];
@@ -851,20 +957,24 @@ void MyGUI::InitializeGrid(int width)
 
 	gridVAO.Bind();
 	VBO VBO(gridVertices);
-	EBO EBO(gridIndices);
+	gridEBO.bufferData(gridIndices);
 
 	gridVAO.LinkAttribute(VBO, 0, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
 
 	gridVAO.Unbind();
 	VBO.Unbind();
-	EBO.Unbind();
+	gridEBO.Unbind();
+
+
 }
 
 void MyGUI::Grid()
 {
 	static auto& shader = shaderSingleton->getShader("Grid");
 	shader.Activate();
+
 	gridVAO.Bind();
+	gridEBO.Bind();
 
 	cameraSingleton->getCamera(0)->CameraUniform(shader, "cameraMatrix");
 

@@ -23,15 +23,21 @@ void Scene::Init()
 
 
 
-	addCircle(8);
+	addCube();
 
 
 
 	Mesh* m1 = static_cast<Mesh*>(objectSingleton->getObject(0));
 
-	auto faces = m1->getVerticesReference()[0].getAdjecentFaces()[0]->getVertices();
+	auto indices = m1->getIndices();
 
 
+	std::cout << "\n Start \n";
+	for (int k = 0;k < indices.size();k++)
+	{
+		if (k && k % 3 == 0)std::cout << "\n";
+		std::cout << indices[k] << " ";
+	}
 
 
 

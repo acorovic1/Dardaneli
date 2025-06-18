@@ -5,6 +5,7 @@
 
 #include<iostream>
 #include<vector>
+#include<unordered_set>
 
 #include "Edge.h"
 
@@ -18,36 +19,25 @@ struct Vertex {
 
 	Edge* edge = nullptr; // arbitrary edge that comes out of the vertex
 
-	std::vector<Face*> getAdjecentFaces() const {
-		if (!edge) return std::vector<Face*>();
+	~Vertex() {}
 
-		Edge* temp = edge;
-		Edge* temp2;
-		std::vector<Face*> faces = std::vector<Face*>();
+	std::unordered_set<Face*> getAdjecentFaces() const {
+		if (!edge) return std::unordered_set<Face*>();
 
-		do
+		std::unordered_set<Face*> faces = std::unordered_set<Face*>();
+
+		for (auto& x : this->getAdjecentEdges())
 		{
-			faces.push_back(temp->face);
-			temp2 = temp;
-			do
-			{
-				temp = temp->next;
-			} while (temp->next != temp2);
+			if (x->face)
+				faces.insert(x->face);
+			if (x->pair->face)
+				faces.insert(x->pair->face);
+		}
 
-			if (temp->pair)
-			{
-				if (!temp->pair->face) // if the object is a plane/circle like structure
-				{
-					break;
-				}
-					temp = temp->pair;
-			}
-			else break;
-		} while (temp != edge);
 		return faces;
 	}
 
-	// the algorithm is the same as for the method 'getAdjecentFaces' aside from the return value
+	// returns all adjecent half-edges that flow outward from the vertex
 	std::vector<Edge*> getAdjecentEdges()const {
 		if (!edge) return std::vector<Edge*>();
 
@@ -64,14 +54,14 @@ struct Vertex {
 			{
 				temp = temp->next;
 			} while (temp->next != temp2);
-			if (temp->pair)
-				temp = temp->pair;
-			else break;
+
+			temp = temp->pair;
+		
 		} while (temp != edge);
 		return edges;
 	}
 
-	// the algorithm is the same as for the method 'getAdjecentFaces' aside from the return value
+	// the algorithm is the same as for the method 'getAdjecentEdges' aside from the return value
 	std::vector<Vertex*> getAdjecentVertices()const {
 		if (!edge) return std::vector<Vertex*>();
 

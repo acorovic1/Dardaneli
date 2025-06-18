@@ -177,6 +177,12 @@
     <ClCompile Include="src\engine\FaceBVH.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
+    <ClCompile Include="src\engine\FaceBVHNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\EdgeBVHNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\basic.vert">
@@ -357,6 +363,12 @@
     </ClInclude>
     <ClInclude Include="include\FaceBVH.h">
       <Filter>Header Files\Picking</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FaceBVHNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EdgeBVHNode.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

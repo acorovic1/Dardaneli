@@ -39,7 +39,9 @@ class Application {
 	float vertexPosition[3] = { 0.0f,0.0f,0.0f };
 	float vertexPrevPosition[3] = { 0.0f,0.0f,0.0f };
 
-	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 model = glm::mat4(1.0f); // treba GUIu... nez zasto je ovde.. pogledaj nekad
+
+
 
 public:
 
@@ -48,13 +50,22 @@ public:
 	Application(const Application& copy) = delete;
 	void operator=(const Application& copy) = delete;
 
+
+	void setSelectMode(SelectMode mode);
+
 	void updateTranslate(glm::vec3 offset);//Updates translate for gui
 
 	void updateVertexPosition(glm::vec3 offset);
 
-	void Inputs(GLFWwindow* window, MyGUI& gui); //Inputs
 	void ObjectMode(GLFWwindow* window, MyGUI& gui); //Inputs
 	void EditMode(GLFWwindow* window, MyGUI& gui); //Inputs
+	void Inputs(GLFWwindow* window, MyGUI& gui); //Inputs
+
+
+
+	void deleteObjects();
+
+	
 
 	friend class MyGUI;
 };

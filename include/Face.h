@@ -7,6 +7,7 @@ struct Face {
 	Edge* edge = nullptr; // arbitrary edge that belongs to the face 
 
 	Face() = default;
+	~Face() {}
 
 	std::vector<Vertex*> getVertices() const
 	{
@@ -18,6 +19,25 @@ struct Face {
 			temp = temp->next;
 		} while (temp != edge);
 		return vertices;
+	}
+
+	std::vector<Edge*>getEdges()
+	{
+		std::vector<Edge*> edges;
+
+		auto temp = edge;
+
+		do {
+			edges.push_back(temp);
+
+			temp = temp->next;
+
+			if (!temp) std::cerr << "\n\n Face.getEdges().. ne valja struktura podataka (Half-Edge)\n\n";
+
+
+		} while (temp != edge);
+
+		return edges;
 	}
 };
 

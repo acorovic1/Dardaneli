@@ -50,11 +50,6 @@ AABB::AABB(std::vector<glm::vec3>vertices)
 	}
 
 
-
-	std::cout << "HOLA MIN - MAX pos: ";
-	std::cout << min.x << " " << min.y << " " << min.z << "		-	 ";
-	std::cout << max.x << " " << max.y << " " << max.z << "\n";
-
 	aabb = DrawableAABB(min, max);
 }
 AABB::AABB(Object& object) {

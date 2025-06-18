@@ -39,7 +39,7 @@ void Object::bindVAO()
 	VAO.Bind();
 }
 
-void Object::UpdateData(int i)
+void Object::UpdateVertexBuffer(int i)
 {
 	VBO.Bind();
 	glBufferSubData(GL_ARRAY_BUFFER, i * sizeof(Vertex), sizeof(Vertex), &((*vertices)[i]));

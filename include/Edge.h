@@ -15,6 +15,7 @@ struct Edge {
 
 public:
 	Edge() = default;
-
+	
+	~Edge(){}
 
 };

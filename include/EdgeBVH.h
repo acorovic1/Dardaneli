@@ -1,17 +1,17 @@
 #pragma once
 
-#include "BVHNode.h"
+#include "EdgeBVHNode.h"
 #include "Mesh.h"
 
-struct BVHNode;
+struct EdgeBVHNode;
 
 class EdgeBVH {
-	BVHNode* root;
+	EdgeBVHNode* root;
 	static EdgeBVH* instancePtr;
 
 	EdgeBVH() :root(nullptr) {};
 
-	void DrawTree(BVHNode* node, Camera& camera, Shader& shader, int subdivision);
+	void DrawTree(EdgeBVHNode* node, Camera& camera, Shader& shader, int subdivision);
 
 public:
 
@@ -20,14 +20,14 @@ public:
 	EdgeBVH(const EdgeBVH& copy) = delete;
 	void operator=(const EdgeBVH& copy) = delete;
 
-	BVHNode* getRoot();
+	EdgeBVHNode* getRoot();
 	void BuildBottomUp(Mesh& mesh);
 	// pokusati staviti default vrijednosti kroz objectManager
 
 	void Refit(Mesh& mesh);
 
 	void Draw(Camera& camera, Shader& shader, int subdivision);
-	void DrawLeaves(BVHNode* node, Camera& camera, Shader& shader);
+	void DrawLeaves(EdgeBVHNode* node, Camera& camera, Shader& shader);
 };
 
 extern EdgeBVH* EdgeBVHSingleton;
