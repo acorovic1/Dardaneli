@@ -1,5 +1,5 @@
 #include "Scene.h"
-#include "Face.h"
+#include "DFace.h"
 Scene::Scene() {}
 
 void Scene::Init()
@@ -22,22 +22,8 @@ void Scene::Init()
 	new Shader("ActiveEdit", "src/shaders/activeEdit.vert", "src/shaders/activeEdit.frag");
 
 
-
-	addCube();
-
-
-
-	Mesh* m1 = static_cast<Mesh*>(objectSingleton->getObject(0));
-
-	auto indices = m1->getIndices();
-
-
-	std::cout << "\n Start \n";
-	for (int k = 0;k < indices.size();k++)
-	{
-		if (k && k % 3 == 0)std::cout << "\n";
-		std::cout << indices[k] << " ";
-	}
+	addDoughnut();
+	
 
 
 

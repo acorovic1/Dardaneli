@@ -13,15 +13,15 @@ EdgeBVH* EdgeBVH::getInstance()
 
 void EdgeBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 {
-	std::vector<Edge*>edges= mesh.getAllEdges();
-	std::vector<Vertex>vertices= mesh.getVerticesCopy();
+	std::unordered_set<DEdge*>edges= mesh.getAllEdges();
+	std::vector<DVertex>vertices= mesh.getVerticesCopy();
 	std::vector<EdgeBVHNode*> bvhNodes;
 
 	//form leaf nodes
 	int numObjects = edges.size();
-	for (int i = 0; i < numObjects; i++)
+	for(DEdge* edge:edges)
 	{
-		bvhNodes.push_back(new EdgeBVHNode(edges[i]));
+		bvhNodes.push_back(new EdgeBVHNode(edge));
 	}
 
 	while (numObjects > 1) {

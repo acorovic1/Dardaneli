@@ -1,6 +1,6 @@
 #include "FaceBVH.h"
 #include "FaceBVHNode.h"
-#include "Face.h"
+#include "DFace.h"
 
 FaceBVH* FaceBVH::instancePtr = nullptr;
 
@@ -15,25 +15,27 @@ FaceBVH* FaceBVH::getInstance()
 
 void FaceBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 {
-	std::vector<Face*>faces = mesh.getAllFaces();
-	std::vector<Vertex>vertices = mesh.getVerticesCopy();
+	std::unordered_set<DFace*>faces = mesh.getAllFaces();
+	std::vector<DVertex>vertices = mesh.getVerticesCopy();
 	int numObjects = faces.size();
 	std::vector<FaceBVHNode*> bvhNodes(0);
 
 	std::vector<int>vertexIndices;
 	std::vector<glm::vec3>vertexLocations;
 	//form leaf nodes
-	for (int i = 0; i < numObjects; i++)
+	for (DFace* face : faces)
 	{
 		//std::cout << "\n\n NUMBER OF FACES " << faces.size()<<"\n\n";
-		std::vector<Vertex*> temp = faces[i]->getVertices();
-		for (int j = 0;j < temp.size();j++)
+		std::unordered_set<DVertex*> temp = face->getVertices();
+
+
+		for (DVertex* vertex : face->getVertices())
 		{
-			vertexIndices.push_back(std::find(vertices.begin(), vertices.end(), *temp[j]) - vertices.begin());
-			vertexLocations.push_back(mesh.getVertexXmodel(vertexIndices.back()));
+			vertexIndices.push_back(std::find(vertices.begin(), vertices.end(), *vertex) - vertices.begin());
+			vertexLocations.push_back(mesh.getModelXVertex(vertexIndices.back()));
 		}
 
-		FaceBVHNode* leaf = new FaceBVHNode(vertexLocations, faces[i]);
+		FaceBVHNode* leaf = new FaceBVHNode(vertexLocations, face);
 		//for (auto x : vertexIndices)
 		//	std::cout << x << " ";
 		//std::cout << "\n";

@@ -35,8 +35,11 @@ class MyGUI /* :public Dardaneli...varijable pod protected staviti*/ {
 
 	bool gizmo = true;
 
-	Edge* selectedEdge = nullptr;
-	Face* selectedFace = nullptr;
+	DLoop* selectedLoop= nullptr;
+	//DFace* selectedFace = nullptr;
+
+	// used only for disk.d1
+	DEdge* vertexEdge = nullptr;
 
 	std::vector<glm::vec2> gridVertices;
 	std::vector<GLuint> gridIndices;
@@ -78,4 +81,6 @@ public:
 	void setGizmoOperation(ImGuizmo::OPERATION op);
 
 	void Modes();
+
+	void DMesh();
 };

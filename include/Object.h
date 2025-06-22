@@ -16,34 +16,41 @@
 class Object {
 protected:
 
+	std::vector<DVertex>* vertices;
+
 	VAO VAO;
 	VBO VBO;
 	EBO ebo;
 
 	GLuint index{};
+	std::string name;
 	glm::mat4 model;
 
-	std::string name;
-	std::vector<Vertex>*vertices;
+
 	
 
 public:
 
 	Object(std::string name);		// call the object bvh in the constructor of the child class
+
 	std::string getName();
 	GLuint getIndex()const;
-	int getNumberOfVertices();
 	glm::mat4 getModelReference();
-	std::vector<Vertex>& getVerticesReference();
-	std::vector<Vertex> getVerticesCopy();
-	std::vector<glm::vec3> getVerticesXmodel();
-	glm::vec3 getVertexXmodel(GLuint vertexIndex);
 	glm::vec3 getPosition();
 
-	void bindVAO();
 
+	void bindVAO();
 	void UpdateVertexBuffer(int i);
-	void addVertex(Vertex& vertex);
+
+	int getNumberOfVertices();
+	std::vector<DVertex>& getVertices();
+	const std::vector<DVertex>& getVertices()const;
+	std::vector<DVertex> getVerticesCopy();
+	std::vector<glm::vec3> getModelXVertices();
+	glm::vec3 getModelXVertex(GLuint vertexIndex);
+	glm::vec3 getModelXVertex(DVertex* vertex);
+
+	int getVertexIndex(DVertex* v);
 
 	virtual void Draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES) = 0;
 
@@ -54,4 +61,9 @@ public:
 
 	virtual void Scale(glm::vec3& scaleVector) = 0;
 	virtual void Scale(float x, float y, float z) = 0;
+
+
+
+
+
 };

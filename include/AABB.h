@@ -24,8 +24,8 @@ struct AABB {
 	AABB(glm::vec3 min, glm::vec3 max);
 	AABB(std::vector<glm::vec3> vertices);
 	AABB(AABB& a, AABB& b);
-	AABB(Face* face);
-	AABB(Object& mesh);
+	AABB(DFace* face);
+	AABB(Object& object);
 
 
 	bool intersectRayAABB(const Ray& ray);

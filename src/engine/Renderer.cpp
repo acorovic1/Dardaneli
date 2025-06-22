@@ -2,7 +2,7 @@
 
 #include "ShaderManager.h"
 #include "MyGUI.h"
-#include "Face.h"
+#include "DFace.h"
 
 Renderer::Renderer() {}
 
@@ -99,7 +99,7 @@ void Renderer::Render(Window& window, MyGUI& gui)
 				{
 					Mesh* mesh = dynamic_cast<Mesh*>(object);
 					if (!mesh)return;
-					std::vector<Edge*>& selectedEdges = mesh->getSelectedEdges();
+					std::vector<DEdge*>& selectedEdges = mesh->getSelectedEdges();
 					std::vector<GLuint> edgeVerts = std::vector<GLuint>();
 					for (auto& x : selectedEdges)
 					{
@@ -141,7 +141,7 @@ void Renderer::Render(Window& window, MyGUI& gui)
 					}*/
 
 					std::vector<int> selectedVerts;
-					std::vector<Face*>& selectedFaces = mesh->getSelectedFaces();
+					std::vector<DFace*>& selectedFaces = mesh->getSelectedFaces();
 
 					
 					for (auto& x : selectedFaces)

@@ -14,7 +14,7 @@ VertexBVH* VertexBVH::getInstance()
 void VertexBVH::BuildBottomUp(Object& object) // O(n^3)
 {
 	int numObjects = object.getNumberOfVertices();
-	std::vector<glm::vec3 >vertices = object.getVerticesXmodel();
+	std::vector<glm::vec3 >vertices = object.getModelXVertices();
 	std::vector<BVHNode*> bvhNodes(0);
 
 	for (int i = 0; i < numObjects; i++)

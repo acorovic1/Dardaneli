@@ -1,15 +1,15 @@
 #include "DrawableAABB.h"
 
 DrawableAABB::DrawableAABB(glm::vec3 min, glm::vec3 max) {
-	DrawableAABB::vertices = std::vector<Vertex>{    //VRATI REFERENCE U MESH.H
-			Vertex{ glm::vec3(min.x, min.y, min.z),glm::vec3()},
-			Vertex{ glm::vec3(max.x, min.y, min.z),glm::vec3()},
-			Vertex{ glm::vec3(max.x, max.y, min.z),glm::vec3()},
-			Vertex{ glm::vec3(min.x, max.y, min.z),glm::vec3()},
-			Vertex{ glm::vec3(min.x, min.y, max.z),glm::vec3()},
-			Vertex{ glm::vec3(max.x, min.y, max.z),glm::vec3()},
-			Vertex{ glm::vec3(max.x, max.y, max.z),glm::vec3()},
-			Vertex{ glm::vec3(min.x, max.y, max.z),glm::vec3()}
+	DrawableAABB::vertices = std::vector<DVertex>{    //VRATI REFERENCE U MESH.H
+			DVertex{ glm::vec3(min.x, min.y, min.z),glm::vec3()},
+			DVertex{ glm::vec3(max.x, min.y, min.z),glm::vec3()},
+			DVertex{ glm::vec3(max.x, max.y, min.z),glm::vec3()},
+			DVertex{ glm::vec3(min.x, max.y, min.z),glm::vec3()},
+			DVertex{ glm::vec3(min.x, min.y, max.z),glm::vec3()},
+			DVertex{ glm::vec3(max.x, min.y, max.z),glm::vec3()},
+			DVertex{ glm::vec3(max.x, max.y, max.z),glm::vec3()},
+			DVertex{ glm::vec3(min.x, max.y, max.z),glm::vec3()}
 	};
 	DrawableAABB::indices = std::vector<GLuint>{
 		0, 1, 1, 2, 2, 3, 3, 0,  // Bottom face
@@ -21,8 +21,8 @@ DrawableAABB::DrawableAABB(glm::vec3 min, glm::vec3 max) {
 	VBO VBO(vertices);
 	EBO EBO(indices);
 
-	VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
-	VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
+	VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0);
+	VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float)));
 
 	VAO.Unbind();
 	VBO.Unbind();
@@ -41,8 +41,8 @@ DrawableAABB::DrawableAABB(const DrawableAABB& a)
 	VBO VBO(vertices);
 	EBO EBO(indices);
 
-	VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
-	VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
+	VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0);
+	VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float)));
 
 	VAO.Unbind();
 	VBO.Unbind();
@@ -64,8 +64,8 @@ DrawableAABB DrawableAABB::operator=(const DrawableAABB& a)
 		VBO VBO(vertices);
 		EBO EBO(indices);
 
-		VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
-		VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
+		VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0);
+		VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float)));
 
 		VAO.Unbind();
 		VBO.Unbind();

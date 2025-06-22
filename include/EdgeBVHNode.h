@@ -11,7 +11,7 @@ struct  EdgeBVHNode
 	AABB box;
 	EdgeBVHNode* left, * right;
 
-	Edge* edge;
+	DEdge* edge;
 
 
 	// preuzeto od BVHNode.h samo promijenjen index vector u face pokazivac
@@ -30,9 +30,9 @@ struct  EdgeBVHNode
 
 	EdgeBVHNode(EdgeBVHNode* a, EdgeBVHNode* b);
 
-	EdgeBVHNode( Edge* e);
+	EdgeBVHNode( DEdge* e);
 
-	bool Hit(const Ray& ray, std::vector<Edge*>& edgesHit);
+	bool Hit(const Ray& ray, std::vector<DEdge*>& edgesHit);
 
 	void refitNode(Mesh& mesh);
 

@@ -7,8 +7,6 @@ BVHNode::BVHNode(glm::vec3& vertex, unsigned int i) :box(vertex), left(nullptr),
 BVHNode::BVHNode(glm::vec3 a, glm::vec3 b, GLuint start, GLuint end) :box(a,b), left(nullptr), right(nullptr), index{ start,end } {}
 
 
-
-
 BVHNode::BVHNode(BVHNode* a, BVHNode* b) :box(a->box, b->box), left(a), right(b), index{ std::numeric_limits<unsigned int>::max() } {}
 
 bool BVHNode::Hit(const Ray& ray, std::vector<int>& index)
@@ -58,7 +56,7 @@ void BVHNode::refitNodeVertex(Object& object)
 {
 	if (!this->left && !this->right) // if its a leaf node
 	{
-		this->box = AABB(object.getVertexXmodel(this->index[0]));
+		this->box = AABB(object.getModelXVertex(this->index[0]));
 	}
 	else
 	{
@@ -76,7 +74,7 @@ void BVHNode::refitNodeEdge(Mesh& mesh)
 {
 	if (!this->left && !this->right)
 	{
-		this->box = AABB(mesh.getVertexXmodel(this->index[0]), mesh.getVertexXmodel(this->index[0]));
+		this->box = AABB(mesh.getModelXVertex(this->index[0]), mesh.getModelXVertex(this->index[0]));
 	}
 	else
 	{

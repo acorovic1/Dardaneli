@@ -148,7 +148,10 @@
     <ClCompile Include="src\engine\BVHNode.cpp" />
     <ClCompile Include="src\engine\CamaraManager.cpp" />
     <ClCompile Include="src\engine\Camera.cpp" />
+    <ClCompile Include="src\engine\DEdge.cpp" />
+    <ClCompile Include="src\engine\DFace.cpp" />
     <ClCompile Include="src\engine\DrawableAABB.cpp" />
+    <ClCompile Include="src\engine\DVertex.cpp" />
     <ClCompile Include="src\engine\EBO.cpp" />
     <ClCompile Include="src\engine\EdgeBVH.cpp" />
     <ClCompile Include="src\engine\EdgeBVHNode.cpp" />
@@ -210,15 +213,20 @@
     <ClInclude Include="include\BVHNode.h" />
     <ClInclude Include="include\Camera.h" />
     <ClInclude Include="include\CameraManager.h" />
+    <ClInclude Include="include\DDiskLink.h" />
+    <ClInclude Include="include\DEdge.h" />
+    <ClInclude Include="include\DFace.h" />
+    <ClInclude Include="include\DLoop.h" />
     <ClInclude Include="include\DrawableAABB.h" />
+    <ClInclude Include="include\DVertex.h" />
     <ClInclude Include="include\EBO.h" />
-    <ClInclude Include="include\Edge.h" />
     <ClInclude Include="include\EdgeBVH.h" />
     <ClInclude Include="include\EdgeBVHNode.h" />
     <ClInclude Include="include\FaceBVH.h" />
     <ClInclude Include="include\FaceBVHNode.h" />
+    <ClInclude Include="include\PairHash.h" />
+    <ClInclude Include="include\UnorderedPair.h" />
     <ClInclude Include="include\VertexBVH.h" />
-    <ClInclude Include="include\Face.h" />
     <ClInclude Include="libraries\include\ImGUIZMO\GraphEditor.h" />
     <ClInclude Include="libraries\include\ImGUIZMO\ImCurveEdit.h" />
     <ClInclude Include="libraries\include\ImGUIZMO\ImGradient.h" />
@@ -246,7 +254,6 @@
     <ClInclude Include="include\Texture.h" />
     <ClInclude Include="include\VAO.h" />
     <ClInclude Include="include\VBO.h" />
-    <ClInclude Include="include\Vertex.h" />
     <ClInclude Include="include\Window.h" />
     <ClInclude Include="include\WindowManager.h" />
   </ItemGroup>

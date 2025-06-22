@@ -11,7 +11,7 @@ struct  FaceBVHNode
 	AABB box;
 	FaceBVHNode* left, * right;
 
-	Face* face;
+	DFace* face;
 
 
 	// preuzeto od BVHNode.h samo promijenjen index vector u face pokazivac
@@ -30,9 +30,9 @@ struct  FaceBVHNode
 
 	FaceBVHNode(FaceBVHNode* a, FaceBVHNode* b);
 
-	FaceBVHNode(std::vector<glm::vec3> vertices, Face* f);
+	FaceBVHNode(std::vector<glm::vec3> vertices, DFace* f);
 
-	bool Hit(const Ray& ray, std::vector<Face*>& facesHit);
+	bool Hit(const Ray& ray, std::vector<DFace*>& facesHit);
 
 	void refitNode();
 

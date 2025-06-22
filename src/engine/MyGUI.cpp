@@ -2,7 +2,8 @@
 #include <iomanip>
 #include "glad/glad.h"
 #include "Window.h"
-#include "Face.h"
+#include "DFace.h"
+#include "DLoop.h"
 #include <unordered_set>
 
 MyGUI::MyGUI(Window* window) :io(nullptr), gizmoIo(nullptr), window(window) {}
@@ -128,9 +129,9 @@ void MyGUI::DrawUI()
 
 		static int e = 0;
 		e = (int)app->selectMode;
-		ImGui::RadioButton("Vertex select", &e, 0); ImGui::SameLine();
+		ImGui::RadioButton("DVertex select", &e, 0); ImGui::SameLine();
 		ImGui::RadioButton("Edge select", &e, 1); ImGui::SameLine();
-		ImGui::RadioButton("Face select", &e, 2);
+		ImGui::RadioButton("DFace select", &e, 2);
 
 		if (e == 0)app->selectMode = SelectMode::VERTEX;
 		else if (e == 1)app->selectMode = SelectMode::EDGE;
@@ -145,338 +146,9 @@ void MyGUI::DrawUI()
 
 	ImGui::End();
 
-	ImGui::Begin("Half-edge");
+	if (app->mode == Mode::EDIT)
+		DMesh();
 
-	// selected vertices
-	if (app->objectIndices.size())
-	{
-		auto& vertexIndicesTemp = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]))->getSelectedVertices();
-
-		if (vertexIndicesTemp.size())
-		{
-
-
-
-			static int clicked = 0;
-
-
-			if (ImGui::Button("Vertex.edge"))
-				clicked++;
-			if (clicked)
-			{
-				clicked = 0;
-
-				vertexIndicesTemp = std::vector<int>{ vertexIndicesTemp.back() };
-
-				auto vertices = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1])->getVerticesCopy();
-
-				if (vertices[vertexIndicesTemp[0]].edge == nullptr)
-				{
-					std::cout << "\nSelected edge is nullptr..vertex.edge\n";
-					ImGui::End();
-					return;
-				}
-				//std::cout << " \n\n " << vertices[vertexIndicesTemp[0]].edge;
-				selectedEdge = vertices[vertexIndicesTemp[0]].edge;
-
-				auto it = std::find(vertices.begin(), vertices.end(), *selectedEdge->tip);
-
-				vertexIndicesTemp.push_back(it - vertices.begin());
-				int x = it - vertices.begin();
-				vertexIndicesTemp = std::vector<int>{ vertexIndicesTemp[0],x };
-
-				std::cout << "\n\nStart vertex = " << vertexIndicesTemp[0] << "   End vertex = " << vertexIndicesTemp[1];
-
-			}
-
-			ImGui::SameLine();
-			if (ImGui::Button("vert.getFaces"))
-				clicked++;
-			if (clicked)
-			{
-				clicked = 0;
-				auto vertices = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1])->getVerticesCopy();
-				std::unordered_set<Face*> faces;
-
-				for (auto x : vertexIndicesTemp)
-				{
-					auto temp = vertices[x].getAdjecentFaces();
-					faces.insert(temp.begin(), temp.end());
-				}
-				vertexIndicesTemp.clear();
-				std::unordered_set<int> indices;
-				std::cout << "\n\n\n";
-				for (auto x : faces)
-					for (auto y : x->getVertices())
-					{
-						auto it = std::find(vertices.begin(), vertices.end(), *y);
-						std::cout << it - vertices.begin() << " ";
-
-						indices.insert(it - vertices.begin());
-					}
-
-				vertexIndicesTemp = std::vector<int>(indices.begin(), indices.end());
-				std::cout << "\n Selected vertices are ";
-				for (auto x : vertexIndicesTemp)
-					std::cout << x << " ";
-				std::cout << "\n face vector size " << faces.size();
-			}
-
-
-			if (ImGui::Button("Edge.next"))
-				clicked++;
-			if (clicked)
-			{
-				clicked = 0;
-
-				if (!selectedEdge)
-				{
-					ImGui::End();
-					return;
-				}
-				if (selectedEdge->next == nullptr)
-				{
-					std::cout << "\nSelected edge is nullptr..edge.next\n";
-					ImGui::End();
-					return;
-				}
-				auto temp = selectedEdge->tip;
-				selectedEdge = selectedEdge->next;
-
-				vertexIndicesTemp = std::vector<int>(2);
-
-				auto vertices = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1])->getVerticesCopy();
-
-				auto it = std::find(vertices.begin(), vertices.end(), *selectedEdge->tip);
-
-				vertexIndicesTemp[1] = it - vertices.begin();
-
-
-				it = std::find(vertices.begin(), vertices.end(), *temp);
-				vertexIndicesTemp[0] = it - vertices.begin();
-
-				std::cout << "\n\nStart vertex = " << vertexIndicesTemp[0] << "   End vertex = " << vertexIndicesTemp[1];
-			}
-
-
-			ImGui::SameLine();
-			if (ImGui::Button("vert.getEdges"))
-				clicked++;
-			if (clicked)
-			{
-				clicked = 0;
-				auto vertices = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1])->getVerticesCopy();
-				std::unordered_set<Edge*> edges;
-
-				for (auto x : vertexIndicesTemp)
-				{
-					auto temp = vertices[x].getAdjecentEdges();
-					edges.insert(temp.begin(), temp.end());
-				}
-				vertexIndicesTemp.clear();
-				std::unordered_set<int> indices;
-				std::cout << "\n\n\n";
-				for (auto x : edges)
-
-				{
-					auto it = std::find(vertices.begin(), vertices.end(), *x->tip);
-					indices.insert(it - vertices.begin());
-
-					it = std::find(vertices.begin(), vertices.end(), *x->pair->tip);
-
-					indices.insert(it - vertices.begin());
-				}
-
-				vertexIndicesTemp = std::vector<int>(indices.begin(), indices.end());
-				std::cout << "\n Selected vertices are ";
-				for (auto x : vertexIndicesTemp)
-					std::cout << x << " ";
-				std::cout << "\n edge vector size " << edges.size();
-			}
-
-
-
-			if (ImGui::Button("Edge.pair"))
-				clicked++;
-			if (clicked)
-			{
-				clicked = 0;
-
-				if (!selectedEdge)
-				{
-					ImGui::End();
-					return;
-				}
-				if (selectedEdge->pair == nullptr)
-				{
-					std::cout << "\nSelected edge is nullptr..edge.pair\n";
-					ImGui::End();
-					return;
-				}
-				auto temp = selectedEdge->tip;
-				selectedEdge = selectedEdge->pair;
-
-				vertexIndicesTemp = std::vector<int>(2);
-
-				auto vertices = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1])->getVerticesCopy();
-
-				auto it = std::find(vertices.begin(), vertices.end(), *selectedEdge->tip);
-
-				vertexIndicesTemp[1] = it - vertices.begin();
-
-
-				it = std::find(vertices.begin(), vertices.end(), *temp);
-				vertexIndicesTemp[0] = it - vertices.begin();
-
-				std::cout << "\n\nStart vertex = " << vertexIndicesTemp[0] << "   End vertex = " << vertexIndicesTemp[1];
-
-
-			}
-
-			ImGui::SameLine();
-			if (ImGui::Button("vert.getVertices"))
-				clicked++;
-			if (clicked)
-			{
-				clicked = 0;
-				auto vertices = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1])->getVerticesCopy();
-				std::unordered_set<Vertex*> verts;
-
-				for (auto x : vertexIndicesTemp)
-				{
-					auto temp = vertices[x].getAdjecentVertices();
-					verts.insert(temp.begin(), temp.end());
-				}
-				std::unordered_set<int> indices(vertexIndicesTemp.begin(), vertexIndicesTemp.end());
-				vertexIndicesTemp.clear();
-				std::cout << "\n\n\n";
-				for (auto x : verts)
-
-				{
-					auto it = std::find(vertices.begin(), vertices.end(), *x);
-					indices.insert(it - vertices.begin());
-
-				}
-
-				vertexIndicesTemp.insert(vertexIndicesTemp.end(), indices.begin(), indices.end());
-				std::cout << "\n Selected vertices are ";
-				for (auto x : vertexIndicesTemp)
-					std::cout << x << " ";
-				std::cout << "\n vertex vector size " << verts.size();
-			}
-
-
-
-			if (ImGui::Button("Edge.tip"))
-				clicked++;
-			if (clicked)
-			{
-				clicked = 0;
-				if (!selectedEdge)
-				{
-					ImGui::End();
-					return;
-				}
-				if (selectedEdge->tip == nullptr)
-				{
-					std::cout << "\nSelected tip is nullptr..edge.tip\n";
-					ImGui::End();
-					return;
-				}
-				vertexIndicesTemp = std::vector<int>(1);
-
-				auto vertices = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1])->getVerticesCopy();
-
-				auto it = std::find(vertices.begin(), vertices.end(), *selectedEdge->tip);
-
-				vertexIndicesTemp[0] = it - vertices.begin();
-
-				std::cout << "\n\nStart vertex = " << vertexIndicesTemp[0];
-			}
-
-
-			if (ImGui::Button("Edge.face"))
-				clicked++;
-			if (clicked)
-			{
-				clicked = 0;
-				if (!selectedEdge)
-				{
-					ImGui::End();
-					return;
-				}
-				if (selectedEdge->face == nullptr)
-				{
-					std::cout << "\nSelected face is nullptr..edge.face\n";
-					ImGui::End();
-					return;
-				}
-				vertexIndicesTemp = std::vector<int>(0);
-
-				auto vertices = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1])->getVerticesCopy();
-
-				selectedFace = selectedEdge->face;
-				Edge* e = selectedEdge;
-				do {
-
-					auto it = std::find(vertices.begin(), vertices.end(), *e->tip);
-					vertexIndicesTemp.push_back(it - vertices.begin());
-
-					e = e->next;
-
-
-				} while (e != selectedEdge);
-
-				std::cout << "Selected vertices for a face = " << vertexIndicesTemp.size();
-			}
-
-
-
-			if (ImGui::Button("Face.edge"))
-				clicked++;
-			if (clicked)
-			{
-				clicked = 0;
-				if (!selectedFace)
-				{
-					ImGui::End();
-					return;
-				}
-				if (selectedFace->edge == nullptr)
-				{
-					std::cout << "\nSelected edge is nullptr..face.edge\n";
-					ImGui::End();
-					return;
-				}
-				selectedEdge = selectedFace->edge;
-
-				vertexIndicesTemp = std::vector<int>(2);
-
-				auto vertices = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1])->getVerticesCopy();
-
-				auto it = std::find(vertices.begin(), vertices.end(), *selectedEdge->tip);
-
-				vertexIndicesTemp[1] = it - vertices.begin();
-
-				auto temp = selectedEdge->next;
-
-				while (temp->next != selectedEdge)
-				{
-					temp = temp->next;
-				}
-
-				it = std::find(vertices.begin(), vertices.end(), *temp->tip);
-				vertexIndicesTemp[0] = it - vertices.begin();
-
-				std::cout << "\n\nStart vertex = " << vertexIndicesTemp[0] << "   End vertex = " << vertexIndicesTemp[1];
-
-			}
-
-
-		}
-	}
-
-	ImGui::End();
 }
 
 void MyGUI::DrawBVH() { objectBVHSingleton->Draw(*cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"), BVHSubd); }
@@ -593,7 +265,7 @@ void MyGUI::Add() {
 			hoverTime = 0;
 
 			window->getKeys()[GLFW_KEY_Q] = 0;
-			std::cout << "HEHEHAHA ";
+			//std::cout << "HEHEHAHA ";
 			showAddMenu = false;
 			ImGui::CloseCurrentPopup();
 		}
@@ -784,20 +456,20 @@ void MyGUI::VertexTransform()
 	static float offset[3];
 
 	Object* activeObject = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]);
-	std::vector<Vertex>& vertices = activeObject->getVerticesReference();
+	std::vector<DVertex>& vertices = activeObject->getVertices();
 	int numberOfVertices = activeObject->getNumberOfVertices();
 
 	std::vector<int>& selectedVertices = static_cast<Mesh*>(activeObject)->getSelectedVertices();
 	if (selectedVertices.size() == 0)return;
 
-	app->vertexPrevPosition[0] = app->vertexPosition[0] = vertices[selectedVertices[selectedVertices.size() - 1]].getPositionCopy().x;
-	app->vertexPrevPosition[1] = app->vertexPosition[1] = vertices[selectedVertices[selectedVertices.size() - 1]].getPositionCopy().y;
-	app->vertexPrevPosition[2] = app->vertexPosition[2] = vertices[selectedVertices[selectedVertices.size() - 1]].getPositionCopy().z;
+	app->vertexPrevPosition[0] = app->vertexPosition[0] = vertices[selectedVertices[selectedVertices.size() - 1]].position.x;
+	app->vertexPrevPosition[1] = app->vertexPosition[1] = vertices[selectedVertices[selectedVertices.size() - 1]].position.y;
+	app->vertexPrevPosition[2] = app->vertexPosition[2] = vertices[selectedVertices[selectedVertices.size() - 1]].position.z;
 
-	ImGui::InputFloat3("Vertex position", app->vertexPosition);
+	ImGui::InputFloat3("DVertex position", app->vertexPosition);
 	if (ImGui::IsItemDeactivatedAfterEdit())
 	{
-		//std::cout << " Vertex moved ";
+		//std::cout << " DVertex moved ";
 
 		offset[0] = app->vertexPosition[0] - app->vertexPrevPosition[0];
 		offset[1] = app->vertexPosition[1] - app->vertexPrevPosition[1];
@@ -1000,4 +672,256 @@ void MyGUI::Modes()
 
 		ImGui::EndPopup();
 	}
+}
+
+void MyGUI::DMesh()
+{
+
+	ImGui::Begin("DMesh");
+
+	Mesh* mesh = dynamic_cast<Mesh*> (objectSingleton->getObject(app->objectIndices.back()));
+
+	if (!mesh)return;
+
+	const std::vector<DVertex>& vertices = mesh->getVertices();
+	std::vector<int>& selectedVertices = mesh->getSelectedVertices();
+	std::vector<DEdge*>& selectedEdges = mesh->getSelectedEdges();
+	std::vector<DFace*>& selectedFaces = mesh->getSelectedFaces();
+
+	static int clicked = 0;
+
+
+	if (ImGui::Button("Vertex.edge"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+
+
+		selectedVertices = { selectedVertices.back() };
+
+		selectedEdges.clear();
+		selectedEdges.push_back(vertices[selectedVertices.back()].e);
+
+		vertexEdge = selectedEdges[0];
+
+		std::pair<int, int> edgeIndices = mesh->getEdgeIndices(selectedEdges.back());
+		selectedVertices.push_back((edgeIndices.first == selectedVertices[0]) ? edgeIndices.second : edgeIndices.first);
+
+	}
+
+	if (ImGui::Button("Edge.DiskLink.d1.next"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+
+		DVertex* v1 = vertexEdge->v1;
+
+		selectedEdges[0] = selectedEdges[0]->d1.next;
+
+		std::pair<int, int> edgeIndices = mesh->getEdgeIndices(selectedEdges.back());
+		selectedVertices.clear();
+
+		std::cout << "\nv1\t" << v1 << "\ne1\t" << &vertices[edgeIndices.first] << "\ne2\t" << &vertices[edgeIndices.second]<<"\nv1 index: "<<mesh->getVertexIndex(v1);
+		
+
+		if (v1 == &vertices[edgeIndices.first])
+		{
+			selectedVertices.push_back(edgeIndices.second);
+			selectedVertices.push_back(edgeIndices.first);
+
+		}
+		else if (v1 == &vertices[edgeIndices.second])
+		{
+			selectedVertices.push_back(edgeIndices.first);
+			selectedVertices.push_back(edgeIndices.second);
+
+		}
+		else std::cout << "\nKonju123  v1 = " << edgeIndices.first<<"\tv2 = "<<edgeIndices.second;
+
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Edge.DiskLink.d1.prev"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+
+		selectedEdges[0] = selectedEdges[0]->d1.prev;
+
+		std::pair<int, int> edgeIndices = mesh->getEdgeIndices(selectedEdges.back());
+		selectedVertices.clear();
+		selectedVertices.push_back(edgeIndices.first);
+		selectedVertices.push_back(edgeIndices.second);
+
+	}
+	if (ImGui::Button("Edge.DiskLink.d2.next"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+
+		selectedEdges[0] = selectedEdges[0]->d2.next;
+
+		std::pair<int, int> edgeIndices = mesh->getEdgeIndices(selectedEdges.back());
+		selectedVertices.clear();
+		selectedVertices.push_back(edgeIndices.first);
+		selectedVertices.push_back(edgeIndices.second);
+
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Edge.DiskLink.d2.prev"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+
+		selectedEdges[0] = selectedEdges[0]->d1.prev;
+
+		std::pair<int, int> edgeIndices = mesh->getEdgeIndices(selectedEdges.back());
+		selectedVertices.clear();
+		selectedVertices.push_back(edgeIndices.first);
+		selectedVertices.push_back(edgeIndices.second);
+
+	}
+	if (ImGui::Button("Edge.loop"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+		selectedLoop = selectedEdges[0]->loop;
+		selectedEdges[0] = selectedLoop->edge;
+
+		std::pair<int, int> edgeIndices = mesh->getEdgeIndices(selectedEdges.back());
+		selectedVertices.clear();
+		selectedVertices.push_back(edgeIndices.first);
+		selectedVertices.push_back(edgeIndices.second);
+
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Loop.edge"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+		
+		selectedEdges[0] = selectedLoop->edge;
+
+		std::pair<int, int> edgeIndices = mesh->getEdgeIndices(selectedEdges.back());
+		selectedVertices.clear();
+		//selectedVertices.push_back(edgeIndices.first);
+		//selectedVertices.push_back(edgeIndices.second);
+
+	}
+	if (ImGui::Button("Loop.next"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+		selectedLoop = selectedLoop->next;
+		selectedEdges[0] = selectedLoop->edge;
+
+		std::pair<int, int> edgeIndices = mesh->getEdgeIndices(selectedEdges.back());
+		selectedVertices.clear();
+		selectedVertices.push_back(edgeIndices.first);
+		selectedVertices.push_back(edgeIndices.second);
+
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Loop.prev"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+
+		selectedLoop = selectedLoop->prev;
+		selectedEdges[0] = selectedLoop->edge;
+
+		std::pair<int, int> edgeIndices = mesh->getEdgeIndices(selectedEdges.back());
+		selectedVertices.clear();
+		selectedVertices.push_back(edgeIndices.first);
+		selectedVertices.push_back(edgeIndices.second);
+
+	}
+	if (ImGui::Button("Loop.radialNext"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+
+		selectedLoop = selectedLoop->radialNext;
+		selectedEdges[0] = selectedLoop->edge;
+
+		std::pair<int, int> edgeIndices = mesh->getEdgeIndices(selectedEdges.back());
+		selectedVertices.clear();
+		selectedVertices.push_back(edgeIndices.first);
+		selectedVertices.push_back(edgeIndices.second);
+
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Loop.radialPrev"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+
+		selectedLoop = selectedLoop->radialPrev;
+		selectedEdges[0] = selectedLoop->edge;
+
+		std::pair<int, int> edgeIndices = mesh->getEdgeIndices(selectedEdges.back());
+		selectedVertices.clear();
+		selectedVertices.push_back(edgeIndices.first);
+		selectedVertices.push_back(edgeIndices.second);
+
+	}
+
+	if (ImGui::Button("Vertex.adjecentVertices"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+
+		selectedVertices = { selectedVertices.back() };
+		std::unordered_set<DVertex*>set = vertices[selectedVertices[0]].getAdjecentVertices();
+
+		for (DVertex* v : set)
+			selectedVertices.push_back(mesh->getVertexIndex(v));
+
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Vertex.adjecentEdges"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+
+		selectedEdges.clear();
+		std::unordered_set<DEdge*>set = vertices[selectedVertices[0]].getAdjecentEdges();
+
+		for (DEdge* e : set)
+			selectedEdges.push_back(e);
+
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button("Vertex.adjecentFaces"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+
+		selectedFaces.clear();
+		std::unordered_set<DFace*>set = vertices[selectedVertices[0]].getAdjecentFaces();
+
+		for (DFace* f : set)
+			selectedFaces.push_back(f);
+
+
+		std::cout << "\n\n\t Selected faces:\t" << selectedFaces.size();
+
+	}
+
+	ImGui::End();
+
 }

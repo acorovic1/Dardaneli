@@ -1,15 +1,15 @@
 #include "EdgeBVHNode.h"
-
+#include "DVertex.h"
 
 EdgeBVHNode::EdgeBVHNode() :box(), left(nullptr), right(nullptr), edge(nullptr) {}
 
-EdgeBVHNode::EdgeBVHNode( Edge* e) :box(std::vector<glm::vec3>{ e->pair->tip->getPositionCopy(), e->tip->getPositionCopy() }),
+EdgeBVHNode::EdgeBVHNode( DEdge* e) :box(std::vector<glm::vec3>{ e->v1->position, e->v2->position }),
 left(nullptr), right(nullptr), edge(e){}
 
 EdgeBVHNode::EdgeBVHNode(EdgeBVHNode* a, EdgeBVHNode* b) :box(a->box, b->box), left(a), right(b), edge(nullptr) {};
 
 
-bool EdgeBVHNode::Hit(const Ray& ray, std::vector<Edge*>& edgesHit)
+bool EdgeBVHNode::Hit(const Ray& ray, std::vector<DEdge*>& edgesHit)
 {
 
 	// kako je lijepo biti glup
@@ -34,7 +34,7 @@ void EdgeBVHNode::refitNode(Mesh& mesh)
 	if (!this->left && !this->right)
 	{
 		std::pair<int, int> edgeVertices = mesh.getEdgeIndices(this->edge);
-		this->box = AABB(mesh.getVertexXmodel(edgeVertices.first), mesh.getVertexXmodel(edgeVertices.second));
+		this->box = AABB(mesh.getModelXVertex(edgeVertices.first), mesh.getModelXVertex(edgeVertices.second));
 	}
 	else
 	{

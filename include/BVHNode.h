@@ -24,7 +24,7 @@ struct  BVHNode
 
 	BVHNode();
 
-	BVHNode(Object& object);
+	BVHNode(Object& mesh);
 	BVHNode(glm::vec3& vertex,unsigned int index);
 	BVHNode(glm::vec3 a,glm::vec3 b, GLuint start, GLuint end);
 	BVHNode(std::vector<glm::vec3> vertices, std::vector<int>& vec);

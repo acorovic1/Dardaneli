@@ -3,12 +3,12 @@
 
 FaceBVHNode::FaceBVHNode():box(),left(nullptr),right(nullptr),face(nullptr){}
 
-FaceBVHNode::FaceBVHNode(std::vector<glm::vec3> vertices, Face* f) :box(vertices), left(nullptr), right(nullptr),face(f){}
+FaceBVHNode::FaceBVHNode(std::vector<glm::vec3> vertices, DFace* f) :box(vertices), left(nullptr), right(nullptr),face(f){}
 
 FaceBVHNode::FaceBVHNode(FaceBVHNode* a, FaceBVHNode* b) :box(a->box, b->box), left(a), right(b), face(nullptr) {};
 
 
-bool FaceBVHNode::Hit(const Ray& ray, std::vector<Face*>& facesHit)
+bool FaceBVHNode::Hit(const Ray& ray, std::vector<DFace*>& facesHit)
 {
 
 	// kako je lijepo biti glup

@@ -1,0 +1,85 @@
+#include "DVertex.h"
+#include "DEdge.h"
+#include "DLoop.h"
+
+
+std::unordered_set<DVertex*>DVertex::getAdjecentVertices()const {
+
+	std::unordered_set<DVertex*> returnVec;
+	DDiskLink* disk;
+
+	DEdge* temp = e;
+	do {
+		if (temp->v2 == this)
+		{
+			returnVec.insert(temp->v1);
+			disk = &temp->d2;
+		}
+		else
+		{
+			returnVec.insert(temp->v2);
+			disk = &temp->d1;
+		}
+
+
+
+		temp = disk->next;
+
+	} while (temp != e);
+
+
+	return returnVec;
+
+}
+std::unordered_set<DEdge*> DVertex::getAdjecentEdges()const {
+
+
+	std::unordered_set<DEdge*> returnVec;
+	DDiskLink* disk;
+
+	DEdge* temp = e;
+	do {
+
+		returnVec.insert(temp);
+
+		disk = (temp->v1 == this) ? &temp->d1 : &temp->d2;
+
+		temp = disk->next;
+
+	} while (temp != e);
+
+
+	return returnVec;
+
+}
+std::unordered_set<DFace*> DVertex::getAdjecentFaces() const {
+	std::unordered_set<DFace*> returnVec;
+	DDiskLink* disk;
+
+	DEdge* temp = e;
+	DLoop* tempRadial = nullptr;
+	do {
+		tempRadial = temp->loop;
+		do {
+			returnVec.insert(tempRadial->face);
+
+			if (!tempRadial->radialNext)break;
+
+			tempRadial = tempRadial->radialNext;
+
+		} while (tempRadial != temp->loop);
+
+		disk = (temp->v1 == this) ? &temp->d1 : &temp->d2;
+
+		temp = disk->next;
+
+	} while (temp != e);
+
+	returnVec.erase(nullptr);
+
+	return returnVec;
+
+}
+
+
+

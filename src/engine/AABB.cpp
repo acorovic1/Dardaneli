@@ -1,5 +1,5 @@
 #include "AABB.h"
-#include "Face.h"
+#include "DFace.h"
 
 AABB::AABB() { aabb = DrawableAABB(min, max); };
 AABB::AABB(glm::vec3 min, glm::vec3 max)
@@ -53,8 +53,8 @@ AABB::AABB(std::vector<glm::vec3>vertices)
 	aabb = DrawableAABB(min, max);
 }
 AABB::AABB(Object& object) {
-	for (const auto& a : object.getVerticesReference()) {
-		glm::vec4 x = object.getModelReference() * glm::vec4(a.getPositionCopy(), 1.0f);
+	for (auto& a : object.getVertices()) {
+		glm::vec3 x = object.getModelXVertex(&a);
 
 		min.x = std::min(min.x, x.x);
 		min.y = std::min(min.y, x.y);

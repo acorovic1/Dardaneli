@@ -5,6 +5,8 @@
 
 class Mesh :public Object {
 
+
+	
 	std::vector<Texture>textures;
 
 	std::vector<GLuint>indices; // used for drawing faces
@@ -12,19 +14,21 @@ class Mesh :public Object {
 	std::vector<GLuint>edgeIndices; // used for drawing edges
 
 	std::vector<int> selectedVertexIndices = std::vector<int>(0);
-	std::vector<Face*>selectedFaces;
-	std::vector<Edge*>selectedEdges;
+	std::vector<DFace*>selectedFaces;
+	std::vector<DEdge*>selectedEdges;
 
 	// !!! needs an EBO update !!!
 // erases indices of the face inside the mesh
-	void eraseFace(Face* face);
+	void eraseFace(DFace* face);
 	// !!! needs an EBO update !!!
 	// erases indices of the edge inside the mesh
-	void eraseEdge(Edge* edge);
+	void eraseEdge(DEdge* edge);
+
+	void duplicateVertex(DVertex& vertex);
 
 public:
 
-	Mesh(std::string&& name, std::vector <Vertex>* vertices, std::vector <GLuint>& indices, const std::vector<GLuint>& edgeIndices = std::vector<GLuint>(), const  std::vector <Texture>& textures = std::vector<Texture>());
+	Mesh(std::string&& name, std::vector <DVertex>* vertices, std::vector <GLuint>& indices, const std::vector<GLuint>& edgeIndices = std::vector<GLuint>(), const  std::vector <Texture>& textures = std::vector<Texture>());
 
 	~Mesh();
 
@@ -34,16 +38,16 @@ public:
 	void updateEBO();
 	void updateEdgeEBO();
 
-	// gets all faces
-	std::vector<Face*> getAllFaces(); // logic can/needs to be improved
-	// gets all edges
-	std::vector<Edge*> getAllEdges();
 
-	Face* getFace(std::vector<int> indices); // returns the common face of indices 
+	
+	std::unordered_set<DFace*> getAllFaces(); 
+	std::unordered_set<DEdge*> getAllEdges();
 
-	Edge* getEdge(int start, int end);
+	DFace* getFace(std::vector<int> indices); // returns the common face of indices 
 
-	GLuint extrudeVertex(GLuint vertex);
+	DEdge* getEdge(int start, int end); // returns the common edge of indices 
+
+	
 
 	void Draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES) override;
 
@@ -55,6 +59,9 @@ public:
 	void Scale(glm::vec3& scaleVector)override;
 	void Scale(float x, float y, float z)override;
 
+
+	
+	GLuint extrudeVertex(GLuint vertex);
 
 	void deleteVertices();
 	void deleteEdges();
@@ -68,18 +75,13 @@ public:
 
 
 
-	std::vector<int>& getSelectedVertices(); //
-//	std::vector<int>& getSelectedEdgeIndices() { return selectedEdges; }; //
-//	std::vector<int>& getSelectedFaceIndices() { return selectedFaces; };  //in the form of n1 xyz n2 abcd n3 klmn | where n = number of vertices of the face 
-//	void setSelectedEdges(std::vector<int>& vec) { selectedEdges = vec; }
-//	void setSelectedFaces(std::vector<int>& vec) { selectedFaces = vec; } //in the form of n1 xyz n2 abcd n3 klmn | where n = number of vertices of the face 
+	std::vector<int>& getSelectedVertices(); 
+	std::vector<DEdge*>& getSelectedEdges();
+	std::vector<DFace*>& getSelectedFaces();
 
-	std::vector<Edge*>& getSelectedEdges();
-	std::vector<Face*>& getSelectedFaces();
-
-	int getVertexIndex(Vertex* v);
-	std::vector<int> getFaceIndices(Face* face);
-	std::pair<int,int> getEdgeIndices(Edge* edge);
+	
+	std::vector<int> getFaceIndices(DFace* face);
+	std::pair<int,int> getEdgeIndices(DEdge* edge);
 
 	std::vector<GLuint> formTrianglesForDrawing();
 

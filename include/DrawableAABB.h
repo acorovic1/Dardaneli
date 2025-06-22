@@ -1,7 +1,7 @@
 #pragma once
 
 #include "glad/glad.h"
-#include "Vertex.h"
+#include "DVertex.h"
 #include <vector>
 
 #include"VAO.h"
@@ -11,7 +11,7 @@
 
 class DrawableAABB {
 	VAO VAO;
-	std::vector<Vertex>vertices;
+	std::vector<DVertex>vertices;
 	std::vector<GLuint>indices;
 
 public:

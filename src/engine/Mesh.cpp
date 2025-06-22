@@ -1,10 +1,14 @@
 #include "Mesh.h"
 #include "ObjectModeBVH.h"
 #include "VertexBVH.h"
-#include "Face.h"
+#include "DFace.h"
+#include "DLoop.h"
 #include "FaceBVH.h"
 
-Mesh::Mesh(std::string&& name, std::vector <Vertex>* vertices,
+#include "DVertex.h"
+
+
+Mesh::Mesh(std::string&& name, std::vector <DVertex>* vertices,
 	std::vector <GLuint>& indices, const std::vector<GLuint>& edgeIndices, const  std::vector <Texture>& textures) :Object(name) {
 	Mesh::vertices = vertices;
 	Mesh::indices = indices;
@@ -16,10 +20,10 @@ Mesh::Mesh(std::string&& name, std::vector <Vertex>* vertices,
 	ebo.bufferData(Mesh::indices);
 	edgeEBO.bufferData(Mesh::edgeIndices);
 
-	VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
-	VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
-	VAO.LinkAttribute(VBO, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
-	VAO.LinkAttribute(VBO, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));
+	VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0);
+	VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float)));
+	VAO.LinkAttribute(VBO, 2, 3, GL_FLOAT, sizeof(DVertex), (void*)(6 * sizeof(float)));
+	VAO.LinkAttribute(VBO, 3, 2, GL_FLOAT, sizeof(DVertex), (void*)(9 * sizeof(float)));
 
 	VAO.Unbind();
 	VBO.Unbind();
@@ -31,143 +35,98 @@ Mesh::Mesh(std::string&& name, std::vector <Vertex>* vertices,
 Mesh::~Mesh() {}
 
 void Mesh::bindEBO() { ebo.Bind(); }
-void Mesh::updateEBO() {
-
-
-	ebo.bufferData(indices);
-}
+void Mesh::updateEBO() { ebo.bufferData(indices); }
 
 void Mesh::updateEdgeEBO()
 {
 	edgeEBO.bufferData(edgeIndices);
 }
 
-std::vector<Face*> Mesh::getAllFaces()
+std::unordered_set<DFace*> Mesh::getAllFaces()
 {
-	std::unordered_set<Face*> faceSet;
+	std::unordered_set<DFace*> returnSet;
 
-	for (auto& x : *vertices)
+	for (auto x : getAllEdges())
+		returnSet.insert(x->loop->face);
+
+	returnSet.erase(nullptr);
+
+
+	return returnSet;
+}
+
+std::unordered_set<DEdge*> Mesh::getAllEdges()
+{
+	std::unordered_set<DEdge*> returnSet;
+	for (auto x : *vertices)
 	{
-		for (auto& y : x.getAdjecentFaces())
-			faceSet.insert(y);
+		returnSet.insert(x.e->d1.next);
+		returnSet.insert(x.e->d1.prev);
 
+		returnSet.insert(x.e->d2.next);
+		returnSet.insert(x.e->d2.prev);
 	}
-	std::cout << "\nnumber of faces " << faceSet.size();
-	return std::vector<Face*>(faceSet.begin(), faceSet.end());
 
-};
-std::vector<Edge*> Mesh::getAllEdges()
+	returnSet.erase(nullptr);
+
+	return returnSet;
+}
+
+DFace* Mesh::getFace(std::vector<int> indices)
 {
-	std::vector<Edge*> edges;
+	DVertex* vert = &(*vertices)[indices[0]];
 
-	for (int i = 0; i < edgeIndices.size(); i += 2)
-	{
-		Vertex* v_start = &(*vertices)[edgeIndices[i]];
-		Vertex* v_end = &(*vertices)[edgeIndices[i + 1]];
-		Edge* e = v_start->edge;
-		Edge* found = nullptr;
+	DEdge* edge = vert->e;
 
-		if (!e) continue;
-
-		Edge* start = e;
+	do {
+		DLoop* loop = edge->loop;
 		do {
-			if (e->tip == v_end) {
-				found = e;
+			if (std::find(indices.begin(), indices.end(), this->getVertexIndex(loop->tip)) == indices.end())
 				break;
-			}
-			e = e->pair ? e->pair->next : nullptr;
-		} while (e && e != start);
+			loop = loop->next;
+		} while (loop != edge->loop);
 
+		if (loop == edge->loop)
+			return loop->face;
 
-		if (!found && v_end->edge) {
-			// Try in the reverse direction
-			e = v_end->edge;
-			start = e;
-			do {
-				if (e->tip == v_start) {
-					found = e->pair; // get the actual edge from v_start to v_end
-					break;
-				}
-				e = e->pair ? e->pair->next : nullptr;
-			} while (e && e != start);
-		}
+		edge = (edge->v1 == vert) ? edge->d1.next : edge->d2.next;
+	} while (edge != vert->e);
 
-		if (found)
-			edges.push_back(found);
-		else
-			std::cerr << "Warning: Edge between " << edgeIndices[i] << " and " << edgeIndices[i + 1] << " not found in half-edge structure.\n";
-	}
-
-	return edges;
+	std::cerr << "\n\n\n Mesh.getFace(indices) returns nullptr\n\n";
+	return nullptr;
 }
 
-Face* Mesh::getFace(std::vector<int> indices)
+DEdge* Mesh::getEdge(int start, int end)
 {
-	if (indices.size() < 3) {
-		std::cerr << "MESH::getFace() error: face must have at least 3 vertices\n";
-		return nullptr;
-	}
+	DVertex* v1 = &(*vertices)[start];
+	DVertex* v2 = &(*vertices)[end];
 
-	std::unordered_set<Face*> faceSet = (*vertices)[indices[0]].getAdjecentFaces();
-	std::unordered_set<Face*> helper = (*vertices)[indices[0]].getAdjecentFaces(); // 
-	std::unordered_set<Face*> temp;
+	DEdge* edge = v1->e;
 
-
-	for (int i = 1;i < indices.size();i++)
-	{
-		temp = (*vertices)[indices[i]].getAdjecentFaces();
-
-		for (auto& x : helper)
+	do {
+		if (edge->v1 == v1)
 		{
+			if ( edge->v2 == v2)
+				return edge;
 
-			if (temp.count(x) == 0) {
-				faceSet.erase(x);
-				//std::cout << std::boolalpha << " " << false << " " << x << "\n";
-				continue;
-			}
-			//std::cout << std::boolalpha << " " << true << " " << x << "\n";
+			edge = edge->d1.next;
 		}
-	}
-	if (!faceSet.size())std::cerr << "\n\nmesh.getFace() empty faceSet!";
-	return *faceSet.begin();
-}
+		else // edge->v2 == v1
+		{
+			if ( edge->v1 == v2)
+				return edge;
 
-Edge* Mesh::getEdge(int start, int end)
-{
-	if (start < 0 || start >= vertices->size() || end < 0 || end >= vertices->size()) {
-		std::cerr << "Invalid vertex indices in getEdge(" << start << ", " << end << ")\n";
-		return nullptr;
-	}
+			edge = edge->d2.next;
+		}
+	} while (edge != v1->e);
 
-	Vertex* startVertex = &(*vertices)[start];
-	Vertex* endVertex = &(*vertices)[end];
-
-
-
-	std::vector<Edge*>edges = startVertex->getAdjecentEdges();
-
-	for (auto& x : edges)
-		if (x->tip == endVertex)
-			return x;
-
-	std::cerr << "\nNo edge with start index " << start << " and end index " << end << "\n";
-
+	std::cerr << "\n\n\n Mesh.getEdge(start,end) returns nullptr\n " << start << " " << end<<"\n\n";
 	return nullptr;
 }
 
 
-GLuint Mesh::extrudeVertex(GLuint vertex)
-{
-	this->addVertex((*vertices)[vertex]); // this duplicates the vertex
-	// recalculate normals potentialy
 
-	edgeIndices.push_back(vertex);				// makes a new edge
-	edgeIndices.push_back(vertices->size() - 1);
 
-	edgeEBO.bufferData(edgeIndices);			// updates the edge buffer
-
-	return vertices->size() - 1;
-}
 
 void Mesh::Draw(Shader& shader, Camera& camera, GLenum mode) {
 	shader.Activate();
@@ -242,44 +201,38 @@ std::vector<int>& Mesh::getSelectedVertices() {
 	return selectedVertexIndices;
 }
 
-std::vector<Edge*>& Mesh::getSelectedEdges()
+std::vector<DEdge*>& Mesh::getSelectedEdges()
 {
 	return selectedEdges;
 }
 
-std::vector<Face*>& Mesh::getSelectedFaces()
+std::vector<DFace*>& Mesh::getSelectedFaces()
 {
 
 	return selectedFaces;
 }
 
-int Mesh::getVertexIndex(Vertex* v)
+std::vector<int> Mesh::getFaceIndices(DFace* face)
 {
-	auto it = std::find_if(vertices->begin(), vertices->end(), [v](const Vertex& vert) {return &vert == v;});
-	if (it != vertices->end()) {
-		return static_cast<int>(std::distance(vertices->begin(), it));
-	}
-	else {
-		std::cerr << "\n\n		ERROR \n	Mesh.getVertexIndex.. Vertex does not exist";
-		return -1; // Not found
-	}
+	std::vector<int> returnVec;
+
+	DLoop* temp = face->loop;
+
+	do {
+		returnVec.push_back(this->getVertexIndex(temp->tip));
+		temp = temp->next;
+	} while (temp != face->loop);
+
+	return returnVec;
 }
 
-std::vector<int> Mesh::getFaceIndices(Face* face)
+std::pair<int, int> Mesh::getEdgeIndices(DEdge* edge)
 {
-	std::vector<Vertex*> vertices = face->getVertices();
-	std::vector<int> indices;
-
-	for (auto& x : vertices)
-		indices.push_back(this->getVertexIndex(x));
-
-	return indices;
+	return std::pair<int, int>{this->getVertexIndex(edge->v1), this->getVertexIndex(edge->v2)};
 }
 
-std::pair<int, int> Mesh::getEdgeIndices(Edge* edge)
-{
-	return { this->getVertexIndex(edge->pair->tip), this->getVertexIndex(edge->tip) };
-}
+
+
 
 std::vector<GLuint> Mesh::formTrianglesForDrawing()
 {
@@ -287,7 +240,7 @@ std::vector<GLuint> Mesh::formTrianglesForDrawing()
 	//std::cout<<"\n";
 	for (int i = 0;i < selectedFaces.size();i++)
 	{
-		std::vector<Vertex*>faceVertices = selectedFaces[i]->getVertices();
+		std::vector<DVertex*>faceVertices = selectedFaces[i]->getVerticesVector();
 		//std::cout << selectedFaces[i] << " ---- number of vertices of face\n";
 		if (faceVertices.size() == 3)
 		{
@@ -333,181 +286,56 @@ std::vector<GLuint> Mesh::formTrianglesForDrawing()
 }
 
 
+
+
+
+
+void Mesh::duplicateVertex(DVertex& vertex)
+{
+	vertices->push_back(vertex);
+	VBO.bufferData(*vertices);
+}
+
+
+GLuint Mesh::extrudeVertex(GLuint vertex)
+{
+	return GLuint();
+}
+
 void Mesh::deleteVertices()
 {
-	/*Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(objectIndices.back()));
-	std::vector<int>& selectedVertices = mesh->getSelectedVertices();
-	std::vector<Vertex>& meshVertices = mesh->getVerticesReference();
-
-
-	for (auto& x : selectedVertices)
-	{
-		std::vector<Face*>faces = meshVertices[x].getAdjecentFaces();
-		for (auto& y : faces)
-		{
-			for (auto& z : y->getEdges())
-				z->face = nullptr;
-			y->edge = nullptr;
-			delete y;
-		}
-		std::vector<Edge*>edges = meshVertices[x].getAdjecentEdges();
-
-	}*/
-
 }
 void Mesh::deleteEdges() {}
 void Mesh::deleteFaces() {}
 void Mesh::deleteOnlyEdgesAndFaces()
 {
-
-	std::vector<Edge*>& selectedEdges = this->getSelectedEdges();
-
-	std::vector<Edge*> edgeNextToNull;
-	std::vector<Vertex*> vertexEdgeToNull;
-
-
-	for (auto& edge : selectedEdges)
-	{
-		eraseEdge(edge);
-
-		std::vector<Edge*>edgeAdjecent = edge->tip->getAdjecentEdges();
-		std::vector<Edge*>edgePairAdjecent = edge->pair->tip->getAdjecentEdges();
-
-		//std::cout << edgeAdjecent.size() << " " << edgePairAdjecent.size() << "\n";
-
-		// remove access to this edge from its previous edge via edge.next
-		for (auto x : edgePairAdjecent)
-		{
-			if (x->pair->next == edge)
-			{
-				//x->pair->next = nullptr;
-				edgeNextToNull.push_back(x->pair);
-
-				break;
-			}
-		}
-
-		// same as above just for the edge.pair
-		for (auto x : edgeAdjecent)
-		{
-			if (x->pair->next == edge->pair)
-			{
-				//x->pair->next = nullptr;
-				edgeNextToNull.push_back(x->pair);
-				break;
-			}
-		}
-
-
-		// remove access to the edge via vertex.edge
-		if (edge->tip->edge == edge->pair )
-		{
-			//edge->tip->edge = nullptr;
-			vertexEdgeToNull.push_back(edge->tip);
-		}
-
-		if (edge->pair->tip->edge == edge)
-		{
-			//edge->pair->tip->edge = nullptr;
-			vertexEdgeToNull.push_back(edge->pair->tip);
-		}
-
-		if (edge->face)
-		{
-			eraseFace(edge->face);
-			for (auto& x : edge->face->getEdges())
-				x->face = nullptr;
-			delete edge->face;
-		}
-
-		if (edge->pair->face)
-		{
-			eraseFace(edge->pair->face);
-			for (auto& x : edge->pair->face->getEdges())
-				x->face = nullptr;
-			delete edge->pair->face;
-		}
-
-
-
-
-	}
-		
-	std::cout << "\n\n \n" << edgeNextToNull.size() << " edges to null\n";
-	for (auto x : edgeNextToNull)
-		x->next = nullptr;
-
-	for (auto x : vertexEdgeToNull)
-		x->edge = nullptr;
-
-	for (auto& edge : selectedEdges)
-	{
-		delete edge->pair;
-		delete edge;
-	}
-
-	this->updateEBO();
-	this->updateEdgeEBO();
-
-	this->getSelectedVertices().clear();
-	selectedEdges.clear();
-	this->getSelectedFaces().clear();
-
-	//FaceBVHSingleton->BuildBottomUp(*mesh);
-	//EdgeBVHSingleton->BuildBottomUp(*mesh);
-	//VertexBVHSingleton->BuildBottomUp(*mesh);
 }
-void Mesh::deleteOnlyFaces() 
+void Mesh::deleteOnlyFaces()
 //  kada je zadnji face ostao, izbacuje error ---> GRESKA JE U FACE BVH, 
 //	eraseFace ne radi za ngone nikako
 {
 
-
-
-
-	std::vector<Face*>& selectedFaces = this->getSelectedFaces();
-
-
-
-	for (auto& face : selectedFaces)
-	{
-		eraseFace(face);
-		for (auto& x : face->getEdges())
-		{
-			x->face = nullptr;
-
-		}
-		face->edge = nullptr;
-		delete face;
-	}
-
-	this->updateEBO();
-
-	this->getSelectedVertices().clear();
-	selectedFaces.clear();
-
-	FaceBVHSingleton->BuildBottomUp(*this);
 
 }
 void Mesh::dissolveVertices() {}
 void Mesh::dissolveEdges() {}
 void Mesh::dissolveFaces() {} // remove shared edges
 
-void Mesh::eraseFace(Face* face)
+void Mesh::eraseFace(DFace* face)
 {
 	if (!face)return;
 
-	std::vector<Vertex*> faceVertices = face->getVertices();
-	int size = faceVertices.size();
 
 	bool flag;
-	int numberOfTriplets = size - 2;
+
 	std::unordered_set<int> setOfVertices;
 
-	for (int j = 0;j < size;j++)
+	for (DVertex* vertex : face->getVertices())
 	{
-		setOfVertices.insert(this->getVertexIndex(faceVertices[j]));
+		setOfVertices.insert(this->getVertexIndex(vertex));
 	}
+
+	int numberOfTriplets = setOfVertices.size() - 2;
 
 	for (int j = 0;j < this->indices.size();j += 3 * numberOfTriplets)
 	{
@@ -530,7 +358,7 @@ void Mesh::eraseFace(Face* face)
 	//mesh->updateEBO();
 }
 
-void Mesh::eraseEdge(Edge* edge)
+void Mesh::eraseEdge(DEdge* edge)
 {
 
 
@@ -552,34 +380,3 @@ void Mesh::eraseEdge(Edge* edge)
 	std::cout << "\n\n NOT erased edge " << indexPair.first << " " << indexPair.second << "\n";
 }
 
-
-
-//void Application::deleteOnlyFaces() //  kada je zadnji face ostao, izbacuje error ---> GRESKA JE U FACE BVH 
-//{
-//
-//
-//	Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(objectIndices.back()));
-//
-//	std::vector<int>& selectedFaceVertices = mesh->getSelectedFaceIndices();
-//	if (!selectedFaceVertices.size())
-//		return;
-//
-//	std::vector<Face*> faces = mesh->getSelectedFaces();
-//	for (auto& face : faces)
-//	{
-//		for (auto& x : face->getEdges())
-//		{
-//			x->face = nullptr;
-//
-//		}
-//		face->edge = nullptr;
-//		delete face;
-//	}
-//	mesh->updateEBO();
-//
-//	mesh->getSelectedVertices().clear();
-//	selectedFaceVertices.clear();
-//
-//	FaceBVHSingleton->BuildBottomUp(*mesh);
-//
-//}

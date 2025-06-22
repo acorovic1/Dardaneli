@@ -169,7 +169,7 @@
 #include "imgui_impl_opengl3_loader.h"
 #endif
 
-// Vertex arrays are not supported on ES2/WebGL1 unless Emscripten which uses an extension
+// DVertex arrays are not supported on ES2/WebGL1 unless Emscripten which uses an extension
 #ifndef IMGUI_IMPL_OPENGL_ES2
 #define IMGUI_IMPL_OPENGL_USE_VERTEX_ARRAY
 #elif defined(__EMSCRIPTEN__)
@@ -229,7 +229,7 @@ struct ImGui_ImplOpenGL3_Data
 	GLuint          ShaderHandle;
 	GLint           AttribLocationTex;       // Uniforms location
 	GLint           AttribLocationProjMtx;
-	GLuint          AttribLocationVtxPos;    // Vertex attributes location
+	GLuint          AttribLocationVtxPos;    // DVertex attributes location
 	GLuint          AttribLocationVtxUV;
 	GLuint          AttribLocationVtxColor;
 	unsigned int    VboHandle, ElementsHandle;
