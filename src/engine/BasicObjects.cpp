@@ -118,7 +118,15 @@ void addPlane()
 	l4->prev = l3;
 	l4->next = l1;
 
+	DLoop* r1 = new DLoop();
+	DLoop* r2 = new DLoop();
+	DLoop* r3 = new DLoop();
+	DLoop* r4 = new DLoop();
 
+	l1->radialNext = r1; l1->radialPrev = r1;  r1->edge = e1; r1->tip = &(*vertices)[0];
+	l2->radialNext = r2; l2->radialPrev = r2;  r2->edge = e2; r2->tip = &(*vertices)[1];
+	l3->radialNext = r3; l3->radialPrev = r3;  r3->edge = e3; r3->tip = &(*vertices)[2];
+	l4->radialNext = r4; l4->radialPrev = r4;  r4->edge = e4; r4->tip = &(*vertices)[3];
 
 
 

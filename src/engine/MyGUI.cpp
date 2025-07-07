@@ -462,9 +462,9 @@ void MyGUI::VertexTransform()
 	std::vector<int>& selectedVertices = static_cast<Mesh*>(activeObject)->getSelectedVertices();
 	if (selectedVertices.size() == 0)return;
 
-	app->vertexPrevPosition[0] = app->vertexPosition[0] = vertices[selectedVertices[selectedVertices.size() - 1]].position.x;
-	app->vertexPrevPosition[1] = app->vertexPosition[1] = vertices[selectedVertices[selectedVertices.size() - 1]].position.y;
-	app->vertexPrevPosition[2] = app->vertexPosition[2] = vertices[selectedVertices[selectedVertices.size() - 1]].position.z;
+	app->vertexPrevPosition[0] = app->vertexPosition[0] = vertices[selectedVertices.back()].position.x;
+	app->vertexPrevPosition[1] = app->vertexPosition[1] = vertices[selectedVertices.back()].position.y;
+	app->vertexPrevPosition[2] = app->vertexPosition[2] = vertices[selectedVertices.back()].position.z;
 
 	ImGui::InputFloat3("DVertex position", app->vertexPosition);
 	if (ImGui::IsItemDeactivatedAfterEdit())
@@ -701,6 +701,12 @@ void MyGUI::DMesh()
 		selectedVertices = { selectedVertices.back() };
 
 		selectedEdges.clear();
+		if (!vertices[selectedVertices.back()].e)// if it doesnt exist
+		{
+			std::cerr << "\n\nvertex.edge does not exist\n";
+			ImGui::End();
+			return;
+		}
 		selectedEdges.push_back(vertices[selectedVertices.back()].e);
 
 		vertexEdge = selectedEdges[0];
@@ -717,6 +723,13 @@ void MyGUI::DMesh()
 		clicked = 0;
 
 		DVertex* v1 = vertexEdge->v1;
+
+		if (!selectedEdges[0]->d1.next)// if it doesnt exist
+		{
+			std::cerr << "\n\n diskLink.d1.next does not exist\n";
+			ImGui::End();
+			return;
+		}
 
 		selectedEdges[0] = selectedEdges[0]->d1.next;
 
@@ -747,6 +760,13 @@ void MyGUI::DMesh()
 	if (clicked)
 	{
 		clicked = 0;
+
+		if (!selectedEdges[0]->d1.prev)// if it doesnt exist
+		{
+			std::cerr << "\n\n diskLink.d1.prev does not exist\n";
+			ImGui::End();
+			return;
+		}
 
 		selectedEdges[0] = selectedEdges[0]->d1.prev;
 
@@ -790,6 +810,12 @@ void MyGUI::DMesh()
 	if (clicked)
 	{
 		clicked = 0;
+		if (!selectedEdges[0]->loop)// if it doesnt exist
+		{
+			std::cerr << "\n\n Edge.loop does not exist\n";
+			ImGui::End();
+			return;
+		}
 		selectedLoop = selectedEdges[0]->loop;
 		selectedEdges[0] = selectedLoop->edge;
 
@@ -805,7 +831,12 @@ void MyGUI::DMesh()
 	if (clicked)
 	{
 		clicked = 0;
-		
+		if (!selectedLoop->edge)// if it doesnt exist
+		{
+			std::cerr << "\n\n loop.edge does not exist\n";
+			ImGui::End();
+			return;
+		}
 		selectedEdges[0] = selectedLoop->edge;
 
 		std::pair<int, int> edgeIndices = mesh->getEdgeIndices(selectedEdges.back());
@@ -819,6 +850,12 @@ void MyGUI::DMesh()
 	if (clicked)
 	{
 		clicked = 0;
+		if (!selectedLoop->next)// if it doesnt exist
+		{
+			std::cerr << "\n\n loop.next does not exist\n";
+			ImGui::End();
+			return;
+		}
 		selectedLoop = selectedLoop->next;
 		selectedEdges[0] = selectedLoop->edge;
 
@@ -834,7 +871,12 @@ void MyGUI::DMesh()
 	if (clicked)
 	{
 		clicked = 0;
-
+		if (!selectedLoop->prev)// if it doesnt exist
+		{
+			std::cerr << "\n\n loop.prev does not exist\n";
+			ImGui::End();
+			return;
+		}
 		selectedLoop = selectedLoop->prev;
 		selectedEdges[0] = selectedLoop->edge;
 
@@ -849,7 +891,12 @@ void MyGUI::DMesh()
 	if (clicked)
 	{
 		clicked = 0;
-
+		if (!selectedLoop->radialNext)// if it doesnt exist
+		{
+			std::cerr << "\n\n loop.radialNext does not exist\n";
+			ImGui::End();
+			return;
+		}
 		selectedLoop = selectedLoop->radialNext;
 		selectedEdges[0] = selectedLoop->edge;
 
@@ -865,7 +912,12 @@ void MyGUI::DMesh()
 	if (clicked)
 	{
 		clicked = 0;
-
+		if (!selectedLoop->radialPrev)// if it doesnt exist
+		{
+			std::cerr << "\n\n loop.radialPrev does not exist\n";
+			ImGui::End();
+			return;
+		}
 		selectedLoop = selectedLoop->radialPrev;
 		selectedEdges[0] = selectedLoop->edge;
 
@@ -888,6 +940,10 @@ void MyGUI::DMesh()
 		for (DVertex* v : set)
 			selectedVertices.push_back(mesh->getVertexIndex(v));
 
+		for (auto x : selectedVertices)
+			std::cout << " " << x;
+		std::cout << "\n";
+
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Vertex.adjecentEdges"))
@@ -900,7 +956,11 @@ void MyGUI::DMesh()
 		std::unordered_set<DEdge*>set = vertices[selectedVertices[0]].getAdjecentEdges();
 
 		for (DEdge* e : set)
+		{
 			selectedEdges.push_back(e);
+			auto temp = mesh->getEdgeIndices(e);
+			std::cout << "\n " << temp.first<<" "<<temp.second;
+		}
 
 	}
 
@@ -915,7 +975,15 @@ void MyGUI::DMesh()
 		std::unordered_set<DFace*>set = vertices[selectedVertices[0]].getAdjecentFaces();
 
 		for (DFace* f : set)
+		{
 			selectedFaces.push_back(f);
+			auto temp = mesh->getFaceIndices(f);
+
+			std::cout << "\n";
+			for(auto x:temp)
+				std::cout << " " << x;
+			std::cout << "\n";
+		}
 
 
 		std::cout << "\n\n\t Selected faces:\t" << selectedFaces.size();

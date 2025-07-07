@@ -24,6 +24,12 @@ class Mesh :public Object {
 	// erases indices of the edge inside the mesh
 	void eraseEdge(DEdge* edge);
 
+	// !!! needs an EBO update !!!
+	// erases the vertex index
+	void eraseVertex(DVertex* v);
+
+	void updateDiskLink(DEdge* edge, DVertex* vert, DDiskLink& disk);
+
 	void duplicateVertex(DVertex& vertex);
 
 public:
@@ -63,11 +69,17 @@ public:
 	
 	GLuint extrudeVertex(GLuint vertex);
 
+
+	// test this thoroughly 
 	void deleteVertices();
+	// ne radi ako je izolovano
 	void deleteEdges();
+	// fale bvh stabla
 	void deleteFaces();
 	void deleteOnlyEdgesAndFaces();
 	void deleteOnlyFaces();
+
+
 	void dissolveVertices();
 	void dissolveEdges();
 	void dissolveFaces();
