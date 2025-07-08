@@ -752,7 +752,7 @@ void addSphere(int segments, int rings, float radius)
 	}
 	for (int i = 0; i < vertices->size(); i++)
 	{
-		for (int j = 0; j < diskEdges[j].size(); j++)
+		for (int j = 0; j < diskEdges[i].size(); j++)
 		{
 			DEdge* e = diskEdges[i][j];
 			if (&(*vertices)[i] == e->v1)
@@ -763,7 +763,7 @@ void addSphere(int segments, int rings, float radius)
 					e->d1.next = diskEdges[i][j + 1];
 					e->d1.prev = diskEdges[i][diskEdges[i].size() - 1];
 				}
-				else if (j == diskEdges[j].size() - 1)
+				else if (j == diskEdges[i].size() - 1)
 				{
 					e->d1.next = diskEdges[i][0];
 					e->d1.prev = diskEdges[i][j - 1];
@@ -781,7 +781,7 @@ void addSphere(int segments, int rings, float radius)
 					e->d2.next = diskEdges[i][j + 1];
 					e->d2.prev = diskEdges[i][diskEdges[i].size() - 1];
 				}
-				else if (j == diskEdges[j].size() - 1)
+				else if (j == diskEdges[i].size() - 1)
 				{
 					e->d2.next = diskEdges[i][0];
 					e->d2.prev = diskEdges[i][j - 1];
@@ -793,13 +793,16 @@ void addSphere(int segments, int rings, float radius)
 				}
 			}
 		}
-
+		if(i==vertices->size()-1)
+		{
+			std::cout << "ljulj";
+		}
 
 
 	}
 
 
-	(*vertices)[vertices->size() - 1].e = edgeMap[UnorderedPair<int>(vertices->size() - 1, vertices->size() - 2)];
+	(*vertices).back().e = edgeMap[UnorderedPair<int>(vertices->size() - 1, vertices->size() - 2)];
 
 	//std::cout << "\n\n Number of indices = " << indices.size()<<"\n";
 

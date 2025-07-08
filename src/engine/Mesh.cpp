@@ -333,7 +333,9 @@ void Mesh::deleteVertices()
 	selectedEdges.insert(selectedEdges.begin(), edges.begin(), edges.end());
 	deleteEdges();
 }
-
+/// <summary>
+///  BELAJ KADA SE OBRISE VERTEX, DISKOVI SE NE AZURIRAJU KAKO TREBA, TJ NEKAKO SE ONI POZIVAJU
+/// </summary>
 void Mesh::deleteEdges()
 {
 	std::vector<DEdge*>& selectedEdges = this->getSelectedEdges();
@@ -415,7 +417,7 @@ void Mesh::deleteEdges()
 			if (!edge->d1.next)
 			{
 				std::cout << "			whoops";
-				eraseVertex(edge->v1);
+				//eraseVertex(edge->v1);
 				continue;
 			}
 			edge->v1->e = edge->d1.next;
@@ -426,7 +428,7 @@ void Mesh::deleteEdges()
 			if (!edge->d2.next)
 			{
 				std::cout << "			whoops";
-				eraseVertex(edge->v2);
+				//eraseVertex(edge->v2);
 				continue;
 			}
 			edge->v2->e = edge->d2.next;

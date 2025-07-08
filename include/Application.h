@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -20,6 +21,7 @@ enum class SelectMode { VERTEX, EDGE, FACE };
 
 class MyGUI;
 
+// cut off one head two more shall take its place
 class Application {
 	static Application* instance;
 	Application() {};

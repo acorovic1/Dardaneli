@@ -10,6 +10,8 @@ void addPlane();
 void addCube();
 // add radial loops to the outer ring similar to plane
 void addCircle(int numSegments = 32, float radius = 1.0f);
+
+// last vertex's disk is wrongly implemented or smth
 void addSphere(int segments = 32, int rings = 16, float radius = 1.0f); 
 void addCylinder(int numSegments = 4, float height = 2.0f, float radius = 1.0f);
 
