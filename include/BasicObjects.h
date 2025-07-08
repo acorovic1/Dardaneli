@@ -10,8 +10,10 @@ void addPlane();
 void addCube();
 // add radial loops to the outer ring similar to plane
 void addCircle(int numSegments = 32, float radius = 1.0f);
-void addSphere(int segments = 32, int rings = 16, float radius = 1.0f); // polulopta
+void addSphere(int segments = 32, int rings = 16, float radius = 1.0f); 
 void addCylinder(int numSegments = 4, float height = 2.0f, float radius = 1.0f);
+
+// face selection ne radi
 void addCone(int numSegments = 8, float height = 2.0f, float radius = 1.0f);
 
 // object converges into 1 point in the middle (no hole)

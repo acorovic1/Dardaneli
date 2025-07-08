@@ -458,10 +458,15 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 					}
 				}
 
-				selectedFace = mesh->getFace(std::vector<int>(index.begin(), index.end()));
+				selectedFace = mesh->getFace(std::unordered_set<int>(index.begin(), index.end()));
 			}
 
 
+			std::cout << "\n\index VERTICES ---> ";
+			for(auto x:index)
+				std::cout << x << " ";
+			std::cout << "\n\n<--- index VERTICES ";
+			auto temp = selectedFace->getVertices();
 			std::vector<DEdge*>& selectedEdges = mesh->getSelectedEdges();
 
 			if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) // shift select

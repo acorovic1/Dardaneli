@@ -33,8 +33,10 @@ std::unordered_set<DVertex*>DVertex::getAdjecentVertices()const {
 }
 std::unordered_set<DEdge*> DVertex::getAdjecentEdges()const {
 
+	if (e == nullptr) return std::unordered_set<DEdge*>();
 
 	std::unordered_set<DEdge*> returnVec;
+
 	DDiskLink* disk;
 
 	DEdge* temp = e;
@@ -45,14 +47,16 @@ std::unordered_set<DEdge*> DVertex::getAdjecentEdges()const {
 		disk = (temp->v1 == this) ? &temp->d1 : &temp->d2;
 
 		temp = disk->next;
-
-	} while (temp != e);
+		 
+	} while (temp != e || !temp);
 
 
 	return returnVec;
 
 }
 std::unordered_set<DFace*> DVertex::getAdjecentFaces() const {
+	if (e == nullptr) return std::unordered_set<DFace*>();
+
 	std::unordered_set<DFace*> returnVec;
 	DDiskLink* disk;
 

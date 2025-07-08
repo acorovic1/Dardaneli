@@ -139,7 +139,6 @@ void Renderer::Render(Window& window, MyGUI& gui)
 						std::cout << drawFaces[i]<<" ";
 						if (i % 3 == 2 && i)std::cout << "\n";
 					}*/
-
 					std::vector<int> selectedVerts;
 					std::vector<DFace*>& selectedFaces = mesh->getSelectedFaces();
 

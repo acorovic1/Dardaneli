@@ -123,12 +123,25 @@ void addPlane()
 	DLoop* r3 = new DLoop();
 	DLoop* r4 = new DLoop();
 
-	l1->radialNext = r1; l1->radialPrev = r1;  r1->edge = e1; r1->tip = &(*vertices)[0];
-	l2->radialNext = r2; l2->radialPrev = r2;  r2->edge = e2; r2->tip = &(*vertices)[1];
-	l3->radialNext = r3; l3->radialPrev = r3;  r3->edge = e3; r3->tip = &(*vertices)[2];
-	l4->radialNext = r4; l4->radialPrev = r4;  r4->edge = e4; r4->tip = &(*vertices)[3];
+	l1->radialNext = r1; l1->radialPrev = r1;
+	l2->radialNext = r2; l2->radialPrev = r2;
+	l3->radialNext = r3; l3->radialPrev = r3;
+	l4->radialNext = r4; l4->radialPrev = r4;
 
+	r1->edge = e1;
+	r2->edge = e2;
+	r3->edge = e3;
+	r4->edge = e4;
 
+	r1->tip = &(*vertices)[0];
+	r2->tip = &(*vertices)[1];
+	r3->tip = &(*vertices)[2];
+	r4->tip = &(*vertices)[3];
+
+	r1->radialNext = l1; r1->radialPrev = l1;
+	r2->radialNext = l2; r2->radialPrev = l2;
+	r3->radialNext = l3; r3->radialPrev = l3;
+	r4->radialNext = l4; r4->radialPrev = l4;
 
 	new Mesh(
 		"Plane",
@@ -209,7 +222,7 @@ void addCube()
 	/* used for linking loop.radial atributes*/
 	std::unordered_multimap < UnorderedPair<int>, DLoop*, UnorderedPairHash<int> > loopMap{};
 
-	for (int i = 0;i < edgeIndices.size();i += 2)
+	for (int i = 0; i < edgeIndices.size(); i += 2)
 	{
 		DEdge* e1 = new DEdge();
 
@@ -229,7 +242,7 @@ void addCube()
 
 	}
 
-	for (int i = 0;i < indices.size();i += 6)
+	for (int i = 0; i < indices.size(); i += 6)
 	{
 		DFace* face = new DFace();
 
@@ -271,7 +284,7 @@ void addCube()
 
 	}
 
-	for (int i = 0;i < edgeIndices.size();i += 2)
+	for (int i = 0; i < edgeIndices.size(); i += 2)
 	{
 		/*
 			equal_range returns iterators to the original map
@@ -292,9 +305,9 @@ void addCube()
 
 	}
 
-	for (int i = 0;i < vertices->size();i++)
+	for (int i = 0; i < vertices->size(); i++)
 	{
-		for (int j = 0;j < diskEdges[i].size();j++)
+		for (int j = 0; j < diskEdges[i].size(); j++)
 		{
 			DEdge* e = diskEdges[i][j];
 			if (&(*vertices)[i] == e->v1)
@@ -394,7 +407,7 @@ void addCircle(int numSegments, float radius)
 	edgeIndices.push_back(0);
 
 	DFace* face = new DFace();
-	for (int i = 0;i < edgeIndices.size();i += 2)
+	for (int i = 0; i < edgeIndices.size(); i += 2)
 	{
 		DEdge* e = new DEdge();
 
@@ -475,14 +488,14 @@ void addSphere(int segments, int rings, float radius)
 	// top vertex
 	vertices->push_back(DVertex{ glm::vec3(0.0f,radius,0.0f),glm::normalize(glm::vec3(0.0f,radius,0.0f)) });
 
-	for (int i = 0;i < rings - 1;i++)
+	for (int i = 0; i < rings - 1; i++)
 	{
 		y = radius * sinf(halfPI - ringStep * (i + 1)); // found from the XY/ZY plane (side view)
 
 		radiusStep = radius * cosf(halfPI - ringStep * (i + 1));  // found from the XY/ZY plane (side view)
 
 
-		for (int j = 0;j < segments;j++)
+		for (int j = 0; j < segments; j++)
 		{
 
 			x = radiusStep * cosf(segmentStep * j); // found from the XZ plane (top down view)
@@ -563,7 +576,7 @@ void addSphere(int segments, int rings, float radius)
 	}
 	float bottomVertex = (rings - 1) * segments + 1;
 	float currentVertex;
-	for (int j = 0;j < segments;j++)// last ring of faces (triangles)
+	for (int j = 0; j < segments; j++)// last ring of faces (triangles)
 	{
 		currentVertex = (rings - 2) * (segments)+1 + j;
 
@@ -611,7 +624,7 @@ void addSphere(int segments, int rings, float radius)
 	(*vertices)[0].e = edgeMap[UnorderedPair<int>(0, 2)];
 
 
-	for (int i = 0;i < indices.size();)
+	for (int i = 0; i < indices.size();)
 	{
 		DFace* face = new DFace();
 		if (i < 3 * segments || i >= 3 * segments + 6 * segments * (rings - 2)) // triangles
@@ -717,7 +730,7 @@ void addSphere(int segments, int rings, float radius)
 
 	}
 
-	for (int i = 0;i < edgeIndices.size();i += 2)
+	for (int i = 0; i < edgeIndices.size(); i += 2)
 	{
 		/*
 			equal_range returns iterators to the original map
@@ -737,9 +750,9 @@ void addSphere(int segments, int rings, float radius)
 		loop2->radialPrev = loop1;
 
 	}
-	for (int i = 0;i < vertices->size();i++)
+	for (int i = 0; i < vertices->size(); i++)
 	{
-		for (int j = 0;j < diskEdges[j].size();j++)
+		for (int j = 0; j < diskEdges[j].size(); j++)
 		{
 			DEdge* e = diskEdges[i][j];
 			if (&(*vertices)[i] == e->v1)
@@ -931,7 +944,7 @@ void addCylinder(int numSegments, float height, float radius)
 
 
 	// quads
-	for (int i = 0;i < 6 * numSegments;i += 6)
+	for (int i = 0; i < 6 * numSegments; i += 6)
 	{
 		DFace* face = new DFace();
 
@@ -979,7 +992,7 @@ void addCylinder(int numSegments, float height, float radius)
 	}
 
 
-	for (int i = 0;i < numSegments * 2;i += 2)
+	for (int i = 0; i < numSegments * 2; i += 2)
 	{
 		topRight = (i + 3) % (numSegments * 2);
 		// top circle 
@@ -1015,7 +1028,7 @@ void addCylinder(int numSegments, float height, float radius)
 
 	loopVecBottom[0]->next = loopVecBottom[1];
 	loopVecBottom[0]->prev = loopVecBottom[size];
-	for (int i = 1;i < size;i++)
+	for (int i = 1; i < size; i++)
 	{
 		loopVecTop[i]->next = loopVecTop[i + 1];
 		loopVecTop[i]->prev = loopVecTop[i - 1];
@@ -1029,7 +1042,7 @@ void addCylinder(int numSegments, float height, float radius)
 	loopVecBottom[size]->next = loopVecBottom[0];
 	loopVecBottom[size]->prev = loopVecBottom[size - 1];
 
-	for (int i = 0;i < edgeIndices.size();i += 2)
+	for (int i = 0; i < edgeIndices.size(); i += 2)
 	{
 		/*
 			equal_range returns iterators to the original map
@@ -1050,9 +1063,9 @@ void addCylinder(int numSegments, float height, float radius)
 
 	}
 
-	for (int i = 0;i < vertices->size();i++)
+	for (int i = 0; i < vertices->size(); i++)
 	{
-		for (int j = 0;j < diskEdges[i].size();j++)
+		for (int j = 0; j < diskEdges[i].size(); j++)
 		{
 			DEdge* e = diskEdges[i][j];
 			if (&(*vertices)[i] == e->v1)
@@ -1200,7 +1213,7 @@ void addCone(int numSegments, float height, float radius)
 	(*vertices).back().e = edgeMap[UnorderedPair<int>(vertices->size() - 1, 1)];
 
 
-	for (int i = 0;i < indices.size();i += 3)
+	for (int i = 0; i < indices.size(); i += 3)
 	{
 		if (i < numSegments * 3)
 		{
@@ -1248,7 +1261,7 @@ void addCone(int numSegments, float height, float radius)
 	loopVec[0]->prev = loopVec[size];
 
 
-	for (int i = 1;i < size;i++)
+	for (int i = 1; i < size; i++)
 	{
 		loopVec[i]->next = loopVec[i + 1];
 		loopVec[i]->prev = loopVec[i - 1];
@@ -1258,7 +1271,7 @@ void addCone(int numSegments, float height, float radius)
 	loopVec[size]->prev = loopVec[size - 1];
 
 
-	for (int i = 0;i < edgeIndices.size();i += 2)
+	for (int i = 0; i < edgeIndices.size(); i += 2)
 	{
 		/*
 			equal_range returns iterators to the original map
@@ -1279,9 +1292,9 @@ void addCone(int numSegments, float height, float radius)
 
 	}
 
-	for (int i = 0;i < vertices->size();i++)
+	for (int i = 0; i < vertices->size(); i++)
 	{
-		for (int j = 0;j < diskEdges[i].size();j++)
+		for (int j = 0; j < diskEdges[i].size(); j++)
 		{
 			DEdge* e = diskEdges[i][j];
 			if (&(*vertices)[i] == e->v1)
@@ -1374,12 +1387,12 @@ void addDoughnut(int majorSegments, int minorSegments, float majorRadius, float 
 
 
 
-	for (int i = 0;i < majorSegments;i++)
+	for (int i = 0; i < majorSegments; i++)
 	{
 		dirX = cosf(majorStep * i);
 		dirZ = sinf(majorStep * i);
 
-		for (int j = 0;j < minorSegments;j++)
+		for (int j = 0; j < minorSegments; j++)
 		{
 			y = minorRadius * sinf(minorStep * j);
 
@@ -1446,7 +1459,7 @@ void addDoughnut(int majorSegments, int minorSegments, float majorRadius, float 
 		std::cout << indices[i] << " ";
 	}
 	std::cout << "number of indices " << edgeMap.size();*/
-	for (int i = 0;i < indices.size();i += 6)
+	for (int i = 0; i < indices.size(); i += 6)
 	{
 		DFace* face = new DFace();
 
@@ -1492,7 +1505,7 @@ void addDoughnut(int majorSegments, int minorSegments, float majorRadius, float 
 
 	}
 
-	for (int i = 0;i < edgeIndices.size();i += 2)
+	for (int i = 0; i < edgeIndices.size(); i += 2)
 	{
 		/*
 			equal_range returns iterators to the original map
@@ -1513,9 +1526,9 @@ void addDoughnut(int majorSegments, int minorSegments, float majorRadius, float 
 
 	}
 
-	for (int i = 0;i < vertices->size();i++)
+	for (int i = 0; i < vertices->size(); i++)
 	{
-		for (int j = 0;j < diskEdges[i].size();j++)
+		for (int j = 0; j < diskEdges[i].size(); j++)
 		{
 			DEdge* e = diskEdges[i][j];
 			if (&(*vertices)[i] == e->v1)

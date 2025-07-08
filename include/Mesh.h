@@ -24,8 +24,8 @@ class Mesh :public Object {
 	// erases indices of the edge inside the mesh
 	void eraseEdge(DEdge* edge);
 
-	// !!! needs an EBO update !!!
-	// erases the vertex index
+	// !!! needs a VBO update !!!
+	// erases the vertex from vertices vector and updates the indices of the mesh
 	void eraseVertex(DVertex* v);
 
 	void updateDiskLink(DEdge* edge, DVertex* vert, DDiskLink& disk);
@@ -49,11 +49,10 @@ public:
 	std::unordered_set<DFace*> getAllFaces(); 
 	std::unordered_set<DEdge*> getAllEdges();
 
-	DFace* getFace(std::vector<int> indices); // returns the common face of indices 
+	DFace* getFace(std::unordered_set<int> indices); // returns the common face of indices 
 
 	DEdge* getEdge(int start, int end); // returns the common edge of indices 
 
-	
 
 	void Draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES) override;
 
@@ -70,7 +69,7 @@ public:
 	GLuint extrudeVertex(GLuint vertex);
 
 
-	// test this thoroughly 
+	// test all of this thoroughly 
 	void deleteVertices();
 	// ne radi ako je izolovano
 	void deleteEdges();

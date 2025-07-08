@@ -49,7 +49,20 @@ std::unordered_set<DFace*> Mesh::getAllFaces()
 	std::unordered_set<DFace*> returnSet;
 
 	for (auto x : getAllEdges())
+	{
+
+		DLoop* l = x->loop;
+		do {
+
+			returnSet.insert(l->face);
+			l = l->radialNext;
+
+		} while (l != x->loop);
 		returnSet.insert(x->loop->face);
+
+
+
+	}
 
 	returnSet.erase(nullptr);
 
@@ -60,14 +73,11 @@ std::unordered_set<DFace*> Mesh::getAllFaces()
 std::unordered_set<DEdge*> Mesh::getAllEdges()
 {
 	std::unordered_set<DEdge*> returnSet;
-	for (auto x : *vertices)
+	for (auto& x : *vertices)
 	{
-		if (!x.e)continue;
-		returnSet.insert(x.e->d1.next);
-		returnSet.insert(x.e->d1.prev);
-
-		returnSet.insert(x.e->d2.next);
-		returnSet.insert(x.e->d2.prev);
+		
+		std::unordered_set<DEdge*> temp = x.getAdjecentEdges();
+		returnSet.insert(temp.begin(), temp.end());
 	}
 
 	returnSet.erase(nullptr);
@@ -75,25 +85,25 @@ std::unordered_set<DEdge*> Mesh::getAllEdges()
 	return returnSet;
 }
 
-DFace* Mesh::getFace(std::vector<int> indices)
+DFace* Mesh::getFace(std::unordered_set<int> indices)
 {
-	DVertex* vert = &(*vertices)[indices[0]];
 
-	DEdge* edge = vert->e;
 
-	do {
-		DLoop* loop = edge->loop;
-		do {
-			if (std::find(indices.begin(), indices.end(), this->getVertexIndex(loop->tip)) == indices.end())
-				break;
-			loop = loop->next;
-		} while (loop != edge->loop);
+	DVertex* vert = &(*vertices)[*indices.begin()];
 
-		if (loop == edge->loop)
-			return loop->face;
+	auto temp = vert->getAdjecentFaces();
 
-		edge = (edge->v1 == vert) ? edge->d1.next : edge->d2.next;
-	} while (edge != vert->e);
+	for (auto x : temp)
+	{
+		std::unordered_set<int> faceIndices;
+		auto faceVerts = x->getVertices();
+		for (auto v : faceVerts)
+			faceIndices.insert(this->getVertexIndex(v));
+		if (faceIndices == indices)
+			return x;
+	}
+
+	
 
 	std::cerr << "\n\n\n Mesh.getFace(indices) returns nullptr\n\n";
 	return nullptr;
@@ -241,7 +251,7 @@ std::vector<GLuint> Mesh::formTrianglesForDrawing()
 {
 	std::vector<GLuint> returnVec = std::vector<GLuint>();
 	//std::cout<<"\n";
-	for (int i = 0;i < selectedFaces.size();i++)
+	for (int i = 0; i < selectedFaces.size(); i++)
 	{
 		std::vector<DVertex*>faceVertices = selectedFaces[i]->getVerticesVector();
 		//std::cout << selectedFaces[i] << " ---- number of vertices of face\n";
@@ -258,8 +268,11 @@ std::vector<GLuint> Mesh::formTrianglesForDrawing()
 			returnVec.push_back(this->getVertexIndex(faceVertices[2]));
 
 			returnVec.push_back(this->getVertexIndex(faceVertices[2]));
-			returnVec.push_back(this->getVertexIndex(faceVertices[3]));
 			returnVec.push_back(this->getVertexIndex(faceVertices[0]));
+			returnVec.push_back(this->getVertexIndex(faceVertices[3]));
+
+			//std::cout << "\n" << this->getVertexIndex(faceVertices[0]) << " " << this->getVertexIndex(faceVertices[1]) << " " << this->getVertexIndex(faceVertices[2]) << "\n"
+			//	<< this->getVertexIndex(faceVertices[2])<<" " << this->getVertexIndex(faceVertices[0]) << " " << this->getVertexIndex(faceVertices[3]) << "\n\n";
 
 		}
 		else if (faceVertices.size() > 4)
@@ -269,7 +282,7 @@ std::vector<GLuint> Mesh::formTrianglesForDrawing()
 				std::cout << "\n" ;*/
 
 				//for (int j = i + 2;j <i+ selectedFaces[i]-1;j++)
-			for (int j = 1;j < faceVertices.size() - 1;j++)
+			for (int j = 1; j < faceVertices.size() - 1; j++)
 			{
 				returnVec.push_back(this->getVertexIndex(faceVertices[0])); // anchor
 				returnVec.push_back(this->getVertexIndex(faceVertices[j])); // 2nd
@@ -535,7 +548,7 @@ void Mesh::deleteFaces() {
 
 		if (edge->v1->e == edge)
 		{
-			
+
 			if (!edge->d1.next)
 			{
 				eraseVertex(edge->v1);
@@ -747,10 +760,10 @@ void Mesh::eraseFace(DFace* face)
 
 	int numberOfTriplets = setOfVertices.size() - 2;
 
-	for (int j = 0;j < this->indices.size();j += 3 * numberOfTriplets)
+	for (int j = 0; j < this->indices.size(); j += 3 * numberOfTriplets)
 	{
 		flag = false;
-		for (int k = j;k < j + 3 * numberOfTriplets;k++)
+		for (int k = j; k < j + 3 * numberOfTriplets; k++)
 		{
 
 			if (!setOfVertices.count(this->indices[k]))
@@ -776,7 +789,7 @@ void Mesh::eraseEdge(DEdge* edge)
 
 	std::pair<int, int> indexPair = this->getEdgeIndices(edge);
 
-	for (int i = 0;i < this->edgeIndices.size();i += 2)
+	for (int i = 0; i < this->edgeIndices.size(); i += 2)
 	{
 		if ((this->edgeIndices[i] == indexPair.first && this->edgeIndices[i + 1] == indexPair.second) || (this->edgeIndices[i + 1] == indexPair.first && this->edgeIndices[i] == indexPair.second))
 		{
