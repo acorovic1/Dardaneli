@@ -44,11 +44,19 @@ std::unordered_set<DEdge*> DVertex::getAdjecentEdges()const {
 
 		returnVec.insert(temp);
 
-		disk = (temp->v1 == this) ? &temp->d1 : &temp->d2;
+		if (temp->v1 == this)
+			disk = &temp->d1;
+		else if (temp->v2 == this)
+			disk = &temp->d2;
+		else {
+			std::cerr << "NESTA NE VALJA vertex.GetAdjecentEdges()";
+			break;
+		}
+		//disk = (temp->v1 == this) ? &temp->d1 : &temp->d2;
 
 		temp = disk->next;
-		 
-	} while (temp != e || !temp);
+
+	} while (temp != e);
 
 
 	return returnVec;

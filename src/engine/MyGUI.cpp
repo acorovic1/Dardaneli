@@ -715,14 +715,47 @@ void MyGUI::DMesh()
 		selectedVertices.push_back((edgeIndices.first == selectedVertices[0]) ? edgeIndices.second : edgeIndices.first);
 
 	}
+	ImGui::SameLine();
+	if (ImGui::Button("Edge.v1"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+		if (selectedEdges.empty())
+		{
+			std::cerr << "\n\n No edge selected\n";
+			ImGui::End();
+			return;
+		}
+		selectedVertices.clear();
+		selectedVertices.push_back(mesh->getVertexIndex(selectedEdges[0]->v1));
 
+		std::cout << "\n\tV1 = " << selectedVertices.back();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Edge.v2"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+		if (selectedEdges.empty())
+		{
+			std::cerr << "\n\n No edge selected\n";
+			ImGui::End();
+			return;
+		}
+		selectedVertices.clear();
+		selectedVertices.push_back(mesh->getVertexIndex(selectedEdges[0]->v2));
+
+		std::cout << "\n\tV2 = " << selectedVertices.back();
+	}
 	if (ImGui::Button("Edge.DiskLink.d1.next"))
 		clicked++;
 	if (clicked)
 	{
 		clicked = 0;
 
-		DVertex* v1 = vertexEdge->v1;
+		DVertex* v1 = selectedEdges.back()->v1;
 
 		if (!selectedEdges[0]->d1.next)// if it doesnt exist
 		{
@@ -797,7 +830,7 @@ void MyGUI::DMesh()
 	{
 		clicked = 0;
 
-		selectedEdges[0] = selectedEdges[0]->d1.prev;
+		selectedEdges[0] = selectedEdges[0]->d2.prev;
 
 		std::pair<int, int> edgeIndices = mesh->getEdgeIndices(selectedEdges.back());
 		selectedVertices.clear();

@@ -347,18 +347,97 @@ void addCube()
 					e->d2.prev = diskEdges[i][j - 1];
 				}
 			}
+
 		}
 
 
 
 	}
 
-	new Mesh(
+	auto mesh = new Mesh(
 		"Cube",
 		vertices,
 		indices,
 		edgeIndices
 	);
+
+	for (int i = 0; i < vertices->size(); i++)
+	{
+		std::cout << "\n\n\nDisk edges for vertex: " << i;
+		for (int j = 0; j < diskEdges[i].size(); j++)
+		{
+			DEdge* e = diskEdges[i][j];
+			if (&(*vertices)[i] == e->v1)
+			{
+
+				if (j == 0)
+				{
+					auto next = mesh->getEdgeIndices(diskEdges[i][j + 1]);
+					auto prev = mesh->getEdgeIndices(diskEdges[i][diskEdges[i].size() - 1]);
+
+					std::cout << "\n\nnext edge: " << next.first << " " << next.second << "\nprev edge: " << prev.first << " " << prev.second;
+
+
+				}
+				else if (j == diskEdges[i].size() - 1)
+				{
+					auto next = mesh->getEdgeIndices(diskEdges[i][0]);
+					auto prev = mesh->getEdgeIndices(diskEdges[i][j - 1]);
+
+					std::cout << "\n\nnext edge: " << next.first << " " << next.second << "\nprev edge: " << prev.first << " " << prev.second;
+
+				}
+				else
+				{
+					auto next = mesh->getEdgeIndices(diskEdges[i][j + 1]);
+					auto prev = mesh->getEdgeIndices(diskEdges[i][j - 1]);
+
+					std::cout << "\n\nnext edge: " << next.first << " " << next.second << "\nprev edge: " << prev.first << " " << prev.second;
+
+				}
+			}
+			else if (&(*vertices)[i] == e->v2)
+			{
+				if (j == 0)
+				{
+					auto next = mesh->getEdgeIndices(diskEdges[i][j + 1]);
+					auto prev = mesh->getEdgeIndices(diskEdges[i][diskEdges[i].size() - 1]);
+
+					std::cout << "\n\nnext edge: " << next.first << " " << next.second << "\nprev edge: " << prev.first << " " << prev.second;
+
+				}
+				else if (j == diskEdges[i].size() - 1)
+				{
+					auto next = mesh->getEdgeIndices(diskEdges[i][0]);
+					auto prev = mesh->getEdgeIndices(diskEdges[i][j - 1]);
+
+					std::cout << "\n\nnext edge: " << next.first << " " << next.second << "\nprev edge: " << prev.first << " " << prev.second;
+
+				}
+				else
+				{
+					auto next = mesh->getEdgeIndices(diskEdges[i][j + 1]);
+					auto prev = mesh->getEdgeIndices(diskEdges[i][j - 1]);
+
+					std::cout << "\n\nnext edge: " << next.first << " " << next.second << "\nprev edge: " << prev.first << " " << prev.second;
+
+
+				}
+			}
+
+		}
+	}
+
+	for (int i = 0;i < diskEdges.size();i++)
+	{
+		std::cout << "\n\n\nDisk edges for vertex: " << i;
+		for (auto y : diskEdges[i])
+		{
+			auto temp = mesh->getEdgeIndices(y);
+			std::cout << "\nEdge: " << temp.first << " " << temp.second;
+		}
+	}
+
 }
 
 void addCircle(int numSegments, float radius)
@@ -793,7 +872,7 @@ void addSphere(int segments, int rings, float radius)
 				}
 			}
 		}
-		if(i==vertices->size()-1)
+		if (i == vertices->size() - 1)
 		{
 			std::cout << "ljulj";
 		}
