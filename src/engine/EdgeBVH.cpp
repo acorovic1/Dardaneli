@@ -13,13 +13,15 @@ EdgeBVH* EdgeBVH::getInstance()
 
 void EdgeBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 {
-	std::unordered_set<DEdge*>edges= mesh.getAllEdges();
-	std::vector<DVertex>vertices= mesh.getVerticesCopy();
+	this->Clear();
+	std::unordered_set<DEdge*>edges = mesh.getAllEdges();
+	std::vector<DVertex>vertices = mesh.getVerticesCopy();
 	std::vector<EdgeBVHNode*> bvhNodes;
 
 	//form leaf nodes
 	int numObjects = edges.size();
-	for(DEdge* edge:edges)
+	if (!numObjects) return;
+	for (DEdge* edge : edges)
 	{
 		bvhNodes.push_back(new EdgeBVHNode(edge));
 	}
@@ -46,6 +48,12 @@ void EdgeBVH::Refit(Mesh& mesh) {
 	getRoot()->refitNode(mesh);
 }
 
+void EdgeBVH::Clear()
+{
+	destroy(root);
+	root = nullptr;
+}
+
 void EdgeBVH::Draw(Camera& camera, Shader& shader, int subdivision)
 {
 	auto root = EdgeBVHSingleton->getRoot();
@@ -57,18 +65,18 @@ void EdgeBVH::Draw(Camera& camera, Shader& shader, int subdivision)
 
 void EdgeBVH::DrawLeaves(EdgeBVHNode* node, Camera& camera, Shader& shader)
 {
-	
-	if (!node->left && !node->right)
-	{
-		
-		
-		node->Draw(camera, shader);
-	}
-	else {
-		
-		DrawLeaves(node->left, camera, shader);
-		DrawLeaves(node->right, camera, shader);
-	}
+	if (root)
+		if (!node->left && !node->right)
+		{
+
+
+			node->Draw(camera, shader);
+		}
+		else {
+
+			DrawLeaves(node->left, camera, shader);
+			DrawLeaves(node->right, camera, shader);
+		}
 }
 
 void EdgeBVH::DrawTree(EdgeBVHNode* node, Camera& camera, Shader& shader, int subdivision) {

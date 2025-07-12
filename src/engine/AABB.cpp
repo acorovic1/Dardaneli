@@ -54,7 +54,7 @@ AABB::AABB(std::vector<glm::vec3>vertices)
 }
 AABB::AABB(Object& object) {
 	for (auto& a : object.getVertices()) {
-		glm::vec3 x = object.getModelXVertex(&a);
+		glm::vec3 x = object.getModelXVertex(a);
 
 		min.x = std::min(min.x, x.x);
 		min.y = std::min(min.y, x.y);

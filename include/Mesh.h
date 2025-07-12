@@ -30,11 +30,12 @@ class Mesh :public Object {
 
 	void updateDiskLink(DEdge* edge, DVertex* vert, DDiskLink& disk);
 
+	// not implemented yet!!!
 	void duplicateVertex(DVertex& vertex);
 
 public:
 
-	Mesh(std::string&& name, std::vector <DVertex>* vertices, std::vector <GLuint>& indices, const std::vector<GLuint>& edgeIndices = std::vector<GLuint>(), const  std::vector <Texture>& textures = std::vector<Texture>());
+	Mesh(std::string&& name, std::vector <DVertex*> vertices, std::vector <GLuint>& indices, const std::vector<GLuint>& edgeIndices = std::vector<GLuint>(), const  std::vector <Texture>& textures = std::vector<Texture>());
 
 	~Mesh();
 
@@ -70,10 +71,12 @@ public:
 
 
 	// test all of this thoroughly 
+
+	// if there is only one edge connected to the vertex, deletes the edge(both vertices)
 	void deleteVertices();
-	// ne radi ako je izolovano
+	
 	void deleteEdges();
-	// fale bvh stabla
+	
 	void deleteFaces();
 	void deleteOnlyEdgesAndFaces();
 	void deleteOnlyFaces();

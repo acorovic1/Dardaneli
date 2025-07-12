@@ -12,6 +12,13 @@ class VertexBVH {
 
 	void DrawTree(BVHNode* node, Camera& camera, Shader& shader, int subdivision);
 
+	void destroy(BVHNode* node) {
+		if (!node) return;
+		destroy(node->left);
+		destroy(node->right);
+		delete node;
+	}
+
 public:
 
 	static VertexBVH* getInstance();
@@ -24,6 +31,7 @@ public:
 	// pokusati staviti default vrijednosti kroz objectManager
 
 	void Refit(Object& object);
+	void Clear();
 
 	void Draw(Camera& camera, Shader& shader, int subdivision);
 	void DrawLeaves(BVHNode* node, Camera& camera, Shader& shader);

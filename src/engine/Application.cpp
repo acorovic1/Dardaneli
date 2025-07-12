@@ -235,7 +235,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		}
 
 		std::vector<int>& vertexIndices = mesh->getSelectedVertices();
-		std::vector<DVertex>& verticesReference = mesh->getVertices();
+		std::vector<DVertex*>& verticesReference = mesh->getVertices();
 		std::vector<int> indexVec;
 		std::vector<int> index = { -1 };
 
@@ -571,13 +571,13 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 
 		auto offset = deltaX * glm::normalize(glm::cross(camera->getOrientation(), glm::vec3(0.0f, 1.0f, 0.0f))) + deltaY * glm::vec3(0.0f, 1.0f, 0.0f);
 
-		std::vector<DVertex>& vertices = mesh->getVertices();
+		std::vector<DVertex*>& vertices = mesh->getVertices();
 		if (keys[GLFW_KEY_X] == 1)
 		{
 			std::cout << "X";
 			for (auto x : mesh->getSelectedVertices())
 			{
-				vertices[x].Translate(offset.x, 0.0f, 0.0f);
+				vertices[x]->Translate(offset.x, 0.0f, 0.0f);
 				mesh->UpdateVertexBuffer(x);
 			}
 
@@ -589,7 +589,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 
 			for (auto x : mesh->getSelectedVertices())
 			{
-				vertices[x].Translate(0.0f, offset.y, 0.0f);
+				vertices[x]->Translate(0.0f, offset.y, 0.0f);
 				mesh->UpdateVertexBuffer(x);
 			}
 			app->updateVertexPosition(glm::vec3(0.0f, offset.y, 0.0f));
@@ -599,7 +599,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 			std::cout << "Z";
 			for (auto x : mesh->getSelectedVertices())
 			{
-				vertices[x].Translate(0.0f, 0.0f, offset.z);
+				vertices[x]->Translate(0.0f, 0.0f, offset.z);
 				mesh->UpdateVertexBuffer(x);
 			}
 			app->updateVertexPosition(glm::vec3(0.0f, 0.0f, offset.z));
@@ -608,7 +608,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		{
 			for (auto x : mesh->getSelectedVertices())
 			{
-				vertices[x].Translate(offset);
+				vertices[x]->Translate(offset);
 				mesh->UpdateVertexBuffer(x);
 			}
 			app->updateVertexPosition(offset);

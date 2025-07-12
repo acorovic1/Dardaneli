@@ -41,7 +41,7 @@ std::unordered_set<DEdge*> DVertex::getAdjecentEdges()const {
 
 	DEdge* temp = e;
 	do {
-
+		/// belaj pravi ova sto se obrise opet ispade edge sa tackama obje te
 		returnVec.insert(temp);
 
 		if (temp->v1 == this)

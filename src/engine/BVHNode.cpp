@@ -11,6 +11,7 @@ BVHNode::BVHNode(BVHNode* a, BVHNode* b) :box(a->box, b->box), left(a), right(b)
 
 bool BVHNode::Hit(const Ray& ray, std::vector<int>& index)
 {
+	if (!this)return false;
 	// problem sa prvim nacinom: ako je vise objekata kolinearno i Ray ide u tom pravcu, onda podjela na lijevo i desno nema smisla
 
 	// trenutno--> napraviti da ne ubacujem -1 u index vec samo listove.. i izbaciti erase iz application.cpp.. tada manuelno postaviti -1 ako je vector prazan

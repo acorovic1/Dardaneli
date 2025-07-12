@@ -10,7 +10,7 @@ FaceBVHNode::FaceBVHNode(FaceBVHNode* a, FaceBVHNode* b) :box(a->box, b->box), l
 
 bool FaceBVHNode::Hit(const Ray& ray, std::vector<DFace*>& facesHit)
 {
-
+	if (!this)return false;
 	// kako je lijepo biti glup
 	if (this->box.intersectRayAABB(ray))
 	{

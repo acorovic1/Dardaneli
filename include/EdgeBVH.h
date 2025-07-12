@@ -12,6 +12,12 @@ class EdgeBVH {
 	EdgeBVH() :root(nullptr) {};
 
 	void DrawTree(EdgeBVHNode* node, Camera& camera, Shader& shader, int subdivision);
+	void destroy(EdgeBVHNode* node) {
+		if (!node) return;
+		destroy(node->left);
+		destroy(node->right);
+		delete node;
+	}
 
 public:
 
@@ -25,6 +31,7 @@ public:
 	// pokusati staviti default vrijednosti kroz objectManager
 
 	void Refit(Mesh& mesh);
+	void Clear();
 
 	void Draw(Camera& camera, Shader& shader, int subdivision);
 	void DrawLeaves(EdgeBVHNode* node, Camera& camera, Shader& shader);

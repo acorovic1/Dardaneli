@@ -12,7 +12,7 @@ public:
 	VBO(std::vector<DVertex>& vertices);
 	VBO(std::vector<glm::vec2>& vertices);
 
-	void bufferData(std::vector<DVertex>& vertices);
+	void bufferData(std::vector<DVertex*>& vertices);
 	void Bind();
 	void Unbind();
 	void Delete();

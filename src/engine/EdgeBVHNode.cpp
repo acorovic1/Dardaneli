@@ -11,7 +11,7 @@ EdgeBVHNode::EdgeBVHNode(EdgeBVHNode* a, EdgeBVHNode* b) :box(a->box, b->box), l
 
 bool EdgeBVHNode::Hit(const Ray& ray, std::vector<DEdge*>& edgesHit)
 {
-
+	if (!this)return false;
 	// kako je lijepo biti glup
 	if (this->box.intersectRayAABB(ray))
 	{

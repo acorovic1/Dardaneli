@@ -16,7 +16,10 @@
 class Object {
 protected:
 
-	std::vector<DVertex>* vertices;
+	std::vector<DVertex*> vertices;
+
+	// used for updating VBO
+	std::vector<DVertex> gpuVertices;
 
 	VAO VAO;
 	VBO VBO;
@@ -40,11 +43,13 @@ public:
 
 
 	void bindVAO();
+
+	// may be unstable !!
 	void UpdateVertexBuffer(int i);
 
 	int getNumberOfVertices();
-	std::vector<DVertex>& getVertices();
-	const std::vector<DVertex>& getVertices()const;
+	std::vector<DVertex*>& getVertices();
+	const std::vector<DVertex*>& getVertices()const;
 	std::vector<DVertex> getVerticesCopy();
 	std::vector<glm::vec3> getModelXVertices();
 	glm::vec3 getModelXVertex(GLuint vertexIndex);

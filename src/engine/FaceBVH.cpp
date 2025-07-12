@@ -15,6 +15,7 @@ FaceBVH* FaceBVH::getInstance()
 
 void FaceBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 {
+	this->Clear();
 
 	std::unordered_set<DFace*>faces = mesh.getAllFaces();
 
@@ -70,6 +71,11 @@ FaceBVHNode* FaceBVH::getRoot() { return root; }
 void FaceBVH::Refit(Mesh& mesh) {
 	//getRoot()->refitNodeEdge(mesh);
 }
+void FaceBVH::Clear()
+{
+	destroy(root);
+	root = nullptr;
+}
 
 void FaceBVH::Draw(Camera& camera, Shader& shader, int subdivision)
 {
@@ -82,18 +88,18 @@ void FaceBVH::Draw(Camera& camera, Shader& shader, int subdivision)
 
 void FaceBVH::DrawLeaves(FaceBVHNode* node, Camera& camera, Shader& shader)
 {
+	if (root)
+		if (!node->left && !node->right)
+		{
 
-	if (!node->left && !node->right)
-	{
 
+			node->Draw(camera, shader);
+		}
+		else {
 
-		node->Draw(camera, shader);
-	}
-	else {
-
-		DrawLeaves(node->left, camera, shader);
-		DrawLeaves(node->right, camera, shader);
-	}
+			DrawLeaves(node->left, camera, shader);
+			DrawLeaves(node->right, camera, shader);
+		}
 }
 
 void FaceBVH::DrawTree(FaceBVHNode* node, Camera& camera, Shader& shader, int subdivision) {

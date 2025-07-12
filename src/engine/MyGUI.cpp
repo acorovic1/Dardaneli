@@ -456,15 +456,15 @@ void MyGUI::VertexTransform()
 	static float offset[3];
 
 	Object* activeObject = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]);
-	std::vector<DVertex>& vertices = activeObject->getVertices();
+	std::vector<DVertex*>& vertices = activeObject->getVertices();
 	int numberOfVertices = activeObject->getNumberOfVertices();
 
 	std::vector<int>& selectedVertices = static_cast<Mesh*>(activeObject)->getSelectedVertices();
 	if (selectedVertices.size() == 0)return;
 
-	app->vertexPrevPosition[0] = app->vertexPosition[0] = vertices[selectedVertices.back()].position.x;
-	app->vertexPrevPosition[1] = app->vertexPosition[1] = vertices[selectedVertices.back()].position.y;
-	app->vertexPrevPosition[2] = app->vertexPosition[2] = vertices[selectedVertices.back()].position.z;
+	app->vertexPrevPosition[0] = app->vertexPosition[0] = vertices[selectedVertices.back()]->position.x;
+	app->vertexPrevPosition[1] = app->vertexPosition[1] = vertices[selectedVertices.back()]->position.y;
+	app->vertexPrevPosition[2] = app->vertexPosition[2] = vertices[selectedVertices.back()]->position.z;
 
 	ImGui::InputFloat3("DVertex position", app->vertexPosition);
 	if (ImGui::IsItemDeactivatedAfterEdit())
@@ -477,7 +477,7 @@ void MyGUI::VertexTransform()
 
 		for (int i = 0; i < selectedVertices.size(); i++)
 		{
-			vertices[selectedVertices[i]].Translate(offset);
+			vertices[selectedVertices[i]]->Translate(offset);
 			activeObject->UpdateVertexBuffer(selectedVertices[i]);
 		}
 
@@ -683,7 +683,7 @@ void MyGUI::DMesh()
 
 	if (!mesh)return;
 
-	const std::vector<DVertex>& vertices = mesh->getVertices();
+	const std::vector<DVertex*>& vertices = mesh->getVertices();
 	std::vector<int>& selectedVertices = mesh->getSelectedVertices();
 	std::vector<DEdge*>& selectedEdges = mesh->getSelectedEdges();
 	std::vector<DFace*>& selectedFaces = mesh->getSelectedFaces();
@@ -701,13 +701,13 @@ void MyGUI::DMesh()
 		selectedVertices = { selectedVertices.back() };
 
 		selectedEdges.clear();
-		if (!vertices[selectedVertices.back()].e)// if it doesnt exist
+		if (!vertices[selectedVertices.back()]->e)// if it doesnt exist
 		{
 			std::cerr << "\n\nvertex.edge does not exist\n";
 			ImGui::End();
 			return;
 		}
-		selectedEdges.push_back(vertices[selectedVertices.back()].e);
+		selectedEdges.push_back(vertices[selectedVertices.back()]->e);
 
 		vertexEdge = selectedEdges[0];
 
@@ -772,13 +772,13 @@ void MyGUI::DMesh()
 		std::cout << "\nv1\t" << v1 << "\ne1\t" << &vertices[edgeIndices.first] << "\ne2\t" << &vertices[edgeIndices.second]<<"\nv1 index: "<<mesh->getVertexIndex(v1);
 		
 
-		if (v1 == &vertices[edgeIndices.first])
+		if (v1 == vertices[edgeIndices.first])
 		{
 			selectedVertices.push_back(edgeIndices.second);
 			selectedVertices.push_back(edgeIndices.first);
 
 		}
-		else if (v1 == &vertices[edgeIndices.second])
+		else if (v1 == vertices[edgeIndices.second])
 		{
 			selectedVertices.push_back(edgeIndices.first);
 			selectedVertices.push_back(edgeIndices.second);
@@ -968,7 +968,7 @@ void MyGUI::DMesh()
 		clicked = 0;
 
 		selectedVertices = { selectedVertices.back() };
-		std::unordered_set<DVertex*>set = vertices[selectedVertices[0]].getAdjecentVertices();
+		std::unordered_set<DVertex*>set = vertices[selectedVertices[0]]->getAdjecentVertices();
 
 		for (DVertex* v : set)
 			selectedVertices.push_back(mesh->getVertexIndex(v));
@@ -986,7 +986,7 @@ void MyGUI::DMesh()
 		clicked = 0;
 
 		selectedEdges.clear();
-		std::unordered_set<DEdge*>set = vertices[selectedVertices[0]].getAdjecentEdges();
+		std::unordered_set<DEdge*>set = vertices[selectedVertices[0]]->getAdjecentEdges();
 
 		for (DEdge* e : set)
 		{
@@ -1005,7 +1005,7 @@ void MyGUI::DMesh()
 		clicked = 0;
 
 		selectedFaces.clear();
-		std::unordered_set<DFace*>set = vertices[selectedVertices[0]].getAdjecentFaces();
+		std::unordered_set<DFace*>set = vertices[selectedVertices[0]]->getAdjecentFaces();
 
 		for (DFace* f : set)
 		{

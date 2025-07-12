@@ -19,11 +19,11 @@
 void addPlane()
 {
 
-	std::vector<DVertex>* vertices = new std::vector<DVertex>{
-		DVertex{glm::vec3(-0.5f, 0.0f, 0.5f),glm::vec3(-0.5f, 0.0f, 0.5f)},
-		DVertex{glm::vec3(0.5f, 0.0f, 0.5f), glm::vec3(0.5f, 0.0f, 0.5f)},
-		DVertex{glm::vec3(0.5f, 0.0f, -0.5f), glm::vec3(0.5f, 0.0f, -0.5f)},
-		DVertex{glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(-0.5f, 0.0f, -0.5f)}
+	std::vector<DVertex*> vertices = {
+		new DVertex{glm::vec3(-0.5f, 0.0f, 0.5f),glm::vec3(-0.5f, 0.0f, 0.5f)},
+		new DVertex{glm::vec3(0.5f, 0.0f, 0.5f), glm::vec3(0.5f, 0.0f, 0.5f)},
+		new DVertex{glm::vec3(0.5f, 0.0f, -0.5f), glm::vec3(0.5f, 0.0f, -0.5f)},
+		new DVertex{glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(-0.5f, 0.0f, -0.5f)}
 	};
 	std::vector<GLuint> indices{
 		0, 1, 2,
@@ -57,32 +57,32 @@ void addPlane()
 	DFace* face = new DFace();
 
 	// DVertex data
-	(*vertices)[0].e = e1;
-	(*vertices)[1].e = e2;
-	(*vertices)[2].e = e3;
-	(*vertices)[3].e = e4;
+	vertices[0]->e = e1;
+	vertices[1]->e = e2;
+	vertices[2]->e = e3;
+	vertices[3]->e = e4;
 
-	// DEdge data
-	e1->v1 = &(*vertices)[0];
-	e1->v2 = &(*vertices)[1];
+	// DEdge data2
+	e1->v1 = vertices[0];
+	e1->v2 = vertices[1];
 	e1->d1 = d4;
 	e1->d2 = d2;
 	e1->loop = l1;
 
-	e2->v1 = &(*vertices)[1];
-	e2->v2 = &(*vertices)[2];
+	e2->v1 = vertices[1];
+	e2->v2 = vertices[2];
 	e2->d1 = d1;
 	e2->d2 = d3;
 	e2->loop = l2;
 
-	e3->v1 = &(*vertices)[2];
-	e3->v2 = &(*vertices)[3];
+	e3->v1 = vertices[2];
+	e3->v2 = vertices[3];
 	e3->d1 = d2;
 	e3->d2 = d4;
 	e3->loop = l3;
 
-	e4->v1 = &(*vertices)[3];
-	e4->v2 = &(*vertices)[0];
+	e4->v1 = vertices[3];
+	e4->v2 = vertices[0];
 
 	e4->d1 = d3;
 	e4->d2 = d1;
@@ -94,25 +94,25 @@ void addPlane()
 
 	// DLoop data
 
-	l1->tip = &(*vertices)[1];
+	l1->tip = vertices[1];
 	l1->edge = e1;
 	l1->face = face;
 	l1->prev = l4;
 	l1->next = l2;
 
-	l2->tip = &(*vertices)[2];
+	l2->tip = vertices[2];
 	l2->edge = e2;
 	l2->face = face;
 	l2->prev = l1;
 	l2->next = l3;
 
-	l3->tip = &(*vertices)[3];
+	l3->tip = vertices[3];
 	l3->edge = e3;
 	l3->face = face;
 	l3->prev = l2;
 	l3->next = l4;
 
-	l4->tip = &(*vertices)[0];
+	l4->tip = vertices[0];
 	l4->edge = e4;
 	l4->face = face;
 	l4->prev = l3;
@@ -133,10 +133,10 @@ void addPlane()
 	r3->edge = e3;
 	r4->edge = e4;
 
-	r1->tip = &(*vertices)[0];
-	r2->tip = &(*vertices)[1];
-	r3->tip = &(*vertices)[2];
-	r4->tip = &(*vertices)[3];
+	r1->tip = vertices[0];
+	r2->tip = vertices[1];
+	r3->tip = vertices[2];
+	r4->tip = vertices[3];
 
 	r1->radialNext = l1; r1->radialPrev = l1;
 	r2->radialNext = l2; r2->radialPrev = l2;
@@ -154,18 +154,18 @@ void addPlane()
 
 void addCube()
 {
-	std::vector<DVertex>* vertices = new std::vector<DVertex>{
+	std::vector<DVertex*> vertices = {
 
-	DVertex{ glm::vec3(0.5f, 0.5f, 0.5f) ,glm::vec3(0.5f, 0.5f, 0.5f) }, // V0
-	DVertex{ glm::vec3(0.5f, 0.5f, -0.5f) ,glm::vec3(0.5f,  0.5f, -0.5f) }, // V1
-	DVertex{ glm::vec3(0.5f, -0.5f,  0.5f) ,glm::vec3(0.5f,  -0.5f,  0.5f) }, // V2
-	DVertex{ glm::vec3(0.5f, -0.5f,  -0.5f) ,glm::vec3(0.5f, -0.5f,  -0.5f) }, // V3
+	new DVertex{ glm::vec3(0.5f, 0.5f, 0.5f) ,glm::vec3(0.5f, 0.5f, 0.5f) }, // V0
+	new DVertex{ glm::vec3(0.5f, 0.5f, -0.5f) ,glm::vec3(0.5f,  0.5f, -0.5f) }, // V1
+	new DVertex{ glm::vec3(0.5f, -0.5f,  0.5f) ,glm::vec3(0.5f,  -0.5f,  0.5f) }, // V2
+	new DVertex{ glm::vec3(0.5f, -0.5f,  -0.5f) ,glm::vec3(0.5f, -0.5f,  -0.5f) }, // V3
 
 
-	DVertex{ glm::vec3(-0.5f, 0.5f, 0.5f) , glm::vec3(-0.5f, 0.5f, 0.5f) }, // V4
-	DVertex{ glm::vec3(-0.5f, 0.5f, -0.5f) , glm::vec3(-0.5f,  0.5f, -0.5f) }, // V5
-	DVertex{ glm::vec3(-0.5f, -0.5f,  0.5f) , glm::vec3(-0.5f,  -0.5f,  0.5f) }, // V6
-	DVertex{ glm::vec3(-0.5f, -0.5f,  -0.5f) , glm::vec3(-0.5f, -0.5f,  -0.5f) }, // V7
+	new DVertex{ glm::vec3(-0.5f, 0.5f, 0.5f) , glm::vec3(-0.5f, 0.5f, 0.5f) }, // V4
+	new DVertex{ glm::vec3(-0.5f, 0.5f, -0.5f) , glm::vec3(-0.5f,  0.5f, -0.5f) }, // V5
+	new DVertex{ glm::vec3(-0.5f, -0.5f,  0.5f) , glm::vec3(-0.5f,  -0.5f,  0.5f) }, // V6
+	new DVertex{ glm::vec3(-0.5f, -0.5f,  -0.5f) , glm::vec3(-0.5f, -0.5f,  -0.5f) }, // V7
 	};
 	std::vector<GLuint> indices{
 		// Right face
@@ -217,7 +217,7 @@ void addCube()
 	 *	each row holds edges for the vertex with the same index
 
 	*/
-	std::vector<std::vector<DEdge*>>diskEdges(vertices->size());
+	std::vector<std::vector<DEdge*>>diskEdges(vertices.size());
 
 	/* used for linking loop.radial atributes*/
 	std::unordered_multimap < UnorderedPair<int>, DLoop*, UnorderedPairHash<int> > loopMap{};
@@ -230,15 +230,15 @@ void addCube()
 		edgeMap[UnorderedPair<int>(edgeIndices[i], edgeIndices[i + 1])] = e1;
 
 		// edge data
-		e1->v1 = &(*vertices)[edgeIndices[i]];
-		e1->v2 = &(*vertices)[edgeIndices[i + 1]];
+		e1->v1 = vertices[edgeIndices[i]];
+		e1->v2 = vertices[edgeIndices[i + 1]];
 
 		diskEdges[edgeIndices[i]].push_back(e1);
 		diskEdges[edgeIndices[i + 1]].push_back(e1);
 
 
 		// vertex data
-		(*vertices)[edgeIndices[i]].e = e1;
+		vertices[edgeIndices[i]]->e = e1;
 
 	}
 
@@ -253,10 +253,10 @@ void addCube()
 
 
 		// loop data
-		DLoop* l1 = new DLoop(&(*vertices)[indices[i + 1]], e1, face);
-		DLoop* l2 = new DLoop(&(*vertices)[indices[i + 5]], e2, face);
-		DLoop* l3 = new DLoop(&(*vertices)[indices[i + 2]], e3, face);
-		DLoop* l4 = new DLoop(&(*vertices)[indices[i]], e4, face);
+		DLoop* l1 = new DLoop(vertices[indices[i + 1]], e1, face);
+		DLoop* l2 = new DLoop(vertices[indices[i + 5]], e2, face);
+		DLoop* l3 = new DLoop(vertices[indices[i + 2]], e3, face);
+		DLoop* l4 = new DLoop(vertices[indices[i]], e4, face);
 
 		l1->next = l2;	l1->prev = l4;
 		l2->next = l3;	l2->prev = l1;
@@ -305,12 +305,12 @@ void addCube()
 
 	}
 
-	for (int i = 0; i < vertices->size(); i++)
+	for (int i = 0; i < vertices.size(); i++)
 	{
 		for (int j = 0; j < diskEdges[i].size(); j++)
 		{
 			DEdge* e = diskEdges[i][j];
-			if (&(*vertices)[i] == e->v1)
+			if (vertices[i] == e->v1)
 			{
 
 				if (j == 0)
@@ -329,7 +329,7 @@ void addCube()
 					e->d1.prev = diskEdges[i][j - 1];
 				}
 			}
-			else if (&(*vertices)[i] == e->v2)
+			else if (vertices[i] == e->v2)
 			{
 				if (j == 0)
 				{
@@ -361,7 +361,7 @@ void addCube()
 		edgeIndices
 	);
 
-	for (int i = 0; i < vertices->size(); i++)
+	/*for (int i = 0; i < vertices->size(); i++)
 	{
 		std::cout << "\n\n\nDisk edges for vertex: " << i;
 		for (int j = 0; j < diskEdges[i].size(); j++)
@@ -436,13 +436,13 @@ void addCube()
 			auto temp = mesh->getEdgeIndices(y);
 			std::cout << "\nEdge: " << temp.first << " " << temp.second;
 		}
-	}
+	}*/
 
 }
 
 void addCircle(int numSegments, float radius)
 {
-	std::vector<DVertex>* vertices = new std::vector<DVertex>();
+	std::vector<DVertex*> vertices;
 	std::vector<GLuint> indices;
 	std::vector<GLuint> edgeIndices;
 
@@ -461,7 +461,7 @@ void addCircle(int numSegments, float radius)
 		x = cos(angle) * radius;
 		z = -sin(angle) * radius;
 
-		vertices->push_back(DVertex{
+		vertices.push_back(new DVertex{
 			glm::vec3(x, 0.0f, z),   // Position
 			glm::normalize(glm::vec3(x, 0.0f, z))  // Normal pointing up
 			});
@@ -493,14 +493,14 @@ void addCircle(int numSegments, float radius)
 		edgeVec.push_back(e);
 
 		// edge data
-		e->v1 = &(*vertices)[edgeIndices[i]];
-		e->v2 = &(*vertices)[edgeIndices[i + 1]];
+		e->v1 = vertices[edgeIndices[i]];
+		e->v2 = vertices[edgeIndices[i + 1]];
 
 
 		// vertex data
-		(*vertices)[edgeIndices[i]].e = e;
+		vertices[edgeIndices[i]]->e = e;
 
-		loopVec.push_back(new DLoop(&(*vertices)[edgeIndices[i + 1]], e, face));
+		loopVec.push_back(new DLoop(vertices[edgeIndices[i + 1]], e, face));
 
 		e->loop = loopVec.back();
 
@@ -536,7 +536,7 @@ void addCircle(int numSegments, float radius)
 
 void addSphere(int segments, int rings, float radius)
 {
-	std::vector<DVertex>* vertices = new std::vector<DVertex>();
+	std::vector<DVertex*> vertices;
 	std::vector<GLuint> indices;
 	std::vector<GLuint> edgeIndices;
 
@@ -565,7 +565,7 @@ void addSphere(int segments, int rings, float radius)
 
 
 	// top vertex
-	vertices->push_back(DVertex{ glm::vec3(0.0f,radius,0.0f),glm::normalize(glm::vec3(0.0f,radius,0.0f)) });
+	vertices.push_back(new DVertex{ glm::vec3(0.0f,radius,0.0f),glm::normalize(glm::vec3(0.0f,radius,0.0f)) });
 
 	for (int i = 0; i < rings - 1; i++)
 	{
@@ -580,7 +580,7 @@ void addSphere(int segments, int rings, float radius)
 			x = radiusStep * cosf(segmentStep * j); // found from the XZ plane (top down view)
 			z = radiusStep * sinf(segmentStep * j);
 
-			vertices->push_back(DVertex{ glm::vec3(x,y,z),glm::normalize(glm::vec3(x,y,z)) });
+			vertices.push_back(new DVertex{ glm::vec3(x,y,z),glm::normalize(glm::vec3(x,y,z)) });
 
 			if (i == 0) // 1st ring of faces (triangles)
 			{
@@ -698,9 +698,9 @@ void addSphere(int segments, int rings, float radius)
 
 	}
 
-	vertices->push_back(DVertex{ glm::vec3(0.0f,-radius,0.0f),glm::normalize(glm::vec3(0.0f,-radius,0.0f)) });
+	vertices.push_back(new DVertex{ glm::vec3(0.0f,-radius,0.0f),glm::normalize(glm::vec3(0.0f,-radius,0.0f)) });
 
-	(*vertices)[0].e = edgeMap[UnorderedPair<int>(0, 2)];
+	vertices[0]->e = edgeMap[UnorderedPair<int>(0, 2)];
 
 
 	for (int i = 0; i < indices.size();)
@@ -718,17 +718,17 @@ void addSphere(int segments, int rings, float radius)
 			DEdge* e3 = edgeMap[UnorderedPair<int>(indices[i + 2], indices[i])];
 
 
-			if (!(*vertices)[indices[i + 1]].e)
-				(*vertices)[indices[i + 1]].e = e2;
+			if (!vertices[indices[i + 1]]->e)
+				vertices[indices[i + 1]]->e = e2;
 
 
-			e1->v1 = &(*vertices)[indices[i]];
-			e2->v1 = &(*vertices)[indices[i + 1]];
-			e3->v1 = &(*vertices)[indices[i + 2]];
+			e1->v1 = vertices[indices[i]];
+			e2->v1 = vertices[indices[i + 1]];
+			e3->v1 = vertices[indices[i + 2]];
 
-			e1->v2 = &(*vertices)[indices[i + 1]];
-			e2->v2 = &(*vertices)[indices[i + 2]];
-			e3->v2 = &(*vertices)[indices[i]];
+			e1->v2 = vertices[indices[i + 1]];
+			e2->v2 = vertices[indices[i + 2]];
+			e3->v2 = vertices[indices[i]];
 
 			DLoop* l1 = new DLoop(e1->v2, e1, face);
 			DLoop* l2 = new DLoop(e2->v2, e2, face);
@@ -767,24 +767,24 @@ void addSphere(int segments, int rings, float radius)
 			DEdge* e4 = edgeMap[UnorderedPair<int>(indices[i + 5], indices[i + 2])]; //	|
 
 
-			if (!(*vertices)[indices[i + 5]].e)
-				(*vertices)[indices[i + 5]].e = e4;
+			if (!vertices[indices[i + 5]]->e)
+				vertices[indices[i + 5]]->e = e4;
 
-			e1->v1 = &(*vertices)[indices[i + 2]];
-			e2->v1 = &(*vertices)[indices[i]];
-			e3->v1 = &(*vertices)[indices[i + 1]];
-			e4->v1 = &(*vertices)[indices[i + 5]];
+			e1->v1 = vertices[indices[i + 2]];
+			e2->v1 = vertices[indices[i]];
+			e3->v1 = vertices[indices[i + 1]];
+			e4->v1 = vertices[indices[i + 5]];
 
-			e1->v2 = &(*vertices)[indices[i]];
-			e2->v2 = &(*vertices)[indices[i + 1]];
-			e3->v2 = &(*vertices)[indices[i + 5]];
-			e4->v2 = &(*vertices)[indices[i + 2]];
+			e1->v2 = vertices[indices[i]];
+			e2->v2 = vertices[indices[i + 1]];
+			e3->v2 = vertices[indices[i + 5]];
+			e4->v2 = vertices[indices[i + 2]];
 
 
-			DLoop* l1 = new DLoop(&(*vertices)[indices[i]], e1, face);
-			DLoop* l2 = new DLoop(&(*vertices)[indices[i + 1]], e2, face);
-			DLoop* l3 = new DLoop(&(*vertices)[indices[i + 5]], e3, face);
-			DLoop* l4 = new DLoop(&(*vertices)[indices[i + 2]], e4, face);
+			DLoop* l1 = new DLoop(vertices[indices[i]], e1, face);
+			DLoop* l2 = new DLoop(vertices[indices[i + 1]], e2, face);
+			DLoop* l3 = new DLoop(vertices[indices[i + 5]], e3, face);
+			DLoop* l4 = new DLoop(vertices[indices[i + 2]], e4, face);
 
 			l1->next = l2;	l1->prev = l4;
 			l2->next = l3;	l2->prev = l1;
@@ -829,12 +829,12 @@ void addSphere(int segments, int rings, float radius)
 		loop2->radialPrev = loop1;
 
 	}
-	for (int i = 0; i < vertices->size(); i++)
+	for (int i = 0; i < vertices.size(); i++)
 	{
 		for (int j = 0; j < diskEdges[i].size(); j++)
 		{
 			DEdge* e = diskEdges[i][j];
-			if (&(*vertices)[i] == e->v1)
+			if (vertices[i] == e->v1)
 			{
 
 				if (j == 0)
@@ -853,7 +853,7 @@ void addSphere(int segments, int rings, float radius)
 					e->d1.prev = diskEdges[i][j - 1];
 				}
 			}
-			else if (&(*vertices)[i] == e->v2)
+			else if (vertices[i] == e->v2)
 			{
 				if (j == 0)
 				{
@@ -872,7 +872,7 @@ void addSphere(int segments, int rings, float radius)
 				}
 			}
 		}
-		if (i == vertices->size() - 1)
+		if (i == vertices.size() - 1)
 		{
 			std::cout << "ljulj";
 		}
@@ -881,7 +881,7 @@ void addSphere(int segments, int rings, float radius)
 	}
 
 
-	(*vertices).back().e = edgeMap[UnorderedPair<int>(vertices->size() - 1, vertices->size() - 2)];
+	vertices.back()->e = edgeMap[UnorderedPair<int>(vertices.size() - 1, vertices.size() - 2)];
 
 	//std::cout << "\n\n Number of indices = " << indices.size()<<"\n";
 
@@ -896,7 +896,7 @@ void addSphere(int segments, int rings, float radius)
 
 void addCylinder(int numSegments, float height, float radius)
 {
-	std::vector<DVertex>* vertices = new std::vector<DVertex>();
+	std::vector<DVertex*> vertices;
 	std::vector<GLuint> indices;
 	std::vector<GLuint> edgeIndices;
 
@@ -930,13 +930,13 @@ void addCylinder(int numSegments, float height, float radius)
 		z = sin(angle) * radius;
 
 		// Bottom circle vertices
-		vertices->push_back(DVertex{
+		vertices.push_back(new DVertex{
 			glm::vec3(x, -height , z),
 			glm::normalize(glm::vec3(x, -height, z))
 			});
 
 		// Top circle vertices
-		vertices->push_back(DVertex{
+		vertices.push_back(new DVertex{
 			glm::vec3(x, height , z),
 			glm::normalize(glm::vec3(x,height,z))
 			});
@@ -1035,15 +1035,15 @@ void addCylinder(int numSegments, float height, float radius)
 		DEdge* e3 = edgeMap[UnorderedPair<int>(indices[i + 5], indices[i + 2])];
 		DEdge* e4 = edgeMap[UnorderedPair<int>(indices[i + 2], indices[i])];
 
-		e1->v1 = &(*vertices)[indices[i]];
-		e2->v1 = &(*vertices)[indices[i + 1]];
-		e3->v1 = &(*vertices)[indices[i + 5]];
-		e4->v1 = &(*vertices)[indices[i + 2]];
+		e1->v1 = vertices[indices[i]];
+		e2->v1 = vertices[indices[i + 1]];
+		e3->v1 = vertices[indices[i + 5]];
+		e4->v1 = vertices[indices[i + 2]];
 
-		e1->v2 = &(*vertices)[indices[i + 1]];
-		e2->v2 = &(*vertices)[indices[i + 5]];
-		e3->v2 = &(*vertices)[indices[i + 2]];
-		e4->v2 = &(*vertices)[indices[i]];
+		e1->v2 = vertices[indices[i + 1]];
+		e2->v2 = vertices[indices[i + 5]];
+		e3->v2 = vertices[indices[i + 2]];
+		e4->v2 = vertices[indices[i]];
 
 		DLoop* l1 = new DLoop(e1->v2, e1, face);
 		DLoop* l2 = new DLoop(e2->v2, e2, face);
@@ -1067,8 +1067,8 @@ void addCylinder(int numSegments, float height, float radius)
 		e3->loop = l3;
 		e4->loop = l4;
 
-		(*vertices)[indices[i]].e = e1;
-		(*vertices)[indices[i + 1]].e = e2;
+		vertices[indices[i]]->e = e1;
+		vertices[indices[i + 1]]->e = e2;
 
 
 	}
@@ -1079,8 +1079,8 @@ void addCylinder(int numSegments, float height, float radius)
 		topRight = (i + 3) % (numSegments * 2);
 		// top circle 
 		DEdge* e1 = edgeMap[UnorderedPair<int>(i + 1, topRight)];
-		e1->v1 = &(*vertices)[i + 1];
-		e1->v2 = &(*vertices)[topRight];
+		e1->v1 = vertices[i + 1];
+		e1->v2 = vertices[topRight];
 
 		DLoop* l1 = new DLoop(e1->v2, e1, top);
 		loopMap.emplace(UnorderedPair<int>(i + 1, topRight), l1);
@@ -1090,8 +1090,8 @@ void addCylinder(int numSegments, float height, float radius)
 		bottomLeft = (i + 2) % (numSegments * 2);
 		// bottom circle
 		e1 = edgeMap[UnorderedPair<int>(i, bottomLeft)];
-		e1->v1 = &(*vertices)[i];
-		e1->v2 = &(*vertices)[bottomLeft];
+		e1->v1 = vertices[i];
+		e1->v2 = vertices[bottomLeft];
 
 		l1 = new DLoop(e1->v2, e1, bottom);
 		loopMap.emplace(UnorderedPair<int>(i, bottomLeft), l1);
@@ -1145,12 +1145,12 @@ void addCylinder(int numSegments, float height, float radius)
 
 	}
 
-	for (int i = 0; i < vertices->size(); i++)
+	for (int i = 0; i < vertices.size(); i++)
 	{
 		for (int j = 0; j < diskEdges[i].size(); j++)
 		{
 			DEdge* e = diskEdges[i][j];
-			if (&(*vertices)[i] == e->v1)
+			if (vertices[i] == e->v1)
 			{
 
 				if (j == 0)
@@ -1169,7 +1169,7 @@ void addCylinder(int numSegments, float height, float radius)
 					e->d1.prev = diskEdges[i][j - 1];
 				}
 			}
-			else if (&(*vertices)[i] == e->v2)
+			else if (vertices[i] == e->v2)
 			{
 				if (j == 0)
 				{
@@ -1202,7 +1202,7 @@ void addCylinder(int numSegments, float height, float radius)
 
 void addCone(int numSegments, float height, float radius)
 {
-	std::vector<DVertex>* vertices = new std::vector<DVertex>();
+	std::vector<DVertex*> vertices;
 	std::vector<GLuint> indices;
 	std::vector<GLuint> edgeIndices;
 
@@ -1232,20 +1232,20 @@ void addCone(int numSegments, float height, float radius)
 		x = cos(angle) * radius;
 		z = sin(angle) * radius;
 
-		vertices->push_back(DVertex{
+		vertices.push_back(new DVertex{
 			glm::vec3(x, -height, z),
 			glm::normalize(glm::vec3(x,height,z))
 			});
 	}
 
 	// top vertex
-	vertices->push_back(DVertex{
+	vertices.push_back(new DVertex{
 		glm::vec3(0.0f, height, 0.0f),
 		glm::normalize(glm::vec3(0.0f, height, 0.0f))
 		});
 
 	// Tris
-	int topVert = vertices->size() - 1;
+	int topVert = vertices.size() - 1;
 	int temp;
 	DFace* bottom = new DFace();
 	for (int i = 0; i < numSegments; i++) {
@@ -1261,8 +1261,8 @@ void addCone(int numSegments, float height, float radius)
 
 		DEdge* e1 = new DEdge();
 		edgeMap[UnorderedPair<int>(topVert, i)] = e1; // vertical edge
-		e1->v1 = &(*vertices)[topVert];
-		e1->v2 = &(*vertices)[i];
+		e1->v1 = vertices[topVert];
+		e1->v2 = vertices[i];
 		diskEdges[topVert].push_back(e1);
 		diskEdges[i].push_back(e1);
 
@@ -1271,12 +1271,12 @@ void addCone(int numSegments, float height, float radius)
 
 		DEdge* e2 = new DEdge();
 		edgeMap[UnorderedPair<int>(temp, i)] = e2; // base edge
-		e2->v1 = &(*vertices)[temp];
-		e2->v2 = &(*vertices)[i];
+		e2->v1 = vertices[temp];
+		e2->v2 = vertices[i];
 		diskEdges[temp].push_back(e2);
 		diskEdges[i].push_back(e2);
 
-		(*vertices)[i].e = e1;
+		vertices[i]->e = e1;
 
 
 		DLoop* l = new DLoop(e2->v2, e2, bottom);
@@ -1292,7 +1292,7 @@ void addCone(int numSegments, float height, float radius)
 		indices.push_back(0);              // anchor
 	}
 
-	(*vertices).back().e = edgeMap[UnorderedPair<int>(vertices->size() - 1, 1)];
+	vertices.back()->e = edgeMap[UnorderedPair<int>(vertices.size() - 1, 1)];
 
 
 	for (int i = 0; i < indices.size(); i += 3)
@@ -1374,12 +1374,12 @@ void addCone(int numSegments, float height, float radius)
 
 	}
 
-	for (int i = 0; i < vertices->size(); i++)
+	for (int i = 0; i < vertices.size(); i++)
 	{
 		for (int j = 0; j < diskEdges[i].size(); j++)
 		{
 			DEdge* e = diskEdges[i][j];
-			if (&(*vertices)[i] == e->v1)
+			if (vertices[i] == e->v1)
 			{
 
 				if (j == 0)
@@ -1398,7 +1398,7 @@ void addCone(int numSegments, float height, float radius)
 					e->d1.prev = diskEdges[i][j - 1];
 				}
 			}
-			else if (&(*vertices)[i] == e->v2)
+			else if (vertices[i] == e->v2)
 			{
 				if (j == 0)
 				{
@@ -1441,7 +1441,7 @@ void addCone(int numSegments, float height, float radius)
 
 void addDoughnut(int majorSegments, int minorSegments, float majorRadius, float minorRadius)
 {
-	std::vector<DVertex>* vertices = new std::vector<DVertex>();
+	std::vector<DVertex*> vertices;
 	std::vector<GLuint> indices;
 	std::vector<GLuint> edgeIndices;
 
@@ -1483,7 +1483,7 @@ void addDoughnut(int majorSegments, int minorSegments, float majorRadius, float 
 
 
 
-			vertices->push_back(DVertex{ glm::vec3(x,y,z),glm::normalize(glm::vec3(x,y,z)) });
+			vertices.push_back(new DVertex{ glm::vec3(x,y,z),glm::normalize(glm::vec3(x,y,z)) });
 
 			bottomRight = i * minorSegments + j;
 			topRight = (bottomRight + 1) % (minorSegments * majorSegments);
@@ -1550,21 +1550,21 @@ void addDoughnut(int majorSegments, int minorSegments, float majorRadius, float 
 		DEdge* e3 = edgeMap[UnorderedPair<int>(indices[i + 5], indices[i + 2])];
 		DEdge* e4 = edgeMap[UnorderedPair<int>(indices[i + 2], indices[i])];
 
-		e1->v1 = &(*vertices)[indices[i]]; e1->v2 = &(*vertices)[indices[i + 1]];
-		e2->v1 = &(*vertices)[indices[i + 1]]; e2->v2 = &(*vertices)[indices[i + 5]];
-		e3->v1 = &(*vertices)[indices[i + 5]]; e3->v2 = &(*vertices)[indices[i + 2]];
-		e4->v1 = &(*vertices)[indices[i + 2]]; e4->v2 = &(*vertices)[indices[i]];
+		e1->v1 = vertices[indices[i]]; e1->v2 = vertices[indices[i + 1]];
+		e2->v1 = vertices[indices[i + 1]]; e2->v2 = vertices[indices[i + 5]];
+		e3->v1 = vertices[indices[i + 5]]; e3->v2 = vertices[indices[i + 2]];
+		e4->v1 = vertices[indices[i + 2]]; e4->v2 = vertices[indices[i]];
 
-		(*vertices)[indices[i]].e = e1;
-		(*vertices)[indices[i + 1]].e = e2;
-		(*vertices)[indices[i + 5]].e = e3;
-		(*vertices)[indices[i + 2]].e = e4;
+		vertices[indices[i]]->e = e1;
+		vertices[indices[i + 1]]->e = e2;
+		vertices[indices[i + 5]]->e = e3;
+		vertices[indices[i + 2]]->e = e4;
 
 
-		DLoop* l1 = new DLoop(&(*vertices)[indices[i + 1]], e1, face);
-		DLoop* l2 = new DLoop(&(*vertices)[indices[i + 5]], e2, face);
-		DLoop* l3 = new DLoop(&(*vertices)[indices[i + 2]], e3, face);
-		DLoop* l4 = new DLoop(&(*vertices)[indices[i]], e4, face);
+		DLoop* l1 = new DLoop(vertices[indices[i + 1]], e1, face);
+		DLoop* l2 = new DLoop(vertices[indices[i + 5]], e2, face);
+		DLoop* l3 = new DLoop(vertices[indices[i + 2]], e3, face);
+		DLoop* l4 = new DLoop(vertices[indices[i]], e4, face);
 
 		l1->next = l2;	l1->prev = l4;
 		l2->next = l3;	l2->prev = l1;
@@ -1608,12 +1608,12 @@ void addDoughnut(int majorSegments, int minorSegments, float majorRadius, float 
 
 	}
 
-	for (int i = 0; i < vertices->size(); i++)
+	for (int i = 0; i < vertices.size(); i++)
 	{
 		for (int j = 0; j < diskEdges[i].size(); j++)
 		{
 			DEdge* e = diskEdges[i][j];
-			if (&(*vertices)[i] == e->v1)
+			if (vertices[i] == e->v1)
 			{
 
 				if (j == 0)
@@ -1632,7 +1632,7 @@ void addDoughnut(int majorSegments, int minorSegments, float majorRadius, float 
 					e->d1.prev = diskEdges[i][j - 1];
 				}
 			}
-			else if (&(*vertices)[i] == e->v2)
+			else if (vertices[i] == e->v2)
 			{
 				if (j == 0)
 				{

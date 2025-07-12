@@ -10,7 +10,7 @@
 
 
 
-Mesh::Mesh(std::string&& name, std::vector <DVertex>* vertices,
+Mesh::Mesh(std::string&& name, std::vector <DVertex*> vertices,
 	std::vector <GLuint>& indices, const std::vector<GLuint>& edgeIndices, const  std::vector <Texture>& textures) :Object(name) {
 	Mesh::vertices = vertices;
 	Mesh::indices = indices;
@@ -18,7 +18,7 @@ Mesh::Mesh(std::string&& name, std::vector <DVertex>* vertices,
 	Mesh::textures = textures;
 
 	VAO.Bind();
-	VBO.bufferData(*Mesh::vertices);
+	VBO.bufferData(Mesh::vertices);
 	ebo.bufferData(Mesh::indices);
 	edgeEBO.bufferData(Mesh::edgeIndices);
 
@@ -55,6 +55,7 @@ std::unordered_set<DFace*> Mesh::getAllFaces()
 		do {
 
 			//std::cout << "\t\t\thii";
+
 			returnSet.insert(l->face);
 			l = l->radialNext;
 
@@ -73,13 +74,13 @@ std::unordered_set<DFace*> Mesh::getAllFaces()
 
 std::unordered_set<DEdge*> Mesh::getAllEdges()
 {
-	std::cout << "\nVertices size " << vertices->size();
+	std::cout << "\n\t\tMesh.getAllEdges\tVertices size " << vertices.size();
 	std::unordered_set<DEdge*> returnSet;
-	for (auto& x : *vertices)
+	for (auto x : vertices)
 	{
-		std::cout <<"\n\n\t"<< x.position.x << " " << x.position.y << " " << x.position.z << "\n";
-		//std::cout << "\nVertex with index " << this->getVertexIndex(&x);
-		std::unordered_set<DEdge*> temp = x.getAdjecentEdges();
+		//std::cout <<"\n\n\t"<< x->position.x << " " << x->position.y << " " << x->position.z << "\n";
+		//std::cout << "\nVertex with index " << this->getVertexIndex(x);
+		std::unordered_set<DEdge*> temp = x->getAdjecentEdges();
 		//std::cout << "\t\tfinished ";
 		returnSet.insert(temp.begin(), temp.end());
 	}
@@ -93,7 +94,7 @@ DFace* Mesh::getFace(std::unordered_set<int> indices)
 {
 
 
-	DVertex* vert = &(*vertices)[*indices.begin()];
+	DVertex* vert = vertices[*indices.begin()];
 
 	auto temp = vert->getAdjecentFaces();
 
@@ -115,8 +116,8 @@ DFace* Mesh::getFace(std::unordered_set<int> indices)
 
 DEdge* Mesh::getEdge(int start, int end)
 {
-	DVertex* v1 = &(*vertices)[start];
-	DVertex* v2 = &(*vertices)[end];
+	DVertex* v1 = vertices[start];
+	DVertex* v2 = vertices[end];
 
 	DEdge* edge = v1->e;
 
@@ -186,7 +187,7 @@ void Mesh::Draw(Shader& shader, Camera& camera, GLenum mode) {
 	else if (mode == GL_POINTS)
 	{
 		VBO.Bind();
-		glDrawArrays(mode, 0, vertices->size());
+		glDrawArrays(mode, 0, vertices.size());
 	}
 
 	VAO.Unbind();
@@ -312,8 +313,7 @@ std::vector<GLuint> Mesh::formTrianglesForDrawing()
 
 void Mesh::duplicateVertex(DVertex& vertex)
 {
-	vertices->push_back(vertex);
-	VBO.bufferData(*vertices);
+
 }
 
 
@@ -327,24 +327,30 @@ void Mesh::deleteVertices()
 	std::vector<DEdge*>& selectedEdges = this->getSelectedEdges();
 
 	std::unordered_set<DEdge*>edges;
+	std::unordered_set<DVertex*>verticesToDelete;
 	for (auto x : selectedVertexIndices)
 	{
-		auto temp = (*vertices)[x].getAdjecentEdges();
+		auto temp = vertices[x]->getAdjecentEdges();
+		if (temp.empty())
+		{
+			verticesToDelete.insert(vertices[x]);
+		}
 		edges.insert(temp.begin(), temp.end());
 	}
 
+	for (auto x : verticesToDelete)
+		eraseVertex(x);
+	
 	selectedEdges.clear();
 	selectedEdges.insert(selectedEdges.begin(), edges.begin(), edges.end());
 	deleteEdges();
 }
-/// <summary>
-///  BELAJ KADA SE OBRISE VERTEX, DISKOVI SE NE AZURIRAJU KAKO TREBA, TJ NEKAKO SE ONI POZIVAJU
-/// </summary>
+
 void Mesh::deleteEdges()
 {
 	std::vector<DEdge*>& selectedEdges = this->getSelectedEdges();
 
-	std::vector<DLoop*> loopsToDelete;
+	std::unordered_set<DLoop*> loopsToDelete;
 	std::vector<DLoop*> loopNextToNull;
 	std::vector<DLoop*> loopPrevToNull;
 
@@ -364,7 +370,7 @@ void Mesh::deleteEdges()
 			if (!l)break;
 			if (!l->face) {
 				auto temp1 = l->tip->getAdjecentEdges();
-				loopsToDelete.push_back(l);
+				loopsToDelete.insert(l);
 				l = l->radialNext;
 				adjecentEdges.insert(temp1.begin(), temp1.end());
 				continue;
@@ -377,7 +383,7 @@ void Mesh::deleteEdges()
 			adjecentEdges.insert(temp.begin(), temp.end());
 
 			DLoop* tempLoop = l;
-			loopsToDelete.push_back(l);
+			loopsToDelete.insert(l);
 
 			do
 			{
@@ -462,7 +468,7 @@ void Mesh::deleteEdges()
 
 	this->updateEBO();
 	this->updateEdgeEBO();
-	VBO.bufferData(*vertices);
+	VBO.bufferData(vertices);
 
 	this->getSelectedVertices().clear();
 	selectedEdges.clear();
@@ -474,7 +480,6 @@ void Mesh::deleteEdges()
 	VertexBVHSingleton->BuildBottomUp(*this);
 
 }
-
 void Mesh::deleteFaces() {
 
 
@@ -482,7 +487,7 @@ void Mesh::deleteFaces() {
 	std::unordered_set<DEdge*>selectedEdges;
 
 	std::unordered_set<DEdge*>edgesToDelete;
-	std::vector<DLoop*> loopsToDelete;
+	std::unordered_set<DLoop*> loopsToDelete;
 
 	std::vector<DLoop*> loopNextToNull;
 	std::vector<DLoop*> loopPrevToNull;
@@ -496,7 +501,7 @@ void Mesh::deleteFaces() {
 
 
 	// deleting edges
-	bool flag = false;
+	bool hasFace = false;
 	for (DEdge* edge : selectedEdges)
 	{
 
@@ -504,7 +509,7 @@ void Mesh::deleteFaces() {
 		do {
 			if (l->face)
 			{
-				flag = true;
+				hasFace = true;
 				break;
 			}
 			l = l->radialNext;
@@ -512,21 +517,22 @@ void Mesh::deleteFaces() {
 
 		} while (l != edge->loop);
 
-		if (flag)
+		if (hasFace)
 		{
-			flag = false;
+			hasFace = false;
 			continue;
 		}
 
-		eraseEdge(edge);
 		edgesToDelete.insert(edge);
+		eraseEdge(edge);
+
 		std::unordered_set<DEdge*>adjecentEdges;
 		do
 		{
 			auto temp = l->tip->getAdjecentEdges();
 			adjecentEdges.insert(temp.begin(), temp.end());
 
-			loopsToDelete.push_back(l);
+			loopsToDelete.insert(l);
 
 			l = l->radialNext;
 
@@ -552,35 +558,41 @@ void Mesh::deleteFaces() {
 					//x->loop->prev = nullptr;
 				}
 
-			updateDiskLink(edge, edge->v1, edge->d1);
-			updateDiskLink(edge, edge->v2, edge->d2);
+
 
 		}
-
+		updateDiskLink(edge, edge->v1, edge->d1);
+		updateDiskLink(edge, edge->v2, edge->d2);
 		if (edge->v1->e == edge)
 		{
 
 			if (!edge->d1.next)
 			{
+
+				edge->v1->e = nullptr;
 				eraseVertex(edge->v1);
-				continue;
+
 			}
-			edge->v1->e = edge->d1.next;
+			else
+				edge->v1->e = edge->d1.next;
 		}
-		else if (edge->v2->e == edge)
+		if (edge->v2->e == edge)
 		{
 			if (!edge->d2.next)
 			{
+
+				edge->v2->e = nullptr;
 				eraseVertex(edge->v2);
-				continue;
+
 			}
-			edge->v2->e = edge->d2.next;
+			else
+				edge->v2->e = edge->d2.next;
 		}
 
 
 
 	}
-
+	std::cout << "\n\n\t edgesToDelete " << edgesToDelete.size();
 	for (auto edge : edgesToDelete)
 		delete edge;
 
@@ -595,15 +607,15 @@ void Mesh::deleteFaces() {
 
 	this->updateEBO();
 	this->updateEdgeEBO();
-	VBO.bufferData(*vertices);
+	VBO.bufferData(vertices);
 
 	this->getSelectedVertices().clear();
-	selectedEdges.clear();
+	this->getSelectedEdges().clear();
 	this->getSelectedFaces().clear();
 
-	//FaceBVHSingleton->BuildBottomUp(*this);
-	//EdgeBVHSingleton->BuildBottomUp(*this);
-	//VertexBVHSingleton->BuildBottomUp(*this);
+	FaceBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
+	VertexBVHSingleton->BuildBottomUp(*this);
 
 }
 void Mesh::deleteOnlyEdgesAndFaces()
@@ -675,20 +687,34 @@ void Mesh::deleteOnlyEdgesAndFaces()
 					//x->loop->prev = nullptr;
 				}
 
-			updateDiskLink(edge, edge->v1, edge->d1);
-			updateDiskLink(edge, edge->v2, edge->d2);
-
 		}
+		updateDiskLink(edge, edge->v1, edge->d1);
+		updateDiskLink(edge, edge->v2, edge->d2);
 
 		if (edge->v1->e == edge)
 		{
 
-			edge->v1->e = edge->d1.next;
-		}
-		else if (edge->v2->e == edge)
-		{
+			if (!edge->d1.next)
+			{
 
-			edge->v2->e = edge->d2.next;
+				edge->v1->e = nullptr;
+				//eraseVertex(edge->v1);
+
+			}
+			else
+				edge->v1->e = edge->d1.next;
+		}
+		if (edge->v2->e == edge)
+		{
+			if (!edge->d2.next)
+			{
+
+				edge->v2->e = nullptr;
+				//eraseVertex(edge->v2);
+
+			}
+			else
+				edge->v2->e = edge->d2.next;
 		}
 
 		//std::cout << "Hello\n";
@@ -820,14 +846,18 @@ void Mesh::eraseVertex(DVertex* v)
 
 	int index = getVertexIndex(v);
 
-	vertices->erase(std::find(vertices->begin(), vertices->end(), *v));
+	vertices.erase(std::find(vertices.begin(), vertices.end(), v));
+
+	std::cout << "\n\n\t Erased vertex.. number of vertices = " << vertices.size();
 
 	// sanity check
-	if (std::find(indices.begin(), indices.end(), getVertexIndex(v)) != indices.end())
+	if (std::find(indices.begin(), indices.end(), index) != indices.end())
 		std::cerr << "\n\n mesh.eraseVertex  the vertex index is still inside mesh.indices attribute\n\n";
 
-	if (std::find(edgeIndices.begin(), edgeIndices.end(), getVertexIndex(v)) != edgeIndices.end())
+	if (std::find(edgeIndices.begin(), edgeIndices.end(), index) != edgeIndices.end())
 		std::cerr << "\n\n mesh.eraseVertex  the vertex index is still inside mesh.edgeIndices attribute\n\n";
+
+
 
 	/// belaj pravi brisanje iz vektora jer se pomjere ostali clanovi vektora i onda pokazivaci ne valjaju kurcu
 	// ili koristiti deck ili naci neki drugi nacin ( mozda da nije *vector vec nesta drugo)
@@ -846,8 +876,7 @@ void Mesh::eraseVertex(DVertex* v)
 void Mesh::updateDiskLink(DEdge* edge, DVertex* vert, DDiskLink& disk)
 {
 
-	if (getVertexIndex(vert) == 5)
-		std::cout << "hahaha";
+
 	if (disk.prev == edge && disk.next == edge) // if this is the only edge in the disk
 	{
 		disk.prev = nullptr;
@@ -857,7 +886,7 @@ void Mesh::updateDiskLink(DEdge* edge, DVertex* vert, DDiskLink& disk)
 	}
 	if (disk.prev == disk.next) // if there are only 2 edges in a disk ( and 1 of them will be deleted)
 	{
-		
+
 	}
 
 	if (disk.prev)
@@ -877,7 +906,5 @@ void Mesh::updateDiskLink(DEdge* edge, DVertex* vert, DDiskLink& disk)
 			disk.next->d2.prev = disk.prev;
 	}
 
-	if (getVertexIndex(vert) == 5)
-		std::cout << "LLALLALALhahaha";
 
 }

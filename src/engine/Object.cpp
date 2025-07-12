@@ -16,30 +16,38 @@ glm::mat4 Object::getModelReference() { return model; }
 
 glm::vec3 Object::getPosition() { return glm::vec3(model[3][0], model[3][1], model[3][2]); }
 
-void Object::bindVAO(){	VAO.Bind();}
+void Object::bindVAO() { VAO.Bind(); }
 
 
 void Object::UpdateVertexBuffer(int i)
 {
 	VBO.Bind();
-	glBufferSubData(GL_ARRAY_BUFFER, i * sizeof(DVertex), sizeof(DVertex), &((*vertices)[i]));
+	glBufferSubData(GL_ARRAY_BUFFER, i * sizeof(DVertex), sizeof(DVertex), vertices[i]);
 }
 
-int Object::getNumberOfVertices() { return vertices->size(); };
-std::vector<DVertex>& Object::getVertices() { return *vertices; }
-const std::vector<DVertex>& Object::getVertices()const { return *vertices; }
-std::vector<DVertex> Object::getVerticesCopy() { return *vertices; }
+int Object::getNumberOfVertices() { return vertices.size(); };
+std::vector<DVertex*>& Object::getVertices() { return vertices; }
+const std::vector<DVertex*>& Object::getVertices()const { return vertices; }
+std::vector<DVertex> Object::getVerticesCopy() {
+
+	std::vector<DVertex> copy;
+	for (const auto v : vertices) {
+		copy.push_back(*v);
+	}
+
+	return copy;
+}
 std::vector<glm::vec3> Object::getModelXVertices()
 {
 	std::vector<glm::vec3>position(0);
-	for (const auto& x : *vertices)
-		position.push_back(glm::vec3(model * glm::vec4(x.position, 1.0f)));
+	for (const auto x : vertices)
+		position.push_back(glm::vec3(model * glm::vec4(x->position, 1.0f)));
 
 	return position;
 }
 glm::vec3 Object::getModelXVertex(GLuint vertexIndex)
 {
-	return glm::vec3(model * glm::vec4((*vertices)[vertexIndex].position, 1.0f));
+	return glm::vec3(model * glm::vec4(vertices[vertexIndex]->position, 1.0f));
 }
 
 glm::vec3 Object::getModelXVertex(DVertex* vertex)
@@ -49,12 +57,13 @@ glm::vec3 Object::getModelXVertex(DVertex* vertex)
 
 int Object::getVertexIndex(DVertex* v)
 {
-	auto it = std::find_if(vertices->begin(), vertices->end(), [v](const DVertex& vert) {return &vert == v;});
-	if (it != vertices->end()) {
-		return static_cast<int>(std::distance(vertices->begin(), it));
+	auto it = std::find_if(vertices.begin(), vertices.end(), [v](const DVertex* vert) {return vert == v;});
+	if (it != vertices.end()) {
+		return static_cast<int>(std::distance(vertices.begin(), it));
 	}
 	else {
-		std::cerr << "\n\n		ERROR \n	Mesh.getVertexIndex.. DVertex does not exist";
+		std::cerr << "\n\n		ERROR \n	Mesh.getVertexIndex.. DVertex does not exist \t function returns -1\t";
+		std::cout << v->position.x << " " << v->position.y << " " << v->position.z;
 		return -1; // Not found
 	}
 }

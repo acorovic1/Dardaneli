@@ -13,7 +13,9 @@ VertexBVH* VertexBVH::getInstance()
 
 void VertexBVH::BuildBottomUp(Object& object) // O(n^3)
 {
+	this->Clear();
 	int numObjects = object.getNumberOfVertices();
+	if (!numObjects)return;
 	std::vector<glm::vec3 >vertices = object.getModelXVertices();
 	std::vector<BVHNode*> bvhNodes(0);
 
@@ -45,6 +47,12 @@ void VertexBVH::Refit(Object& object) {
 	getRoot()->refitNodeVertex(object);
 }
 
+void VertexBVH::Clear()
+{
+	destroy(root);
+	root = nullptr;
+}
+
 void VertexBVH::Draw(Camera& camera, Shader& shader, int subdivision)
 {
 	auto root = VertexBVHSingleton->getRoot();
@@ -56,14 +64,15 @@ void VertexBVH::Draw(Camera& camera, Shader& shader, int subdivision)
 
 void VertexBVH::DrawLeaves(BVHNode* node, Camera& camera, Shader& shader)
 {
-	if (!node->left && !node->right)
-	{
-		node->Draw(camera, shader);
-	}
-	else {
-		DrawLeaves(node->left, camera, shader);
-		DrawLeaves(node->right, camera, shader);
-	}
+	if (root)
+		if (!node->left && !node->right)
+		{
+			node->Draw(camera, shader);
+		}
+		else {
+			DrawLeaves(node->left, camera, shader);
+			DrawLeaves(node->right, camera, shader);
+		}
 }
 
 void VertexBVH::DrawTree(BVHNode* node, Camera& camera, Shader& shader, int subdivision) {

@@ -12,6 +12,12 @@ class FaceBVH {
 	FaceBVH() :root(nullptr) {};
 
 	void DrawTree(FaceBVHNode* node, Camera& camera, Shader& shader, int subdivision);
+	void destroy(FaceBVHNode* node) {
+		if (!node) return;
+		destroy(node->left);
+		destroy(node->right);
+		delete node;
+	}
 
 public:
 
@@ -25,6 +31,7 @@ public:
 	// pokusati staviti default vrijednosti kroz objectManager
 
 	void Refit(Mesh& mesh);
+	void Clear();
 
 	void Draw(Camera& camera, Shader& shader, int subdivision);
 	void DrawLeaves(FaceBVHNode* node, Camera& camera, Shader& shader);
