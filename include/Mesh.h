@@ -18,7 +18,7 @@ class Mesh :public Object {
 	std::vector<DEdge*>selectedEdges;
 
 	// !!! needs an EBO update !!!
-// erases indices of the face inside the mesh
+	// erases indices of the face inside the mesh and updates the DMesh structure accordingly
 	void eraseFace(DFace* face);
 	// !!! needs an EBO update !!!
 	// erases indices of the edge inside the mesh
@@ -28,7 +28,16 @@ class Mesh :public Object {
 	// erases the vertex from vertices vector and updates the indices of the mesh
 	void eraseVertex(DVertex* v);
 
+	// used primarily for delete operations
 	void updateDiskLink(DEdge* edge, DVertex* vert, DDiskLink& disk);
+	// used primarily for fill operation
+	void addEdgeToDisk( DEdge* edge, DEdge* pivotEdge, DVertex* pivot);
+
+	// sets the winding order for the SELECTED vertices !!!
+	void setWindingOrder();
+
+	DEdge* createEdgeForFill(int a,int b,DFace* face);
+	void connectLoopToEdge(DEdge* edge, DLoop* loop);
 
 	// not implemented yet!!!
 	void duplicateVertex(DVertex& vertex);
@@ -74,9 +83,8 @@ public:
 
 	// if there is only one edge connected to the vertex, deletes the edge(both vertices)
 	void deleteVertices();
-	
+
 	void deleteEdges();
-	
 	void deleteFaces();
 	void deleteOnlyEdgesAndFaces();
 	void deleteOnlyFaces();
@@ -87,6 +95,7 @@ public:
 	void dissolveFaces();
 
 
+	void fill();
 
 
 	std::vector<int>& getSelectedVertices(); 

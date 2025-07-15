@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <numeric>
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"

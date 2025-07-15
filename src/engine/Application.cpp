@@ -411,9 +411,11 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 			{
 				//indexVec.erase(std::remove(indexVec.begin(), indexVec.end(), -1), indexVec.end());
 				//indexVec.erase(std::remove(indexVec.begin(), indexVec.end(), std::numeric_limits<unsigned int>::max()), indexVec.end());
-				/*for (auto x : indexVec)
+				
+				std::cout << "\n\n\t indexVec content:\t";
+				for (auto x : indexVec)
 					std::cout << " " << x;
-				std::cout << "\n ";*/
+				std::cout << "\n ";
 
 				// discards all the "hits" beyond the first one.. makes it so the ray "stops after the first hit"
 
@@ -546,6 +548,28 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		mode = Mode::OBJECT;
 	}
 
+	// SELECT ALL
+	if (keys[GLFW_KEY_A])
+	{
+		auto& selectedVertices = mesh->getSelectedVertices();
+		auto& selectedEdges = mesh->getSelectedEdges();
+		auto& selectedFaces = mesh->getSelectedFaces();
+
+
+		selectedVertices.clear();
+		selectedVertices.resize(mesh->getVertices().size());
+		std::iota(selectedVertices.begin(), selectedVertices.end(), 0);
+
+		// vector assign replaces all the contents of the vector before inserting new values
+		auto selectedEdgesSet = mesh->getAllEdges();
+		selectedEdges.assign(selectedEdgesSet.begin(), selectedEdgesSet.end());
+
+		auto selectedFacesSet = mesh->getAllFaces();
+		selectedFaces.assign(selectedFacesSet.begin(), selectedFacesSet.end());
+
+		keys[GLFW_KEY_A] = 0;
+	}
+
 	// TRANSLATE
 	if (keys[GLFW_KEY_G] == 1)
 	{
@@ -644,6 +668,15 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		keys[GLFW_KEY_E] = 0;
 		keys[GLFW_KEY_G] = 1;
 	}
+
+	// FILL
+	if (keys[GLFW_KEY_F])
+	{
+		mesh->fill();
+		keys[GLFW_KEY_F] = 0;
+	}
+
+
 }
 void Application::Inputs(GLFWwindow* window, MyGUI& gui) {
 	static Camera* camera = cameraSingleton->getCamera(0);

@@ -45,4 +45,19 @@ std::vector<DVertex*> DFace::getVerticesVector() const
 
 
 	return returnVec;
-};
+}
+std::unordered_set<DLoop*> DFace::getLoops()
+{
+
+	std::unordered_set<DLoop*>returnVec;
+
+	DLoop* temp = loop;
+
+	do {
+		returnVec.insert(temp);
+		temp = temp->next;
+	} while (temp != loop);
+
+	return returnVec;
+}
+;

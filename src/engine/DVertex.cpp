@@ -71,16 +71,19 @@ std::unordered_set<DFace*> DVertex::getAdjecentFaces() const {
 	DEdge* temp = e;
 	DLoop* tempRadial = nullptr;
 	do {
-		tempRadial = temp->loop;
-		do {
-			returnVec.insert(tempRadial->face);
+		if (temp->loop)
+		{
+			tempRadial = temp->loop;
+			do {
+				returnVec.insert(tempRadial->face);
 
-			if (!tempRadial->radialNext)break;
+				if (!tempRadial->radialNext)break;
 
-			tempRadial = tempRadial->radialNext;
+				tempRadial = tempRadial->radialNext;
 
-		} while (tempRadial != temp->loop);
+			} while (tempRadial != temp->loop);
 
+		}
 		disk = (temp->v1 == this) ? &temp->d1 : &temp->d2;
 
 		temp = disk->next;

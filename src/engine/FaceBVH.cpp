@@ -25,6 +25,7 @@ void FaceBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 	if (!numObjects)return;
 	std::vector<FaceBVHNode*> bvhNodes(0);
 
+
 	std::vector<int>vertexIndices;
 	std::vector<glm::vec3>vertexLocations;
 	//form leaf nodes

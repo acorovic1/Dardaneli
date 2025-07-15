@@ -19,4 +19,7 @@ struct DFace {
 	// used for drawing 
 	std::vector<DVertex*> getVerticesVector()const;
 
+
+	std::unordered_set<DLoop*>getLoops();
+
 };
