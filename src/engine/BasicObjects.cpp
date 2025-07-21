@@ -118,30 +118,6 @@ void addPlane()
 	l4->prev = l3;
 	l4->next = l1;
 
-	DLoop* r1 = new DLoop();
-	DLoop* r2 = new DLoop();
-	DLoop* r3 = new DLoop();
-	DLoop* r4 = new DLoop();
-
-	l1->radialNext = r1; l1->radialPrev = r1;
-	l2->radialNext = r2; l2->radialPrev = r2;
-	l3->radialNext = r3; l3->radialPrev = r3;
-	l4->radialNext = r4; l4->radialPrev = r4;
-
-	r1->edge = e1;
-	r2->edge = e2;
-	r3->edge = e3;
-	r4->edge = e4;
-
-	r1->tip = vertices[0];
-	r2->tip = vertices[1];
-	r3->tip = vertices[2];
-	r4->tip = vertices[3];
-
-	r1->radialNext = l1; r1->radialPrev = l1;
-	r2->radialNext = l2; r2->radialPrev = l2;
-	r3->radialNext = l3; r3->radialPrev = l3;
-	r4->radialNext = l4; r4->radialPrev = l4;
 
 	new Mesh(
 		"Plane",

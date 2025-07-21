@@ -18,7 +18,15 @@ struct DEdge {
 	DLoop* loop;
 
 	DEdge() : v1(nullptr), v2(nullptr), d1(), d2(), loop(nullptr) {}
+	DEdge(DVertex* a, DVertex* b);
 
+	void connectLoopToEdge(DLoop* loop);
+
+	// only removes the edge from the disks, probably needs to be deleted afterwards
+	void removeFromDisk();
+
+	void addToDisk(DEdge* pivotEdge, DVertex* pivot);
+	
 
 	std::unordered_set<DFace*> getFaces();
 

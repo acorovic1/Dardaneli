@@ -28,19 +28,16 @@ class Mesh :public Object {
 	// erases the vertex from vertices vector and updates the indices of the mesh
 	void eraseVertex(DVertex* v);
 
-	// used primarily for delete operations
-	void updateDiskLink(DEdge* edge, DVertex* vert, DDiskLink& disk);
-	// used primarily for fill operation
-	void addEdgeToDisk( DEdge* edge, DEdge* pivotEdge, DVertex* pivot);
 
 	// sets the winding order for the SELECTED vertices !!!
 	void setWindingOrder();
 
+
 	DEdge* createEdgeForFill(int a,int b,DFace* face);
-	void connectLoopToEdge(DEdge* edge, DLoop* loop);
+
 
 	// not implemented yet!!!
-	void duplicateVertex(DVertex& vertex);
+	DVertex* duplicateVertex(DVertex& vertex);
 
 public:
 
@@ -76,7 +73,9 @@ public:
 
 
 	
-	GLuint extrudeVertex(GLuint vertex);
+	void extrudeVertex(DVertex* vertex, bool update = false);
+	void extrudeEdge(DEdge* edge,bool update = false);
+	void extrudeFace(DFace* face,bool update = false);
 
 
 	// test all of this thoroughly 

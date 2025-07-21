@@ -77,7 +77,7 @@ std::unordered_set<DFace*> DVertex::getAdjecentFaces() const {
 			do {
 				returnVec.insert(tempRadial->face);
 
-				if (!tempRadial->radialNext)break;
+				if (tempRadial->radialNext==tempRadial)break;
 
 				tempRadial = tempRadial->radialNext;
 

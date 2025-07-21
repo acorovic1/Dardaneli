@@ -10,6 +10,8 @@
 #include "FaceBVH.h"
 #include "CameraManager.h"
 
+// BELAJ PRAVI DELETE ONLY FACES,, NEKAKO  U REMOVE LOOP FROM  RADIAL SE DODJELJUJE ISTI TAJ LOOP
+
 
 
 Mesh::Mesh(std::string&& name, std::vector <DVertex*> vertices,
@@ -54,6 +56,7 @@ std::unordered_set<DFace*> Mesh::getAllFaces()
 	{
 		if (!x->loop)
 			continue;
+
 		//std::cout << "\n\ngetAllFaces";
 		DLoop* l = x->loop;
 		do {
@@ -61,9 +64,11 @@ std::unordered_set<DFace*> Mesh::getAllFaces()
 			//std::cout << "\t\t\thii";
 
 			returnSet.insert(l->face);
+			
+			if (l==l->radialNext)break;
+			
 			l = l->radialNext;
 
-			if (!l)break;
 
 		} while (l != x->loop);
 		//returnSet.insert(x->loop->face);
@@ -320,16 +325,39 @@ std::vector<GLuint> Mesh::formTrianglesForDrawing()
 
 
 
-void Mesh::duplicateVertex(DVertex& vertex)
+DVertex* Mesh::duplicateVertex(DVertex& vertex)
+{
+	vertices.push_back(new DVertex(vertex));
+
+	return vertices.back();
+}
+
+
+void Mesh::extrudeVertex(DVertex* vertex, bool update)
+{
+	DVertex* duplicate = duplicateVertex(*vertex);
+
+	DEdge* e = new DEdge(vertex, duplicate);
+
+	if (vertex->e)
+		e->addToDisk(vertex->e, vertex);
+
+	if (!update)return;
+
+	updateEdgeEBO();
+	VBO.bufferData(vertices);
+
+
+}
+
+void Mesh::extrudeEdge(DEdge* edge, bool update)
 {
 
 }
 
-
-GLuint Mesh::extrudeVertex(GLuint vertex)
+void Mesh::extrudeFace(DFace* face, bool update)
 {
-	return GLuint();
-}
+	}
 
 void Mesh::deleteVertices()
 {
@@ -373,8 +401,7 @@ void Mesh::deleteEdges()
 
 		eraseEdge(edge);
 
-		updateDiskLink(edge, edge->v1, edge->d1);
-		updateDiskLink(edge, edge->v2, edge->d2);
+		edge->removeFromDisk();
 
 		if (edge->v1->e == edge)
 		{
@@ -444,9 +471,8 @@ void Mesh::deleteFaces()
 		edgesToDelete.insert(edge);
 		eraseEdge(edge);
 
+		edge->removeFromDisk();
 
-		updateDiskLink(edge, edge->v1, edge->d1);
-		updateDiskLink(edge, edge->v2, edge->d2);
 		if (edge->v1->e == edge)
 		{
 
@@ -507,8 +533,7 @@ void Mesh::deleteOnlyEdgesAndFaces()
 			eraseFace(face);
 		}
 
-		updateDiskLink(edge, edge->v1, edge->d1);
-		updateDiskLink(edge, edge->v2, edge->d2);
+		edge->removeFromDisk();
 
 		if (edge->v1->e == edge)
 		{
@@ -544,7 +569,6 @@ void Mesh::deleteOnlyEdgesAndFaces()
 
 }
 void Mesh::deleteOnlyFaces()
-//  kada je zadnji face ostao, izbacuje error ---> GRESKA JE U FACE BVH, 
 //	eraseFace ne radi za ngone nikako
 {
 	std::vector<DFace*>& selectedFaces = this->getSelectedFaces();
@@ -560,13 +584,42 @@ void Mesh::deleteOnlyFaces()
 	FaceBVHSingleton->BuildBottomUp(*this);
 }
 
+
 void Mesh::dissolveVertices() {}
 void Mesh::dissolveEdges() {}
 void Mesh::dissolveFaces() {} // remove shared edges
 
 void Mesh::fill()
 {
-	if (selectedVertexIndices.size() < 3)return;
+	if (selectedVertexIndices.size() < 2)return;
+
+	std::vector<int>& verts = selectedVertexIndices;
+
+	// Edge fill
+	if (selectedVertexIndices.size() == 2)
+	{
+		if (!this->getEdge(verts[0], verts[1]))
+		{
+			DEdge* e = new DEdge();
+			e->v1 = vertices[verts[0]];
+			e->v2 = vertices[verts[1]];
+
+			if (e->v1->e)
+				e->addToDisk(e->v1->e, e->v1);
+			else e->v1->e = e;
+
+			if (e->v2->e)
+				e->addToDisk(e->v2->e, e->v2);
+			else e->v2->e = e;
+
+			edgeIndices.push_back(verts[0]);
+			edgeIndices.push_back(verts[1]);
+		}
+		this->updateEdgeEBO();
+		EdgeBVHSingleton->BuildBottomUp(*this);
+		return;
+	}
+
 
 	std::unordered_set<int> indices = { selectedVertexIndices.begin(),selectedVertexIndices.end() };
 	if (getFace(indices))
@@ -575,28 +628,54 @@ void Mesh::fill()
 		return;
 	}
 
+	// Face fill
+
 	setWindingOrder();
 
-	std::vector<int>& verts = selectedVertexIndices;
 
 	DFace* face = new DFace();
 	if (verts.size() == 3)
 	{
+		std::cerr<< "\n\n\tFill 3\t";
+		DLoop* l1, * l2, * l3;
+
 		DEdge* e1 = this->getEdge(verts[0], verts[1]);
-		if (!e1)
+		if (e1)
+		{
+			l1 = new DLoop(vertices[verts[1]], e1, face);
+			e1->connectLoopToEdge(l1);
+		}
+		else
+		{
 			e1 = createEdgeForFill(verts[0], verts[1], face);
+			l1 = e1->loop;
+		}
 
 		DEdge* e2 = this->getEdge(verts[1], verts[2]);
-		if (!e2)
+		if (e2)
+		{
+			l2 = new DLoop(vertices[verts[2]], e2, face);
+			e2->connectLoopToEdge(l2);
+		}
+		else
+		{
 			e2 = createEdgeForFill(verts[1], verts[2], face);
+			l2 = e2->loop;
+		}
+
 
 		DEdge* e3 = this->getEdge(verts[2], verts[0]);
-		if (!e3)
-			e3 = createEdgeForFill(verts[2], verts[0], face);
+		if (e3)
+		{
+			l3 = new DLoop(vertices[verts[0]], e3, face);
+			e3->connectLoopToEdge(l3);
+		}
+		else
 
-		DLoop* l1 = new DLoop(vertices[verts[1]], e1, face);
-		DLoop* l2 = new DLoop(vertices[verts[2]], e2, face);
-		DLoop* l3 = new DLoop(vertices[verts[0]], e3, face);
+		{
+			e3 = createEdgeForFill(verts[2], verts[0], face);
+			l3 = e3->loop;
+		}
 
 
 		l1->next = l2;l1->prev = l3;
@@ -606,34 +685,68 @@ void Mesh::fill()
 		face->loop = l1;
 
 		// connect the structure to the rest of the mesh
-		connectLoopToEdge(e1, l1);
-		connectLoopToEdge(e2, l2);
-		connectLoopToEdge(e3, l3);
+		e1->connectLoopToEdge(l1);
+		e2->connectLoopToEdge(l2);
+		e3->connectLoopToEdge(l3);
 
 		this->indices.push_back(verts[0]);
 		this->indices.push_back(verts[1]);
 		this->indices.push_back(verts[2]);
+		std::cerr << "\n\n\tFill 3\t end";
 	}
 	else if (verts.size() == 4)
 	{
+		DLoop* l1, * l2, * l3, * l4;
 
 		DEdge* e1 = this->getEdge(verts[0], verts[1]);
-		if (!e1)
+		if (e1)
+		{
+			l1 = new DLoop(vertices[verts[1]], e1, face);
+			e1->connectLoopToEdge(l1);
+		}
+		else
+		{
 			e1 = createEdgeForFill(verts[0], verts[1], face);
-		DEdge* e2 = this->getEdge(verts[1], verts[2]);
-		if (!e2)
-			e2 = createEdgeForFill(verts[1], verts[2], face);
-		DEdge* e3 = this->getEdge(verts[2], verts[3]);
-		if (!e3)
-			e3 = createEdgeForFill(verts[2], verts[3], face);
-		DEdge* e4 = this->getEdge(verts[3], verts[0]);
-		if (!e4)
-			e4 = createEdgeForFill(verts[3], verts[0], face);
+			l1 = e1->loop;
+		}
 
-		DLoop* l1 = new DLoop(vertices[verts[1]], e1, face);
-		DLoop* l2 = new DLoop(vertices[verts[2]], e2, face);
-		DLoop* l3 = new DLoop(vertices[verts[3]], e3, face);
-		DLoop* l4 = new DLoop(vertices[verts[0]], e4, face);
+		DEdge* e2 = this->getEdge(verts[1], verts[2]);
+		if (e2)
+		{
+			l2 = new DLoop(vertices[verts[2]], e2, face);
+			e2->connectLoopToEdge(l2);
+		}
+		else
+		{
+			e2 = createEdgeForFill(verts[1], verts[2], face);
+			l2 = e2->loop;
+		}
+
+
+		DEdge* e3 = this->getEdge(verts[2], verts[3]);
+		if (e3)
+		{
+			l3 = new DLoop(vertices[verts[3]], e3, face);
+			e3->connectLoopToEdge(l3);
+		}
+		else
+
+		{
+			e3 = createEdgeForFill(verts[2], verts[3], face);
+			l3 = e3->loop;
+		}
+
+		DEdge* e4 = this->getEdge(verts[3], verts[0]);
+		if (e4)
+		{
+			l4 = new DLoop(vertices[verts[0]], e4, face);
+			e4->connectLoopToEdge(l4);
+		}
+		else
+		{
+			e4 = createEdgeForFill(verts[3], verts[0], face);
+			l4 = e4->loop;
+		}
 
 		l1->next = l2; l1->prev = l4;
 		l2->next = l3; l2->prev = l1;
@@ -642,10 +755,9 @@ void Mesh::fill()
 
 		face->loop = l1;
 
-		connectLoopToEdge(e1, l1);
-		connectLoopToEdge(e2, l2);
-		connectLoopToEdge(e3, l3);
-		connectLoopToEdge(e4, l4);
+
+
+
 
 		this->indices.push_back(verts[0]);
 		this->indices.push_back(verts[1]);
@@ -665,23 +777,35 @@ void Mesh::fill()
 			if (i == verts.size() - 1)
 			{
 				e1 = this->getEdge(verts[i], verts[0]);
-				if (!e1)
+				if (e1)
+					l1 = new DLoop(vertices[verts[0]], e1, face);
+				else
+				{
 					e1 = createEdgeForFill(verts[i], verts[0], face);
+					l1 = e1->loop;
+				}
 
-				l1 = new DLoop(vertices[verts[0]], e1, face);
+
 			}
 			else
 			{
 				e1 = this->getEdge(verts[i], verts[i + 1]);
-				if (!e1)
+				if (e1)
+					l1 = new DLoop(vertices[verts[i + 1]], e1, face);
+				else
+				{
 					e1 = createEdgeForFill(verts[i], verts[i + 1], face);
+					l1 = e1->loop;
+				}
 
-				l1 = new DLoop(vertices[verts[i + 1]], e1, face);
+
+				// dupli loop creation ako edge ne postoji
+				// za onaj bug, delete edges facea, pa fill pa opet delete
 			}
 
 			loopVec[i] = l1;
 
-			connectLoopToEdge(e1, l1);
+			e1->connectLoopToEdge(l1);
 
 			if (i >= verts.size() - 2)continue;
 			this->indices.push_back(verts[0]);
@@ -720,7 +844,7 @@ void Mesh::fill()
 
 
 	FaceBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
+	//EdgeBVHSingleton->BuildBottomUp(*this);
 	//std::cout << "\n\n\tKRAJ.fill";
 }
 
@@ -758,17 +882,10 @@ void Mesh::eraseFace(DFace* face)
 
 	}
 
-
-
 	for (DLoop* l : face->getLoops())
 	{
-		if (l->edge->loop == l)
-			l->edge->loop = l->radialNext;
-
 		l->removeLoopFromRadial();
-
 		delete l;
-
 	}
 
 	delete face;
@@ -828,105 +945,6 @@ void Mesh::eraseVertex(DVertex* v)
 	{
 		if (x > index) x--;
 	}
-
-}
-
-void Mesh::updateDiskLink(DEdge* edge, DVertex* vert, DDiskLink& disk)
-{
-
-
-	if (disk.prev == edge && disk.next == edge) // if this is the only edge in the disk
-	{
-		disk.prev = nullptr;
-		disk.next = nullptr;
-
-		return;
-	}
-	if (disk.prev == disk.next) // if there are only 2 edges in a disk ( and 1 of them will be deleted)
-	{
-
-	}
-
-	if (disk.prev)
-	{
-		if (disk.prev->v1 == vert)
-			disk.prev->d1.next = disk.next;
-		else if (disk.prev->v2 == vert)
-			disk.prev->d2.next = disk.next;
-
-	}
-
-	if (disk.next)
-	{
-		if (disk.next->v1 == vert)
-			disk.next->d1.prev = disk.prev;
-		else if (disk.next->v2 == vert)
-			disk.next->d2.prev = disk.prev;
-	}
-
-
-}
-
-void Mesh::addEdgeToDisk(DEdge* edge, DEdge* pivotEdge, DVertex* pivot)
-{
-	DDiskLink& disk = (pivotEdge->v1 == pivot) ? pivotEdge->d1 : pivotEdge->d2;
-
-	if (disk.next)// more than one edge around the vertex
-	{
-		DEdge* temp = disk.next;
-
-		disk.next = edge;
-
-		if (edge->v1 == pivot)
-		{
-
-			edge->d1.next = temp;
-			edge->d1.prev = pivotEdge;
-
-		}
-		else if (edge->v2 == pivot)
-		{
-			edge->d2.next = temp;
-			edge->d2.prev = pivotEdge;
-
-		}
-		else std::cerr << "\n\n\tERROR 1\t addEdgeToDisk\n\n";
-
-
-		if (temp->v1 == pivot)
-		{
-			temp->d1.prev = edge;
-		}
-		else if (temp->v2 == pivot)
-		{
-			temp->d2.prev = edge;
-		}
-		else std::cerr << "\n\n\tERROR 2\t addEdgeToDisk\n\n";
-	}
-	else { // if the pivot vertex only has 1 edge --  pivotEdge
-
-		disk.next = edge;
-		disk.prev = edge;
-
-
-		if (edge->v1 == pivot)
-		{
-
-			edge->d1.next = pivotEdge;
-			edge->d1.prev = pivotEdge;
-
-		}
-		else if (edge->v2 == pivot)
-		{
-			edge->d2.next = pivotEdge;
-			edge->d2.prev = pivotEdge;
-
-		}
-		else std::cerr << "\n\n\tERROR 1\t addEdgeToDisk\n\n";
-
-
-	}
-
 
 }
 
@@ -1008,22 +1026,9 @@ DEdge* Mesh::createEdgeForFill(int a, int b, DFace* face)
 	// face BVH  ne radi nesto kako treba
 	// nekad hoce nekad nece
 
-	DEdge* e = new DEdge();
-	e->v1 = vertices[a];
-	e->v2 = vertices[b];
+	DEdge* e = new DEdge(vertices[a], vertices[b]);
 
-	if (e->v1->e)
-		addEdgeToDisk(e, e->v1->e, e->v1);
-	else e->v1->e = e;
-
-	if (e->v2->e)
-		addEdgeToDisk(e, e->v2->e, e->v2);
-	else e->v2->e = e;
-
-	//if (!face)std::cout << "\n\n \face is somehow nullptr" << std::flush;
-	//else std::cout << "\n\n\tpffff";
 	DLoop* l = new DLoop(e->v2, e, face);
-
 
 	e->loop = l;
 
@@ -1033,38 +1038,5 @@ DEdge* Mesh::createEdgeForFill(int a, int b, DFace* face)
 	return e;
 }
 
-void Mesh::connectLoopToEdge(DEdge* edge, DLoop* loop)
-{
-	if (!edge->loop)
-	{
-		edge->loop = loop;
-
-		return;
-	}
-	if (edge->loop == loop)return;
-
-
-	if (edge->loop->radialNext)
-	{
-		DLoop* temp = edge->loop->radialNext;
-
-		edge->loop->radialNext = loop;
-		loop->radialNext = temp;
-
-		temp->radialPrev = loop;
-		loop->radialPrev = edge->loop;
-	}
-	else
-	{
-		edge->loop->radialNext = loop;
-		edge->loop->radialPrev = loop;
-
-		loop->radialNext = edge->loop;
-		loop->radialPrev = edge->loop;
-	}
-
-
-
-}
 
 

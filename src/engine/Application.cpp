@@ -652,7 +652,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 
 	// EXTRUDE
 	if (keys[GLFW_KEY_E]) {
-		std::vector<int>& vertexIndices = mesh->getSelectedVertices();
+	/*	std::vector<int>& vertexIndices = mesh->getSelectedVertices();
 
 		std::vector<int> temp(0);
 		for (int i = 0; i < vertexIndices.size(); i++)
@@ -663,7 +663,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 
 		VertexBVHSingleton->BuildBottomUp(*mesh);
 
-		std::cout << "extrude vertex";
+		std::cout << "extrude vertex";*/
 
 		keys[GLFW_KEY_E] = 0;
 		keys[GLFW_KEY_G] = 1;

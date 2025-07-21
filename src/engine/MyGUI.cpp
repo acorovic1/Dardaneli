@@ -924,9 +924,9 @@ void MyGUI::DMesh()
 	if (clicked)
 	{
 		clicked = 0;
-		if (!selectedLoop->radialNext)// if it doesnt exist
+		if (selectedLoop->radialNext==selectedLoop)// if it doesnt exist
 		{
-			std::cerr << "\n\n loop.radialNext does not exist\n";
+			std::cerr << "\n\n loop.radialNext ---> only edge loop\n";
 			ImGui::End();
 			return;
 		}
@@ -945,9 +945,9 @@ void MyGUI::DMesh()
 	if (clicked)
 	{
 		clicked = 0;
-		if (!selectedLoop->radialPrev)// if it doesnt exist
+		if (selectedLoop->radialPrev==selectedLoop)// if it doesnt exist
 		{
-			std::cerr << "\n\n loop.radialPrev does not exist\n";
+			std::cerr << "\n\n loop.radialPrev ---> only edge loop\n";
 			ImGui::End();
 			return;
 		}

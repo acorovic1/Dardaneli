@@ -3,6 +3,7 @@
 //#include "DEdge.h"
 struct DEdge;
 
+// circular lists
 struct DDiskLink {
 	DEdge* next;
 	DEdge* prev;
