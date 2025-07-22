@@ -22,6 +22,12 @@ struct DVertex {
 
 	DVertex() : e(nullptr) {}
 	DVertex(glm::vec3 pos, glm::vec3 norm = glm::vec3()) : position(pos), normal(norm), e(nullptr) {}
+	DVertex(const DVertex& vertex){
+	
+		this->position = vertex.position;
+		this->normal = vertex.normal;
+		e = nullptr;
+	}
 
 
 
@@ -31,7 +37,8 @@ struct DVertex {
 
 
 
-	bool operator==(DVertex vert)
+	bool operator==(const DVertex& vert) const
+
 	{
 		return glm::all(glm::epsilonEqual(position, vert.position, 0.001f));
 	}

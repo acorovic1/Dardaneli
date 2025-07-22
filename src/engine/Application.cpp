@@ -305,7 +305,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 			}
 
 			std::vector<DEdge*>& selectedEdges = mesh->getSelectedEdges();
-			DEdge* selectedEdge=nullptr;
+			DEdge* selectedEdge = nullptr;
 
 			if (indexVec.size())
 			{
@@ -359,6 +359,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 
 				std::cout << "\nMULTI SELECT ---> " << index[0] << " " << index[1];
 
+
 			}
 			else if (!indexVec.size())// normal select ..... miss 
 			{
@@ -390,7 +391,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 			std::vector<DFace*>& selectedFaces = mesh->getSelectedFaces();
 			int numberOfVerticesInLastFace = 0;
 
-			DFace* selectedFace=nullptr;
+			DFace* selectedFace = nullptr;
 
 			for (auto& face : facesHit)
 			{
@@ -411,7 +412,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 			{
 				//indexVec.erase(std::remove(indexVec.begin(), indexVec.end(), -1), indexVec.end());
 				//indexVec.erase(std::remove(indexVec.begin(), indexVec.end(), std::numeric_limits<unsigned int>::max()), indexVec.end());
-				
+
 				std::cout << "\n\n\t indexVec content:\t";
 				for (auto x : indexVec)
 					std::cout << " " << x;
@@ -642,6 +643,41 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		previousY = posY;
 	}
 
+	// SEPARATE
+	if (keys[GLFW_KEY_Y] == 1)
+	{
+
+		std::cout << "\n\n\t [Operation] Separate \n";
+		mesh->separate(mesh->getSelectedFaces());
+
+		keys[GLFW_KEY_Y] = 0;
+		keys[GLFW_KEY_G] = 1;
+	}
+
+
+	// DUPLICATE
+	if (keys[GLFW_KEY_D] && keys[GLFW_KEY_LEFT_SHIFT])
+	{
+		if (selectMode == SelectMode::VERTEX)
+		{
+			mesh->duplicateVertices(mesh->getSelectedVertices(),true);
+		}
+		else if (selectMode == SelectMode::EDGE)
+		{
+			mesh->duplicateEdges(mesh->getSelectedEdges(), true);
+		}
+		else if (selectMode == SelectMode::FACE)
+		{
+
+			mesh->duplicateFaces(mesh->getSelectedFaces(),true);
+
+		}
+
+		keys[GLFW_KEY_D] = 0;
+		keys[GLFW_KEY_LEFT_SHIFT] = 0;
+		keys[GLFW_KEY_G] = 1;
+	}
+
 	// DELETE
 	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
 	{
@@ -651,19 +687,9 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 	}
 
 	// EXTRUDE
-	if (keys[GLFW_KEY_E]) {
-	/*	std::vector<int>& vertexIndices = mesh->getSelectedVertices();
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
 
-		std::vector<int> temp(0);
-		for (int i = 0; i < vertexIndices.size(); i++)
-		{
-			temp.push_back(mesh->extrudeVertex(vertexIndices[i]));
-		}
-		vertexIndices = temp;
-
-		VertexBVHSingleton->BuildBottomUp(*mesh);
-
-		std::cout << "extrude vertex";*/
+		gui.ExtrudeMenu();
 
 		keys[GLFW_KEY_E] = 0;
 		keys[GLFW_KEY_G] = 1;
@@ -672,7 +698,12 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 	// FILL
 	if (keys[GLFW_KEY_F])
 	{
-		mesh->fill();
+
+		auto& temp = mesh->getSelectedVertices();
+		if (temp.size() == 2)
+			mesh->edgeFill(temp);
+		else
+			mesh->faceFill(temp);
 		keys[GLFW_KEY_F] = 0;
 	}
 

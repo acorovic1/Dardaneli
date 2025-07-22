@@ -1,3 +1,6 @@
+#include "unordered_map"
+
+
 #include "Mesh.h"
 #include "DFace.h"
 #include "DLoop.h"
@@ -9,8 +12,9 @@
 #include "EdgeBVH.h"
 #include "FaceBVH.h"
 #include "CameraManager.h"
+#include "UnorderedPair.h"
 
-// BELAJ PRAVI DELETE ONLY FACES,, NEKAKO  U REMOVE LOOP FROM  RADIAL SE DODJELJUJE ISTI TAJ LOOP
+
 
 
 
@@ -64,9 +68,9 @@ std::unordered_set<DFace*> Mesh::getAllFaces()
 			//std::cout << "\t\t\thii";
 
 			returnSet.insert(l->face);
-			
-			if (l==l->radialNext)break;
-			
+
+			if (l == l->radialNext)break;
+
 			l = l->radialNext;
 
 
@@ -85,6 +89,7 @@ std::unordered_set<DFace*> Mesh::getAllFaces()
 
 std::unordered_set<DEdge*> Mesh::getAllEdges()
 {
+
 	std::cout << "\n\t\tMesh.getAllEdges\tVertices size " << vertices.size();
 	std::unordered_set<DEdge*> returnSet;
 	for (auto x : vertices)
@@ -135,22 +140,23 @@ DEdge* Mesh::getEdge(int start, int end)
 
 	DEdge* edge = v1->e;
 
-	do {
-		if (edge->v1 == v1)
-		{
-			if (edge->v2 == v2)
-				return edge;
+	if (edge)
+		do {
+			if (edge->v1 == v1)
+			{
+				if (edge->v2 == v2)
+					return edge;
 
-			edge = edge->d1.next;
-		}
-		else // edge->v2 == v1
-		{
-			if (edge->v1 == v2)
-				return edge;
+				edge = edge->d1.next;
+			}
+			else // edge->v2 == v1
+			{
+				if (edge->v1 == v2)
+					return edge;
 
-			edge = edge->d2.next;
-		}
-	} while (edge != v1->e);
+				edge = edge->d2.next;
+			}
+		} while (edge != v1->e);
 
 	std::cerr << "\n\n\n Mesh.getEdge(start,end) returns nullptr\n " << start << " " << end << "\n\n";
 	return nullptr;
@@ -333,39 +339,446 @@ DVertex* Mesh::duplicateVertex(DVertex& vertex)
 }
 
 
-void Mesh::extrudeVertex(DVertex* vertex, bool update)
+void Mesh::extrudeVertices(std::vector<int>& verts, bool update)
 {
-	DVertex* duplicate = duplicateVertex(*vertex);
+	DVertex* vertex;
+	DVertex* duplicate;
 
-	DEdge* e = new DEdge(vertex, duplicate);
+	int size = verts.size();
 
-	if (vertex->e)
-		e->addToDisk(vertex->e, vertex);
+	for (auto x : verts)
+	{
+		vertex = vertices[x];
+		duplicate = duplicateVertex(*vertex);
+
+		DEdge* e = new DEdge(vertex, duplicate);
+
+		edgeIndices.push_back(x);
+		edgeIndices.push_back(vertices.size() - 1);
+
+	}
 
 	if (!update)return;
+
+	selectedVertexIndices.clear();
+	for (int i = vertices.size() - size;i < vertices.size();i++)
+		selectedVertexIndices.push_back(i);
 
 	updateEdgeEBO();
 	VBO.bufferData(vertices);
 
+	VertexBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
 
 }
 
-void Mesh::extrudeEdge(DEdge* edge, bool update)
+void Mesh::extrudeEdges(std::vector<DEdge*>& edges, bool update)
 {
 
-}
+	DVertex* v1, * v2;
+	DVertex* duplicate1, * duplicate2;
+	int index1, index2;
+	DEdge* e1, * e2, * middle;
 
-void Mesh::extrudeFace(DFace* face, bool update)
-{
+	std::unordered_map<DVertex*, DVertex*> visited;
+
+	for (DEdge* e : edges)
+	{
+		v1 = e->v1;
+		v2 = e->v2;
+		index1 = this->getVertexIndex(v1);
+		index2 = this->getVertexIndex(v2);
+
+		auto it = visited.find(v1);
+		if (it == visited.end())
+		{
+			duplicate1 = duplicateVertex(*v1);
+			visited.insert({ v1,duplicate1 });
+			e1 = new DEdge(v1, duplicate1);
+
+			edgeIndices.push_back(index1);
+			edgeIndices.push_back(vertices.size() - 1);
+		}
+		else // edge alread exists
+		{
+			duplicate1 = it->second;
+			e1 = getEdge(index1, this->getVertexIndex(duplicate1));
+		}
+
+
+		it = visited.find(v2);
+		if (it == visited.end())
+		{
+			duplicate2 = duplicateVertex(*v2);
+			visited.insert({ v2,duplicate2 });
+			e2 = new DEdge(v2, duplicate2);
+			edgeIndices.push_back(index2);
+			edgeIndices.push_back(vertices.size() - 1);
+		}
+		else // edge alread exists
+		{
+			duplicate2 = it->second;
+			e2 = getEdge(index2, this->getVertexIndex(duplicate2));
+		}
+
+		middle = new DEdge(duplicate1, duplicate2);
+		edgeIndices.push_back(vertices.size() - 2);
+		edgeIndices.push_back(vertices.size() - 1);
+
+
+		DFace* face = new DFace();
+
+		DLoop* l1 = new DLoop(duplicate1, e1, face);
+		DLoop* l2 = new DLoop(duplicate2, middle, face);
+		DLoop* l3 = new DLoop(e->v2, e2, face);
+		DLoop* l4 = new DLoop(e->v1, e, face);
+
+		e1->connectLoopToEdge(l1);
+		middle->connectLoopToEdge(l2);
+		e2->connectLoopToEdge(l3);
+		e->connectLoopToEdge(l4);
+
+		l1->next = l2; l1->prev = l4;
+		l2->next = l3; l2->prev = l1;
+		l3->next = l4; l3->prev = l2;
+		l4->next = l1; l4->prev = l3;
+
+		face->loop = l1;
+
+		this->indices.push_back(index1);
+		this->indices.push_back(vertices.size() - 2);
+		this->indices.push_back(index2);
+
+		this->indices.push_back(index2);
+		this->indices.push_back(vertices.size() - 2);
+		this->indices.push_back(vertices.size() - 1);
+
+
 	}
 
-void Mesh::deleteVertices()
+	if (!update)return;
+
+	int size = selectedVertexIndices.size();
+	edges.clear();
+	selectedVertexIndices.clear();
+	for (int i = vertices.size() - size;i < vertices.size();i++)
+		selectedVertexIndices.push_back(i);
+
+	updateEdgeEBO();
+	VBO.bufferData(vertices);
+	updateEBO();
+
+	VertexBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
+
+}
+
+void Mesh::extrudeFaces(std::vector<DFace*>& faces, bool update)
+{
+	std::unordered_map<DEdge*, int> edges;
+
+	for (auto face : faces)
+	{
+
+		for (auto edge : face->getEdges())
+		{
+			auto it = edges.find(edge);
+
+			if (it == edges.end())
+			{
+				edges.insert({ edge,1 });
+			}
+			else it->second += 1;
+		}
+	}
+
+	std::vector<DFace*> separatedFaces = separate(faces);
+
+
+	std::unordered_map<DEdge*, int> edgesSeparated;
+
+	for (auto face : separatedFaces)
+	{
+
+		for (auto edge : face->getEdges())
+		{
+			auto it = edgesSeparated.find(edge);
+
+			if (it == edgesSeparated.end())
+			{
+				edgesSeparated.insert({ edge,1 });
+			}
+			else it->second += 1;
+		}
+	}
+
+	std::vector<int> fillVector;
+
+	for (auto it : edges)
+	{
+		if (it.second != 1)continue;
+
+		auto found = std::find_if(edgesSeparated.begin(), edgesSeparated.end(),
+			[&it](const auto& pair) {
+
+				if (pair.second != 1)return false;
+
+				DEdge* e1 = pair.first;
+				DEdge* e2 = it.first;
+
+				return
+					(
+						(*e1->v1 == *e2->v1 && *e1->v2 == *e2->v2) ||
+						(*e1->v1 == *e2->v2 && *e1->v2 == *e2->v1)
+						);
+
+
+			});
+		if (found == edgesSeparated.end())continue;
+
+		fillVector = { getVertexIndex(it.first->v1),getVertexIndex(it.first->v2) };
+
+		if (*found->first->v2 == *it.first->v2)
+		{
+			fillVector.push_back(getVertexIndex(found->first->v2));
+			fillVector.push_back(getVertexIndex(found->first->v1));
+		}
+		else
+		{
+			fillVector.push_back(getVertexIndex(found->first->v1));
+			fillVector.push_back(getVertexIndex(found->first->v2));
+		}
+
+
+		faceFill(fillVector, true);
+
+	}
+
+	if (!update)return;
+
+	this->updateEBO();
+	this->updateEdgeEBO();
+	VBO.bufferData(vertices);
+
+	//this->getSelectedVertices().clear();
+	//this->getSelectedEdges().clear();
+	//this->getSelectedFaces().clear();
+
+	FaceBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
+	VertexBVHSingleton->BuildBottomUp(*this);
+
+
+}
+
+void Mesh::extrudeIndividualFaces(std::vector<DFace*>& faces, bool update)
+{
+	std::vector<DFace*> vec;
+	for (auto face : faces)
+	{
+		vec = { face };
+		extrudeFaces(vec);
+	}
+
+	this->updateEBO();
+	this->updateEdgeEBO();
+	VBO.bufferData(vertices);
+
+	//this->getSelectedVertices().clear();
+	//this->getSelectedEdges().clear();
+	//this->getSelectedFaces().clear();
+
+	FaceBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
+	VertexBVHSingleton->BuildBottomUp(*this);
+}
+
+void Mesh::extrudeManifold()
+{
+}
+
+void Mesh::extrudeAlongNormals()
+{
+}
+
+void Mesh::extrudeRepeat()
+{
+}
+
+void Mesh::spin()
+{
+}
+
+std::vector<DFace*> Mesh::separate(std::vector<DFace*> faces)
+{
+	std::unordered_set<DEdge*> edges;
+	selectedFaces = duplicateFaces(faces);
+
+	for (auto face : faces)
+	{
+		for (auto edge : face->getEdges())
+			edges.insert(edge);
+
+		eraseFace(face);
+
+	}
+	std::unordered_set<DEdge*> edgesToDelete;
+	for (auto edge : edges)
+		if (!edge->loop)
+			edgesToDelete.insert(edge);
+
+	deleteEdges(edgesToDelete);
+
+
+	setSelectedVertexIndicesFromFaces(selectedFaces);
+
+	VBO.bufferData(vertices);
+	updateEBO();
+	updateEdgeEBO();
+
+	VertexBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
+	FaceBVHSingleton->BuildBottomUp(*this);
+
+	return selectedFaces;
+}
+
+std::vector<DVertex*> Mesh::duplicateVertices(std::vector<int>& verts, bool update)
+{
+	std::vector<DVertex*> returnVec;
+	std::vector<int> vertIndices;
+	for (auto x : verts)
+	{
+		returnVec.push_back(duplicateVertex(*vertices[x]));
+		vertIndices.push_back(vertices.size() - 1);
+	}
+
+	if (!update)return returnVec;
+
+
+	selectedVertexIndices = vertIndices;
+	VBO.bufferData(vertices);
+
+	VertexBVHSingleton->BuildBottomUp(*this);
+
+	return returnVec;
+}
+
+std::vector<DEdge*> Mesh::duplicateEdges(std::vector<DEdge*>& edges, bool update)
+{
+	std::vector<DEdge*> returnVec;
+	std::unordered_map<DVertex*, DVertex*> visited;
+	std::unordered_set<int> vertIndices;
+	DVertex* v1, * v2;
+	for (auto edge : edges)
+	{
+		auto it = visited.find(edge->v1);
+		if (it != visited.end())
+		{
+			v1 = it->second;
+			edgeIndices.push_back(getVertexIndex(v1));
+			vertIndices.insert(edgeIndices.back());
+		}
+		else
+		{
+			v1 = duplicateVertex(*edge->v1);
+			visited.insert({ edge->v1,v1 });
+			edgeIndices.push_back(vertices.size() - 1);
+			vertIndices.insert(edgeIndices.back());
+		}
+
+
+		it = visited.find(edge->v2);
+
+		if (it != visited.end())
+		{
+			v2 = it->second;
+			edgeIndices.push_back(getVertexIndex(v2));
+			vertIndices.insert(edgeIndices.back());
+		}
+		else
+		{
+			v2 = duplicateVertex(*edge->v2);
+			visited.insert({ edge->v2,v2 });
+			edgeIndices.push_back(vertices.size() - 1);
+			vertIndices.insert(edgeIndices.back());
+		}
+
+		returnVec.push_back(new DEdge(v1, v2));
+
+	}
+
+	if (!update)return returnVec;
+
+	selectedEdges = returnVec;
+	selectedVertexIndices.clear();
+	selectedVertexIndices.insert(selectedVertexIndices.begin(), vertIndices.begin(), vertIndices.end());
+
+	VBO.bufferData(vertices);
+	//updateEBO();
+	updateEdgeEBO();
+
+	VertexBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
+	//FaceBVHSingleton->BuildBottomUp(*this);
+
+	return returnVec;
+}
+
+std::vector<DFace*> Mesh::duplicateFaces(std::vector<DFace*>& faces, bool update)
+{
+	std::vector<DFace*> newFaces;
+	std::unordered_map<DVertex*, DVertex*> visited;
+	std::vector<int> toFill;
+	std::unordered_set<int> vertIndices;
+
+	for (auto face : faces)
+	{
+		for (auto vertex : face->getVertices())
+		{
+			auto it = visited.find(vertex);
+			if (it != visited.end())
+			{
+				toFill.push_back(getVertexIndex(it->second));
+			}
+			else
+			{
+				visited.insert({ vertex,duplicateVertex(*vertex) });
+				toFill.push_back(vertices.size() - 1);
+			}
+		}
+		newFaces.push_back(faceFill(toFill));
+
+		vertIndices.insert(toFill.begin(), toFill.end());
+		toFill.clear();
+
+	}
+
+	if (!update)return newFaces;
+
+	selectedFaces = newFaces;
+	selectedVertexIndices.clear();
+	selectedVertexIndices.insert(selectedVertexIndices.begin(), vertIndices.begin(), vertIndices.end());
+
+	VBO.bufferData(vertices);
+	updateEBO();
+	updateEdgeEBO();
+
+	VertexBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
+	FaceBVHSingleton->BuildBottomUp(*this);
+
+	return newFaces;
+}
+template <typename Container, typename>
+void Mesh::deleteVertices(Container& vertIndices, bool update)
 {
 	std::vector<DEdge*>& selectedEdges = this->getSelectedEdges();
 
 	std::unordered_set<DEdge*>edges;
 	std::unordered_set<DVertex*>verticesToDelete;
-	for (auto x : selectedVertexIndices)
+
+	for (auto x : vertIndices)
 	{
 		auto temp = vertices[x]->getAdjecentEdges();
 		if (temp.empty())
@@ -384,16 +797,16 @@ void Mesh::deleteVertices()
 	for (auto x : verticesToDelete)
 		eraseVertex(x);
 
-	selectedEdges.clear();
-	selectedEdges.insert(selectedEdges.begin(), edges.begin(), edges.end());
-	deleteEdges();
-}
-void Mesh::deleteEdges()
-{
-	std::vector<DEdge*>& selectedEdges = this->getSelectedEdges();
-	std::vector<DFace*>& selectedFaces = this->getSelectedFaces();
 
-	for (DEdge* edge : selectedEdges)
+	deleteEdges(edges, update);
+}
+
+template <typename Container, typename>
+void Mesh::deleteEdges(Container& edges, bool update)
+{
+
+
+	for (DEdge* edge : edges)
 	{
 
 		for (DFace* face : edge->getFaces())
@@ -432,12 +845,14 @@ void Mesh::deleteEdges()
 
 
 
+	if (!update)return;
+
 	this->updateEBO();
 	this->updateEdgeEBO();
 	VBO.bufferData(vertices);
 
 	this->getSelectedVertices().clear();
-	selectedEdges.clear();
+	edges.clear();
 	this->getSelectedFaces().clear();
 
 	FaceBVHSingleton->BuildBottomUp(*this);
@@ -446,21 +861,24 @@ void Mesh::deleteEdges()
 	VertexBVHSingleton->BuildBottomUp(*this);
 
 }
-void Mesh::deleteFaces()
+
+template <typename Container, typename>
+void Mesh::deleteFaces(Container& faces, bool update)
 {
-	std::vector<DFace*>& selectedFaces = this->getSelectedFaces();
+
 	std::unordered_set<DEdge*>selectedEdges;
 
 	std::unordered_set<DEdge*>edgesToDelete;
 
 
-	for (DFace* face : selectedFaces)
+	for (DFace* face : faces)
 	{
 		std::unordered_set<DEdge*> temp = face->getEdges();
 		selectedEdges.insert(temp.begin(), temp.end());
 	}
-	// two bvh build calls ... maybe have a bool as function variable to call it
-	deleteOnlyFaces();
+
+
+	deleteOnlyFaces(faces);
 
 
 	// deleting edges
@@ -506,6 +924,7 @@ void Mesh::deleteFaces()
 	for (auto edge : edgesToDelete)
 		delete edge;
 
+	if (!update)return;
 
 	this->updateEBO();
 	this->updateEdgeEBO();
@@ -515,16 +934,18 @@ void Mesh::deleteFaces()
 	this->getSelectedEdges().clear();
 	this->getSelectedFaces().clear();
 
-	//FaceBVHSingleton->BuildBottomUp(*this);
+	FaceBVHSingleton->BuildBottomUp(*this);
 	EdgeBVHSingleton->BuildBottomUp(*this);
 	VertexBVHSingleton->BuildBottomUp(*this);
 
 }
-void Mesh::deleteOnlyEdgesAndFaces()
-{
-	std::vector<DEdge*>& selectedEdges = this->getSelectedEdges();
 
-	for (DEdge* edge : selectedEdges)
+template <typename Container, typename>
+void Mesh::deleteOnlyEdgesAndFaces(Container& edges, bool update)
+{
+
+
+	for (DEdge* edge : edges)
 	{
 		eraseEdge(edge);
 
@@ -554,89 +975,123 @@ void Mesh::deleteOnlyEdgesAndFaces()
 	}
 
 
-	for (auto edge : selectedEdges)
+	for (auto edge : edges)
 		delete edge;
+
+	if (!update)return;
 
 	this->updateEBO();
 	this->updateEdgeEBO();
 
 	this->getSelectedVertices().clear();
-	selectedEdges.clear();
+	this->getSelectedEdges().clear();
 	this->getSelectedFaces().clear();
 
 	FaceBVHSingleton->BuildBottomUp(*this);
 	EdgeBVHSingleton->BuildBottomUp(*this);
 
 }
-void Mesh::deleteOnlyFaces()
+
+template <typename Container, typename>
+void Mesh::deleteOnlyFaces(Container& faces, bool update)
 //	eraseFace ne radi za ngone nikako
 {
-	std::vector<DFace*>& selectedFaces = this->getSelectedFaces();
 
-	for (auto& face : selectedFaces)
+
+	for (auto face : faces)
 		eraseFace(face);
+
+
+	if (!update)return;
 
 	this->updateEBO();
 
 	this->getSelectedVertices().clear();
-	selectedFaces.clear();
+	faces.clear();
 
 	FaceBVHSingleton->BuildBottomUp(*this);
 }
+
+
+// ----------------------------
+// EXPLICIT INSTANTIATIONS
+// ----------------------------
+
+// deleteVertices<int>
+template void Mesh::deleteVertices<std::vector<int>>(std::vector<int>&, bool update);
+template void Mesh::deleteVertices<std::unordered_set<int>>(std::unordered_set<int>&, bool update);
+
+// deleteEdges<DEdge*>
+template void Mesh::deleteEdges<std::vector<DEdge*>>(std::vector<DEdge*>&, bool update);
+template void Mesh::deleteEdges<std::unordered_set<DEdge*>>(std::unordered_set<DEdge*>&, bool update);
+
+// deleteFaces<DFace*>
+template void Mesh::deleteFaces<std::vector<DFace*>>(std::vector<DFace*>&, bool update);
+template void Mesh::deleteFaces<std::unordered_set<DFace*>>(std::unordered_set<DFace*>&, bool update);
+
+// deleteOnlyEdgesAndFaces<DEdge*>
+template void Mesh::deleteOnlyEdgesAndFaces<std::vector<DEdge*>>(std::vector<DEdge*>&, bool update);
+template void Mesh::deleteOnlyEdgesAndFaces<std::unordered_set<DEdge*>>(std::unordered_set<DEdge*>&, bool update);
+
+// deleteOnlyFaces<DFace*>
+template void Mesh::deleteOnlyFaces<std::vector<DFace*>>(std::vector<DFace*>&, bool update);
+template void Mesh::deleteOnlyFaces<std::unordered_set<DFace*>>(std::unordered_set<DFace*>&, bool update);
 
 
 void Mesh::dissolveVertices() {}
 void Mesh::dissolveEdges() {}
 void Mesh::dissolveFaces() {} // remove shared edges
 
-void Mesh::fill()
+DEdge* Mesh::edgeFill(std::vector<int>& verts)
 {
-	if (selectedVertexIndices.size() < 2)return;
-
-	std::vector<int>& verts = selectedVertexIndices;
+	if (verts.size() != 2)return nullptr;
 
 	// Edge fill
-	if (selectedVertexIndices.size() == 2)
+
+	DEdge* e = nullptr;
+	if (!this->getEdge(verts[0], verts[1]))
 	{
-		if (!this->getEdge(verts[0], verts[1]))
-		{
-			DEdge* e = new DEdge();
-			e->v1 = vertices[verts[0]];
-			e->v2 = vertices[verts[1]];
+		e = new DEdge();
+		e->v1 = vertices[verts[0]];
+		e->v2 = vertices[verts[1]];
 
-			if (e->v1->e)
-				e->addToDisk(e->v1->e, e->v1);
-			else e->v1->e = e;
+		if (e->v1->e)
+			e->addToDisk(e->v1->e, e->v1);
+		else e->v1->e = e;
 
-			if (e->v2->e)
-				e->addToDisk(e->v2->e, e->v2);
-			else e->v2->e = e;
+		if (e->v2->e)
+			e->addToDisk(e->v2->e, e->v2);
+		else e->v2->e = e;
 
-			edgeIndices.push_back(verts[0]);
-			edgeIndices.push_back(verts[1]);
-		}
-		this->updateEdgeEBO();
-		EdgeBVHSingleton->BuildBottomUp(*this);
-		return;
+		edgeIndices.push_back(verts[0]);
+		edgeIndices.push_back(verts[1]);
 	}
+	this->updateEdgeEBO();
+	EdgeBVHSingleton->BuildBottomUp(*this);
+	return e;
+
+}
+
+DFace* Mesh::faceFill(std::vector<int>& verts, bool windingOrderSet, bool update)
+{
+	if (verts.size() < 3)return nullptr;
 
 
-	std::unordered_set<int> indices = { selectedVertexIndices.begin(),selectedVertexIndices.end() };
+	std::unordered_set<int> indices = { verts.begin(),verts.end() };
 	if (getFace(indices))
 	{
 		std::cout << "\n\n\t Selected vertices already form a face \t";
-		return;
+		return nullptr;
 	}
 
 	// Face fill
-
-	setWindingOrder();
-
+	if (!windingOrderSet)
+		setWindingOrder(verts);
 
 	DFace* face = new DFace();
 	if (verts.size() == 3)
 	{
-		std::cerr<< "\n\n\tFill 3\t";
+		std::cerr << "\n\n\tFill 3\t";
 		DLoop* l1, * l2, * l3;
 
 		DEdge* e1 = this->getEdge(verts[0], verts[1]);
@@ -839,13 +1294,20 @@ void Mesh::fill()
 
 	}
 
+
+
+	if (!update)return face;
+
 	this->updateEBO();
 	this->updateEdgeEBO();
 
 
 	FaceBVHSingleton->BuildBottomUp(*this);
-	//EdgeBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
 	//std::cout << "\n\n\tKRAJ.fill";
+
+
+	return face;
 }
 
 void Mesh::eraseFace(DFace* face)
@@ -948,24 +1410,24 @@ void Mesh::eraseVertex(DVertex* v)
 
 }
 
-void Mesh::setWindingOrder()
+void Mesh::setWindingOrder(std::vector<int>& verts)
 {
 	// Compute centroid
 	glm::vec3 centroid = glm::vec3(0.0f);
-	for (auto x : indices)
+	for (auto x : verts)
 		centroid += vertices[x]->position;
-	centroid /= static_cast<float>(indices.size());
+	centroid /= static_cast<float>(verts.size());
 
 
 	// Covariance matrix
 	glm::mat3 cov(0.0f);
-	for (auto x : indices) {
+	for (auto x : verts) {
 		glm::vec3 d = vertices[x]->position - centroid;
 		cov[0] += d.x * d; // first column
 		cov[1] += d.y * d;
 		cov[2] += d.z * d;
 	}
-	cov /= static_cast<float>(indices.size());
+	cov /= static_cast<float>(verts.size());
 
 	// Find normal = eigenvector of smallest eigenvalue
 	// Using cross products only (sufficient for symmetric 3x3)
@@ -1001,7 +1463,7 @@ void Mesh::setWindingOrder()
 	std::cout << "\n\tu vector" << u.x << " " << u.y << " " << u.z;
 	std::cout << "\n\tv vector" << v.x << " " << v.y << " " << v.z;*/
 
-	std::sort(selectedVertexIndices.begin(), selectedVertexIndices.end(),
+	std::sort(verts.begin(), verts.end(),
 		[&](int a, int b) {
 			glm::vec3 offsetA = this->vertices[a]->position - centroid;
 			glm::vec3 offsetB = this->vertices[b]->position - centroid;
@@ -1020,6 +1482,49 @@ void Mesh::setWindingOrder()
 
 
 }
+
+
+template <typename Container, typename>
+void Mesh::setSelectedVertexIndicesFromFaces(const Container& faces)
+{
+
+	std::cout << "\n\n\t setVertexIndices with faces works\n\n\t";
+	std::unordered_set<int>verts;
+
+
+	for (auto face : faces)
+		for (auto x : face->getVertices())
+			verts.insert(getVertexIndex(x));
+
+
+	selectedVertexIndices.clear();
+	selectedVertexIndices.insert(selectedVertexIndices.begin(), verts.begin(), verts.end());
+
+
+}
+
+
+template <typename Container, typename>
+void Mesh::setSelectedVertexIndicesFromEdges(const Container& edges)
+{
+	std::cout << "\n\n\t setVertexIndices with faces works\n\n\t";
+	std::unordered_set<int>verts;
+
+
+	for (auto edge : edges)
+	{
+
+		verts.insert(getVertexIndex(edge->v1));
+		verts.insert(getVertexIndex(edge->v2));
+	}
+
+	selectedVertexIndices.clear();
+	selectedVertexIndices.insert(selectedVertexIndices.begin(), verts.begin(), verts.end());
+
+
+}
+
+
 
 DEdge* Mesh::createEdgeForFill(int a, int b, DFace* face)
 {

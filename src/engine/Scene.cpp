@@ -22,7 +22,7 @@ void Scene::Init()
 	new Shader("ActiveEdit", "src/shaders/activeEdit.vert", "src/shaders/activeEdit.frag");
 
 
-	addPlane();
+	addCube();
 	
 
 

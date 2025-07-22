@@ -50,6 +50,7 @@ class MyGUI /* :public Dardaneli...varijable pod protected staviti*/ {
 public:
 	bool showAddMenu = false;
 	bool showDeleteMenu = false;
+	bool showExtrudeMenu = false;
 	MyGUI(Window* window);
 	void Init();
 	void NewFrame();
@@ -63,10 +64,12 @@ public:
 
 	std::vector<int>& getObjectIndex();
 
-	void Add();
-	void DeleteEdit();
 	void AddMenu();
+	void Add();
 	void DeleteMenu();
+	void Delete();
+	void ExtrudeMenu();
+	void Extrude();
 
 	void DrawBVH();
 

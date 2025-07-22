@@ -6,7 +6,7 @@
 class Mesh :public Object {
 
 
-	
+
 	std::vector<Texture>textures;
 
 	std::vector<GLuint>indices; // used for drawing faces
@@ -30,13 +30,25 @@ class Mesh :public Object {
 
 
 	// sets the winding order for the SELECTED vertices !!!
-	void setWindingOrder();
+	void setWindingOrder(std::vector<int>& verts);
+
+	template <typename Container,
+		typename = typename std::enable_if<
+		std::is_same<typename Container::value_type, DFace*>::value
+	>::type>
+	void setSelectedVertexIndicesFromFaces(const Container& faces);
+
+	template <typename Container,
+		typename = typename std::enable_if<
+		std::is_same<typename Container::value_type, DEdge*>::value
+	>::type>
+	void setSelectedVertexIndicesFromEdges(const Container& edges);
 
 
-	DEdge* createEdgeForFill(int a,int b,DFace* face);
+	DEdge* createEdgeForFill(int a, int b, DFace* face);
 
 
-	// not implemented yet!!!
+	
 	DVertex* duplicateVertex(DVertex& vertex);
 
 public:
@@ -52,8 +64,8 @@ public:
 	void updateEdgeEBO();
 
 
-	
-	std::unordered_set<DFace*> getAllFaces(); 
+
+	std::unordered_set<DFace*> getAllFaces();
 	std::unordered_set<DEdge*> getAllEdges();
 
 	DFace* getFace(std::unordered_set<int> indices); // returns the common face of indices 
@@ -72,21 +84,60 @@ public:
 	void Scale(float x, float y, float z)override;
 
 
-	
-	void extrudeVertex(DVertex* vertex, bool update = false);
-	void extrudeEdge(DEdge* edge,bool update = false);
-	void extrudeFace(DFace* face,bool update = false);
+
+	void extrudeVertices(std::vector<int>&verts,bool update = false);
+	void extrudeEdges(std::vector<DEdge*>&edges, bool update = false);
+	void extrudeFaces(std::vector<DFace*>&faces,bool update = false);
+	void extrudeIndividualFaces(std::vector<DFace*>&faces,bool update = false);
+
+	// !!! NOT IMPLEMENTED !!!
+	void extrudeManifold();
+	// !!! NOT IMPLEMENTED !!!
+	void extrudeAlongNormals();
+	// !!! NOT IMPLEMENTED !!!
+	void extrudeRepeat();
+	// !!! NOT IMPLEMENTED !!!
+	void spin();
+
+	std::vector<DFace*> separate(std::vector<DFace*>faces);
 
 
-	// test all of this thoroughly 
 
-	// if there is only one edge connected to the vertex, deletes the edge(both vertices)
-	void deleteVertices();
+	std::vector<DVertex*> duplicateVertices(std::vector<int>&verts, bool update = false);
+	std::vector<DEdge*> duplicateEdges(std::vector<DEdge*>&edges, bool update = false);
+	std::vector<DFace*> duplicateFaces(std::vector<DFace*>&faces, bool update = false);
 
-	void deleteEdges();
-	void deleteFaces();
-	void deleteOnlyEdgesAndFaces();
-	void deleteOnlyFaces();
+
+	// test all of these thoroughly 
+	template <typename Container,
+		typename = typename std::enable_if<
+		std::is_same<typename Container::value_type, int>::value
+	>::type>
+	void deleteVertices(Container& vertIndices, bool update = false);
+
+	template <typename Container,
+		typename = typename std::enable_if<
+		std::is_same<typename Container::value_type, DEdge*>::value
+	>::type>
+	void deleteEdges(Container& edges, bool update = false);
+
+	template <typename Container,
+		typename = typename std::enable_if<
+		std::is_same<typename Container::value_type, DFace*>::value
+	>::type>
+	void deleteFaces(Container& faces, bool update = false);
+
+	template <typename Container,
+		typename = typename std::enable_if<
+		std::is_same<typename Container::value_type, DEdge*>::value
+	>::type>
+	void deleteOnlyEdgesAndFaces(Container& edges, bool update = false);
+
+	template <typename Container,
+		typename = typename std::enable_if<
+		std::is_same<typename Container::value_type, DFace*>::value
+	>::type>
+	void deleteOnlyFaces(Container& faces, bool update = false);
 
 
 	void dissolveVertices();
@@ -94,18 +145,21 @@ public:
 	void dissolveFaces();
 
 
-	void fill();
+	DEdge* edgeFill(std::vector<int>& verts);
+	DFace* faceFill(std::vector<int>& verts,bool windingOrderSet=false,bool update=false);
 
 
-	std::vector<int>& getSelectedVertices(); 
+	std::vector<int>& getSelectedVertices();
 	std::vector<DEdge*>& getSelectedEdges();
 	std::vector<DFace*>& getSelectedFaces();
 
-	
+
 	std::vector<int> getFaceIndices(DFace* face);
-	std::pair<int,int> getEdgeIndices(DEdge* edge);
+	std::pair<int, int> getEdgeIndices(DEdge* edge);
 
 	std::vector<GLuint> formTrianglesForDrawing();
+
+
 
 
 };

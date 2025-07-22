@@ -10,12 +10,19 @@ DEdge::DEdge(DVertex* a, DVertex* b) : loop(nullptr), d1(), d2()
 	v1 = a;
 	v2 = b;
 
+
+	d1.next = this;
+	d1.prev = this;
+	d2.next = this;
+	d2.prev = this;
+
 	if (v1->e)
-		addToDisk(v1->e,v1);
-	else v1->e = this;
+		addToDisk(v1->e, v1);
+	else
+		v1->e = this;
 
 	if (v2->e)
-		addToDisk(v2->e,v2);
+		addToDisk(v2->e, v2);
 	else v2->e = this;
 
 }
@@ -135,8 +142,9 @@ void DEdge::addToDisk(DEdge* pivotEdge, DVertex* pivot)
 {
 	DDiskLink& disk = (pivotEdge->v1 == pivot) ? pivotEdge->d1 : pivotEdge->d2;
 
-	if (disk.next)// more than one this around the vertex
+	if (disk.next != pivotEdge)// more than one this around the vertex
 	{
+		std::cout << "\n\n\t\t Aloha";
 		DEdge* temp = disk.next;
 
 		disk.next = this;
@@ -169,6 +177,8 @@ void DEdge::addToDisk(DEdge* pivotEdge, DVertex* pivot)
 	}
 	else { // if the pivot vertex only has 1 edge --  pivotEdge
 
+
+		std::cout << "\n\n\t\t HEEEEEEEELLoooOOOooo";
 		disk.next = this;
 		disk.prev = this;
 
@@ -205,8 +215,8 @@ std::unordered_set<DFace*> DEdge::getFaces()
 	{
 		returnSet.insert(temp->face);
 
-		if (temp==temp->radialNext)break;
-		
+		if (temp == temp->radialNext)break;
+
 		temp = temp->radialNext;
 
 	} while (temp != loop);

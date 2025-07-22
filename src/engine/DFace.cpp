@@ -2,6 +2,7 @@
 #include "DLoop.h"
 
 
+
 std::unordered_set<DVertex*> DFace::getVertices()const
 {
 	std::unordered_set<DVertex*> returnVec;

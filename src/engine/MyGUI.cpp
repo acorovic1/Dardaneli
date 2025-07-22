@@ -141,7 +141,10 @@ void MyGUI::DrawUI()
 
 
 		if (showDeleteMenu)
-			DeleteEdit();
+			Delete();
+
+		if (showExtrudeMenu)
+			Extrude();
 	}
 
 	ImGui::End();
@@ -273,12 +276,12 @@ void MyGUI::Add() {
 		ImGui::EndPopup();
 	}
 }
-void MyGUI::DeleteEdit()
+void MyGUI::Delete()
 {
 
 	hoverTime = glfwGetTime();
 	static int selected_option = -1;
-	const char* options[] = { "Vertices", "Edges", "Faces", "Only Edges & Faces", "Only Faces", "Dissolve Vertices","Dissolve Edges","Dissolve Faces" };
+	const char* options[] = { "Vertices", "Edges", "Faces", "Only Edges & Faces", "Only Faces", "Dissolve Vertices | WIP","Dissolve Edges | WIP","Dissolve Faces | WIP" };
 
 	ImGui::OpenPopup("Delete popup");
 
@@ -302,19 +305,15 @@ void MyGUI::DeleteEdit()
 
 
 		if (selected_option == 0)
-			mesh->deleteVertices();
+			mesh->deleteVertices(mesh->getSelectedVertices(),true);
 		else if (selected_option == 1)
-			mesh->deleteEdges();
+			mesh->deleteEdges(mesh->getSelectedEdges(), true);
 		else if (selected_option == 2)
-			mesh->deleteFaces();
+			mesh->deleteFaces(mesh->getSelectedFaces(), true);
 		else if (selected_option == 3)
-			mesh->deleteOnlyEdgesAndFaces();
+			mesh->deleteOnlyEdgesAndFaces(mesh->getSelectedEdges(), true);
 		else if (selected_option == 4)
-		{
-			mesh->deleteOnlyFaces();
-			std::cout << "\n\n grid indices " << gridIndices.size();
-
-		}
+			mesh->deleteOnlyFaces(mesh->getSelectedFaces(), true);
 		else if (selected_option == 5)
 			mesh->dissolveVertices();
 		else if (selected_option == 6)
@@ -330,7 +329,7 @@ void MyGUI::DeleteEdit()
 			hoverTime = 0;
 
 			window->getKeys()[GLFW_KEY_X] = 0;
-			std::cout << "HEHEHAHA ";
+			//std::cout << "HEHEHAHA ";
 			showDeleteMenu = false;
 			ImGui::CloseCurrentPopup();
 		}
@@ -343,6 +342,76 @@ void MyGUI::AddMenu() { showAddMenu = true; }
 void MyGUI::DeleteMenu()
 {
 	showDeleteMenu = true;
+
+
+}
+
+void MyGUI::ExtrudeMenu()
+{
+	showExtrudeMenu = true;
+}
+
+void MyGUI::Extrude()
+{
+	std::cout << "\n\n\tEXTRUDEEEE";
+
+	hoverTime = glfwGetTime();
+	static int selected_option = -1;
+	const char* options[] = { "Vertices", "Edges", "Faces","Individual Faces","Manifold | WIP","Along Normals | WIP","Repeat | WIP", "Spin | WIP"};
+
+	ImGui::OpenPopup("Extrude popup");
+
+	if (ImGui::BeginPopup("Extrude popup"))
+	{
+		ImGui::SeparatorText("Extrude");
+		ImGui::Separator();
+
+		Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()));
+		if (!mesh)return;
+
+		for (int i = 0; i < 8; ++i) {
+			if (i ==6) {
+				ImGui::Separator();
+			}
+
+			if (ImGui::Selectable(options[i])) {
+				selected_option = i;
+			}
+		}
+
+
+		if (selected_option == 0)
+			mesh->extrudeVertices(mesh->getSelectedVertices(), true);
+		else if (selected_option == 1)
+			mesh->extrudeEdges(mesh->getSelectedEdges(), true);
+		else if (selected_option == 2)
+			mesh->extrudeFaces(mesh->getSelectedFaces(), true);
+		else if (selected_option == 3)
+			mesh->extrudeIndividualFaces(mesh->getSelectedFaces(), true);
+		else if (selected_option == 4)
+			mesh->extrudeManifold();
+		else if (selected_option == 5)
+			mesh->extrudeAlongNormals();
+		else if (selected_option == 6)
+			mesh->extrudeRepeat();
+		else if (selected_option == 7)
+			mesh->spin();
+
+		selected_option = -1;
+
+		if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) && !ImGui::IsAnyItemHovered() && hoverTime > 1.4)
+		{
+			glfwSetTime(0);
+			hoverTime = 0;
+
+			window->getKeys()[GLFW_KEY_E] = 0;
+			//std::cout << "HEHEHAHA ";
+			showExtrudeMenu = false;
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
 
 
 }
@@ -874,6 +943,25 @@ void MyGUI::DMesh()
 
 		std::pair<int, int> edgeIndices = mesh->getEdgeIndices(selectedEdges.back());
 		selectedVertices.clear();
+		//selectedVertices.push_back(edgeIndices.first);
+		//selectedVertices.push_back(edgeIndices.second);
+
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Loop.tip"))
+		clicked++;
+	if (clicked)
+	{
+		clicked = 0;
+		if (!selectedLoop)// if it doesnt exist
+		{
+			std::cerr << "\n\n loop.edge not selected\n";
+			ImGui::End();
+			return;
+		}
+
+		selectedVertices.clear();
+		selectedVertices.push_back(mesh->getVertexIndex(selectedLoop->tip));
 		//selectedVertices.push_back(edgeIndices.first);
 		//selectedVertices.push_back(edgeIndices.second);
 

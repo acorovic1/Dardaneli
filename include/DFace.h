@@ -12,6 +12,7 @@ struct DFace {
 
 	DFace() : loop(nullptr) {}
 
+
 	std::unordered_set<DVertex*> getVertices()const;
 
 	std::unordered_set<DEdge*> getEdges()const;

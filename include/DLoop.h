@@ -33,8 +33,8 @@ struct DLoop {
 		if (radialNext == this && radialPrev == this)
 		{
 			
-			radialNext = nullptr;
-			radialPrev = nullptr;
+			//radialNext = nullptr;
+			//radialPrev = nullptr;
 		
 			edge->loop = nullptr;
 
@@ -45,23 +45,26 @@ struct DLoop {
 		radialPrev->radialNext = radialNext;
 		radialNext->radialPrev = radialPrev;
 
-		if (radialNext == this)std::cerr << "HOWWwwwww";
+		//if (radialNext == this)std::cerr << "HOWWwwwww";
 
 		// update edge
 		if (edge->loop == this)
 		{
-			std::cout << "\n\n\t tip before " << edge->loop->tip->position.x << " " << edge->loop->tip->position.y << " " << edge->loop->tip->position.z;
+			//std::cout << "\n\n\t tip before " << edge->loop->tip->position.x << " " << edge->loop->tip->position.y << " " << edge->loop->tip->position.z;
 
-			std::cout <<"\n\n\t" <<edge->v1->position.x << " " << edge->v1->position.y << " " << edge->v1->position.z;
-			std::cout <<"\n\n\t" <<edge->v2->position.x << " " << edge->v2->position.y << " " << edge->v2->position.z;
+			//std::cout <<"\n\n\t" <<edge->v1->position.x << " " << edge->v1->position.y << " " << edge->v1->position.z;
+			//std::cout <<"\n\n\t" <<edge->v2->position.x << " " << edge->v2->position.y << " " << edge->v2->position.z;
 			edge->loop = radialNext;
 
-			std::cout << "\n\n\t tip after " << edge->loop->tip->position.x << " " << edge->loop->tip->position.y << " " << edge->loop->tip->position.z;
+			//std::cout << "\n\n\t tip after " << edge->loop->tip->position.x << " " << edge->loop->tip->position.y << " " << edge->loop->tip->position.z;
 		}
-		std::cout << "\n\n\n\t ";
+		//std::cout << "\n\n\n\t ";
 
 		radialNext = nullptr;
 		radialPrev = nullptr;
 	}
 
 };
+
+
+
