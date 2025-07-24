@@ -2,6 +2,7 @@
 #include "CameraManager.h"
 #include "MyGUI.h"
 #include "DFace.h"
+#include "GeometryUtils.h"
 
 
 
@@ -157,6 +158,9 @@ void Application::ObjectMode(GLFWwindow* window, MyGUI& gui)
 			keys[GLFW_KEY_G] = 0;
 			return;
 		}
+
+
+
 		// Fetches the coordinates of the cursor
 		glfwGetCursorPos(window, &posX, &posY);
 
@@ -223,9 +227,12 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 
 	static Camera* camera = cameraSingleton->getCamera(0);
 	Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(objectIndices[objectIndices.size() - 1]));
+
 	// SELECT
 	if (mouseButtons[GLFW_MOUSE_BUTTON_LEFT])
 	{
+		slide = false;
+		firstClick = true;
 		if (keys[GLFW_KEY_LEFT_ALT])return;
 		if (keys[GLFW_KEY_G])
 		{
@@ -525,7 +532,6 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		keys[GLFW_KEY_E] = 0;
 	}
 
-
 	// SELECT MODE
 	if (keys[GLFW_KEY_1])
 	{
@@ -643,6 +649,105 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		previousY = posY;
 	}
 
+	// SLIDE
+	if (keys[GLFW_KEY_G] == 2)
+	{
+		static glm::vec2 drag;
+		static glm::vec2 dragPrev;
+		if (!mesh->getSelectedVertices().size())
+		{
+			keys[GLFW_KEY_G] = 0;
+			return;
+		}
+		// Fetches the coordinates of the cursor
+
+		glfwGetCursorPos(window, &posX, &posY);
+
+
+		auto& tempVertices = mesh->getVertices();
+
+		// Prevents  jumping on the first click
+		if (!slide)
+		{
+
+			slide = true;
+
+			slideDirections.clear();
+			startPositions.clear();
+			slideUnProjectedDirections.clear();
+			bestDirection = std::vector<glm::vec3>(mesh->getSelectedVertices().size(),glm::vec3(0.0f));
+
+			for (auto x : mesh->getSelectedVertices())
+			{
+				auto neighbours = tempVertices[x]->getAdjecentVertices();
+				startPositions.push_back(tempVertices[x]->position);
+				slideLengths.push_back(mesh->getSlideClampMax(neighbours));
+				slideDirections.push_back(mesh->getSlideDirections(tempVertices[x], neighbours));
+				slideUnProjectedDirections.push_back(mesh->getSlideUnprojectedDirections(tempVertices[x], neighbours));
+			}
+
+			previousX = posX;
+			previousY = posY;
+
+			slideStartX = posX;
+			slideStartY = posY;
+
+			std::cout << "\n\n\t slideStartX " << slideStartX << "\n\t slideStartY " << slideStartY;
+
+			dragPrev = drag = glm::vec2(0.0f, 0.0f);
+
+			return;
+		}
+		float deltaX = (posX - previousX) / 150;
+		float deltaY = (previousY - posY) / 150;
+
+
+
+		drag.x = (posX - slideStartX)/* * (drag.x - dragPrev.x >= 0) ? 1 : -1*/;
+		drag.y = (slideStartY - posY)/* * (dragPrev.y - drag.y >= 0) ? 1 : -1*/;
+
+
+
+		auto selectedVertices = mesh->getSelectedVertices();
+
+		for (int i = 0;i < selectedVertices.size();i++)
+		{
+			auto bestDir = GeometryUtils::bestSlideDirection(slideDirections[i], slideUnProjectedDirections[i], drag);
+			if (!glm::all(glm::epsilonEqual(bestDir, bestDirection[i], 0.001f)))
+			{
+				bestDirection[i] = bestDir;
+
+				tempVertices[selectedVertices[i]]->position = startPositions[i];
+				/*		if (i == selectedVertices.size() - 1)
+							app->updateVertexPosition(deltaX * bestDir);*/
+			}
+			int j = 0;
+			for (j = 0;j < slideDirections[i].size();j++)
+			{
+				if (glm::all(glm::epsilonEqual(bestDir, slideDirections[i][j], 0.001f)) || glm::all(glm::epsilonEqual(bestDir, -slideDirections[i][j], 0.001f)))
+					break;
+			}
+
+			tempVertices[selectedVertices[i]]->Translate(fabs(deltaX) * bestDir);
+
+
+			float projectedLength = glm::dot(tempVertices[selectedVertices[i]]->position - startPositions[i], bestDir); // scalar movement along direction
+			float maxLength = glm::length(slideLengths[i][j] - startPositions[i]);
+			projectedLength = glm::clamp(projectedLength, 0.0f, maxLength);
+
+			tempVertices[selectedVertices[i]]->position = startPositions[i] + bestDir * projectedLength;
+
+			mesh->UpdateVertexBuffer(selectedVertices[i]);
+
+			if (i == selectedVertices.size() - 1)
+				app->updateVertexPosition(bestDir * projectedLength);
+		}
+
+
+		previousX = posX;
+		previousY = posY;
+	}
+
 	// SEPARATE
 	if (keys[GLFW_KEY_Y] == 1)
 	{
@@ -654,13 +759,12 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		keys[GLFW_KEY_G] = 1;
 	}
 
-
 	// DUPLICATE
 	if (keys[GLFW_KEY_D] && keys[GLFW_KEY_LEFT_SHIFT])
 	{
 		if (selectMode == SelectMode::VERTEX)
 		{
-			mesh->duplicateVertices(mesh->getSelectedVertices(),true);
+			mesh->duplicateVertices(mesh->getSelectedVertices(), true);
 		}
 		else if (selectMode == SelectMode::EDGE)
 		{
@@ -669,7 +773,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		else if (selectMode == SelectMode::FACE)
 		{
 
-			mesh->duplicateFaces(mesh->getSelectedFaces(),true);
+			mesh->duplicateFaces(mesh->getSelectedFaces(), true);
 
 		}
 

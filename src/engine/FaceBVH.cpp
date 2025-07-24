@@ -19,7 +19,7 @@ void FaceBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 
 	std::unordered_set<DFace*>faces = mesh.getAllFaces();
 
-	std::cerr << "\n\n\t buildBVH get faces finished";
+	//std::cerr << "\n\n\t buildBVH get faces finished";
 
 	std::vector<DVertex>vertices = mesh.getVerticesCopy();
 	int numObjects = faces.size();

@@ -44,7 +44,14 @@ class Application {
 
 	glm::mat4 model = glm::mat4(1.0f); // treba GUIu... nez zasto je ovde.. pogledaj nekad
 
-
+	bool slide=false;
+	bool slideFirstClick;
+	double slideStartX, slideStartY;
+	std::vector< std::vector<glm::vec3>>slideLengths;
+	std::vector< std::vector<glm::vec3>> slideDirections;
+	std::vector< std::vector<glm::vec2>> slideUnProjectedDirections;
+	std::vector<glm::vec3> bestDirection;
+	std::vector<glm::vec3> startPositions;
 
 public:
 

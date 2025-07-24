@@ -8,7 +8,6 @@ constexpr auto halfPI = PI/2;
 
 void addPlane();
 void addCube();
-// add radial loops to the outer ring similar to plane
 void addCircle(int numSegments = 32, float radius = 1.0f);
 
 // last vertex's disk is wrongly implemented or smth

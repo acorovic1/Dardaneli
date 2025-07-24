@@ -83,7 +83,9 @@ public:
 	void Scale(glm::vec3& scaleVector)override;
 	void Scale(float x, float y, float z)override;
 
-
+	std::vector<glm::vec3> getSlideClampMax( std::unordered_set<DVertex*> neighbours);
+	std::vector<glm::vec3> getSlideDirections(DVertex* vert, std::unordered_set<DVertex*> neighbours);
+	std::vector<glm::vec2> getSlideUnprojectedDirections(DVertex* vert, std::unordered_set<DVertex*> neighbours);
 
 	void extrudeVertices(std::vector<int>&verts,bool update = false);
 	void extrudeEdges(std::vector<DEdge*>&edges, bool update = false);
