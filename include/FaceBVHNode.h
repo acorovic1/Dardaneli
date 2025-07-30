@@ -34,7 +34,7 @@ struct  FaceBVHNode
 
 	bool Hit(const Ray& ray, std::vector<DFace*>& facesHit);
 
-	void refitNode();
+	void refitNode(Mesh& mesh);
 
 	void Draw(Camera& camera, Shader& shader);
 };

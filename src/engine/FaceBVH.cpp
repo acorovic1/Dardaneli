@@ -35,7 +35,7 @@ void FaceBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 		//std::cout << "\n\n NUMBER OF FACES " << faces.size()<<"\n\n";
 		std::unordered_set<DVertex*> temp = face->getVertices();
 
-		std::cerr << "\n\n\t buildBVH face.get vertices finished";
+		//std::cerr << "\n\n\t buildBVH face.get vertices finished";
 
 		for (DVertex* vertex : face->getVertices())
 		{
@@ -72,7 +72,7 @@ void FaceBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 FaceBVHNode* FaceBVH::getRoot() { return root; }
 
 void FaceBVH::Refit(Mesh& mesh) {
-	//getRoot()->refitNodeEdge(mesh);
+	getRoot()->refitNode(mesh);
 }
 void FaceBVH::Clear()
 {

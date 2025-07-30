@@ -1,4 +1,5 @@
 #include "FaceBVHNode.h"
+#include "DFace.h"
 
 
 FaceBVHNode::FaceBVHNode():box(),left(nullptr),right(nullptr),face(nullptr){}
@@ -27,8 +28,29 @@ bool FaceBVHNode::Hit(const Ray& ray, std::vector<DFace*>& facesHit)
 	return false;
 }
 
-void FaceBVHNode::refitNode()
+void FaceBVHNode::refitNode(Mesh& mesh)
 {
+	if (!this->left && !this->right)
+	{
+		auto faceVertices = face->getVerticesVector();
+		std::vector<glm::vec3>faceVertexPositions;
+		for (auto vert : faceVertices)
+			faceVertexPositions.push_back(vert->position);
+
+		this->box = AABB(faceVertexPositions);
+	}
+	else
+	{
+		this->left->refitNode(mesh);
+		this->right->refitNode(mesh);
+
+		if (this->left && this->right)
+			this->box = AABB(this->left->box, this->right->box);
+		else if (this->left)
+			this->box = AABB(this->left->box);
+		else this->box = AABB(this->right->box);
+	}
+
 }
 
 

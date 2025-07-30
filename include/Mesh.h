@@ -22,6 +22,7 @@ class Mesh :public Object {
 	void eraseFace(DFace* face);
 	// !!! needs an EBO update !!!
 	// erases indices of the edge inside the mesh
+	// !!! DISK UPDATING NOT IMPLEMENTED !!!
 	void eraseEdge(DEdge* edge);
 
 	// !!! needs a VBO update !!!
@@ -29,8 +30,7 @@ class Mesh :public Object {
 	void eraseVertex(DVertex* v);
 
 
-	// sets the winding order for the SELECTED vertices !!!
-	void setWindingOrder(std::vector<int>& verts);
+	glm::vec3 setWindingOrder(std::vector<int>& verts);
 
 	template <typename Container,
 		typename = typename std::enable_if<
@@ -48,7 +48,7 @@ class Mesh :public Object {
 	DEdge* createEdgeForFill(int a, int b, DFace* face);
 
 
-	
+
 	DVertex* duplicateVertex(DVertex& vertex);
 
 public:
@@ -83,14 +83,57 @@ public:
 	void Scale(glm::vec3& scaleVector)override;
 	void Scale(float x, float y, float z)override;
 
-	std::vector<glm::vec3> getSlideClampMax( std::unordered_set<DVertex*> neighbours);
+	void edgeScale(DEdge* edge, float delta, bool update = false);
+
+	void inset(std::vector<DFace*> faces);
+	void insetIndividual(std::vector<DFace*> faces);
+
+	template <typename Container,
+		typename = typename std::enable_if<
+		std::is_same<typename Container::value_type, DFace*>::value
+	>::type>
+	void pokeFaces(Container& faces, bool update = false);
+
+	template <typename Container,
+		typename = typename std::enable_if<
+		std::is_same<typename Container::value_type, DFace*>::value
+	>::type>
+	void triangulateFaces(Container& faces, bool update = false);
+
+	void bridgeFaces(DFace* faceA, DFace* faceB, bool update = false);
+
+	void trisToQuads(std::unordered_set < DFace*>& faces, bool update = false);
+
+	template <typename Container,
+		typename = typename std::enable_if<
+		std::is_same<typename Container::value_type, DFace*>::value
+	>::type>
+	void flipFaceNormals(Container& faces);
+
+	std::vector<glm::vec3> getSlideClampMax(std::unordered_set<DVertex*> neighbours);
 	std::vector<glm::vec3> getSlideDirections(DVertex* vert, std::unordered_set<DVertex*> neighbours);
 	std::vector<glm::vec2> getSlideUnprojectedDirections(DVertex* vert, std::unordered_set<DVertex*> neighbours);
 
-	void extrudeVertices(std::vector<int>&verts,bool update = false);
-	void extrudeEdges(std::vector<DEdge*>&edges, bool update = false);
-	void extrudeFaces(std::vector<DFace*>&faces,bool update = false);
-	void extrudeIndividualFaces(std::vector<DFace*>&faces,bool update = false);
+	void extrudeVertices(std::vector<int>& verts, bool update = false);
+
+	// returns middle edges
+	template <typename Container,
+		typename = typename std::enable_if<
+		std::is_same<typename Container::value_type, DEdge*>::value
+	>::type>
+	std::unordered_set<DEdge*>  extrudeEdges(Container& edges, bool update = false);
+
+	template <typename Container,
+		typename = typename std::enable_if<
+		std::is_same<typename Container::value_type, DFace*>::value
+	>::type>
+	void extrudeFaces(Container& faces, bool update = false);
+
+	template <typename Container,
+		typename = typename std::enable_if<
+		std::is_same<typename Container::value_type, DFace*>::value
+	>::type>
+	void extrudeIndividualFaces(Container& faces, bool update = false);
 
 	// !!! NOT IMPLEMENTED !!!
 	void extrudeManifold();
@@ -101,13 +144,28 @@ public:
 	// !!! NOT IMPLEMENTED !!!
 	void spin();
 
-	std::vector<DFace*> separate(std::vector<DFace*>faces);
+
+	template <typename Container,
+		typename = typename std::enable_if<
+		std::is_same<typename Container::value_type, DFace*>::value
+	>::type>
+	std::vector<DFace*> separate(Container faces);
 
 
 
-	std::vector<DVertex*> duplicateVertices(std::vector<int>&verts, bool update = false);
-	std::vector<DEdge*> duplicateEdges(std::vector<DEdge*>&edges, bool update = false);
-	std::vector<DFace*> duplicateFaces(std::vector<DFace*>&faces, bool update = false);
+	std::vector<DVertex*> duplicateVertices(std::vector<int>& verts, bool update = false);
+
+	template <typename Container,
+		typename = typename std::enable_if<
+		std::is_same<typename Container::value_type, DEdge*>::value
+	>::type>
+	std::vector<DEdge*> duplicateEdges(Container& edges, bool update = false);
+
+	template <typename Container,
+		typename = typename std::enable_if<
+		std::is_same<typename Container::value_type, DFace*>::value
+	>::type>
+	std::vector<DFace*> duplicateFaces(Container& faces, bool update = false);
 
 
 	// test all of these thoroughly 
@@ -148,7 +206,9 @@ public:
 
 
 	DEdge* edgeFill(std::vector<int>& verts);
-	DFace* faceFill(std::vector<int>& verts,bool windingOrderSet=false,bool update=false);
+
+
+	DFace* faceFill(std::vector<int>& verts, bool windingOrderSet = false, bool update = false);
 
 
 	std::vector<int>& getSelectedVertices();

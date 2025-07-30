@@ -145,6 +145,9 @@ void MyGUI::DrawUI()
 
 		if (showExtrudeMenu)
 			Extrude();
+
+		if (showInsetMenu)
+			Inset();
 	}
 
 	ImGui::End();
@@ -305,7 +308,7 @@ void MyGUI::Delete()
 
 
 		if (selected_option == 0)
-			mesh->deleteVertices(mesh->getSelectedVertices(),true);
+			mesh->deleteVertices(mesh->getSelectedVertices(), true);
 		else if (selected_option == 1)
 			mesh->deleteEdges(mesh->getSelectedEdges(), true);
 		else if (selected_option == 2)
@@ -353,11 +356,11 @@ void MyGUI::ExtrudeMenu()
 
 void MyGUI::Extrude()
 {
-	std::cout << "\n\n\tEXTRUDEEEE";
+	//std::cout << "\n\n\tEXTRUDEEEE";
 
 	hoverTime = glfwGetTime();
 	static int selected_option = -1;
-	const char* options[] = { "Vertices", "Edges", "Faces","Individual Faces","Manifold | WIP","Along Normals | WIP","Repeat | WIP", "Spin | WIP"};
+	const char* options[] = { "Vertices", "Edges", "Faces","Individual Faces","Manifold | WIP","Along Normals | WIP","Repeat | WIP", "Spin | WIP" };
 
 	ImGui::OpenPopup("Extrude popup");
 
@@ -370,7 +373,7 @@ void MyGUI::Extrude()
 		if (!mesh)return;
 
 		for (int i = 0; i < 8; ++i) {
-			if (i ==6) {
+			if (i == 6) {
 				ImGui::Separator();
 			}
 
@@ -413,6 +416,74 @@ void MyGUI::Extrude()
 		ImGui::EndPopup();
 	}
 
+
+}
+
+void MyGUI::InsetMenu()
+{
+	showInsetMenu = true;
+}
+
+void MyGUI::Inset()
+{
+	hoverTime = glfwGetTime();
+	static int selected_option = -1;
+	const char* options[] = { "Group", "Individual" };
+
+	ImGui::OpenPopup("Inset popup");
+
+	if (ImGui::BeginPopup("Inset popup"))
+	{
+		ImGui::SeparatorText("Inset");
+		ImGui::Separator();
+
+		Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()));
+		if (!mesh)return;
+
+		for (int i = 0; i < 2; ++i) {
+			if (i == 6) {
+				//ImGui::Separator();
+			}
+
+			if (ImGui::Selectable(options[i])) {
+				selected_option = i;
+			}
+		}
+
+
+		if (selected_option == 0)
+		{
+			mesh->inset(mesh->getSelectedFaces());
+			window->getKeys()[GLFW_KEY_S] = 1;
+			std::cout << "\n\naj karamba ";
+
+		}
+		else if (selected_option == 1)
+		{
+			mesh->insetIndividual(mesh->getSelectedFaces());
+			window->getKeys()[GLFW_KEY_S] = 1;
+			std::cout << "\n\naj karamba ";
+
+		}
+
+
+
+
+		if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) && !ImGui::IsAnyItemHovered() && hoverTime > 1.4)
+		{
+			glfwSetTime(0);
+			hoverTime = 0;
+			if (selected_option		!= -1)
+			{
+				
+				std::cout << "\n\naj karamba ";
+			}
+			showInsetMenu = false;
+			ImGui::CloseCurrentPopup();
+		}
+		selected_option = -1;
+		ImGui::EndPopup();
+	}
 
 }
 
@@ -506,9 +577,9 @@ void MyGUI::Gizmos()
 				app->scale[0] = transform[0][0];
 				app->scale[1] = transform[1][1];
 				app->scale[2] = transform[2][2];
-				if (app->scale[0] == 0)app->scale[0] == 1;
-				if (app->scale[1] == 0)app->scale[1] == 1;
-				if (app->scale[2] == 0)app->scale[2] == 1;
+				if (app->scale[0] == 0)app->scale[0] = 1;
+				if (app->scale[1] == 0)app->scale[1] = 1;
+				if (app->scale[2] == 0)app->scale[2] = 1;
 
 				auto delta = transform / previousTransform;
 				for (auto x : app->objectIndices)
@@ -838,8 +909,8 @@ void MyGUI::DMesh()
 		std::pair<int, int> edgeIndices = mesh->getEdgeIndices(selectedEdges.back());
 		selectedVertices.clear();
 
-		std::cout << "\nv1\t" << v1 << "\ne1\t" << &vertices[edgeIndices.first] << "\ne2\t" << &vertices[edgeIndices.second]<<"\nv1 index: "<<mesh->getVertexIndex(v1);
-		
+		std::cout << "\nv1\t" << v1 << "\ne1\t" << &vertices[edgeIndices.first] << "\ne2\t" << &vertices[edgeIndices.second] << "\nv1 index: " << mesh->getVertexIndex(v1);
+
 
 		if (v1 == vertices[edgeIndices.first])
 		{
@@ -853,7 +924,7 @@ void MyGUI::DMesh()
 			selectedVertices.push_back(edgeIndices.second);
 
 		}
-		else std::cout << "\nKonju123  v1 = " << edgeIndices.first<<"\tv2 = "<<edgeIndices.second;
+		else std::cout << "\nKonju123  v1 = " << edgeIndices.first << "\tv2 = " << edgeIndices.second;
 
 	}
 	ImGui::SameLine();
@@ -1012,7 +1083,7 @@ void MyGUI::DMesh()
 	if (clicked)
 	{
 		clicked = 0;
-		if (selectedLoop->radialNext==selectedLoop)// if it doesnt exist
+		if (selectedLoop->radialNext == selectedLoop)// if it doesnt exist
 		{
 			std::cerr << "\n\n loop.radialNext ---> only edge loop\n";
 			ImGui::End();
@@ -1033,7 +1104,7 @@ void MyGUI::DMesh()
 	if (clicked)
 	{
 		clicked = 0;
-		if (selectedLoop->radialPrev==selectedLoop)// if it doesnt exist
+		if (selectedLoop->radialPrev == selectedLoop)// if it doesnt exist
 		{
 			std::cerr << "\n\n loop.radialPrev ---> only edge loop\n";
 			ImGui::End();
@@ -1080,7 +1151,7 @@ void MyGUI::DMesh()
 		{
 			selectedEdges.push_back(e);
 			auto temp = mesh->getEdgeIndices(e);
-			std::cout << "\n " << temp.first<<" "<<temp.second;
+			std::cout << "\n " << temp.first << " " << temp.second;
 		}
 
 	}
@@ -1101,7 +1172,7 @@ void MyGUI::DMesh()
 			auto temp = mesh->getFaceIndices(f);
 
 			std::cout << "\n";
-			for(auto x:temp)
+			for (auto x : temp)
 				std::cout << " " << x;
 			std::cout << "\n";
 		}

@@ -51,6 +51,7 @@ public:
 	bool showAddMenu = false;
 	bool showDeleteMenu = false;
 	bool showExtrudeMenu = false;
+	bool showInsetMenu = false;
 	MyGUI(Window* window);
 	void Init();
 	void NewFrame();
@@ -70,6 +71,8 @@ public:
 	void Delete();
 	void ExtrudeMenu();
 	void Extrude();
+	void InsetMenu();
+	void Inset();
 
 	void DrawBVH();
 

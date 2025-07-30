@@ -21,6 +21,11 @@ struct DFace {
 	std::vector<DVertex*> getVerticesVector()const;
 
 
-	std::unordered_set<DLoop*>getLoops();
+	std::unordered_set<DLoop*>getLoops()const;
+
+	std::unordered_set<DFace*>getAdjecentFaces()const;
+
+
+	void flip();
 
 };

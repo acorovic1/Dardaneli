@@ -234,9 +234,12 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		slide = false;
 		firstClick = true;
 		if (keys[GLFW_KEY_LEFT_ALT])return;
+		keys[GLFW_KEY_S] = 0;
 		if (keys[GLFW_KEY_G])
 		{
 			VertexBVHSingleton->Refit(*mesh);
+			EdgeBVHSingleton->Refit(*mesh);
+			FaceBVHSingleton->Refit(*mesh);
 			keys[GLFW_KEY_G] = 0;
 			return;
 		}
@@ -577,6 +580,43 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		keys[GLFW_KEY_A] = 0;
 	}
 
+	// SCALE
+	if (keys[GLFW_KEY_S])
+	{
+
+		glfwGetCursorPos(window, &posX, &posY);
+
+		static std::vector<glm::vec3> directions;
+
+		if (firstClick)
+		{
+			directions.clear();
+			for (auto& edge : mesh->getSelectedEdges())
+				directions.push_back(glm::normalize(edge->v1->position - edge->v2->position));
+
+			previousX = posX;
+			previousY = posY;
+			firstClick = false;
+			return;
+		}
+		float deltaX = (posX - previousX) / 150;
+		float deltaY = (previousY - posY) / 150;
+
+		auto edges = mesh->getSelectedEdges();
+		glm::vec3 offset;
+		for (int i = 0;i < edges.size();i++)
+		{
+			offset = deltaX * directions[i];
+			edges[i]->v1->Translate(offset);
+			edges[i]->v2->Translate(-offset);
+			mesh->UpdateVertexBuffer(mesh->getVertexIndex(edges[i]->v1));
+			mesh->UpdateVertexBuffer(mesh->getVertexIndex(edges[i]->v2));
+		}
+		std::cout << "\nSCALE";
+		previousX = posX;
+		previousY = posY;
+	}
+
 	// TRANSLATE
 	if (keys[GLFW_KEY_G] == 1)
 	{
@@ -675,7 +715,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 			slideDirections.clear();
 			startPositions.clear();
 			slideUnProjectedDirections.clear();
-			bestDirection = std::vector<glm::vec3>(mesh->getSelectedVertices().size(),glm::vec3(0.0f));
+			bestDirection = std::vector<glm::vec3>(mesh->getSelectedVertices().size(), glm::vec3(0.0f));
 
 			for (auto x : mesh->getSelectedVertices())
 			{
@@ -748,6 +788,15 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		previousY = posY;
 	}
 
+	// INSET
+	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+	{
+		gui.InsetMenu();
+
+		keys[GLFW_KEY_I] = 0;
+		//	keys[GLFW_KEY_S] = 1;
+	}
+
 	// SEPARATE
 	if (keys[GLFW_KEY_Y] == 1)
 	{
@@ -807,8 +856,58 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		if (temp.size() == 2)
 			mesh->edgeFill(temp);
 		else
-			mesh->faceFill(temp);
+			mesh->faceFill(temp, false, true);
 		keys[GLFW_KEY_F] = 0;
+	}
+
+	// POKE
+	if (keys[GLFW_KEY_P])
+	{
+		mesh->pokeFaces(mesh->getSelectedFaces(), true);
+		keys[GLFW_KEY_P] = 0;
+	}
+
+	// TRIANGULATE
+	if (keys[GLFW_KEY_T] && keys[GLFW_KEY_LEFT_CONTROL])
+	{
+		mesh->triangulateFaces(mesh->getSelectedFaces(), true);
+		keys[GLFW_KEY_T] = 0;
+		keys[GLFW_KEY_LEFT_CONTROL] = 0;
+	}
+
+	// TRIS TO QUADS
+	if (keys[GLFW_KEY_T] && keys[GLFW_KEY_LEFT_ALT])
+
+	{
+		auto temp = mesh->getSelectedFaces();
+
+		std::unordered_set < DFace*> faces{ temp.begin(),temp.end() };
+
+		mesh->trisToQuads(faces, true);
+		keys[GLFW_KEY_T] = 0;
+		keys[GLFW_KEY_LEFT_ALT] = 0;
+	}
+
+	// BRIDGE FACES
+	if (keys[GLFW_KEY_B])
+	{
+		auto& selectedFaces = mesh->getSelectedFaces();
+		DFace* faceA = selectedFaces.back();
+		selectedFaces.pop_back();
+		DFace* faceB = selectedFaces.back();
+
+		mesh->bridgeFaces(faceA, faceB, true);
+
+		keys[GLFW_KEY_B] = 0;
+	}
+
+	// FLIP NORMALS
+	if (keys[GLFW_KEY_N] && keys[GLFW_KEY_LEFT_ALT])
+	{
+		mesh->flipFaceNormals(mesh->getSelectedFaces());
+
+		keys[GLFW_KEY_N] = 0;
+		keys[GLFW_KEY_LEFT_ALT] = 0;
 	}
 
 

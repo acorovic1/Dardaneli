@@ -100,6 +100,8 @@ AABB::AABB(AABB& a, AABB& b)
 	aabb = DrawableAABB(min, max);
 }
 
+
+
 AABB::AABB(glm::vec3 vertex)
 {
 	min = vertex - glm::vec3(0.05f, 0.05f, 0.05f);

@@ -235,11 +235,272 @@ void Mesh::Scale(float x, float y, float z) {
 	model = glm::scale(model, glm::vec3(x, y, z));
 }
 
+void Mesh::edgeScale(DEdge* edge, float delta, bool update)
+{
+
+
+	DVertex* v1 = edge->v1;
+	DVertex* v2 = edge->v2;
+
+	glm::vec3 dir = glm::normalize(v1->position - v2->position);
+
+	v1->position += delta * dir;
+	v2->position -= delta * dir;
+
+	//std::cout << "\ni am here "<<v1->position.x;
+	std::cout << "\n\n\tMesh.edgeScale " << v1->position.x << " " << v1->position.y << " " << v1->position.z;
+	std::cout << "\n\n\tMesh.edgeScale " << v2->position.x << " " << v2->position.y << " " << v2->position.z;
+	std::cout << "\n\n\tMesh.edgeScale delta " << delta;
+	std::cout << "\n\n\tMesh.edgeScale dir " << dir.x << " " << dir.y << " " << dir.z;
+	std::cout << "\n\n\n ";
+
+	if (!update)return;
+
+
+	VBO.bufferData(vertices);
+
+	EdgeBVHSingleton->Refit(*this);
+
+
+}
+
+void Mesh::inset(std::vector<DFace*> faces)
+{
+	return; //
+
+	// mnogo zajebana operacija!!
+	// 
+	// 
+	// find outer rim
+
+	// delete everything except vertices from the inside of the rim
+
+	// extrude outer rim inwards, just like in the individual inset
+
+	// get directions of new edges and find all the vertices that lie in that direction (use epsilon )
+	// closest vertex is the one that is needed
+
+	// one edge, if two vertices find a vertex each, fill those
+
+	// if only one vertex finds a corresponding vertex, check its neighbouring edge 2nd vertex, they form a corner
+
+	// if no vertices find a corresponding vertex, its probably a standalone face, find its vertices and fill 
+
+
+	// all selected edges
+	std::unordered_map<DEdge*, int> edges;
+
+	std::unordered_set<DEdge*> outerEdges;
+	std::unordered_set<DEdge*> innerEdges;
+
+	// outer edges have int=1, inner edges have more
+	for (auto face : faces)
+	{
+
+		for (auto edge : face->getEdges())
+		{
+			auto it = edges.find(edge);
+
+			if (it == edges.end())
+			{
+				edges.insert({ edge,1 });
+			}
+			else it->second += 1;
+		}
+	}
+
+	// separate inner and outer edges;
+	for (auto edge : edges)
+	{
+		if (edge.second == 1)
+			outerEdges.insert(edge.first);
+		else
+			innerEdges.insert(edge.first);
+
+	}
+
+	// vertices to check if they lie on the specified direction
+	std::unordered_set<DVertex*> middleVertices;
+	for (auto innerEdge : innerEdges)
+	{
+		DVertex* v1 = innerEdge->v1;
+		DVertex* v2 = innerEdge->v2;
+		if (!std::count_if(outerEdges.begin(), outerEdges.end(), [&v1](DEdge* outerEdge)
+			{
+				return outerEdge->v1 == v1 || outerEdge->v2 == v1;
+
+			}))
+			middleVertices.insert(v1);
+
+		if (!std::count_if(outerEdges.begin(), outerEdges.end(), [&v2](DEdge* outerEdge)
+			{
+				return outerEdge->v1 == v2 || outerEdge->v2 == v2;
+
+			}))
+			middleVertices.insert(v2);
+	}
+	deleteOnlyEdgesAndFaces(innerEdges);
+
+	// extrude edges
+	std::unordered_set<DEdge*> extrudedEdges = extrudeEdges(outerEdges);
+
+	std::unordered_map<DVertex*, glm::vec3> vertexDirection;
+
+	for (DEdge* edge : extrudedEdges)
+	{
+
+		if (!vertexDirection.count(edge->v1))
+			for (auto vertEdges : edge->v1->getAdjecentEdges())
+			{
+				// if its the directedEdge
+				if (!std::count(extrudedEdges.begin(), extrudedEdges.end(), vertEdges))
+				{
+					if (edge->v1 == vertEdges->v1)
+					{
+						vertexDirection.insert({ edge->v1,glm::normalize(edge->v1->position - vertEdges->v2->position) });
+					}
+					else if (edge->v1 == vertEdges->v2)
+					{
+						vertexDirection.insert({ edge->v1,glm::normalize(edge->v1->position - vertEdges->v1->position) });
+					}
+					else std::cout << "\n\n\t ERROR mesh.inset --- problem with finding directedEdge 1";
+				}
+			}
+
+		if (!vertexDirection.count(edge->v2))
+			for (auto vertEdges : edge->v2->getAdjecentEdges())
+			{
+				// if its the directedEdge
+				if (!std::count(extrudedEdges.begin(), extrudedEdges.end(), vertEdges))
+				{
+					if (edge->v2 == vertEdges->v1)
+					{
+						vertexDirection.insert({ edge->v2,glm::normalize(edge->v2->position - vertEdges->v2->position) });
+					}
+					else if (edge->v2 == vertEdges->v2)
+					{
+						vertexDirection.insert({ edge->v2,glm::normalize(edge->v2->position - vertEdges->v1->position) });
+					}
+					else std::cout << "\n\n\t ERROR mesh.inset --- problem with finding directedEdge 2";
+				}
+			}
+
+	}
+
+	bool v1Found, v2Found;
+	std::vector<int>fillIndices;
+	// check for colinear verts
+	for (DEdge* edge : extrudedEdges)
+	{
+		DVertex* v1 = edge->v1;
+		DVertex* v2 = edge->v2;
+
+		v1Found = false;
+		v2Found = false;
+
+		fillIndices.push_back(getVertexIndex(v1));
+		fillIndices.push_back(getVertexIndex(v2));
+
+		for (DVertex* middleVertex : middleVertices)
+		{
+
+			if (vertexDirection[v1] == glm::normalize(middleVertex->position - v1->position) && !v1Found)
+			{
+				v1Found = true;
+				fillIndices.push_back(getVertexIndex(middleVertex));
+			}
+			if (vertexDirection[v2] == glm::normalize(middleVertex->position - v2->position) && !v2Found)
+			{
+				v2Found = true;
+				fillIndices.push_back(getVertexIndex(middleVertex));
+			}
+		}
+
+		if (v1Found && v2Found)
+		{
+			faceFill(fillIndices);
+			continue;
+		}
+
+		if (!v1Found && !v2Found);
+
+		if (v1Found)
+		{
+			DEdge* nextEdge = edge->d2.next;
+			while (!std::count(extrudedEdges.begin(), extrudedEdges.end(), nextEdge))
+			{
+				if (nextEdge->v1 == edge->v2)
+					nextEdge = nextEdge->d1.next;
+				else if (nextEdge->v2 == edge->v2)
+					nextEdge = nextEdge->d2.next;
+				else std::cout << "\n\n\t ERROR Mesh.inset.. v1Found";
+			}
+
+			DVertex* otherVertex = (nextEdge->v1 == edge->v2) ? nextEdge->v2 : nextEdge->v1;
+
+			for (DVertex* middleVertex : middleVertices)
+			{
+
+				if (vertexDirection[otherVertex] == glm::normalize(middleVertex->position - otherVertex->position))
+				{
+					fillIndices.push_back(getVertexIndex(middleVertex));
+					fillIndices.push_back(getVertexIndex(otherVertex));
+					break;
+				}
+
+			}
+
+		}
+	}
+
+}
+
+void Mesh::insetIndividual(std::vector<DFace*> faces)
+{
+	selectedVertexIndices.clear();
+	this->getSelectedEdges().clear();
+	this->getSelectedFaces().clear();
+
+	for (DFace* face : faces)
+	{
+		std::unordered_set<DEdge*>  edges = face->getEdges();
+		eraseFace(face);
+
+
+		std::unordered_set<int> vertIndices;
+
+		for (auto edge : extrudeEdges(edges))
+		{
+			vertIndices.insert(getVertexIndex(edge->v1));
+			vertIndices.insert(getVertexIndex(edge->v2));
+			selectedEdges.push_back(edge);
+		}
+
+		std::vector<int> vertIndicesVec{ vertIndices.begin(),vertIndices.end() };
+		faceFill(vertIndicesVec);
+
+
+		selectedVertexIndices.insert(selectedVertexIndices.begin(), vertIndices.begin(), vertIndices.end());
+	}
+
+	this->updateEBO();
+	this->updateEdgeEBO();
+	VBO.bufferData(vertices);
+
+	//this->getSelectedVertices().clear();
+
+
+	FaceBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
+	VertexBVHSingleton->BuildBottomUp(*this);
+
+}
+
 std::vector<glm::vec3> Mesh::getSlideClampMax(std::unordered_set<DVertex*> neighbours)
 {
 	std::vector<glm::vec3> max;
 
-	for (auto x :neighbours)
+	for (auto x : neighbours)
 		max.push_back(x->position);
 
 	return max;
@@ -448,14 +709,359 @@ void Mesh::extrudeVertices(std::vector<int>& verts, bool update)
 	EdgeBVHSingleton->BuildBottomUp(*this);
 
 }
+template<typename Container, typename>
+void Mesh::pokeFaces(Container& faces, bool update)
+{
+	//std::cout << "\n\n\t Beggining of pokeFaces... vertices.size= " << vertices.size();
 
-void Mesh::extrudeEdges(std::vector<DEdge*>& edges, bool update)
+	for (DFace* face : faces)
+	{
+		auto verts = face->getVertices();
+
+		glm::vec3 midPoint(0.0f);
+		for (auto vert : verts)
+		{
+			midPoint += vert->position;
+		}
+
+		midPoint /= verts.size();
+
+		vertices.push_back(new DVertex(midPoint));
+
+		auto edges = face->getEdges();
+
+		eraseFace(face);
+
+		std::vector<int> fillVec;
+
+		for (auto edge : edges)
+		{
+			fillVec.push_back(getVertexIndex(edge->v1));
+			fillVec.push_back(getVertexIndex(edge->v2));
+			fillVec.push_back(vertices.size() - 1);
+
+			faceFill(fillVec);
+
+			fillVec.clear();
+		}
+
+
+	}
+	if (!update)return;
+
+	VBO.bufferData(vertices);
+	updateEBO();
+	updateEdgeEBO();
+
+	selectedFaces.clear();
+
+	VertexBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
+	FaceBVHSingleton->BuildBottomUp(*this);
+	//std::cout << "\n\n\t End of pokeFaces... vertices.size= " << vertices.size();
+
+}
+
+template<typename Container, typename>
+void Mesh::triangulateFaces(Container& faces, bool update)
+{
+	std::vector<int> vertIndices;
+	std::vector<int> fillVec;
+	for (DFace* face : faces)
+	{
+
+		auto verts = face->getVertices();
+
+		if (verts.size() == 3)continue;
+		eraseFace(face);
+
+		vertIndices.clear();
+		for (auto vert : verts)
+			vertIndices.push_back(getVertexIndex(vert));
+
+		setWindingOrder(vertIndices);
+
+		int stride = 1;
+		int num = vertIndices.size();
+
+		while (true) {
+			bool anyPrinted = false;
+
+			for (int i = 0; i < num; i += 2 * stride) {
+				fillVec.clear();
+				int a = i;
+				int b = i + stride;
+				int c = i + 2 * stride;
+
+				if (b >= num) break;
+
+				if (c >= num) c = 0;
+
+				if (a == b || b == c || a == c)
+					continue;
+
+				fillVec.push_back(vertIndices[a]);
+				fillVec.push_back(vertIndices[b]);
+				fillVec.push_back(vertIndices[c]);
+
+				faceFill(fillVec, true);
+
+				anyPrinted = true;
+			}
+
+			if (!anyPrinted) break;
+
+			stride *= 2;
+		}
+
+	}
+
+	if (!update)return;
+
+
+	updateEBO();
+	updateEdgeEBO();
+
+	selectedFaces.clear();
+
+	//VertexBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
+	FaceBVHSingleton->BuildBottomUp(*this);
+
+}
+
+template<typename Container,typename >
+void Mesh::flipFaceNormals(Container& faces)
+{
+	for (DFace* face : faces)
+	{
+		face->flip();
+
+		std::vector<int> newIndices;
+		bool flag;
+		std::unordered_set<int> setOfVertices;
+
+		for (DVertex* vertex : face->getVertices())
+		{
+			setOfVertices.insert(this->getVertexIndex(vertex));
+		}
+
+		int numberOfTriplets = setOfVertices.size() - 2;
+
+		for (int j = 0; j < this->indices.size(); j += 3 * numberOfTriplets)
+		{
+			flag = false;
+			for (int k = j; k < j + 3 * numberOfTriplets; k++)
+			{
+
+				if (!setOfVertices.count(this->indices[k]))
+				{
+					flag = true;
+					break;
+				}
+			}
+			if (flag)continue;
+
+			for (int i = 0;i < 3 * numberOfTriplets;i+=3)
+			{
+				std::swap(*(this->indices.begin() + j + i), *(this->indices.begin() + j + i + 2));
+			}
+
+			//newIndices.insert(newIndices.begin(), this->indices.begin() + j, this->indices.begin() + j + 3 * numberOfTriplets);
+			//this->indices.erase(this->indices.begin() + j, this->indices.begin() + j + 3 * numberOfTriplets);
+
+
+			break;  /// dodaj ovaj break i u eraseFace
+
+		}
+
+
+
+
+	}
+
+
+	updateEBO();
+
+}
+
+
+void Mesh::bridgeFaces(DFace* faceA, DFace* faceB, bool update)
+{
+	auto vertVecA = faceA->getVerticesVector();
+	auto vertVecB = faceB->getVerticesVector();
+
+	if (vertVecA.size() != vertVecB.size())
+	{
+		std::cout << " \n\n\tFaces do not have equal number of vertices\n";
+		return;
+	}
+
+	int size = vertVecA.size();
+
+	std::vector<int> vertIndicesA;
+	std::vector<int> vertIndicesB;
+
+	for (int i = 0;i < size;i++)
+	{
+		vertIndicesA.push_back(getVertexIndex(vertVecA[i]));
+		vertIndicesB.push_back(getVertexIndex(vertVecB[i]));
+	}
+
+	glm::vec3 normalA = setWindingOrder(vertIndicesA);
+	glm::vec3 normalB = setWindingOrder(vertIndicesB);
+
+	if (glm::dot(normalA, normalB) < 0.0f)
+		std::reverse(vertIndicesB.begin(), vertIndicesB.end());
+
+	std::vector<int>fillVec;
+	int temp;
+
+	for (int i = 0;i < size;i++)
+	{
+
+		temp = (i + 1) % size;
+
+		fillVec.push_back(vertIndicesA[i]);
+		fillVec.push_back(vertIndicesA[temp]);
+		fillVec.push_back(vertIndicesB[i]);
+		fillVec.push_back(vertIndicesB[temp]);
+
+
+		faceFill(fillVec);
+		fillVec.clear();
+	}
+
+	// if there were adjecentFaces before the bridge operation
+	if (faceA->getAdjecentFaces().size() != size)
+		eraseFace(faceA);
+
+	if (faceB->getAdjecentFaces().size() != size)
+		eraseFace(faceB);
+
+
+
+	if (!update)return;
+
+
+	updateEBO();
+	updateEdgeEBO();
+
+	selectedFaces.clear();
+
+	//VertexBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
+	FaceBVHSingleton->BuildBottomUp(*this);
+
+
+}
+
+void Mesh::trisToQuads(std::unordered_set<DFace*>& faces, bool update)
+{
+
+	std::unordered_map<DFace*, bool> temp;
+
+	for (DFace* face : faces)
+		temp.insert({ face,false });
+
+
+
+
+
+	std::vector<int> fillVec;
+
+	for (auto& pair : temp)
+	{
+		if (pair.second) continue;
+
+		DFace* face = pair.first;
+		fillVec.clear();
+
+		auto loops = face->getLoops();
+		if (loops.size() != 3)continue;
+
+		std::vector<std::pair<DLoop*, float>> v;
+
+
+		for (DLoop* loop : loops)
+			v.push_back({ loop,glm::length(loop->tip->position - loop->prev->tip->position) });
+
+
+		std::sort(v.begin(), v.end(), [](auto& a, auto& b) { return a.second > b.second; });
+
+		DLoop* longest = v[0].first;
+		DLoop* middle = v[1].first;
+		DLoop* shortest = v[2].first;
+
+		DLoop* commonSide = nullptr;
+		DFace* otherFace = nullptr;
+
+		for (int i = 0; i < 3; ++i)
+		{
+			DLoop* candidate = v[i].first;
+			DLoop* radial = candidate->radialNext;
+
+			if (radial == candidate)
+				continue;
+
+			DFace* radialFace = radial->face;
+			if (!radialFace || radialFace->getLoops().size() != 3)
+				continue;
+
+			if (!faces.count(radialFace))
+				continue;
+
+
+			commonSide = candidate;
+			otherFace = radialFace;
+			break;
+		}
+
+		if (!commonSide || !otherFace)
+			continue;
+
+		auto verts = face->getVertices();
+		auto verts1 = otherFace->getVertices();
+		verts.insert(verts1.begin(), verts1.end());
+
+		for (auto x : verts)
+			fillVec.push_back(getVertexIndex(x));
+
+		temp[commonSide->radialNext->face] = true;
+		temp[face] = true;
+
+		std::unordered_set<DEdge*> deleteSet{ getEdge(getVertexIndex(commonSide->tip),getVertexIndex(commonSide->prev->tip)) };
+		deleteOnlyEdgesAndFaces(deleteSet);
+
+		faceFill(fillVec);
+
+
+
+	}
+	if (!update)return;
+
+
+	updateEBO();
+	updateEdgeEBO();
+
+	selectedFaces.clear();
+
+	//VertexBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
+	FaceBVHSingleton->BuildBottomUp(*this);
+
+}
+template <typename Container, typename>
+std::unordered_set<DEdge*>  Mesh::extrudeEdges(Container& edges, bool update)
 {
 
 	DVertex* v1, * v2;
 	DVertex* duplicate1, * duplicate2;
 	int index1, index2;
 	DEdge* e1, * e2, * middle;
+
+	// middle edges
+	std::unordered_set<DEdge*> returnEdges;
 
 	std::unordered_map<DVertex*, DVertex*> visited;
 
@@ -499,8 +1105,14 @@ void Mesh::extrudeEdges(std::vector<DEdge*>& edges, bool update)
 		}
 
 		middle = new DEdge(duplicate1, duplicate2);
-		edgeIndices.push_back(vertices.size() - 2);
-		edgeIndices.push_back(vertices.size() - 1);
+
+		returnEdges.insert(middle);
+
+		int duplicateIndex1 = getVertexIndex(duplicate1);
+		int duplicateIndex2 = getVertexIndex(duplicate2);
+
+		edgeIndices.push_back(duplicateIndex1);
+		edgeIndices.push_back(duplicateIndex2);
 
 
 		DFace* face = new DFace();
@@ -523,17 +1135,17 @@ void Mesh::extrudeEdges(std::vector<DEdge*>& edges, bool update)
 		face->loop = l1;
 
 		this->indices.push_back(index1);
-		this->indices.push_back(vertices.size() - 2);
+		this->indices.push_back(duplicateIndex1);
 		this->indices.push_back(index2);
 
 		this->indices.push_back(index2);
-		this->indices.push_back(vertices.size() - 2);
-		this->indices.push_back(vertices.size() - 1);
+		this->indices.push_back(duplicateIndex1);
+		this->indices.push_back(duplicateIndex2);
 
 
 	}
 
-	if (!update)return;
+	if (!update)return returnEdges;
 
 	int size = selectedVertexIndices.size();
 	edges.clear();
@@ -548,9 +1160,13 @@ void Mesh::extrudeEdges(std::vector<DEdge*>& edges, bool update)
 	VertexBVHSingleton->BuildBottomUp(*this);
 	EdgeBVHSingleton->BuildBottomUp(*this);
 
+
+	return returnEdges;
+
 }
 
-void Mesh::extrudeFaces(std::vector<DFace*>& faces, bool update)
+template <typename Container, typename>
+void Mesh::extrudeFaces(Container& faces, bool update)
 {
 	std::unordered_map<DEdge*, int> edges;
 
@@ -648,7 +1264,8 @@ void Mesh::extrudeFaces(std::vector<DFace*>& faces, bool update)
 
 }
 
-void Mesh::extrudeIndividualFaces(std::vector<DFace*>& faces, bool update)
+template <typename Container, typename>
+void Mesh::extrudeIndividualFaces(Container& faces, bool update)
 {
 	std::vector<DFace*> vec;
 	for (auto face : faces)
@@ -686,7 +1303,8 @@ void Mesh::spin()
 {
 }
 
-std::vector<DFace*> Mesh::separate(std::vector<DFace*> faces)
+template <typename Container, typename>
+std::vector<DFace*> Mesh::separate(Container faces)
 {
 	std::unordered_set<DEdge*> edges;
 	selectedFaces = duplicateFaces(faces);
@@ -741,7 +1359,8 @@ std::vector<DVertex*> Mesh::duplicateVertices(std::vector<int>& verts, bool upda
 	return returnVec;
 }
 
-std::vector<DEdge*> Mesh::duplicateEdges(std::vector<DEdge*>& edges, bool update)
+template <typename Container, typename>
+std::vector<DEdge*> Mesh::duplicateEdges(Container& edges, bool update)
 {
 	std::vector<DEdge*> returnVec;
 	std::unordered_map<DVertex*, DVertex*> visited;
@@ -802,7 +1421,8 @@ std::vector<DEdge*> Mesh::duplicateEdges(std::vector<DEdge*>& edges, bool update
 	return returnVec;
 }
 
-std::vector<DFace*> Mesh::duplicateFaces(std::vector<DFace*>& faces, bool update)
+template <typename Container, typename>
+std::vector<DFace*> Mesh::duplicateFaces(Container& faces, bool update)
 {
 	std::vector<DFace*> newFaces;
 	std::unordered_map<DVertex*, DVertex*> visited;
@@ -847,6 +1467,7 @@ std::vector<DFace*> Mesh::duplicateFaces(std::vector<DFace*>& faces, bool update
 
 	return newFaces;
 }
+
 template <typename Container, typename>
 void Mesh::deleteVertices(Container& vertIndices, bool update)
 {
@@ -1090,29 +1711,7 @@ void Mesh::deleteOnlyFaces(Container& faces, bool update)
 }
 
 
-// ----------------------------
-// EXPLICIT INSTANTIATIONS
-// ----------------------------
 
-// deleteVertices<int>
-template void Mesh::deleteVertices<std::vector<int>>(std::vector<int>&, bool update);
-template void Mesh::deleteVertices<std::unordered_set<int>>(std::unordered_set<int>&, bool update);
-
-// deleteEdges<DEdge*>
-template void Mesh::deleteEdges<std::vector<DEdge*>>(std::vector<DEdge*>&, bool update);
-template void Mesh::deleteEdges<std::unordered_set<DEdge*>>(std::unordered_set<DEdge*>&, bool update);
-
-// deleteFaces<DFace*>
-template void Mesh::deleteFaces<std::vector<DFace*>>(std::vector<DFace*>&, bool update);
-template void Mesh::deleteFaces<std::unordered_set<DFace*>>(std::unordered_set<DFace*>&, bool update);
-
-// deleteOnlyEdgesAndFaces<DEdge*>
-template void Mesh::deleteOnlyEdgesAndFaces<std::vector<DEdge*>>(std::vector<DEdge*>&, bool update);
-template void Mesh::deleteOnlyEdgesAndFaces<std::unordered_set<DEdge*>>(std::unordered_set<DEdge*>&, bool update);
-
-// deleteOnlyFaces<DFace*>
-template void Mesh::deleteOnlyFaces<std::vector<DFace*>>(std::vector<DFace*>&, bool update);
-template void Mesh::deleteOnlyFaces<std::unordered_set<DFace*>>(std::unordered_set<DFace*>&, bool update);
 
 
 void Mesh::dissolveVertices() {}
@@ -1148,6 +1747,7 @@ DEdge* Mesh::edgeFill(std::vector<int>& verts)
 	return e;
 
 }
+
 
 DFace* Mesh::faceFill(std::vector<int>& verts, bool windingOrderSet, bool update)
 {
@@ -1216,10 +1816,6 @@ DFace* Mesh::faceFill(std::vector<int>& verts, bool windingOrderSet, bool update
 
 		face->loop = l1;
 
-		// connect the structure to the rest of the mesh
-		e1->connectLoopToEdge(l1);
-		e2->connectLoopToEdge(l2);
-		e3->connectLoopToEdge(l3);
 
 		this->indices.push_back(verts[0]);
 		this->indices.push_back(verts[1]);
@@ -1286,10 +1882,6 @@ DFace* Mesh::faceFill(std::vector<int>& verts, bool windingOrderSet, bool update
 		l4->next = l1; l4->prev = l3;
 
 		face->loop = l1;
-
-
-
-
 
 		this->indices.push_back(verts[0]);
 		this->indices.push_back(verts[1]);
@@ -1487,7 +2079,7 @@ void Mesh::eraseVertex(DVertex* v)
 
 }
 
-void Mesh::setWindingOrder(std::vector<int>& verts)
+glm::vec3 Mesh::setWindingOrder(std::vector<int>& verts)
 {
 	// Compute centroid
 	glm::vec3 centroid = glm::vec3(0.0f);
@@ -1523,12 +2115,6 @@ void Mesh::setWindingOrder(std::vector<int>& verts)
 
 	normal = glm::normalize(normal);
 
-	//glm::vec3 cameraPosition = cameraSingleton->getCamera(0)->getPosition();
-	//cameraPosition = glm::normalize(cameraPosition-centroid);
-	//float angle = glm::angle(normal, cameraPosition);
-
-	//std::cout << "\n\n\t"<<glm::degrees(angle) << " degrees between normal and camera orientation\n";
-
 	// define local 2D frame (u,v) in plane
 	u = glm::cross(normal, glm::vec3(0, 0, 1));
 	if (glm::length2(u) < 1e-6f)
@@ -1552,11 +2138,11 @@ void Mesh::setWindingOrder(std::vector<int>& verts)
 		});
 
 
-
 	/*std::cout << "\n\tsorted\t ";
 	for (auto x : selectedVertexIndices)
 		std::cout << " " << x;*/
 
+	return normal;
 
 }
 
@@ -1622,3 +2208,72 @@ DEdge* Mesh::createEdgeForFill(int a, int b, DFace* face)
 
 
 
+
+
+
+// ----------------------------
+// EXPLICIT INSTANTIATIONS
+// ----------------------------
+
+// deleteVertices<int>
+template void Mesh::deleteVertices<std::vector<int>>(std::vector<int>&, bool update);
+template void Mesh::deleteVertices<std::unordered_set<int>>(std::unordered_set<int>&, bool update);
+
+// deleteEdges<DEdge*>
+template void Mesh::deleteEdges<std::vector<DEdge*>>(std::vector<DEdge*>&, bool update);
+template void Mesh::deleteEdges<std::unordered_set<DEdge*>>(std::unordered_set<DEdge*>&, bool update);
+
+// deleteFaces<DFace*>
+template void Mesh::deleteFaces<std::vector<DFace*>>(std::vector<DFace*>&, bool update);
+template void Mesh::deleteFaces<std::unordered_set<DFace*>>(std::unordered_set<DFace*>&, bool update);
+
+// deleteOnlyEdgesAndFaces<DEdge*>
+template void Mesh::deleteOnlyEdgesAndFaces<std::vector<DEdge*>>(std::vector<DEdge*>&, bool update);
+template void Mesh::deleteOnlyEdgesAndFaces<std::unordered_set<DEdge*>>(std::unordered_set<DEdge*>&, bool update);
+
+// deleteOnlyFaces<DFace*>
+template void Mesh::deleteOnlyFaces<std::vector<DFace*>>(std::vector<DFace*>&, bool update);
+template void Mesh::deleteOnlyFaces<std::unordered_set<DFace*>>(std::unordered_set<DFace*>&, bool update);
+
+
+
+
+// extrudeEdges
+template std::unordered_set<DEdge*>  Mesh::extrudeEdges(std::vector<DEdge*>&, bool);
+template std::unordered_set<DEdge*>  Mesh::extrudeEdges(std::unordered_set<DEdge*>&, bool);
+
+// extrudeFaces
+template void Mesh::extrudeFaces(std::vector<DFace*>&, bool);
+template void Mesh::extrudeFaces(std::unordered_set<DFace*>&, bool);
+
+// extrudeIndividualFaces
+template void Mesh::extrudeIndividualFaces(std::vector<DFace*>&, bool);
+template void Mesh::extrudeIndividualFaces(std::unordered_set<DFace*>&, bool);
+
+
+
+// duplicateEdges
+template std::vector<DEdge*> Mesh::duplicateEdges<std::vector<DEdge*>>(std::vector<DEdge*>&, bool);
+template std::vector<DEdge*> Mesh::duplicateEdges<std::unordered_set<DEdge*>>(std::unordered_set<DEdge*>&, bool);
+
+// duplicateFaces
+template std::vector<DFace*> Mesh::duplicateFaces<std::vector<DFace*>>(std::vector<DFace*>&, bool);
+template std::vector<DFace*> Mesh::duplicateFaces<std::unordered_set<DFace*>>(std::unordered_set<DFace*>&, bool);
+
+
+
+// separate
+template std::vector<DFace*> Mesh::separate<std::vector<DFace*>>(std::vector<DFace*>);
+template std::vector<DFace*> Mesh::separate<std::unordered_set<DFace*>>(std::unordered_set<DFace*>);
+
+// pokeFaces
+template void Mesh::pokeFaces<std::vector<DFace*>>(std::vector<DFace*>&, bool);
+template void Mesh::pokeFaces<std::unordered_set<DFace*>>(std::unordered_set<DFace*>&, bool);
+
+// triangulateFaces
+template void Mesh::triangulateFaces<std::vector<DFace*>>(std::vector<DFace*>&, bool);
+template void Mesh::triangulateFaces<std::unordered_set<DFace*>>(std::unordered_set<DFace*>&, bool);
+
+// flipFaceNormals
+template void Mesh::flipFaceNormals<std::vector<DFace*>>(std::vector<DFace*>&);
+template void Mesh::flipFaceNormals<std::unordered_set<DFace*>>(std::unordered_set<DFace*>&);

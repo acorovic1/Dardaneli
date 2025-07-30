@@ -8,7 +8,7 @@ constexpr auto halfPI = PI/2;
 
 void addPlane();
 void addCube();
-void addCircle(int numSegments = 32, float radius = 1.0f);
+void addCircle(int numSegments = 16, float radius = 1.0f);
 
 // last vertex's disk is wrongly implemented or smth
 void addSphere(int segments = 8, int rings =4, float radius = 1.0f); 
