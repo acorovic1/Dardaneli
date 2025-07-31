@@ -1,6 +1,7 @@
 #pragma once
 
 #include"Object.h"
+#include "GeometryUtils.h"
 #include "unordered_set"
 
 class Mesh :public Object {
@@ -18,12 +19,12 @@ class Mesh :public Object {
 	std::vector<DEdge*>selectedEdges;
 
 	// !!! needs an EBO update !!!
-	// erases indices of the face inside the mesh and updates the DMesh structure accordingly
+	// erases indices of the face inside the mesh and updates DMesh structure accordingly
 	void eraseFace(DFace* face);
 	// !!! needs an EBO update !!!
-	// erases indices of the edge inside the mesh
-	// !!! DISK UPDATING NOT IMPLEMENTED !!!
-	void eraseEdge(DEdge* edge);
+	// erases indices of the edge inside the mesh and updates DMesh structure accordingly
+
+	void eraseEdge(DEdge* edge, bool vertex = true);
 
 	// !!! needs a VBO update !!!
 	// erases the vertex from vertices vector and updates the indices of the mesh
@@ -109,6 +110,8 @@ public:
 		std::is_same<typename Container::value_type, DFace*>::value
 	>::type>
 	void flipFaceNormals(Container& faces);
+
+	std::unordered_set<DVertex*> linearSubdivision();
 
 	std::vector<glm::vec3> getSlideClampMax(std::unordered_set<DVertex*> neighbours);
 	std::vector<glm::vec3> getSlideDirections(DVertex* vert, std::unordered_set<DVertex*> neighbours);
@@ -205,10 +208,11 @@ public:
 	void dissolveFaces();
 
 
-	DEdge* edgeFill(std::vector<int>& verts);
+	DEdge* edgeFill(std::vector<int>& verts, bool update = false);
 
 
 	DFace* faceFill(std::vector<int>& verts, bool windingOrderSet = false, bool update = false);
+	DFace* faceFill(std::unordered_set<int>& verts, bool windingOrderSet = false, bool update = false);
 
 
 	std::vector<int>& getSelectedVertices();

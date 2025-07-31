@@ -114,12 +114,9 @@ DFace* Mesh::getFace(std::unordered_set<int> indices)
 
 	for (DFace* face : vert->getAdjecentFaces())
 	{
-		std::unordered_set<int> faceIndices;
-
-		auto faceVerts = face->getVertices();
 
 		bool found = true;
-		for (auto v : faceVerts)
+		for (auto v : face->getVertices())
 			if (!indices.count(this->getVertexIndex(v)))
 			{
 				found = false;
@@ -158,7 +155,7 @@ DEdge* Mesh::getEdge(int start, int end)
 			}
 		} while (edge != v1->e);
 
-	std::cerr << "\n\n\n Mesh.getEdge(start,end) returns nullptr\n " << start << " " << end << "\n\n";
+	//std::cerr << "\n\n\n Mesh.getEdge(start,end) returns nullptr\n " << start << " " << end << "\n\n";
 	return nullptr;
 }
 
@@ -496,6 +493,306 @@ void Mesh::insetIndividual(std::vector<DFace*> faces)
 
 }
 
+std::unordered_set<DVertex*> Mesh::linearSubdivision()
+{
+	double time = glfwGetTime();
+	std::unordered_map<DFace*, std::pair<std::vector<DVertex*>, FaceType>> facesToFill;
+
+	// create vertices at center of quads
+	for (DFace* face : selectedFaces)
+	{
+
+		auto faceVerts = face->getVerticesVector();
+
+		int size = faceVerts.size();
+
+		if (size == 3)
+			facesToFill.insert({ face,{faceVerts,FaceType::TRI} });
+		else if (size == 4)
+		{
+			// vertex at the center of the quad
+			glm::vec3 vertexPos(0.0f);
+			for (DVertex* v : faceVerts)
+			{
+				vertexPos += v->position;
+			}
+			vertices.push_back(new DVertex(0.25f * vertexPos));
+			faceVerts.push_back(vertices.back());
+			facesToFill.insert({ face,{faceVerts,FaceType::QUAD} });
+		}
+		else
+			facesToFill.insert({ face,{faceVerts,FaceType::NGON} });
+
+	}
+
+	for (DEdge* edge : selectedEdges)
+	{
+
+		vertices.push_back(new DVertex((edge->v1->position + edge->v2->position) / 2.0f));
+
+		auto faces = edge->getFaces();
+
+		if (faces.size())
+			for (DFace* face : faces)
+			{
+				if (!facesToFill.count(face))
+				{
+					auto temp = face->getVerticesVector();
+					int size = temp.size();
+					if (size == 3)
+						facesToFill.insert({ face,{temp,FaceType::TRI} });
+					else if (size == 4)
+						facesToFill.insert({ face,{temp,FaceType::QUAD} });
+					else
+						facesToFill.insert({ face,{temp,FaceType::NGON} });
+
+				}
+
+				facesToFill[face].first.push_back(vertices.back());
+
+			}
+		else
+		{
+			new DEdge(edge->v1, vertices.back());
+			new DEdge(edge->v2, vertices.back());
+
+			edgeIndices.push_back(getVertexIndex(edge->v1));
+			edgeIndices.push_back(vertices.size() - 1);
+			edgeIndices.push_back(getVertexIndex(edge->v2));
+			edgeIndices.push_back(vertices.size() - 1);
+
+			eraseEdge(edge, false);
+		}
+
+	}
+
+	deleteOnlyEdgesAndFaces(selectedEdges);
+	for (auto it : facesToFill)
+	{
+		std::vector<int>fillVec;
+		for (auto vert : it.second.first)
+			fillVec.push_back(getVertexIndex(vert));
+
+		FaceType type = it.second.second;
+
+
+		int size = fillVec.size();
+
+		if (size == 4)
+		{
+			faceFill(fillVec);
+		}
+		else if (size == 5)
+		{
+			if (type == FaceType::TRI)
+			{
+
+				DVertex* vert = GeometryUtils::findClosestVertex({ vertices[fillVec[0]],vertices[fillVec[1]],vertices[fillVec[2]] },
+					vertices[fillVec[3]], vertices[fillVec[4]]);
+				if (vert)
+				{
+
+					int closestVert = getVertexIndex(vert);
+
+					// triangle
+					std::vector<int> tempFillVec{ fillVec[3],fillVec[4],closestVert };
+					faceFill(tempFillVec);
+
+					// quad
+					fillVec.erase(std::remove(fillVec.begin(), fillVec.end(), closestVert), fillVec.end());
+					faceFill(fillVec);
+				}
+
+			}
+			else if (type == FaceType::QUAD)
+			{
+
+				faceFill(fillVec);
+			}
+		}
+		else if (size == 6)
+		{
+			if (type == FaceType::TRI)
+			{
+
+				// one
+				int closestVert = getVertexIndex(GeometryUtils::findClosestVertex({ vertices[fillVec[0]],vertices[fillVec[1]],vertices[fillVec[2]] },
+					vertices[fillVec[3]], vertices[fillVec[4]]));
+
+				std::vector<int> tempFillVec{ fillVec[3],fillVec[4],closestVert };
+				faceFill(tempFillVec);
+
+
+				// two
+				closestVert = getVertexIndex(GeometryUtils::findClosestVertex({ vertices[fillVec[0]],vertices[fillVec[1]],vertices[fillVec[2]] },
+					vertices[fillVec[3]], vertices[fillVec[5]]));
+
+				tempFillVec = { fillVec[3],fillVec[5],closestVert };
+				faceFill(tempFillVec);
+
+				// three
+				closestVert = getVertexIndex(GeometryUtils::findClosestVertex({ vertices[fillVec[0]],vertices[fillVec[1]],vertices[fillVec[2]] },
+					vertices[fillVec[4]], vertices[fillVec[5]]));
+
+				tempFillVec = { fillVec[4],fillVec[5],closestVert };
+				faceFill(tempFillVec);
+
+
+				// middle
+				tempFillVec = { fillVec[3],fillVec[4],fillVec[5] };
+				faceFill(tempFillVec);
+
+
+			}
+			else if (type == FaceType::QUAD)
+			{
+				std::cout << "\n\n\t size = 6 -- QUAD \n";
+				DVertex* closestVert = GeometryUtils::findClosestVertex({ vertices[fillVec[0]],vertices[fillVec[1]],vertices[fillVec[2]],vertices[fillVec[3]] },
+					vertices[fillVec[4]], vertices[fillVec[5]]);
+
+				if (closestVert)
+				{
+
+
+					// triangle
+					std::vector<int> tempFillVec{ fillVec[4],fillVec[5],getVertexIndex(closestVert) };
+					faceFill(tempFillVec);
+
+					// quad
+					fillVec.erase(std::remove(fillVec.begin(), fillVec.end(), getVertexIndex(closestVert)), fillVec.end());
+					faceFill(fillVec);
+				}
+				else
+				{
+					std::vector<DVertex*> out1;
+					std::vector<DVertex*> out2;
+					GeometryUtils::splitQuadAlongMidpointsOpposite({ vertices[fillVec[0]],vertices[fillVec[1]],vertices[fillVec[2]],vertices[fillVec[3]] },
+						vertices[fillVec[4]], vertices[fillVec[5]], out1, out2);
+
+					fillVec.clear();
+					for (auto x : out1)
+						fillVec.push_back(getVertexIndex(x));
+					faceFill(fillVec);
+
+					fillVec.clear();
+					for (auto x : out2)
+						fillVec.push_back(getVertexIndex(x));
+					faceFill(fillVec);
+				}
+			}
+			else // type == FaceType::NGON
+			{
+				faceFill(fillVec);
+			}
+		}
+		else if (size == 7)
+		{
+			if (type == FaceType::QUAD)
+			{
+				std::vector<DVertex*>temp{ vertices[fillVec[0]], vertices[fillVec[1]], vertices[fillVec[2]],vertices[fillVec[3]] };
+				DVertex* a = nullptr, * b = nullptr;
+				int midA, midB;
+				for (int i = 4;i < 7;i++)
+				{
+					int index = (i == 6) ? 4 : i + 1;
+					DVertex* v = GeometryUtils::findClosestVertex(temp, vertices[fillVec[i]], vertices[fillVec[index]]);
+
+					if (!v)
+					{
+						midA = fillVec[i];
+						midB = fillVec[index];
+						continue;
+					}
+
+					if (!a)
+						a = v;
+					else b = v;
+
+					std::vector<int>fillTemp{ getVertexIndex(v),fillVec[i],fillVec[index] };
+
+					faceFill(fillTemp);
+
+				}
+
+				fillVec = { fillVec[4],fillVec[5],fillVec[6] };
+				faceFill(fillVec);
+
+
+				std::vector<DVertex*> tempTemp;
+				for (auto x : temp)
+					if (x != a && x != b) tempTemp.push_back(x);
+
+				fillVec = { midA,midB,getVertexIndex(tempTemp[0]),getVertexIndex(tempTemp[1]) };
+				faceFill(fillVec);
+
+			}
+			else // type == FaceType::NGON
+			{
+				faceFill(fillVec);
+			}
+		}
+		else if (size == 8)
+		{
+			// NGON only
+			faceFill(fillVec);
+		}
+		else if (size == 9)
+		{
+			if (type == FaceType::QUAD)
+			{
+
+				std::vector<DVertex*> originalFour{ vertices[fillVec[0]],vertices[fillVec[1]],vertices[fillVec[2]],vertices[fillVec[3]] };
+				int midPoint = getVertexIndex(vertices[fillVec[4]]);
+				std::vector<int> other{fillVec[5],fillVec[6],fillVec[7],fillVec[8] };
+
+				setWindingOrder(other);
+
+				for (int i = 0;i < 4;i++)
+				{
+
+					int index = (i == 3) ? 0 : i + 1;
+					DVertex* v = GeometryUtils::findClosestVertex(originalFour, vertices[other[i]], vertices[other[index]]);
+
+					std::vector<int> helpFill{ midPoint,other[i],other[index],getVertexIndex(v) };
+
+					faceFill(helpFill);
+
+				}
+
+			}
+			else // type == FaceType::NGON
+			{
+				faceFill(fillVec);
+			}
+		}
+		else // NGON ONLY
+		{
+			faceFill(fillVec);
+		}
+	}
+
+	std::cerr << "\n\n\t TIME to subdivide (without bvh building) = " << glfwGetTime() - time<<"\n\n";
+
+	this->updateEBO();
+	this->updateEdgeEBO();
+	VBO.bufferData(vertices);
+
+	this->getSelectedVertices().clear();
+	this->getSelectedEdges().clear();
+	this->getSelectedFaces().clear();
+
+
+	FaceBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
+	VertexBVHSingleton->BuildBottomUp(*this);
+
+
+
+
+
+	return std::unordered_set<DVertex*>();
+}
+
 std::vector<glm::vec3> Mesh::getSlideClampMax(std::unordered_set<DVertex*> neighbours)
 {
 	std::vector<glm::vec3> max;
@@ -830,7 +1127,7 @@ void Mesh::triangulateFaces(Container& faces, bool update)
 
 }
 
-template<typename Container,typename >
+template<typename Container, typename >
 void Mesh::flipFaceNormals(Container& faces)
 {
 	for (DFace* face : faces)
@@ -862,7 +1159,7 @@ void Mesh::flipFaceNormals(Container& faces)
 			}
 			if (flag)continue;
 
-			for (int i = 0;i < 3 * numberOfTriplets;i+=3)
+			for (int i = 0;i < 3 * numberOfTriplets;i += 3)
 			{
 				std::swap(*(this->indices.begin() + j + i), *(this->indices.begin() + j + i + 2));
 			}
@@ -1159,6 +1456,7 @@ std::unordered_set<DEdge*>  Mesh::extrudeEdges(Container& edges, bool update)
 
 	VertexBVHSingleton->BuildBottomUp(*this);
 	EdgeBVHSingleton->BuildBottomUp(*this);
+	FaceBVHSingleton->BuildBottomUp(*this);
 
 
 	return returnEdges;
@@ -1512,36 +1810,7 @@ void Mesh::deleteEdges(Container& edges, bool update)
 
 		eraseEdge(edge);
 
-		edge->removeFromDisk();
-
-		if (edge->v1->e == edge)
-		{
-
-			if (!edge->d1.next)
-			{
-				edge->v1->e = nullptr;
-				eraseVertex(edge->v1);
-
-			}
-			else
-				edge->v1->e = edge->d1.next;
-		}
-		if (edge->v2->e == edge)
-		{
-			if (!edge->d2.next)
-			{
-				edge->v2->e = nullptr;
-				eraseVertex(edge->v2);
-
-			}
-			else
-				edge->v2->e = edge->d2.next;
-		}
-
-		delete edge;
 	}
-
-
 
 	if (!update)return;
 
@@ -1564,15 +1833,12 @@ template <typename Container, typename>
 void Mesh::deleteFaces(Container& faces, bool update)
 {
 
-	std::unordered_set<DEdge*>selectedEdges;
-
-	std::unordered_set<DEdge*>edgesToDelete;
-
+	std::unordered_set<DEdge*>edges;
 
 	for (DFace* face : faces)
 	{
 		std::unordered_set<DEdge*> temp = face->getEdges();
-		selectedEdges.insert(temp.begin(), temp.end());
+		edges.insert(temp.begin(), temp.end());
 	}
 
 
@@ -1580,47 +1846,14 @@ void Mesh::deleteFaces(Container& faces, bool update)
 
 
 	// deleting edges
-	for (DEdge* edge : selectedEdges)
+	for (DEdge* edge : edges)
 	{
+		// if it has a face attached 
 		if (edge->loop)continue;
 
-		edgesToDelete.insert(edge);
 		eraseEdge(edge);
 
-		edge->removeFromDisk();
-
-		if (edge->v1->e == edge)
-		{
-
-			if (!edge->d1.next)
-			{
-
-				edge->v1->e = nullptr;
-				eraseVertex(edge->v1);
-
-			}
-			else
-				edge->v1->e = edge->d1.next;
-		}
-		if (edge->v2->e == edge)
-		{
-			if (!edge->d2.next)
-			{
-
-				edge->v2->e = nullptr;
-				eraseVertex(edge->v2);
-
-			}
-			else
-				edge->v2->e = edge->d2.next;
-		}
-
-
-
 	}
-	//std::cout << "\n\n\t edgesToDelete " << edgesToDelete.size();
-	for (auto edge : edgesToDelete)
-		delete edge;
 
 	if (!update)return;
 
@@ -1641,40 +1874,13 @@ void Mesh::deleteFaces(Container& faces, bool update)
 template <typename Container, typename>
 void Mesh::deleteOnlyEdgesAndFaces(Container& edges, bool update)
 {
-
-
 	for (DEdge* edge : edges)
 	{
-		eraseEdge(edge);
-
 		for (DFace* face : edge->getFaces())
-		{
 			eraseFace(face);
-		}
 
-		edge->removeFromDisk();
-
-		if (edge->v1->e == edge)
-		{
-
-			if (!edge->d1.next)
-				edge->v1->e = nullptr;
-			else
-				edge->v1->e = edge->d1.next;
-		}
-		if (edge->v2->e == edge)
-		{
-			if (!edge->d2.next)
-				edge->v2->e = nullptr;
-			else
-				edge->v2->e = edge->d2.next;
-		}
-
+		eraseEdge(edge, false);
 	}
-
-
-	for (auto edge : edges)
-		delete edge;
 
 	if (!update)return;
 
@@ -1718,7 +1924,7 @@ void Mesh::dissolveVertices() {}
 void Mesh::dissolveEdges() {}
 void Mesh::dissolveFaces() {} // remove shared edges
 
-DEdge* Mesh::edgeFill(std::vector<int>& verts)
+DEdge* Mesh::edgeFill(std::vector<int>& verts, bool update)
 {
 	if (verts.size() != 2)return nullptr;
 
@@ -1727,21 +1933,14 @@ DEdge* Mesh::edgeFill(std::vector<int>& verts)
 	DEdge* e = nullptr;
 	if (!this->getEdge(verts[0], verts[1]))
 	{
-		e = new DEdge();
-		e->v1 = vertices[verts[0]];
-		e->v2 = vertices[verts[1]];
-
-		if (e->v1->e)
-			e->addToDisk(e->v1->e, e->v1);
-		else e->v1->e = e;
-
-		if (e->v2->e)
-			e->addToDisk(e->v2->e, e->v2);
-		else e->v2->e = e;
+		e = new DEdge(vertices[verts[0]], vertices[verts[1]]);
 
 		edgeIndices.push_back(verts[0]);
 		edgeIndices.push_back(verts[1]);
 	}
+
+	if (!update) return e;
+
 	this->updateEdgeEBO();
 	EdgeBVHSingleton->BuildBottomUp(*this);
 	return e;
@@ -1768,7 +1967,7 @@ DFace* Mesh::faceFill(std::vector<int>& verts, bool windingOrderSet, bool update
 	DFace* face = new DFace();
 	if (verts.size() == 3)
 	{
-		std::cerr << "\n\n\tFill 3\t";
+		//std::cerr << "\n\n\tFill 3\t";
 		DLoop* l1, * l2, * l3;
 
 		DEdge* e1 = this->getEdge(verts[0], verts[1]);
@@ -1820,7 +2019,7 @@ DFace* Mesh::faceFill(std::vector<int>& verts, bool windingOrderSet, bool update
 		this->indices.push_back(verts[0]);
 		this->indices.push_back(verts[1]);
 		this->indices.push_back(verts[2]);
-		std::cerr << "\n\n\tFill 3\t end";
+		//std::cerr << "\n\n\tFill 3\t end";
 	}
 	else if (verts.size() == 4)
 	{
@@ -2024,7 +2223,7 @@ void Mesh::eraseFace(DFace* face)
 	//mesh->updateEBO();
 }
 
-void Mesh::eraseEdge(DEdge* edge)
+void Mesh::eraseEdge(DEdge* edge, bool vertex)
 {
 
 
@@ -2036,14 +2235,46 @@ void Mesh::eraseEdge(DEdge* edge)
 	{
 		if ((this->edgeIndices[i] == indexPair.first && this->edgeIndices[i + 1] == indexPair.second) || (this->edgeIndices[i + 1] == indexPair.first && this->edgeIndices[i] == indexPair.second))
 		{
-			std::cout << "\n\nERASED EDGE " << this->edgeIndices[i] << " " << this->edgeIndices[i + 1] << "\n";
+			//std::cout << "\n\nERASED EDGE " << this->edgeIndices[i] << " " << this->edgeIndices[i + 1] << "\n";
+
+			edge->removeFromDisk();
+
+			if (edge->v1->e == edge)
+			{
+
+				if (!edge->d1.next)
+				{
+					edge->v1->e = nullptr;
+					if (vertex)
+						eraseVertex(edge->v1);
+
+				}
+				else
+					edge->v1->e = edge->d1.next;
+			}
+			if (edge->v2->e == edge)
+			{
+				if (!edge->d2.next)
+				{
+					edge->v2->e = nullptr;
+					if (vertex)
+						eraseVertex(edge->v2);
+
+				}
+				else
+					edge->v2->e = edge->d2.next;
+			}
 
 			this->edgeIndices.erase(this->edgeIndices.begin() + i, this->edgeIndices.begin() + i + 2);
+
+			delete edge;
+
+
 			return;
 
 		}
 	}
-	std::cout << "\n\n NOT erased edge " << indexPair.first << " " << indexPair.second << "\n";
+	//std::cout << "\n\n NOT erased edge " << indexPair.first << " " << indexPair.second << "\n";
 }
 
 void Mesh::eraseVertex(DVertex* v)
@@ -2138,9 +2369,6 @@ glm::vec3 Mesh::setWindingOrder(std::vector<int>& verts)
 		});
 
 
-	/*std::cout << "\n\tsorted\t ";
-	for (auto x : selectedVertexIndices)
-		std::cout << " " << x;*/
 
 	return normal;
 

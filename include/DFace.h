@@ -2,6 +2,9 @@
 
 #include "DVertex.h"
 
+enum class FaceType { TRI, QUAD, NGON };
+
+
 struct DLoop;
 
 

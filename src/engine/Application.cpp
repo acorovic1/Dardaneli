@@ -584,7 +584,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 	if (keys[GLFW_KEY_S])
 	{
 
-		glfwGetCursorPos(window, &posX, &posY);
+	/*	glfwGetCursorPos(window, &posX, &posY);
 
 		static std::vector<glm::vec3> directions;
 
@@ -614,7 +614,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		}
 		std::cout << "\nSCALE";
 		previousX = posX;
-		previousY = posY;
+		previousY = posY;*/
 	}
 
 	// TRANSLATE
@@ -910,6 +910,14 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		keys[GLFW_KEY_LEFT_ALT] = 0;
 	}
 
+	// SIMPLE SUBDIVISION
+		// TRIANGULATE
+	if (keys[GLFW_KEY_S] && keys[GLFW_KEY_LEFT_CONTROL])
+	{
+		mesh->linearSubdivision();
+		keys[GLFW_KEY_S] = 0;
+		keys[GLFW_KEY_LEFT_CONTROL] = 0;
+	}
 
 }
 void Application::Inputs(GLFWwindow* window, MyGUI& gui) {

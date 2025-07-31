@@ -144,7 +144,7 @@ void DEdge::addToDisk(DEdge* pivotEdge, DVertex* pivot)
 
 	if (disk.next != pivotEdge)// more than one this around the vertex
 	{
-		std::cout << "\n\n\t\t Aloha";
+		//std::cout << "\n\n\t\t Aloha";
 		DEdge* temp = disk.next;
 
 		disk.next = this;
@@ -178,7 +178,7 @@ void DEdge::addToDisk(DEdge* pivotEdge, DVertex* pivot)
 	else { // if the pivot vertex only has 1 edge --  pivotEdge
 
 
-		std::cout << "\n\n\t\t HEEEEEEEELLoooOOOooo";
+		//std::cout << "\n\n\t\t HEEEEEEEELLoooOOOooo";
 		disk.next = this;
 		disk.prev = this;
 
