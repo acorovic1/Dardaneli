@@ -30,5 +30,7 @@ struct DEdge {
 
 	std::unordered_set<DFace*> getFaces();
 
+	DVertex* commonVertex(DEdge* edge);
+
 
 };

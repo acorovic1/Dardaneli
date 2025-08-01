@@ -32,6 +32,7 @@ class Mesh :public Object {
 
 
 	glm::vec3 setWindingOrder(std::vector<int>& verts);
+	glm::vec3 setWindingOrder(std::vector<DVertex*>& verts);
 
 	template <typename Container,
 		typename = typename std::enable_if<
@@ -45,12 +46,12 @@ class Mesh :public Object {
 	>::type>
 	void setSelectedVertexIndicesFromEdges(const Container& edges);
 
-
 	DEdge* createEdgeForFill(int a, int b, DFace* face);
-
-
-
 	DVertex* duplicateVertex(DVertex& vertex);
+
+	// only works for quads
+	DEdge* getOpossingEdge(DEdge* edge, DFace* face);
+	std::pair<DEdge*,DEdge*> getTwoIncidentEdges(DEdge* edge, DFace* face);
 
 public:
 
@@ -72,6 +73,7 @@ public:
 	DFace* getFace(std::unordered_set<int> indices); // returns the common face of indices 
 
 	DEdge* getEdge(int start, int end); // returns the common edge of indices 
+	DEdge* getEdge(DVertex* start,DVertex* end); // returns the common edge of vertices 
 
 
 	void Draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES) override;
@@ -112,6 +114,8 @@ public:
 	void flipFaceNormals(Container& faces);
 
 	std::unordered_set<DVertex*> linearSubdivision();
+
+	void loopCut(DEdge* edge,int numberOfCuts);
 
 	std::vector<glm::vec3> getSlideClampMax(std::unordered_set<DVertex*> neighbours);
 	std::vector<glm::vec3> getSlideDirections(DVertex* vert, std::unordered_set<DVertex*> neighbours);
@@ -212,7 +216,7 @@ public:
 
 
 	DFace* faceFill(std::vector<int>& verts, bool windingOrderSet = false, bool update = false);
-	DFace* faceFill(std::unordered_set<int>& verts, bool windingOrderSet = false, bool update = false);
+	//DFace* faceFill(std::unordered_set<int>& verts, bool windingOrderSet = false, bool update = false);
 
 
 	std::vector<int>& getSelectedVertices();

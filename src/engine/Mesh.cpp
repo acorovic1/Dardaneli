@@ -159,6 +159,33 @@ DEdge* Mesh::getEdge(int start, int end)
 	return nullptr;
 }
 
+DEdge* Mesh::getEdge(DVertex* start, DVertex* end)
+{
+
+	DEdge* edge = start->e;
+
+	if (edge)
+		do {
+			if (edge->v1 == start)
+			{
+				if (edge->v2 == end)
+					return edge;
+
+				edge = edge->d1.next;
+			}
+			else // edge->v2 == v1
+			{
+				if (edge->v1 == end)
+					return edge;
+
+				edge = edge->d2.next;
+			}
+		} while (edge != start->e);
+
+
+	return nullptr;
+}
+
 
 
 
@@ -743,7 +770,7 @@ std::unordered_set<DVertex*> Mesh::linearSubdivision()
 
 				std::vector<DVertex*> originalFour{ vertices[fillVec[0]],vertices[fillVec[1]],vertices[fillVec[2]],vertices[fillVec[3]] };
 				int midPoint = getVertexIndex(vertices[fillVec[4]]);
-				std::vector<int> other{fillVec[5],fillVec[6],fillVec[7],fillVec[8] };
+				std::vector<int> other{ fillVec[5],fillVec[6],fillVec[7],fillVec[8] };
 
 				setWindingOrder(other);
 
@@ -771,7 +798,7 @@ std::unordered_set<DVertex*> Mesh::linearSubdivision()
 		}
 	}
 
-	std::cerr << "\n\n\t TIME to subdivide (without bvh building) = " << glfwGetTime() - time<<"\n\n";
+	std::cerr << "\n\n\t TIME to subdivide (without bvh building) = " << glfwGetTime() - time << "\n\n";
 
 	this->updateEBO();
 	this->updateEdgeEBO();
@@ -791,6 +818,205 @@ std::unordered_set<DVertex*> Mesh::linearSubdivision()
 
 
 	return std::unordered_set<DVertex*>();
+}
+
+void Mesh::loopCut(DEdge* edge, int numberOfCuts)
+{
+	// stop at an edge that has more than 2 faces;
+	// stop at a non quad face
+
+	auto faces = edge->getFaces();
+	int size = faces.size();
+	if (size != 1 && size != 2)return;
+
+	// new vertices for the start edge
+	std::vector<std::vector<int>> newVertices(1);
+
+	glm::vec3 position = edge->v2->position - edge->v1->position;
+	position /= (numberOfCuts + 1);
+
+	for (int i = 1;i <= numberOfCuts;i++)
+	{
+		newVertices[0].push_back(this->vertices.size());
+		this->vertices.push_back(new DVertex(edge->v1->position + position * float(i)));
+	}
+	// created vertices span out from edge.v1 to edge.v2 respectively
+
+
+	DFace* face = *faces.begin();
+	std::unordered_set<DFace*>facesToDelete{ faces.begin(),faces.end() };
+	auto faceVertices = face->getVertices();
+	if (faceVertices.size() == 4)
+	{
+		DEdge* nextEdge;
+		DEdge* oldEdge;
+
+		for (int j = 0;j < 2;j++)
+		{
+			nextEdge = edge;
+			oldEdge = edge;
+
+			while (true)
+			{
+				nextEdge = getOpossingEdge(nextEdge, face);
+
+
+
+				position = nextEdge->v2->position - nextEdge->v1->position;
+				position /= (numberOfCuts + 1);
+				std::vector<int> current;
+
+				// vertex creation
+				if (nextEdge != edge)
+					for (int i = 1;i <= numberOfCuts;i++)
+					{
+						current.push_back(this->vertices.size());
+						this->vertices.push_back(new DVertex(nextEdge->v1->position + position * float(i)));
+					}
+				else current = newVertices[0];
+
+
+				auto old = newVertices.back();
+
+				auto incidentEdges = getTwoIncidentEdges(nextEdge, face);
+
+				// face fill
+				if (numberOfCuts == 1)
+				{
+					std::cout << "\n\nNumber of cuts is 1\n\n";
+					std::vector<DVertex*> out1;
+					std::vector<DVertex*> out2;
+					std::vector<DVertex*> temp{ incidentEdges.first->v1,incidentEdges.first->v2,incidentEdges.second->v1,incidentEdges.second->v2 };
+
+					setWindingOrder(temp);
+					GeometryUtils::splitQuadAlongMidpointsOpposite(temp,
+						vertices[old[0]], vertices[current[0]], out1, out2);
+
+					std::vector<int>fillVec;
+					for (auto x : out1)
+						fillVec.push_back(getVertexIndex(x));
+					faceFill(fillVec);
+
+					fillVec.clear();
+
+					for (auto x : out2)
+						fillVec.push_back(getVertexIndex(x));
+					faceFill(fillVec);
+				}
+				else
+				{
+					if (getEdge(nextEdge->v1, oldEdge->v1))
+					{
+
+
+						std::vector<int>fillVec{ old[0],current[0],getVertexIndex(nextEdge->v1),getVertexIndex(oldEdge->v1) };
+						faceFill(fillVec);
+
+						fillVec = { old.back(),current.back(),getVertexIndex(nextEdge->v2),getVertexIndex(oldEdge->v2) };
+						faceFill(fillVec);
+
+
+						for (int i = 0;i < numberOfCuts - 1;i++)
+						{
+							std::vector<int>fillVec{ old[i],old[i + 1],current[i],current[i + 1] };
+							faceFill(fillVec);
+						}
+					}
+					else
+					{
+						std::vector<int>fillVec{ old.back(),current[0],getVertexIndex(nextEdge->v1),getVertexIndex(oldEdge->v2) };
+						faceFill(fillVec);
+
+						fillVec = { old.front(),current.back(),getVertexIndex(nextEdge->v2),getVertexIndex(oldEdge->v1) };
+						faceFill(fillVec);
+
+
+						for (int i = 0;i < numberOfCuts - 1;i++)
+						{
+							std::vector<int>fillVec{ old[numberOfCuts - 1 - i],old[numberOfCuts - 2 - i],current[i],current[i + 1] };
+							faceFill(fillVec);
+						}
+					}
+				}
+
+				if (nextEdge == edge)break;
+
+
+
+				newVertices.push_back(current);
+
+
+
+				auto edgeFaces = nextEdge->getFaces();
+				int numOfFaces = edgeFaces.size();
+				// kako fillat taj drugi face kad se brejka ovde
+				if (numOfFaces != 1 && numOfFaces != 2)break;
+
+				// get the next face
+				for (DFace* f : edgeFaces)
+					if (f != face)
+					{
+						face = f;
+						break;
+					}
+				facesToDelete.insert(face);
+				auto faceVerts = face->getVertices();
+				if (faceVerts.size() != 4)
+				{
+					for (auto vert : faceVerts)
+						current.push_back(getVertexIndex(vert));
+
+					faceFill(current);
+					newVertices = { newVertices[0] };
+					break;
+				}
+
+				//nextEdge = getOpossingEdge(nextEdge, face);
+
+				oldEdge = nextEdge;
+
+			}
+
+			if (nextEdge == edge)break;
+
+			face = *(++faces.begin());
+		}
+		// if nextEdge!=edge zavrti jos jedan krug od edge al sa kontra strane
+	}
+	else
+	{
+		for (auto f : faces)
+		{
+			std::vector<int>fillVec = newVertices[0];
+			for (auto x : f->getVertices())
+				fillVec.push_back(getVertexIndex(x));
+			faceFill(fillVec);
+
+			fillVec = newVertices[0];
+
+		}
+			deleteFaces(faces);
+
+
+
+		// fill both faces
+	}
+
+	deleteFaces(facesToDelete);
+
+	this->updateEBO();
+	this->updateEdgeEBO();
+	VBO.bufferData(vertices);
+
+	this->getSelectedVertices().clear();
+	this->getSelectedEdges().clear();
+	this->getSelectedFaces().clear();
+
+
+	FaceBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
+	VertexBVHSingleton->BuildBottomUp(*this);
+
 }
 
 std::vector<glm::vec3> Mesh::getSlideClampMax(std::unordered_set<DVertex*> neighbours)
@@ -971,6 +1197,36 @@ DVertex* Mesh::duplicateVertex(DVertex& vertex)
 	vertices.push_back(new DVertex(vertex));
 
 	return vertices.back();
+}
+
+DEdge* Mesh::getOpossingEdge(DEdge* edge, DFace* face)
+{
+
+	DLoop* l = face->loop;
+
+	while (l->edge != edge)
+	{
+		l = l->next;
+	}
+
+
+	return l->next->next->edge;
+}
+
+std::pair<DEdge*, DEdge*> Mesh::getTwoIncidentEdges(DEdge* edge, DFace* face)
+{
+
+	DLoop* l = face->loop;
+
+	while (l->edge != edge)
+	{
+		l = l->next;
+	}
+
+	if (l->tip == edge->v1)
+		return { l->next->edge,l->prev->edge };
+	else
+		return { l->prev->edge, l->next->edge };
 }
 
 
@@ -2235,6 +2491,7 @@ void Mesh::eraseEdge(DEdge* edge, bool vertex)
 	{
 		if ((this->edgeIndices[i] == indexPair.first && this->edgeIndices[i + 1] == indexPair.second) || (this->edgeIndices[i + 1] == indexPair.first && this->edgeIndices[i] == indexPair.second))
 		{
+			this->edgeIndices.erase(this->edgeIndices.begin() + i, this->edgeIndices.begin() + i + 2);
 			//std::cout << "\n\nERASED EDGE " << this->edgeIndices[i] << " " << this->edgeIndices[i + 1] << "\n";
 
 			edge->removeFromDisk();
@@ -2265,7 +2522,7 @@ void Mesh::eraseEdge(DEdge* edge, bool vertex)
 					edge->v2->e = edge->d2.next;
 			}
 
-			this->edgeIndices.erase(this->edgeIndices.begin() + i, this->edgeIndices.begin() + i + 2);
+
 
 			delete edge;
 
@@ -2294,10 +2551,6 @@ void Mesh::eraseVertex(DVertex* v)
 	if (std::find(edgeIndices.begin(), edgeIndices.end(), index) != edgeIndices.end())
 		std::cerr << "\n\n mesh.eraseVertex  the vertex index is still inside mesh.edgeIndices attribute\n\n";
 
-
-
-	/// belaj pravi brisanje iz vektora jer se pomjere ostali clanovi vektora i onda pokazivaci ne valjaju kurcu
-	// ili koristiti deck ili naci neki drugi nacin ( mozda da nije *vector vec nesta drugo)
 
 	for (auto& x : indices)
 	{
@@ -2361,6 +2614,70 @@ glm::vec3 Mesh::setWindingOrder(std::vector<int>& verts)
 		[&](int a, int b) {
 			glm::vec3 offsetA = this->vertices[a]->position - centroid;
 			glm::vec3 offsetB = this->vertices[b]->position - centroid;
+
+			float angleA = std::atan2(glm::dot(offsetA, v), glm::dot(offsetA, u));
+			float angleB = std::atan2(glm::dot(offsetB, v), glm::dot(offsetB, u));
+
+			return angleA > angleB;
+		});
+
+
+
+	return normal;
+
+}
+
+glm::vec3 Mesh::setWindingOrder(std::vector<DVertex*>& verts)
+{
+	// Compute centroid
+	glm::vec3 centroid = glm::vec3(0.0f);
+	for (auto x : verts)
+		centroid += x->position;
+	centroid /= static_cast<float>(verts.size());
+
+
+	// Covariance matrix
+	glm::mat3 cov(0.0f);
+	for (auto x : verts) {
+		glm::vec3 d = x->position - centroid;
+		cov[0] += d.x * d; // first column
+		cov[1] += d.y * d;
+		cov[2] += d.z * d;
+	}
+	cov /= static_cast<float>(verts.size());
+
+	// Find normal = eigenvector of smallest eigenvalue
+	// Using cross products only (sufficient for symmetric 3x3)
+	glm::vec3 r0(cov[0][0], cov[1][0], cov[2][0]);
+	glm::vec3 r1(cov[0][1], cov[1][1], cov[2][1]);
+	glm::vec3 r2(cov[0][2], cov[1][2], cov[2][2]);
+
+	glm::vec3 u = glm::cross(r0, r1);
+	glm::vec3 v = glm::cross(r0, r2);
+	glm::vec3 w = glm::cross(r1, r2);
+
+	// Pick most stable cross as eigenvector
+	glm::vec3 normal = (glm::length2(u) > glm::length2(v)) ?
+		((glm::length2(u) > glm::length2(w)) ? u : w) :
+		((glm::length2(v) > glm::length2(w)) ? v : w);
+
+	normal = glm::normalize(normal);
+
+	// define local 2D frame (u,v) in plane
+	u = glm::cross(normal, glm::vec3(0, 0, 1));
+	if (glm::length2(u) < 1e-6f)
+		u = glm::vec3(1, 0, 0);
+	else
+		u = glm::normalize(u);
+	v = glm::normalize(glm::cross(normal, u));
+	/*std::cout << "\n\tNormal vector" << normal.x << " " << normal.y << " " << normal.z;
+	std::cout << "\n\tu vector" << u.x << " " << u.y << " " << u.z;
+	std::cout << "\n\tv vector" << v.x << " " << v.y << " " << v.z;*/
+
+	std::sort(verts.begin(), verts.end(),
+		[&](DVertex* a, DVertex* b) {
+			glm::vec3 offsetA = a->position - centroid;
+			glm::vec3 offsetB = b->position - centroid;
 
 			float angleA = std::atan2(glm::dot(offsetA, v), glm::dot(offsetA, u));
 			float angleB = std::atan2(glm::dot(offsetB, v), glm::dot(offsetB, u));

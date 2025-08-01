@@ -224,3 +224,17 @@ std::unordered_set<DFace*> DEdge::getFaces()
 
 	return returnSet;
 }
+
+DVertex* DEdge::commonVertex(DEdge* edge)
+{
+
+	if (edge->v1 == this->v1 || edge->v1 == this->v2)
+		return edge->v1;
+	else if (edge->v2 == this->v1 || edge->v2 == this->v2)
+		return edge->v2;
+
+
+
+	std::cerr << "\n\n\t Edge.commonVertex ---> no common vertex";
+	return nullptr;
+}

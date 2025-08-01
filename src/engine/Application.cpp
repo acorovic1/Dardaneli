@@ -919,6 +919,13 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		keys[GLFW_KEY_LEFT_CONTROL] = 0;
 	}
 
+	if (keys[GLFW_KEY_R] && keys[GLFW_KEY_LEFT_CONTROL])
+	{
+		mesh->loopCut(mesh->getSelectedEdges().back(),3);
+		keys[GLFW_KEY_R] = 0;
+		keys[GLFW_KEY_LEFT_CONTROL] = 0;
+	}
+
 }
 void Application::Inputs(GLFWwindow* window, MyGUI& gui) {
 	static Camera* camera = cameraSingleton->getCamera(0);
