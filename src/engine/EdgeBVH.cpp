@@ -45,7 +45,8 @@ void EdgeBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 EdgeBVHNode* EdgeBVH::getRoot() { return root; }
 
 void EdgeBVH::Refit(Mesh& mesh) {
-	getRoot()->refitNode(mesh);
+	if (root)
+		root->refitNode(mesh);
 }
 
 void EdgeBVH::Clear()

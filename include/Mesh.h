@@ -116,6 +116,7 @@ public:
 	std::unordered_set<DVertex*> linearSubdivision();
 
 	void loopCut(DEdge* edge,int numberOfCuts);
+	void mergeVertices(std::vector<int>& verts);
 
 	std::vector<glm::vec3> getSlideClampMax(std::unordered_set<DVertex*> neighbours);
 	std::vector<glm::vec3> getSlideDirections(DVertex* vert, std::unordered_set<DVertex*> neighbours);

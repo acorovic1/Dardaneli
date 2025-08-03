@@ -473,9 +473,9 @@ void MyGUI::Inset()
 		{
 			glfwSetTime(0);
 			hoverTime = 0;
-			if (selected_option		!= -1)
+			if (selected_option != -1)
 			{
-				
+
 				std::cout << "\n\naj karamba ";
 			}
 			showInsetMenu = false;
@@ -527,44 +527,56 @@ void MyGUI::Gizmos()
 			}
 
 		if (operation == ImGuizmo::OPERATION::ROTATE)
-			if (previousTransform != transform) {
-				//std::cout << "\n Rotate ";
+		{
+			// compare matrices with an epsilon, not direct !=
+			bool transformsDifferent = false;
+			const float matrixEpsilon = 1e-5f;
+			for (int i = 0; i < 4 && !transformsDifferent; ++i)
+				for (int j = 0; j < 4; ++j)
+					if (fabs(previousTransform[i][j] - transform[i][j]) > matrixEpsilon)
+					{
+						transformsDifferent = true;
+						break;
+					}
 
-				app->rotatePrev[0] = app->rotate[0];
-				app->rotatePrev[1] = app->rotate[1];
-				app->rotatePrev[2] = app->rotate[2];
+			if (transformsDifferent)
+			{
+				// Get quaternions from transforms
+				glm::quat currentQuat = glm::quat_cast(transform);
+				glm::quat prevQuat = glm::quat_cast(previousTransform);
 
-				if (transform[2][1] != 1 && transform[2][1] != -1)
-				{
-					app->rotate[0] = -glm::asin(transform[2][1]);
-				}
+				// Delta rotation: how to go from previous to current
+				glm::quat deltaQuat = currentQuat * glm::inverse(prevQuat);
+				deltaQuat = glm::normalize(deltaQuat); // stability
 
-				app->rotate[0] = std::atan2(-transform[2][1], transform[2][2]) * radian;
-				app->rotate[1] = std::atan2(transform[2][0], std::sqrt(transform[0][0] * transform[0][0] + transform[1][0] * transform[1][0])) * radian;
-				app->rotate[2] = std::atan2(-transform[1][0], transform[0][0]) * radian;
+				// Update Euler angles for UI (if you need to display them)
+				glm::vec3 euler = glm::eulerAngles(currentQuat); // radians, order: XYZ
+				app->rotate[0] = euler.x * radian;
+				app->rotate[1] = euler.y * radian;
+				app->rotate[2] = euler.z * radian;
+
+				if (fabs(app->rotate[0]) < epsilon) app->rotate[0] = 0.0f;
+				if (fabs(app->rotate[1]) < epsilon) app->rotate[1] = 0.0f;
+				if (fabs(app->rotate[2]) < epsilon) app->rotate[2] = 0.0f;
 
 				std::cout << app->rotate[0] << " " << app->rotate[1] << " " << app->rotate[2] << " ";
 
-				if (fabs(app->rotate[0]) < epsilon)
-					app->rotate[0] = 0;
-
-				if (fabs(app->rotate[1]) < epsilon)
-					app->rotate[1] = 0;
-
-				if (fabs(app->rotate[2]) < epsilon)
-					app->rotate[2] = 0;
-				for (auto x : app->objectIndices)
+				// Apply the delta rotation to each selected object as axis-angle
+				float angle = glm::angle(deltaQuat); // radians
+				if (angle > epsilon)
 				{
-					auto object = objectSingleton->getObject(x);
-
-					if (fabs(app->rotate[0]) > epsilon)
-						object->Rotate(app->rotate[0] - app->rotatePrev[0], glm::vec3(1.0f, 0.0f, 0.0f));
-					if (fabs(app->rotate[1]) > epsilon)
-						object->Rotate(app->rotate[1] - app->rotatePrev[1], glm::vec3(0.0f, 1.0f, 0.0f));
-					if (fabs(app->rotate[2]) > epsilon)
-						object->Rotate(app->rotate[2] - app->rotatePrev[2], glm::vec3(0.0f, 0.0f, 1.0f));
+					glm::vec3 axis = glm::axis(deltaQuat);
+					for (auto x : app->objectIndices)
+					{
+						auto object = objectSingleton->getObject(x);
+						object->Rotate(glm::degrees(angle), axis); // assumes Rotate(angle, axis) expects radians
+					}
 				}
+
+				// Store for next frame
+				previousTransform = transform;
 			}
+		}
 
 		if (operation == ImGuizmo::OPERATION::SCALE)
 			if (previousTransform != transform) {

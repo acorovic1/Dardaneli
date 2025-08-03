@@ -1,4 +1,4 @@
-#include "unordered_map"
+﻿#include "unordered_map"
 
 
 #include "Mesh.h"
@@ -987,15 +987,21 @@ void Mesh::loopCut(DEdge* edge, int numberOfCuts)
 	{
 		for (auto f : faces)
 		{
+			std::cout << "\n first entry";
 			std::vector<int>fillVec = newVertices[0];
 			for (auto x : f->getVertices())
+			{
 				fillVec.push_back(getVertexIndex(x));
+
+			}
+			for (auto x : fillVec)
+				std::cout << " " << x;
+			std::cout << "\n ";
 			faceFill(fillVec);
 
 			fillVec = newVertices[0];
 
 		}
-			deleteFaces(faces);
 
 
 
@@ -1016,6 +1022,118 @@ void Mesh::loopCut(DEdge* edge, int numberOfCuts)
 	FaceBVHSingleton->BuildBottomUp(*this);
 	EdgeBVHSingleton->BuildBottomUp(*this);
 	VertexBVHSingleton->BuildBottomUp(*this);
+
+}
+
+void Mesh::mergeVertices(std::vector<int>& verts)
+{
+	if (verts.size() < 2)return;
+	// map value are those vertices that are supposed to be merged, that belong to its corresponding face(key)
+	std::unordered_map<DFace*, std::unordered_set<DVertex*>> faceMap;
+
+
+
+	DVertex* v;
+	glm::vec3 position(0.0f);
+	for (auto index : verts)
+	{
+		v = vertices[index];
+		for (auto face : v->getAdjecentFaces())
+		{
+			faceMap[face].insert(v);
+		}
+
+		position += v->position;
+	}
+
+	vertices.push_back(new DVertex(position / float(verts.size())));
+	for (auto map : faceMap)
+	{
+		auto faceVerts = map.first->getVertices();
+		auto mergedVerts = map.second;
+
+		if (mergedVerts.size() == 1)
+		{
+			//std::cout << "\n\n\t new iteration [1]: ";
+			faceVerts.erase(*mergedVerts.begin());
+
+			std::vector<int>fillVec;
+			for (auto x : faceVerts)
+			{
+				std::cout << getVertexIndex(x) << " ";
+				fillVec.push_back(getVertexIndex(x));
+			}
+
+			fillVec.push_back(vertices.size()-1);
+			faceFill(fillVec);
+
+		}
+		else
+		{
+			DLoop* l = map.first->loop;
+
+			// get to the starting point
+			while (!mergedVerts.count(l->tip))
+			{
+				l = l->next;
+			}
+			//std::cout << "\n\n\t Starting point: "<< getVertexIndex(l->tip);
+
+			
+
+			std::vector<int>helpFill;
+			DLoop* start = l;
+			do
+			{
+				/*std::cout << "\n\n\t Hi im the new problem";*/
+				//std::cout << "\n\n\t new iteration [2]: ";
+				l = l->next;
+				while (!mergedVerts.count(l->tip))
+				{
+					//std::cout << getVertexIndex(l->tip) << " ";
+					helpFill.push_back(getVertexIndex(l->tip));
+					l = l->next;
+				}
+				if (helpFill.size() == 0)
+					continue;
+				else if (helpFill.size() == 1)
+				{
+					helpFill.push_back(vertices.size() - 1);
+
+					edgeFill(helpFill);
+				}
+				else
+				{
+					helpFill.push_back(vertices.size() - 1);
+					faceFill(helpFill);
+				}
+				helpFill.clear();
+
+
+
+			} while (l != start);
+
+		}
+		std::vector<DFace*>del{map.first};
+		deleteFaces(del);
+	}
+
+	
+
+
+	this->updateEBO();
+	this->updateEdgeEBO();
+	VBO.bufferData(vertices);
+
+	this->getSelectedVertices().clear();
+	this->getSelectedEdges().clear();
+	this->getSelectedFaces().clear();
+
+
+	FaceBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHSingleton->BuildBottomUp(*this);
+	VertexBVHSingleton->BuildBottomUp(*this);
+
 
 }
 
@@ -1401,34 +1519,79 @@ void Mesh::flipFaceNormals(Container& faces)
 
 		int numberOfTriplets = setOfVertices.size() - 2;
 
-		for (int j = 0; j < this->indices.size(); j += 3 * numberOfTriplets)
-		{
-			flag = false;
-			for (int k = j; k < j + 3 * numberOfTriplets; k++)
-			{
+		//for (int j = 0; j < this->indices.size(); j += 3 * numberOfTriplets)
+		//{
+		//	flag = false;
+		//	for (int k = j; k < j + 3 * numberOfTriplets /* && k<this->indices.size() */ ; k++)
+		//	{
 
-				if (!setOfVertices.count(this->indices[k]))
-				{
-					flag = true;
-					break;
+		//		if (!setOfVertices.count(this->indices[k]))
+		//		{
+		//			flag = true;
+		//			break;
+		//		}
+		//	}
+		//	if (flag)continue;
+
+		//		std::cout <<"\n\n\n indices \n\t";
+		//	for (int i = 0;i < 3 * numberOfTriplets;i += 3)
+		//	{
+		//		std::cout << indices[j + i] << " " << indices[j + i + 1] << " " << indices[j + i + 2] << "\n\t";
+
+		//		std::swap(*(this->indices.begin() + j + i), *(this->indices.begin() + j + i + 2));
+		//	}
+
+		//	//newIndices.insert(newIndices.begin(), this->indices.begin() + j, this->indices.begin() + j + 3 * numberOfTriplets);
+		//	//this->indices.erase(this->indices.begin() + j, this->indices.begin() + j + 3 * numberOfTriplets);
+
+
+		//	//break;  /// dodaj ovaj break i u eraseFace
+
+		//}
+
+
+		// jebem ti gpti majku
+		const size_t span = 3 * static_cast<size_t>(numberOfTriplets);
+		const size_t total = indices.size();
+		if (span > total) return;
+
+		size_t required_unique = setOfVertices.size();
+
+		// Prolazimo po svim mogucim pocecima sekvence od trojke (tj. pomeramo za 3)
+		for (size_t j = 0; j + span <= total; j += 3) {
+			std::unordered_map<int, int> freq;
+			size_t present_unique = 0;
+			bool outside_found = false;
+
+			// Obrada trenutnog prozora: span elemenata
+			for (size_t k = j; k < j + span; ++k) {
+				int val = indices[k];
+				if (setOfVertices.count(val) != 0) { // C++20; ako nema, zameni sa count(val) != 0
+					int prev = freq[val];
+					freq[val] = prev + 1;
+					if (prev == 0) {
+						present_unique++;
+					}
+				}
+				else {
+					outside_found = true;
+					break; // nevazeci  prozor, element van skupa
 				}
 			}
-			if (flag)continue;
 
-			for (int i = 0;i < 3 * numberOfTriplets;i += 3)
-			{
-				std::swap(*(this->indices.begin() + j + i), *(this->indices.begin() + j + i + 2));
+			if (outside_found) continue;
+			if (present_unique != required_unique) continue; // nije pokriven ceo skup
+
+			// validan prozor: ispiši trojke i uradi swap prvog i trećeg elementa svake trojke
+			std::cout << "\n\n\n indices \n\t";
+			for (size_t offset = 0; offset < span; offset += 3) {
+				size_t base = j + offset;
+				std::cout << indices[base] << " " << indices[base + 1] << " " << indices[base + 2] << "\n\t";
+				std::swap(*(this->indices.begin() + base), *(this->indices.begin() + base + 2));
 			}
 
-			//newIndices.insert(newIndices.begin(), this->indices.begin() + j, this->indices.begin() + j + 3 * numberOfTriplets);
-			//this->indices.erase(this->indices.begin() + j, this->indices.begin() + j + 3 * numberOfTriplets);
-
-
-			break;  /// dodaj ovaj break i u eraseFace
-
+			// vraćamo pocetni indeks prozora
 		}
-
-
 
 
 	}
@@ -2040,7 +2203,7 @@ void Mesh::deleteVertices(Container& vertIndices, bool update)
 		else if (temp.size() == 1)
 		{
 			verticesToDelete.insert(vertices[x]);
-			eraseEdge(*temp.begin());
+			eraseEdge(*temp.begin(),false);
 		}
 		else
 			edges.insert(temp.begin(), temp.end());
@@ -2450,7 +2613,7 @@ void Mesh::eraseFace(DFace* face)
 
 	int numberOfTriplets = setOfVertices.size() - 2;
 
-	for (int j = 0; j < this->indices.size(); j += 3 * numberOfTriplets)
+	for (int j = 0; j + 3 * numberOfTriplets <= this->indices.size(); j += 3 * numberOfTriplets)
 	{
 		flag = false;
 		for (int k = j; k < j + 3 * numberOfTriplets; k++)
@@ -2465,7 +2628,7 @@ void Mesh::eraseFace(DFace* face)
 		if (flag)continue;
 
 		this->indices.erase(this->indices.begin() + j, this->indices.begin() + j + 3 * numberOfTriplets);
-
+		break;
 	}
 
 	for (DLoop* l : face->getLoops())

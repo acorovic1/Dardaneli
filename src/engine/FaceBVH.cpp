@@ -72,7 +72,8 @@ void FaceBVH::BuildBottomUp(Mesh& mesh) // O(n^3)
 FaceBVHNode* FaceBVH::getRoot() { return root; }
 
 void FaceBVH::Refit(Mesh& mesh) {
-	getRoot()->refitNode(mesh);
+	if (root)
+		root->refitNode(mesh);
 }
 void FaceBVH::Clear()
 {

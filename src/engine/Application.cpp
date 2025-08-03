@@ -133,6 +133,7 @@ void Application::ObjectMode(GLFWwindow* window, MyGUI& gui)
 			return;
 		mode = Mode::EDIT;
 	}
+	
 	// GIZMO OPERATION
 	if (keys[GLFW_KEY_1])
 	{
@@ -904,6 +905,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 	// FLIP NORMALS
 	if (keys[GLFW_KEY_N] && keys[GLFW_KEY_LEFT_ALT])
 	{
+		std::cout << "\n\n\t [Operation] Flip normals \n";
 		mesh->flipFaceNormals(mesh->getSelectedFaces());
 
 		keys[GLFW_KEY_N] = 0;
@@ -911,7 +913,6 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 	}
 
 	// SIMPLE SUBDIVISION
-		// TRIANGULATE
 	if (keys[GLFW_KEY_S] && keys[GLFW_KEY_LEFT_CONTROL])
 	{
 		mesh->linearSubdivision();
@@ -919,10 +920,18 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		keys[GLFW_KEY_LEFT_CONTROL] = 0;
 	}
 
+	// LOOP CUT
 	if (keys[GLFW_KEY_R] && keys[GLFW_KEY_LEFT_CONTROL])
 	{
 		mesh->loopCut(mesh->getSelectedEdges().back(),3);
 		keys[GLFW_KEY_R] = 0;
+		keys[GLFW_KEY_LEFT_CONTROL] = 0;
+	}
+
+	if (keys[GLFW_KEY_M] && keys[GLFW_KEY_LEFT_CONTROL])
+	{
+		mesh->mergeVertices(mesh->getSelectedVertices());
+		keys[GLFW_KEY_M] = 0;
 		keys[GLFW_KEY_LEFT_CONTROL] = 0;
 	}
 
