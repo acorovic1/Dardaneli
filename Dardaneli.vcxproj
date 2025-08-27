@@ -86,6 +86,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -118,6 +119,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -158,6 +160,7 @@
     <ClCompile Include="src\engine\FaceBVH.cpp" />
     <ClCompile Include="src\engine\FaceBVHNode.cpp" />
     <ClCompile Include="src\engine\GeometryUtils.cpp" />
+    <ClCompile Include="src\engine\UVVertexBVH.cpp" />
     <ClCompile Include="src\engine\VertexBVH.cpp" />
     <ClCompile Include="src\engine\glad.c" />
     <ClCompile Include="libraries\include\ImGUIZMO\GraphEditor.cpp" />
@@ -206,6 +209,8 @@
     <None Include="src\shaders\selectEdit.vert" />
     <None Include="src\shaders\selectObject.frag" />
     <None Include="src\shaders\selectObject.vert" />
+    <None Include="src\shaders\UV.frag" />
+    <None Include="src\shaders\UV.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AABB.h" />
@@ -228,6 +233,8 @@
     <ClInclude Include="include\GeometryUtils.h" />
     <ClInclude Include="include\PairHash.h" />
     <ClInclude Include="include\UnorderedPair.h" />
+    <ClInclude Include="include\UVVertex.h" />
+    <ClInclude Include="include\UVVertexBVH.h" />
     <ClInclude Include="include\VertexBVH.h" />
     <ClInclude Include="libraries\include\ImGUIZMO\GraphEditor.h" />
     <ClInclude Include="libraries\include\ImGUIZMO\ImCurveEdit.h" />

@@ -31,6 +31,7 @@ public:
 
 	void Delete();
 
+	void setBool(bool activated, const char* uniform, bool value);
 	void setFloat(bool activated, const char* uniform, float value);
 	void setInteger(bool activated, const char* uniform, int value);
 	void setVector2f(bool activated, const char* uniform, float x, float y);

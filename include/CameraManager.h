@@ -19,6 +19,7 @@ public:
 	void deleteCamera(GLuint index);
 
 	Camera* getCamera(GLuint index);
+	Camera* getCamera(std::string name);
 
 	std::vector<Camera*>& getAllCameras();
 };

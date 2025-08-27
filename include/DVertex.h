@@ -15,7 +15,7 @@ struct DVertex {
 
 	glm::vec3 position;
 	glm::vec3 normal;
-	//glm::vec2 texUV;
+	
 
 
 	DEdge* e;

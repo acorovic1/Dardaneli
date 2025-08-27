@@ -21,6 +21,8 @@ class Camera {
 	glm::vec3 Orientation = glm::vec3(0.3f, -0.3f, -1.0f); // orientation is reversed
 	//glm::vec3 Orientation = glm::vec3(0.0f,-0.5f,0.0f); // orientation is reversed
 
+	std::string name;
+
 	glm::mat4 Projection;
 
 	glm::mat4 cameraMatrix = glm::mat4(1.0f); // projection * view
@@ -33,14 +35,19 @@ class Camera {
 	bool firstClick = true;
 public:
 
-	Camera(int width, int height, glm::vec3 Position);
+	Camera(int width, int height, glm::vec3 Position,std::string name);
 	void Update();
 	void CameraUniform(Shader& shader, const char* uniform);
 
-	void setProjectionMatrix(float fovy, float aspect, float near, float far);
+	void setOrientation(glm::vec3 ori);
+
+	void setPerspectiveProjection(float fovy, float aspect, float near, float far);
+	void setOrthographicProjection();
+	void setProjection(glm::mat4 projection) { this->Projection = projection; }
 
 	glm::mat4  getViewMatrix()const;
 	glm::mat4  getProjectionMatrix()const;
+	std::string getName() const { return name; }
 
 	int getWidth()const;
 	int getHeight()const;
@@ -56,5 +63,10 @@ public:
 
 	Ray CreateRay(GLFWwindow* window);
 
-	void Movement(GLFWwindow* window, MyGUI& gui);
+	void Movement3D(GLFWwindow* glfwWindow, MyGUI& gui);
+	void Movement2D(GLFWwindow* glfwWindow, MyGUI& gui);
+
+
+	void setCamera2D();
+
 };

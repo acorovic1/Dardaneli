@@ -4,11 +4,19 @@
 #include "algorithm"
 #include "Window.h"
 
+
 class Renderer {
+	Window& window;
+	MyGUI& gui;
 public:
 
-	Renderer();
+	Renderer(Window& window, MyGUI& gui);
 
 	void Init();
-	void Render(Window& window, MyGUI& gui);
+	void Render();
+
+
+
+	void RenderUVEditor();
+
 };

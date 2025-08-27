@@ -4,13 +4,13 @@ layout (location = 0) in vec2 aPos;
 
 
 uniform mat4 cameraMatrix;
-uniform mat4 model;
+uniform bool DDD;
 
 void main()
 {
 
-
-	gl_Position = cameraMatrix * vec4(aPos.x,0.0,aPos.y, 1.0);
-
-
+	if(DDD)
+		gl_Position = cameraMatrix * vec4(aPos.x,0.0,aPos.y, 1.0);
+    else 
+		gl_Position = cameraMatrix * vec4(aPos.x,aPos.y,0.0, 1.0);
 }

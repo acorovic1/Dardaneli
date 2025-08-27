@@ -3,11 +3,12 @@
 #include "CameraManager.h"
 #include "Window.h"
 
-Camera::Camera(int width, int height, glm::vec3 Position)
+Camera::Camera(int width, int height, glm::vec3 Position,std::string name)
 {
 	Camera::width = width;
 	Camera::height = height;
 	Camera::Position = Position;
+	Camera::name = name;
 
 	fov = 45.0, near = 0.01f, far = 100.0f;
 	posX = 0, posY = 0, previousX = 0, previousY = 0;
@@ -15,15 +16,30 @@ Camera::Camera(int width, int height, glm::vec3 Position)
 	cameraSingleton->addCamera(this);
 }
 
-void Camera::setProjectionMatrix(float fov, float aspect, float near, float far)
+void Camera::setPerspectiveProjection(float fov, float aspect, float near, float far)
 {
 	Camera::fov = fov;
 	Camera::near = near;
 	Camera::far = far;
 	this->Projection = glm::perspective(glm::radians(fov), aspect, near, far);
+	this->Update();
+}
+
+void Camera::setOrthographicProjection()
+{
+	float orthoScale = 5.0f; // controls zoom level
+	float aspect = (float)width / (float)height;
+
+	this->Projection = glm::ortho(
+		-orthoScale * aspect, orthoScale * aspect,  // left, right
+		-orthoScale, orthoScale,                    // bottom, top
+		-100.0f, 100.0f                             // near, far
+	); // top-left origin
+	this->Update();
 }
 
 glm::mat4 Camera::getViewMatrix()const {
+	
 	return glm::lookAt(Position, Position + Orientation, Up);
 }
 glm::mat4 Camera::getProjectionMatrix()const {
@@ -34,7 +50,12 @@ void Camera::Update()
 	cameraMatrix = Projection * getViewMatrix(); // projection * view
 }
 void Camera::CameraUniform(Shader& shader, const char* uniform) {
+	shader.Activate();
 	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), uniform), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
+}
+void Camera::setOrientation(glm::vec3 ori)
+{
+	this->Orientation = ori;
 }
 int Camera::getWidth()const { return width; }
 int Camera::getHeight()const { return height; }
@@ -70,7 +91,7 @@ Ray Camera::CreateRay(GLFWwindow* window)
 
 void Camera::setFOV(float fov)
 {
-	setProjectionMatrix(fov, float(getWidth()) / float(getHeight()), near, far);
+	setPerspectiveProjection(fov, float(getWidth()) / float(getHeight()), near, far);
 }
 void Camera::setPosition(glm::vec3 position)
 {
@@ -78,7 +99,7 @@ void Camera::setPosition(glm::vec3 position)
 }
 float Camera::getFOV()const { return fov; }
 
-void Camera::Movement(GLFWwindow* glfwWindow, MyGUI& gui)
+void Camera::Movement3D(GLFWwindow* glfwWindow, MyGUI& gui)
 {
 	Window* window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
 	std::vector<int>& keys = window->getKeys();
@@ -97,7 +118,7 @@ void Camera::Movement(GLFWwindow* glfwWindow, MyGUI& gui)
 			if (firstClick)
 			{
 				//std::cout << "HAHAHAH";
-				glfwSetCursorPos(window->GetWindow(), (width / 2), (height / 2));
+				glfwSetCursorPos(window->getWindow(), (width / 2), (height / 2));
 				firstClick = false;
 			}
 
@@ -105,7 +126,7 @@ void Camera::Movement(GLFWwindow* glfwWindow, MyGUI& gui)
 			double mouseX;
 			double mouseY;
 			// Fetches the coordinates of the cursor
-			glfwGetCursorPos(window->GetWindow(), &mouseX, &mouseY);
+			glfwGetCursorPos(window->getWindow(), &mouseX, &mouseY);
 
 			// Normalizes and shifts the coordinates of the cursor such that they begin in the middle of the screen
 			// and then "transforms" them into degrees
@@ -124,12 +145,12 @@ void Camera::Movement(GLFWwindow* glfwWindow, MyGUI& gui)
 			// Rotates the Orientation left and right
 			Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
 
-			glfwSetCursorPos(window->GetWindow(), (width / 2), (height / 2)); //NEKADA IZBACITI OVO I STAVITI ROTXPREVIOUS I ROTYPREVIOUS
+			glfwSetCursorPos(window->getWindow(), (width / 2), (height / 2)); //NEKADA IZBACITI OVO I STAVITI ROTXPREVIOUS I ROTYPREVIOUS
 		}
 		else if (buttons[GLFW_MOUSE_BUTTON_RIGHT])
 		{
 			// Fetches the coordinates of the cursor
-			glfwGetCursorPos(window->GetWindow(), &posX, &posY);
+			glfwGetCursorPos(window->getWindow(), &posX, &posY);
 
 			// Prevents camera from jumping on the first click
 			if (firstClick)
@@ -160,7 +181,7 @@ void Camera::Movement(GLFWwindow* glfwWindow, MyGUI& gui)
 		// Makes sure the next time the camera looks around it doesn't jump
 		firstClick = true;
 
-		if (glfwGetKey(window->GetWindow(), GLFW_KEY_LEFT_ALT) != GLFW_PRESS)
+		if (glfwGetKey(window->getWindow(), GLFW_KEY_LEFT_ALT) != GLFW_PRESS)
 		{
 			//std::cout << "asdasdasda";
 			keys[GLFW_KEY_LEFT_ALT] = 0;
@@ -168,4 +189,70 @@ void Camera::Movement(GLFWwindow* glfwWindow, MyGUI& gui)
 			buttonsProcessed[GLFW_MOUSE_BUTTON_RIGHT] = 0; // makes it so that this if only goes through 1 iteration
 		}
 	}
+}
+
+void Camera::Movement2D(GLFWwindow* glfwWindow, MyGUI& gui)
+{
+	Window* window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
+	std::vector<int>& keys = window->getKeys();
+	std::vector<int>& keysProcessed = window->getKeysProcessed();
+	std::vector<int>& buttons = window->getMouseButtons();
+	std::vector<int>& buttonsProcessed = window->getMouseButtonsProcessed();
+
+
+	if (keys[GLFW_KEY_LEFT_ALT]) 
+		if (buttons[GLFW_MOUSE_BUTTON_RIGHT]) // PAN
+		{
+			// Fetches the coordinates of the cursor
+			glfwGetCursorPos(window->getWindow(), &posX, &posY);
+
+			// Prevents camera from jumping on the first click
+			if (firstClick)
+			{
+				//glfwSetCursorPos(window, (width / 2), (height / 2));
+				previousX = posX;
+				previousY = posY;
+				firstClick = false;
+				//std::cout << "HAHAHAH";
+				return;
+			}
+			float deltaX = (posX - previousX) / 150;
+			float deltaY = (posY - previousY) / 150;
+
+			//std::cout << deltaX << " " << posX << " " << previousX << "\n";
+			Position.x += -deltaX ;
+			Position.y += deltaY ;
+
+			previousX = posX;
+			previousY = posY;
+		}
+	//RESET
+	if ( !buttons[GLFW_MOUSE_BUTTON_RIGHT])
+	{
+		// Makes sure the next time the camera looks around it doesn't jump
+		firstClick = true;
+
+		if (glfwGetKey(window->getWindow(), GLFW_KEY_LEFT_ALT) != GLFW_PRESS)
+		{
+			//std::cout << "asdasdasda";
+			keys[GLFW_KEY_LEFT_ALT] = 0;
+			buttonsProcessed[GLFW_MOUSE_BUTTON_LEFT] = 0; // makes it so that this if only goes through 1 iteration
+			buttonsProcessed[GLFW_MOUSE_BUTTON_RIGHT] = 0; // makes it so that this if only goes through 1 iteration
+		}
+	}
+}
+
+void Camera::setCamera2D()
+{
+	std::cout << "SetCamera2D";
+	
+
+	// View from above, looking down -Z
+	this->Position= glm::vec3(0.0f, 0.0f, +3.0f); // Z = +1
+	Orientation= glm::vec3(0.0f, 0.0f, -1.0f);
+	Up= glm::vec3(0.0f, -1.0f, 0.0f);
+
+	this->Update();
+
+	
 }

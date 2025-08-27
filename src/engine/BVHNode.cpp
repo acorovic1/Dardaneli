@@ -4,6 +4,8 @@ BVHNode::BVHNode() :box(), left(nullptr), right(nullptr), index(-1) {}
 
 BVHNode::BVHNode(Object& object) :box(object), left(nullptr), right(nullptr), index{ object.getIndex() } {}
 BVHNode::BVHNode(glm::vec3& vertex, unsigned int i) :box(vertex), left(nullptr), right(nullptr), index{ i } {}
+BVHNode::BVHNode(float x, float y, float z, unsigned int index): box(glm::vec3(x,y,z)),left(nullptr),right(nullptr),index{index}{}
+
 BVHNode::BVHNode(glm::vec3 a, glm::vec3 b, GLuint start, GLuint end) :box(a,b), left(nullptr), right(nullptr), index{ start,end } {}
 
 
@@ -89,6 +91,32 @@ void BVHNode::refitNodeEdge(Mesh& mesh)
 		else this->box = AABB(this->right->box);
 	}
 }
+
+
+
+void BVHNode::refitNodeUVVertex(Mesh& mesh)
+{
+	if (!this->left && !this->right) // if its a leaf node
+	{
+		auto uv = mesh.getUVVertex(this->index[0]);
+		this->box = AABB(glm::vec3(uv->uv.x, uv->uv.y, 0.0f));
+	}
+	else
+	{
+		this->left->refitNodeUVVertex(mesh);
+		this->right->refitNodeUVVertex(mesh);
+
+		if (this->left && this->right)
+			this->box = AABB(this->left->box, this->right->box);
+		else if (this->left)
+			this->box = AABB(this->left->box);
+		else this->box = AABB(this->right->box);
+	}
+}
+
+
+
+
 void BVHNode::Draw(Camera& camera, Shader& shader) {
 	box.Draw(camera, shader);
 }

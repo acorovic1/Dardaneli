@@ -17,6 +17,9 @@ struct DEdge {
 
 	DLoop* loop;
 
+	bool isSeam = false;
+
+
 	DEdge() : v1(nullptr), v2(nullptr), d1(), d2(), loop(nullptr) {}
 	DEdge(DVertex* a, DVertex* b);
 

@@ -15,10 +15,11 @@ void MyGUI::Init()
 	io = &ImGui::GetIO(); (void)io;
 	gizmoIo = &ImGui::GetIO();
 	ImGui::StyleColorsDark();
-	ImGui_ImplGlfw_InitForOpenGL(window->GetWindow(), true);
+	ImGui_ImplGlfw_InitForOpenGL(window->getWindow(), true);
 	ImGui_ImplOpenGL3_Init("#version 460");
 
-	InitializeGrid();
+	InitializeGrid2D();
+	InitializeGrid3D();
 }
 void MyGUI::NewFrame()
 {
@@ -86,18 +87,41 @@ void MyGUI::DrawUI()
 	}
 	else if (app->mode == Mode::EDIT)
 	{
-		ImGui::Checkbox("BVHTree", &BVHTree);
-		ImGui::SameLine();
-		ImGui::InputInt("BVHTreeSubdivision", &eBVHSubd);
-		ImGui::Checkbox("FaceCulling", &faceCulling);
+		Mesh* mesh = nullptr;
 		if (edit)
 		{
-			Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]));
+			mesh = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]));
 			VertexBVHSingleton->BuildBottomUp(*objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]));
 			EdgeBVHSingleton->BuildBottomUp(*mesh);
 			FaceBVHSingleton->BuildBottomUp(*mesh);
 			std::cout << "built";
 			edit = false;
+		}
+
+
+		ImGui::Checkbox("BVHTree", &BVHTree);
+		ImGui::SameLine();
+		ImGui::InputInt("BVHTreeSubdivision", &eBVHSubd);
+		ImGui::Checkbox("FaceCulling", &faceCulling);
+		ImGui::Button("Mark seam");
+		if (ImGui::IsItemClicked())
+		{
+			ImGui::SetTooltip("Mark seam for selected edges");
+			std::cout << "\n\nSeams marked";
+			for (DEdge* edge : static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()))->getSelectedEdges())
+				edge->isSeam = true;
+
+			static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()))->lscmUVUnwrap();
+		}
+		ImGui::Button("Clear seam");
+		if (ImGui::IsItemClicked())
+		{
+			ImGui::SetTooltip("Clear seam for selected edges");
+			
+			for (DEdge* edge : static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()))->getSelectedEdges())
+				edge->isSeam = false;
+
+			static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()))->mergeUVs();
 		}
 
 		if (BVHTree)
@@ -148,6 +172,18 @@ void MyGUI::DrawUI()
 
 		if (showInsetMenu)
 			Inset();
+	}
+	else if (app->mode == Mode::UV_EDITOR)
+	{
+		ImGui::Checkbox("BVHTree", &BVHTree);
+
+		Mesh *mesh = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()));
+		UVVertexBVHSingleton->BuildBottomUp(*mesh); // prebaci ovo na unwrap funkciju
+
+		if (BVHTree)
+		{
+			UVVertexBVHSingleton->DrawLeaves(UVVertexBVHSingleton->getRoot(), *cameraSingleton->getCamera("UV"), shaderSingleton->getShader("AABB"));
+		}
 	}
 
 	ImGui::End();
@@ -455,14 +491,12 @@ void MyGUI::Inset()
 		{
 			mesh->inset(mesh->getSelectedFaces());
 			window->getKeys()[GLFW_KEY_S] = 1;
-			std::cout << "\n\naj karamba ";
 
 		}
 		else if (selected_option == 1)
 		{
 			mesh->insetIndividual(mesh->getSelectedFaces());
 			window->getKeys()[GLFW_KEY_S] = 1;
-			std::cout << "\n\naj karamba ";
 
 		}
 
@@ -473,11 +507,6 @@ void MyGUI::Inset()
 		{
 			glfwSetTime(0);
 			hoverTime = 0;
-			if (selected_option != -1)
-			{
-
-				std::cout << "\n\naj karamba ";
-			}
 			showInsetMenu = false;
 			ImGui::CloseCurrentPopup();
 		}
@@ -489,7 +518,7 @@ void MyGUI::Inset()
 
 void MyGUI::Gizmos()
 {
-	Camera* camera = cameraSingleton->getCamera(0);
+	Camera* camera = window->getCamera();
 
 	ImGuizmo::SetOrthographic(false);
 
@@ -528,12 +557,12 @@ void MyGUI::Gizmos()
 
 		if (operation == ImGuizmo::OPERATION::ROTATE)
 		{
-			// compare matrices with an epsilon, not direct !=
+			// compare matrices with an myEpsilon, not direct !=
 			bool transformsDifferent = false;
-			const float matrixEpsilon = 1e-5f;
+			const float matrixmyEpsilon = 1e-5f;
 			for (int i = 0; i < 4 && !transformsDifferent; ++i)
 				for (int j = 0; j < 4; ++j)
-					if (fabs(previousTransform[i][j] - transform[i][j]) > matrixEpsilon)
+					if (fabs(previousTransform[i][j] - transform[i][j]) > matrixmyEpsilon)
 					{
 						transformsDifferent = true;
 						break;
@@ -555,15 +584,15 @@ void MyGUI::Gizmos()
 				app->rotate[1] = euler.y * radian;
 				app->rotate[2] = euler.z * radian;
 
-				if (fabs(app->rotate[0]) < epsilon) app->rotate[0] = 0.0f;
-				if (fabs(app->rotate[1]) < epsilon) app->rotate[1] = 0.0f;
-				if (fabs(app->rotate[2]) < epsilon) app->rotate[2] = 0.0f;
+				if (fabs(app->rotate[0]) < myEpsilon) app->rotate[0] = 0.0f;
+				if (fabs(app->rotate[1]) < myEpsilon) app->rotate[1] = 0.0f;
+				if (fabs(app->rotate[2]) < myEpsilon) app->rotate[2] = 0.0f;
 
 				std::cout << app->rotate[0] << " " << app->rotate[1] << " " << app->rotate[2] << " ";
 
 				// Apply the delta rotation to each selected object as axis-angle
 				float angle = glm::angle(deltaQuat); // radians
-				if (angle > epsilon)
+				if (angle > myEpsilon)
 				{
 					glm::vec3 axis = glm::axis(deltaQuat);
 					for (auto x : app->objectIndices)
@@ -717,13 +746,13 @@ void MyGUI::SelectObject()
 		app->rotate[1] = std::atan2(app->model[2][0], std::sqrt(app->model[0][0] * app->model[0][0] + app->model[1][0] * app->model[1][0])) * radian;
 		app->rotate[2] = std::atan2(-app->model[1][0], app->model[0][0]) * radian;
 
-		if (app->rotate[0] < epsilon)
+		if (app->rotate[0] < myEpsilon)
 			app->rotate[0] = app->rotatePrev[0] = 0;
 		else app->rotatePrev[0] = app->rotate[0];
-		if (app->rotate[1] < epsilon)
+		if (app->rotate[1] < myEpsilon)
 			app->rotate[1] = app->rotatePrev[1] = 0;
 		else app->rotatePrev[1] = app->rotate[1];
-		if (app->rotate[2] < epsilon)
+		if (app->rotate[2] < myEpsilon)
 			app->rotate[2] = app->rotatePrev[2] = 0;
 		else app->rotatePrev[2] = app->rotate[2];
 
@@ -754,60 +783,121 @@ void MyGUI::setGizmoOperation(ImGuizmo::OPERATION op)
 	operation = op;
 }
 
-void MyGUI::InitializeGrid(int width)
+void MyGUI::InitializeGrid3D(int width)
 {
 	int z = 0;
+
 	for (int i = 0; i <= width; i++)
 	{
-		gridVertices.push_back(glm::vec2(-width * 0.5, width * 0.5 - i));
-		gridVertices.push_back(glm::vec2(width * 0.5, width * 0.5 - i));
+		gridVertices3D.push_back(glm::vec2(-width * 0.5, width * 0.5 - i));
+		gridVertices3D.push_back(glm::vec2(width * 0.5, width * 0.5 - i));
 
-		gridIndices.push_back(z++);
-		gridIndices.push_back(z++);
+		gridIndices3D.push_back(z++);
+		gridIndices3D.push_back(z++);
 	}
 	for (int i = 1; i < width; i++)
 	{
-		gridVertices.push_back(glm::vec2(-width * 0.5 + i, width * 0.5));
-		gridVertices.push_back(glm::vec2(-width * 0.5 + i, -width * 0.5));
-		gridIndices.push_back(z++);
-		gridIndices.push_back(z++);
+		gridVertices3D.push_back(glm::vec2(-width * 0.5 + i, width * 0.5));
+		gridVertices3D.push_back(glm::vec2(-width * 0.5 + i, -width * 0.5));
+		gridIndices3D.push_back(z++);
+		gridIndices3D.push_back(z++);
 	}
 
-	gridIndices.push_back(0);
-	gridIndices.push_back(width * 2);
+	gridIndices3D.push_back(0);
+	gridIndices3D.push_back(width * 2);
 
-	gridIndices.push_back(1);
-	gridIndices.push_back(width * 2 + 1);
+	gridIndices3D.push_back(1);
+	gridIndices3D.push_back(width * 2 + 1);
 
-	gridVAO.Bind();
-	VBO VBO(gridVertices);
-	gridEBO.bufferData(gridIndices);
+	grid3DVAO.Bind();
+	VBO VBO(gridVertices3D);
+	grid3DEBO.bufferData(gridIndices3D);
 
-	gridVAO.LinkAttribute(VBO, 0, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
+	grid3DVAO.LinkAttribute(VBO, 0, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
 
-	gridVAO.Unbind();
+	grid3DVAO.Unbind();
 	VBO.Unbind();
-	gridEBO.Unbind();
+	grid3DEBO.Unbind();
 
 
 }
+void MyGUI::InitializeGrid2D(int width)
+{
 
-void MyGUI::Grid()
+	// Horizontal lines 
+	for (int i = 0; i <= width; i++)
+	{
+		float y = float(i) / width;
+		gridVertices2D.push_back(glm::vec2(0.0f, y));
+		gridVertices2D.push_back(glm::vec2(1.0f, y));
+		gridIndices2D.push_back(i * 2);
+		gridIndices2D.push_back(i * 2 + 1);
+	}
+
+	// Vertical lines 
+	for (int i = 1; i < width; i++)
+	{
+		float x = float(i) / width;
+		int baseIndex = (width + 1) * 2 + (i - 1) * 2;
+
+		gridVertices2D.push_back(glm::vec2(x, 0.0f));
+		gridVertices2D.push_back(glm::vec2(x, 1.0f));
+		gridIndices2D.push_back(baseIndex);
+		gridIndices2D.push_back(baseIndex + 1);
+	}
+
+	gridIndices2D.push_back(0);
+	gridIndices2D.push_back(2*width);
+
+	gridIndices2D.push_back(1);
+	gridIndices2D.push_back(2*width+1);
+
+	grid2DVAO.Bind();
+	VBO VBO(gridVertices2D);
+	grid2DEBO.bufferData(gridIndices2D);
+
+	grid2DVAO.LinkAttribute(VBO, 0, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
+
+	grid2DVAO.Unbind();
+	VBO.Unbind();
+	grid2DEBO.Unbind();
+
+
+}
+void MyGUI::Grid3D()
 {
 	static auto& shader = shaderSingleton->getShader("Grid");
 	shader.Activate();
 
-	gridVAO.Bind();
-	gridEBO.Bind();
+	grid3DVAO.Bind();
+	grid3DEBO.Bind();
 
-	cameraSingleton->getCamera(0)->CameraUniform(shader, "cameraMatrix");
+	shader.setBool(true, "DDD", true);
 
-	glDrawElements(GL_LINES, gridIndices.size(), GL_UNSIGNED_INT, 0);
+
+	window->getCamera()->CameraUniform(shader, "cameraMatrix");
+
+	glDrawElements(GL_LINES, gridIndices3D.size(), GL_UNSIGNED_INT, 0);
+}
+
+void MyGUI::Grid2D()
+{
+	static auto& shader = shaderSingleton->getShader("Grid");
+	shader.Activate();
+
+	grid2DVAO.Bind();
+	grid2DEBO.Bind();
+
+	shader.setBool(true, "DDD", false);
+
+	window->getCamera()->CameraUniform(shader, "cameraMatrix");
+
+	glDrawElements(GL_LINES, gridIndices2D.size(), GL_UNSIGNED_INT, 0);
 }
 
 void MyGUI::Modes()
 {
-	static const char* modes[] = { "Object mode","Edit mode","Sculpt mode","Weight paint mode","Texture paint mode" };
+	static const char* modes[] = { "Object mode","Edit mode","Sculpt mode","Weight paint","Texture paint ","UV Editor" };
 
 	if (ImGui::Button("Mode - "))
 		ImGui::OpenPopup("Modes");
@@ -819,8 +909,12 @@ void MyGUI::Modes()
 	{
 		ImGui::SeparatorText("Mode");
 		for (int i = 0; i < IM_ARRAYSIZE(modes); i++)
-			if (ImGui::Selectable(modes[i]))
-				app->mode = Mode(i);
+			if (i == 4) {
+				ImGui::Separator();
+			}
+			else
+				if (ImGui::Selectable(modes[i]))
+					app->mode = Mode(i);
 
 		ImGui::EndPopup();
 	}

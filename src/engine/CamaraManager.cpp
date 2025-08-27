@@ -25,4 +25,15 @@ Camera* CameraManager::getCamera(GLuint index)
 	return cameras[index];
 }
 
+Camera* CameraManager::getCamera(std::string name)
+{
+	for (auto& camera : cameras)
+	{
+		if (camera->getName() == name)
+			return camera;
+	}
+	std::cout << "Camera with name " << name << " not found.\n";
+	return nullptr;
+}
+
 std::vector<Camera*>& CameraManager::getAllCameras() { return cameras; }

@@ -61,6 +61,13 @@ void Shader::Delete() {
 
 GLuint Shader::getID() { return ID; }
 
+void Shader::setBool(bool activated, const char* uniform, bool value)
+{
+	if (!activated)
+		this->Activate();
+	glUniform1i(glGetUniformLocation(this->ID, uniform), value);
+}
+
 void Shader::setFloat(bool activated, const char* uniform, float value)
 {
 	if (!activated)

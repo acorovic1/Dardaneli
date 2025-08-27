@@ -119,6 +119,14 @@ void addPlane()
 	l4->next = l1;
 
 
+
+	l1->uvVertex = std::make_shared<UVVertex>();
+	l2->uvVertex = std::make_shared<UVVertex>();
+	l3->uvVertex = std::make_shared<UVVertex>();
+	l4->uvVertex = std::make_shared<UVVertex>();
+
+
+
 	new Mesh(
 		"Plane",
 		vertices,
@@ -198,6 +206,14 @@ void addCube()
 	/* used for linking loop.radial atributes*/
 	std::unordered_multimap < UnorderedPair<int>, DLoop*, UnorderedPairHash<int> > loopMap{};
 
+
+	std::vector< std::shared_ptr<UVVertex>> uvs(vertices.size());
+
+	for (int i = 0;i < vertices.size();i++)
+	{
+		uvs[i] = std::make_shared<UVVertex>();
+	}
+
 	for (int i = 0; i < edgeIndices.size(); i += 2)
 	{
 		DEdge* e1 = new DEdge();
@@ -238,6 +254,11 @@ void addCube()
 		l2->next = l3;	l2->prev = l1;
 		l3->next = l4;	l3->prev = l2;
 		l4->next = l1;	l4->prev = l3;
+
+		l1->uvVertex = uvs[indices[i + 1]];
+		l2->uvVertex = uvs[indices[i + 5]];
+		l3->uvVertex = uvs[indices[i + 2]];
+		l4->uvVertex = uvs[indices[i]];
 
 		// will be used for radial attributes
 		loopMap.emplace(UnorderedPair<int>(indices[i], indices[i + 1]), l1);

@@ -15,9 +15,9 @@
 #include "FaceBVH.h"
 
 #define radian 180/3.14159265358979323846f
-#define epsilon 0.00001
+#define myEpsilon 0.00001
 
-enum class Mode { OBJECT, EDIT, SCULPT, WEIGHT_PAINT, TEXTURE_PAINT };
+enum class Mode { OBJECT, EDIT, SCULPT, WEIGHT_PAINT, TEXTURE_PAINT, UV_EDITOR };
 enum class SelectMode { VERTEX, EDGE, FACE };
 
 class MyGUI;
@@ -27,7 +27,7 @@ class Application {
 	static Application* instance;
 	Application() {};
 
-	Mode mode = Mode::OBJECT;
+	Mode mode = Mode::EDIT;
 	SelectMode selectMode = SelectMode::VERTEX;
 
 	std::vector<int> objectIndices = std::vector<int>(1);
@@ -69,9 +69,14 @@ public:
 
 	void ObjectMode(GLFWwindow* window, MyGUI& gui); //Inputs
 	void EditMode(GLFWwindow* window, MyGUI& gui); //Inputs
+	void UVMode(GLFWwindow* window, MyGUI& gui); //Inputs
 	void Inputs(GLFWwindow* window, MyGUI& gui); //Inputs
 
-
+	Object* getActiveObject() {
+		if (objectIndices.size() == 0 || objectIndices.back() < 0 || objectIndices.back() >= objectSingleton->getNumberOfObjects())
+			return nullptr;
+		return objectSingleton->getObject(objectIndices.back());
+	}
 
 	void deleteObjects();
 

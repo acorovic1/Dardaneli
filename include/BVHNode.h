@@ -26,6 +26,7 @@ struct  BVHNode
 
 	BVHNode(Object& mesh);
 	BVHNode(glm::vec3& vertex,unsigned int index);
+	BVHNode(float x,float y,float z,unsigned int index);
 	BVHNode(glm::vec3 a,glm::vec3 b, GLuint start, GLuint end);
 	BVHNode(std::vector<glm::vec3> vertices, std::vector<int>& vec);
 
@@ -36,6 +37,7 @@ struct  BVHNode
 	void refitNode();
 	void refitNodeVertex(Object& object);
 	void refitNodeEdge(Mesh& mesh);
+	void refitNodeUVVertex(Mesh& mesh);
 
 	void Draw(Camera& camera, Shader& shader);
 };

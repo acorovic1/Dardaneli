@@ -4,6 +4,9 @@
 #include "Scene.h"
 #include "windows.h"
 
+// sastaviti edge/face za UVove
+// napraviti UV selection vert/edge/face
+
 // Debug message callback function
 void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
@@ -56,17 +59,19 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
-	Window window(800, 600, "Dardaneli");
+	Window window( "Dardaneli");
 	window.Init();
 
 	MyGUI gui(&window);
 	gui.Init();
 
 	Scene scene;
-	scene.Init();
+	scene.Init(window);
 
-	Renderer renderer;
+	Renderer renderer(window,gui);
 	renderer.Init();
+
+	window.setCamera(cameraSingleton->getCamera("Viewport"));
 
 	double prevTime = 0.0;
 	double crntTime = 0.0;
@@ -95,6 +100,9 @@ int main() {
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 
+	
+	std::cout << "\n\nDardaneli started successfully!\n";
+
 	while (!window.ShouldClose()) {
 		crntTime = glfwGetTime();
 		timeDiff = crntTime - prevTime;
@@ -104,7 +112,7 @@ int main() {
 			std::string FPS = std::to_string((1.0 / timeDiff) * counter);
 			std::string ms = std::to_string((timeDiff / counter) * 1000);
 			std::string newTitle = "Dardaneli - " + FPS + "FPS / " + ms + "ms";
-			glfwSetWindowTitle(window.GetWindow(), newTitle.c_str());
+			glfwSetWindowTitle(window.getWindow(), newTitle.c_str());
 
 			prevTime = crntTime;
 			counter = 0;
@@ -112,14 +120,14 @@ int main() {
 
 		gui.NewFrame();
 
-		window.getCamera().Update();
+		//window.getCamera()->Update();
 
-		renderer.Render(window, gui);
+		renderer.Render();
 
 		if (!gui.getIO()->WantCaptureMouse) {
-			app->Inputs(window.GetWindow(), gui);
+			app->Inputs(window.getWindow(), gui);
 		}
-		gui.Grid();
+
 		gui.DrawUI();
 		gui.Render();
 

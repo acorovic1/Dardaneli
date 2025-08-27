@@ -13,9 +13,11 @@
 class Application;
 class Window {
 	GLFWwindow* window;
-	Camera camera;
+	Camera* camera;
 
 	std::string name;
+
+	int width, height;
 
 	double posX = 0, posY = 0;
 	double previousX = 0, previousY = 0;
@@ -27,16 +29,20 @@ class Window {
 	std::vector<int>mouseButtonsProcessed = std::vector<int>(2, 0);
 
 public:
-	Window(int width, int height, const char* title);
+	Window( const char* title);
 	void Init();
 	void Terminate();
 	bool ShouldClose();
 	void PollEvents();
-	GLFWwindow* GetWindow(); //promijeni veliko G u malo g... konzistentnost
+	GLFWwindow* getWindow(); //promijeni veliko G u malo g... konzistentnost
 	std::string getName() { return name; };
+	int getWidth() { return width; };
+	int getHeight() { return height; };
 
-	Camera& getCamera();
+	Camera* getCamera();
+	void setCamera(Camera* cam);
 	void resizeWindow(int width, int height);
+	void splitWindow(int width, int height);
 
 	void setCallbacks();
 	static void key_callback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods);

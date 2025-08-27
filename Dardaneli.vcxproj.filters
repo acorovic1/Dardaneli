@@ -195,6 +195,9 @@
     <ClCompile Include="src\engine\GeometryUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\engine\UVVertexBVH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\basic.vert">
@@ -245,6 +248,8 @@
     <None Include="src\shaders\activeObject.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="src\shaders\UV.vert" />
+    <None Include="src\shaders\UV.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Camera.h">
@@ -395,6 +400,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\GeometryUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UVVertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UVVertexBVH.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

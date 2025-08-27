@@ -3,7 +3,7 @@
 #include "DVertex.h"
 #include "DEdge.h"
 #include "DFace.h"
-
+#include "UVVertex.h"
 
 struct DLoop {
 
@@ -14,14 +14,15 @@ struct DLoop {
 	DLoop* prev;
 	DLoop* next;
 
-
-	// circular lists
 	DLoop* radialPrev;
 	DLoop* radialNext;
 
 
-	DLoop() : tip(nullptr), edge(nullptr), face(nullptr), prev(nullptr), next(nullptr), radialPrev(this), radialNext(this) {}
-	DLoop(DVertex* v, DEdge* e, DFace* f) : tip(v), edge(e), face(f), prev(nullptr), next(nullptr), radialPrev(this), radialNext(this) {}
+	std::shared_ptr<UVVertex> uvVertex;
+
+
+	DLoop() : tip(nullptr), edge(nullptr), face(nullptr), prev(nullptr), next(nullptr), radialPrev(this), radialNext(this),uvVertex(nullptr) {}
+	DLoop(DVertex* v, DEdge* e, DFace* f) : tip(v), edge(e), face(f), prev(nullptr), next(nullptr), radialPrev(this), radialNext(this), uvVertex(nullptr) {}
 
 
 

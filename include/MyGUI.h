@@ -13,6 +13,7 @@
 #include "CameraManager.h"
 #include "ObjectModeBVH.h"
 #include "VertexBVH.h"
+#include "UVVertexBVH.h"
 #include "EdgeBVH.h"
 #include "Object.h"
 #include "BasicObjects.h"
@@ -41,11 +42,16 @@ class MyGUI /* :public Dardaneli...varijable pod protected staviti*/ {
 	// used only for disk.d1
 	DEdge* vertexEdge = nullptr;
 
-	std::vector<glm::vec2> gridVertices;
-	std::vector<GLuint> gridIndices;
+	std::vector<glm::vec2> gridVertices3D;
+	std::vector<GLuint> gridIndices3D;
+	std::vector<glm::vec2> gridVertices2D;
+	std::vector<GLuint> gridIndices2D;
 
-	VAO gridVAO;
-	EBO gridEBO;
+	VAO grid3DVAO;
+	EBO grid3DEBO;
+
+	VAO grid2DVAO;
+	EBO grid2DEBO;
 
 public:
 	bool showAddMenu = false;
@@ -81,8 +87,11 @@ public:
 	void VertexTransform();
 	void Transformations();
 	void SelectObject();
-	void Grid();
-	void InitializeGrid(int width = 20);
+
+	void InitializeGrid3D(int width = 20);
+	void Grid3D();
+	void InitializeGrid2D(int width = 10);
+	void Grid2D();
 
 	void setGizmoOperation(ImGuizmo::OPERATION op);
 

@@ -1,4 +1,10 @@
-﻿#include "unordered_map"
+﻿
+#define NOMINMAX
+
+
+
+#include "unordered_map"
+#include "queue"
 
 
 #include "Mesh.h"
@@ -13,8 +19,12 @@
 #include "FaceBVH.h"
 #include "CameraManager.h"
 #include "UnorderedPair.h"
+#include "igl/lscm.h"
+#include "igl/boundary_loop.h"
 
 
+#include <glm/glm.hpp>
+#include <glm/gtx/hash.hpp>  // this includes the definition of hash for glm types
 
 
 
@@ -30,10 +40,10 @@ Mesh::Mesh(std::string&& name, std::vector <DVertex*> vertices,
 	ebo.bufferData(Mesh::indices);
 	edgeEBO.bufferData(Mesh::edgeIndices);
 
-	VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0);
-	VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float)));
-	VAO.LinkAttribute(VBO, 2, 3, GL_FLOAT, sizeof(DVertex), (void*)(6 * sizeof(float)));
-	VAO.LinkAttribute(VBO, 3, 2, GL_FLOAT, sizeof(DVertex), (void*)(9 * sizeof(float)));
+	VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0); //position
+	VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float))); //normal
+
+
 
 	VAO.Unbind();
 	VBO.Unbind();
@@ -1064,7 +1074,7 @@ void Mesh::mergeVertices(std::vector<int>& verts)
 				fillVec.push_back(getVertexIndex(x));
 			}
 
-			fillVec.push_back(vertices.size()-1);
+			fillVec.push_back(vertices.size() - 1);
 			faceFill(fillVec);
 
 		}
@@ -1079,7 +1089,7 @@ void Mesh::mergeVertices(std::vector<int>& verts)
 			}
 			//std::cout << "\n\n\t Starting point: "<< getVertexIndex(l->tip);
 
-			
+
 
 			std::vector<int>helpFill;
 			DLoop* start = l;
@@ -1114,11 +1124,11 @@ void Mesh::mergeVertices(std::vector<int>& verts)
 			} while (l != start);
 
 		}
-		std::vector<DFace*>del{map.first};
+		std::vector<DFace*>del{ map.first };
 		deleteFaces(del);
 	}
 
-	
+
 
 
 	this->updateEBO();
@@ -1164,7 +1174,7 @@ std::vector<glm::vec3> Mesh::getSlideDirections(DVertex* vert, std::unordered_se
 
 std::vector<glm::vec2> Mesh::getSlideUnprojectedDirections(DVertex* vert, std::unordered_set<DVertex*> neighbours)
 {
-	auto camera = cameraSingleton->getCamera(0);
+	auto camera = cameraSingleton->getCamera("Viewport");
 	int screenWidth = camera->getWidth();
 	int screenHeight = camera->getHeight();
 
@@ -1229,6 +1239,54 @@ std::vector<DFace*>& Mesh::getSelectedFaces()
 	return selectedFaces;
 }
 
+void Mesh::findUVIslands(std::vector<std::unordered_set<DFace*>>& islands)
+{
+	std::unordered_set<DFace*>faces = getAllFaces();
+	std::unordered_map<DFace*, bool> facesVisited;
+	facesVisited.reserve(faces.size());
+	for (DFace* f : faces) {
+		facesVisited[f] = false;
+	}
+
+	for (auto face : facesVisited)
+	{
+		if (face.second)continue;
+
+		std::unordered_set<DFace*> island;
+
+		std::queue<DFace*> q;
+
+
+		face.second = true;
+		q.push(face.first);
+
+		while (!q.empty())
+		{
+			DFace* f = q.front();
+			q.pop();
+			island.insert(f);
+
+			for (DLoop* loop : f->getLoops())
+			{
+				if (loop->edge->isSeam)continue;
+
+				for (DFace* neighbour : loop->edge->getFaces())
+				{
+					if (facesVisited[neighbour]) continue;
+					facesVisited[neighbour] = true;
+					q.push(neighbour);
+				}
+			}
+
+		}
+		islands.push_back(island);
+
+
+	}
+
+
+}
+
 std::vector<int> Mesh::getFaceIndices(DFace* face)
 {
 	std::vector<int> returnVec;
@@ -1272,8 +1330,8 @@ std::vector<GLuint> Mesh::formTrianglesForDrawing()
 			returnVec.push_back(this->getVertexIndex(faceVertices[2]));
 
 			returnVec.push_back(this->getVertexIndex(faceVertices[2]));
-			returnVec.push_back(this->getVertexIndex(faceVertices[0]));
 			returnVec.push_back(this->getVertexIndex(faceVertices[3]));
+			returnVec.push_back(this->getVertexIndex(faceVertices[0]));
 
 			//std::cout << "\n" << this->getVertexIndex(faceVertices[0]) << " " << this->getVertexIndex(faceVertices[1]) << " " << this->getVertexIndex(faceVertices[2]) << "\n"
 			//	<< this->getVertexIndex(faceVertices[2])<<" " << this->getVertexIndex(faceVertices[0]) << " " << this->getVertexIndex(faceVertices[3]) << "\n\n";
@@ -1347,7 +1405,449 @@ std::pair<DEdge*, DEdge*> Mesh::getTwoIncidentEdges(DEdge* edge, DFace* face)
 		return { l->prev->edge, l->next->edge };
 }
 
+void Mesh::lscmFaceIndicesHelper(std::vector<GLuint>& F, int index, DLoop* loop)
+{
 
+
+	//std::cout << "\n\n\t OLD \n";
+	//for (auto i = 0;i < F.size();i += 3)
+	//{
+	//	std::cout << F[i] << " " << F[i + 1] << " " << F[i + 2];
+	//	std::cout << "\n";
+	//}
+
+
+	int indexToSwap = getVertexIndex(loop->tip);
+
+
+	std::unordered_set<int> setOfVertices;
+
+	for (DVertex* vertex : loop->face->getVertices())
+	{
+		setOfVertices.insert(this->getVertexIndex(vertex));
+	}
+
+	int numberOfTriplets = setOfVertices.size() - 2;
+
+
+	const size_t span = 3 * static_cast<size_t>(numberOfTriplets);
+	const size_t total = F.size();
+	if (span > total) return;
+
+	size_t required_unique = setOfVertices.size();
+
+	for (size_t j = 0; j + span <= total; j += 3) {
+		std::unordered_map<int, int> freq;
+		size_t present_unique = 0;
+		bool outside_found = false;
+
+		for (size_t k = j; k < j + span; ++k) {
+			int val = indices[k];
+			if (setOfVertices.count(val) != 0) {
+				int prev = freq[val];
+				freq[val] = prev + 1;
+				if (prev == 0) {
+					present_unique++;
+				}
+			}
+			else {
+				outside_found = true;
+				break;
+			}
+		}
+
+		if (outside_found) continue;
+		if (present_unique != required_unique) continue;
+
+
+		//std::cout << "\n\n\n indices \n\t";
+		for (size_t offset = 0; offset < span; offset++) {
+
+			if (F[j + offset] == indexToSwap)
+				F[j + offset] = index;
+
+		}
+	}
+
+
+	//std::cout << "\n\n\t NEW \n";
+	//for (auto i = 0;i < F.size();i += 3)
+	//{
+	//	std::cout << F[i] << " " << F[i + 1] << " " << F[i + 2];
+	//	std::cout << "\n";
+	//}
+
+}
+
+void Mesh::spitUVsAlongSeams()
+{
+	std::unordered_set<std::shared_ptr<UVVertex>>uvs;
+
+	for (DEdge* e : getAllEdges())
+	{
+		if (!e->loop)continue;
+
+		if (!e->isSeam)
+		{
+			uvs.insert(e->loop->uvVertex);
+			uvs.insert(e->loop->radialNext->uvVertex);
+
+			continue;
+		}
+
+		if (e->loop->radialNext == e->loop)
+		{
+
+			uvs.insert(e->loop->uvVertex);
+			continue;
+		}
+
+		DLoop* loop = e->loop;
+
+		do
+		{
+			if (loop->next->edge->isSeam)
+			{
+				if (loop->uvVertex.use_count() != 1)
+				{
+					loop->uvVertex = std::make_shared<UVVertex>();
+				}
+				else std::cout << "\n\n\t The count is 1";
+				uvs.insert(loop->uvVertex);
+
+			}
+
+			loop = loop->radialNext;
+
+		} while (loop != e->loop);
+
+	}
+
+	std::cout << "\n\n\tNumber of UVs: " << uvs.size();
+
+}
+
+void Mesh::mergeUVs()
+{
+	uvCoords.clear();
+
+	std::unordered_map<DVertex*, std::shared_ptr<UVVertex>> map;
+	for (DVertex* vertex : vertices)
+	{
+		map.insert({ vertex,std::make_shared<UVVertex>() });
+	}
+
+	for (DFace* face : getAllFaces())
+	{
+		for (DLoop* loop : face->getLoops())
+			loop->uvVertex = map[loop->tip];
+
+	}
+
+	std::cout << "\n\n\t MergeUVs size: " << map.size();
+
+}
+
+void Mesh::formUVTopology()
+{
+
+
+}
+
+void Mesh::lscmUVUnwrap()
+{
+	mergeUVs();
+
+
+	auto tempV = vertices;
+	auto tempF = indices;
+
+	// DLoop , global index
+	std::unordered_map<DLoop*, int> newUVs;
+
+
+	// Split UVs along seams 
+	for (DEdge* e : getAllEdges())
+	{
+		if (!e->loop)continue;
+
+		if (!e->isSeam)
+			continue;
+
+
+		if (e->loop->radialNext == e->loop)
+			continue;
+
+		DLoop* loop = e->loop;
+
+		do
+		{
+			if (loop->next->edge->isSeam)
+			{
+				if (loop->uvVertex.use_count() != 1)
+				{
+					loop->uvVertex = std::make_shared<UVVertex>();
+					tempV.push_back(loop->tip);
+					newUVs.insert({ loop, tempV.size() - 1 });
+					lscmFaceIndicesHelper(tempF, tempV.size() - 1, loop);
+
+				}
+				else std::cout << "\n\n\t The count is 1";
+
+			}
+
+			loop = loop->radialNext;
+
+		} while (loop != e->loop);
+
+	}
+
+	//std::cout << "\n\n\t tempV size: " << tempV.size()<< "\t\t newUVs size:"<<newUVs.size();
+
+
+
+	// Find islands
+	std::vector<std::unordered_set<DFace*>> islands;
+	findUVIslands(islands);
+
+	int islandsSize = islands.size();
+	double offset = 1.0 / islandsSize;
+
+	int offsetCounter = 0;
+	this->uvCoords.clear();
+	for (auto island : islands)
+	{
+		// local index, DLoop* which points to the vert with local index
+		std::map< int, DLoop*> loopUVmap;
+		// global index, local index
+		std::map<int, int> vHelper;
+		std::vector<int> vHelperVector;
+		std::vector<std::vector<int>> fHelper;
+
+		int counter = 0;
+		for (DFace* face : island)
+		{
+			// per face UV indices
+			std::vector<int> temp;
+			for (DLoop* loop : face->getLoops())
+			{
+				int globalIndex;
+				if (newUVs.count(loop))
+					globalIndex = newUVs[loop];
+				else globalIndex = std::find(tempV.begin(), tempV.end(), loop->tip) - tempV.begin();
+
+				if (!vHelper.count(globalIndex))
+				{
+					vHelper[globalIndex] = vHelper.size();
+					loopUVmap.insert({ vHelper[globalIndex], loop });
+
+				}
+				temp.push_back(vHelper[globalIndex]);// pushing back local index
+			}
+
+
+			// creating fHelper
+			if (temp.size() == 3)
+			{
+				fHelper.push_back(std::move(temp));
+
+			}
+			else if (temp.size() == 4)
+			{
+				fHelper.emplace_back(std::initializer_list<int>{temp[0], temp[1], temp[2]});
+				fHelper.emplace_back(std::initializer_list<int>{temp[2], temp[3], temp[0]});
+
+			}
+			else if (temp.size() > 4)
+			{
+				for (int j = 1; j < temp.size() - 1; j++)
+					fHelper.emplace_back(std::initializer_list<int>{temp[0], temp[j], temp[j + 1]});
+
+			}
+			else std::cout << "\n\n MISTAKE Mesh::lscmUVUnwrap() ---> Fhelper matrix formation error \n\n";
+
+		}
+
+
+		Eigen::MatrixXd V(vHelper.size(), 3);
+		for (auto vHelp : vHelper)
+			V.row(vHelp.second) <<
+			tempV[vHelp.first]->position.x,
+			tempV[vHelp.first]->position.y,
+			tempV[vHelp.first]->position.z;
+
+
+
+
+		Eigen::MatrixXi F(fHelper.size(), 3);
+		for (int i = 0;i < fHelper.size();i++)
+			F.row(i) <<
+			fHelper[i][0],
+			fHelper[i][1],
+			fHelper[i][2];
+
+
+		// Find boundary loop
+		Eigen::VectorXi bnd;
+		igl::boundary_loop(F, bnd); // OVDJE NEGDJE ERROR KAD NEMA SEAMA;
+
+		if (bnd.size() == 0) {
+			std::cerr << "Error: UV island has no boundary (missing seams)." << std::endl;
+			return;
+		}
+
+		// Appoint boundary vertices
+		Eigen::VectorXi b(2);
+		b(0) = bnd(0);
+		b(1) = bnd(bnd.size() / 2);
+
+		// Appoint boundary vertices UV coordinates
+		Eigen::MatrixXd bc(2, 2);
+		bc <<
+			offset * offsetCounter, 0.0,  // UV for b(0)
+			offset* (offsetCounter + 1), 0.0;  // UV for b(1)
+		offsetCounter++;
+		// Compute lscm
+		Eigen::MatrixXd V_uv;
+		if (!igl::lscm(V, F, b, bc, V_uv))
+			return;
+
+		// Normalize UV coordinates to [0, 1] range
+		Eigen::Vector2d minUV = V_uv.colwise().minCoeff();
+		Eigen::Vector2d maxUV = V_uv.colwise().maxCoeff();
+		V_uv = (V_uv.rowwise() - minUV.transpose());
+		V_uv = V_uv.array().rowwise() / (maxUV - minUV).transpose().array();
+
+
+
+
+		// Update UVs in the mesh and DLoops
+
+		for (auto it : loopUVmap)
+		{
+			int index = it.first;
+			DLoop* l = it.second;
+			l->uvVertex->uv.x = V_uv(index, 0);
+			l->uvVertex->uv.y = V_uv(index, 1);
+			if (std::find(uvCoords.begin(), uvCoords.end(), l->uvVertex) == uvCoords.end())// mozda belaj ... ovdje je bio unordered_set prije
+				uvCoords.push_back(l->uvVertex);
+
+		}
+
+
+	}
+
+	//std::cout << "\n\n\t Number of UV islands is: " << islands.size();
+	//std::cout << "\n\n\t Number of UV coords is: " << uvCoords.size();
+
+
+	// ne znam zasto ovo radi ali NE DIRAJ!!!!! ako se ovo izbaci onda topologija ne valja
+	std::unordered_map<std::shared_ptr<UVVertex>, int> uvIndexMap;
+	uvIndexMap.reserve(uvCoords.size());
+	for (int i = 0; i < (int)uvCoords.size(); i++)
+		uvIndexMap[uvCoords[i]] = i;
+
+	// form UV topology
+	uvEdgeindices.clear();
+	for (DFace* face : getAllFaces())
+	{
+		std::cout << "\n ";
+		bool flag = true;
+		for (DLoop* loop : face->getLoops())
+			if (!loop->edge->isSeam)
+			{
+				flag = false;
+				break;
+			}
+		//if (flag)
+		//	std::cout << "\n\t\tfound it ";
+
+		for (DLoop* loop : face->getLoops())
+		{
+			int index1 = uvIndexMap[loop->uvVertex];
+			int index2 = uvIndexMap[loop->next->uvVertex];
+
+			if (flag)
+			{
+
+			//	std::cout << "\n Vert the uv  " << index1 << " belongs to " << getVertexIndex(tempV[index1]);
+			//	std::cout << "\n Vert the uv  " << index2 << " belongs to " << getVertexIndex(tempV[index2]);
+			}
+			uvEdgeindices.push_back(index1);
+			uvEdgeindices.push_back(index2);
+		}
+
+
+	}
+
+	//std::cout << "\n\n\t Number of uvEdgeIndices: " << uvEdgeindices.size() << "\n";
+	//std::cout << "\n\n\t Number of newUVs: " << newUVs.size() << "\n";
+
+	//for (int i = 0;i < uvEdgeindices.size();i += 2)
+	//{
+	//	std::cout << "\n\t" << uvEdgeindices[i] << "  " << uvEdgeindices[i + 1];
+	//}
+
+
+	// pack the islands
+
+	// grid of n x n cells, where each islands takes up one cell
+	int n = std::ceil(std::sqrt(islands.size()));
+	double sizeOfCell = 1.0 / n;
+
+	int row = 0;
+
+
+	for (int i = 0;i < islands.size();i++)
+	{
+		glm::vec2 min(std::numeric_limits<float>::max()), max(std::numeric_limits<float>::min());
+		for (DFace* face : islands[i])
+		{
+			auto loops = face->getLoops();
+			for (DLoop* loop : loops)
+			{
+				glm::vec2 uv = loop->uvVertex->uv;
+				if (uv.x < min.x) min.x = uv.x;
+				if (uv.y < min.y) min.y = uv.y;
+				if (uv.x > max.x) max.x = uv.x;
+				if (uv.y > max.y) max.y = uv.y;
+			}
+
+			max -= min;
+			double scaleX = sizeOfCell / (max.x * 1.12f);
+			double scaleY = sizeOfCell / (max.y * 1.12f);
+
+
+			for (DLoop* loop : loops)
+			{
+				// shift to the 0 0 cell
+				loop->uvVertex->uv.x -= min.x;
+				loop->uvVertex->uv.y -= min.y;
+
+
+				// scale to the size of the cell
+
+				loop->uvVertex->uv.x *= scaleX;
+				loop->uvVertex->uv.y *= scaleY;
+			}
+
+			// shift to the correct cell
+
+			for (DLoop* loop : loops)
+			{
+				loop->uvVertex->uv.x += (i % n) * sizeOfCell;
+				loop->uvVertex->uv.y += row * sizeOfCell;
+			}
+			if ((i + 1) % n == 0)row++;
+
+		}
+	}
+}
+
+//if (V_uv.rows() == 4) std::cout << "\n\n\tQUAD\n";
+//else std::cout << "\n\n\t OTHER\n";
+//
+//std::cout << l->uvVertex->uv.x << " " << l->uvVertex->uv.y << "\n";
 void Mesh::extrudeVertices(std::vector<int>& verts, bool update)
 {
 	DVertex* vertex;
@@ -1550,23 +2050,22 @@ void Mesh::flipFaceNormals(Container& faces)
 		//}
 
 
-		// jebem ti gpti majku
+
 		const size_t span = 3 * static_cast<size_t>(numberOfTriplets);
 		const size_t total = indices.size();
 		if (span > total) return;
 
 		size_t required_unique = setOfVertices.size();
 
-		// Prolazimo po svim mogucim pocecima sekvence od trojke (tj. pomeramo za 3)
+
 		for (size_t j = 0; j + span <= total; j += 3) {
 			std::unordered_map<int, int> freq;
 			size_t present_unique = 0;
 			bool outside_found = false;
 
-			// Obrada trenutnog prozora: span elemenata
 			for (size_t k = j; k < j + span; ++k) {
 				int val = indices[k];
-				if (setOfVertices.count(val) != 0) { // C++20; ako nema, zameni sa count(val) != 0
+				if (setOfVertices.count(val) != 0) {
 					int prev = freq[val];
 					freq[val] = prev + 1;
 					if (prev == 0) {
@@ -1575,22 +2074,20 @@ void Mesh::flipFaceNormals(Container& faces)
 				}
 				else {
 					outside_found = true;
-					break; // nevazeci  prozor, element van skupa
+					break;
 				}
 			}
 
 			if (outside_found) continue;
-			if (present_unique != required_unique) continue; // nije pokriven ceo skup
+			if (present_unique != required_unique) continue;
 
-			// validan prozor: ispiši trojke i uradi swap prvog i trećeg elementa svake trojke
+
 			std::cout << "\n\n\n indices \n\t";
 			for (size_t offset = 0; offset < span; offset += 3) {
 				size_t base = j + offset;
 				std::cout << indices[base] << " " << indices[base + 1] << " " << indices[base + 2] << "\n\t";
 				std::swap(*(this->indices.begin() + base), *(this->indices.begin() + base + 2));
 			}
-
-			// vraćamo pocetni indeks prozora
 		}
 
 
@@ -2203,7 +2700,7 @@ void Mesh::deleteVertices(Container& vertIndices, bool update)
 		else if (temp.size() == 1)
 		{
 			verticesToDelete.insert(vertices[x]);
-			eraseEdge(*temp.begin(),false);
+			eraseEdge(*temp.begin(), false);
 		}
 		else
 			edges.insert(temp.begin(), temp.end());

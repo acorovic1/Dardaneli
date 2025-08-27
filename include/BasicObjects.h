@@ -6,6 +6,11 @@
 constexpr auto PI = 3.14159265358979323846f;
 constexpr auto halfPI = PI/2;
 
+
+/// <summary>
+//  add UVVertex* to loops in the following objects: Circle, Sphere, Cylinder, Cone, Doughnut
+/// </summary>
+
 void addPlane();
 void addCube();
 void addCircle(int numSegments = 16, float radius = 1.0f);

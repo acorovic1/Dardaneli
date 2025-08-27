@@ -3,12 +3,14 @@
 #include"Object.h"
 #include "GeometryUtils.h"
 #include "unordered_set"
+#include "UVVertex.h"
 
-class Mesh :public Object {
 
-
+class Mesh : public Object {
 
 	std::vector<Texture>textures;
+
+
 
 	std::vector<GLuint>indices; // used for drawing faces
 	EBO edgeEBO;
@@ -17,6 +19,16 @@ class Mesh :public Object {
 	std::vector<int> selectedVertexIndices = std::vector<int>(0);
 	std::vector<DFace*>selectedFaces;
 	std::vector<DEdge*>selectedEdges;
+
+
+
+	std::vector<std::shared_ptr<UVVertex>>uvCoords;
+	std::vector<GLuint>uvEdgeindices;
+	std::vector<GLuint>uvIndices; // used for drawing faces
+
+	std::vector<std::shared_ptr<UVVertex>> selectedUVVertices;
+	std::unordered_map<UVVertex*, int> uvIndexMap;
+
 
 	// !!! needs an EBO update !!!
 	// erases indices of the face inside the mesh and updates DMesh structure accordingly
@@ -51,9 +63,16 @@ class Mesh :public Object {
 
 	// only works for quads
 	DEdge* getOpossingEdge(DEdge* edge, DFace* face);
-	std::pair<DEdge*,DEdge*> getTwoIncidentEdges(DEdge* edge, DFace* face);
+	std::pair<DEdge*, DEdge*> getTwoIncidentEdges(DEdge* edge, DFace* face);
 
+
+	void lscmFaceIndicesHelper(std::vector<GLuint>& F, int index, DLoop* loop);
 public:
+	void spitUVsAlongSeams();
+	void mergeUVs();
+	void formUVTopology();
+	// this method is commicaly inneficient, but due to time constraints it will have to do for now
+	void lscmUVUnwrap();
 
 	Mesh(std::string&& name, std::vector <DVertex*> vertices, std::vector <GLuint>& indices, const std::vector<GLuint>& edgeIndices = std::vector<GLuint>(), const  std::vector <Texture>& textures = std::vector<Texture>());
 
@@ -73,7 +92,7 @@ public:
 	DFace* getFace(std::unordered_set<int> indices); // returns the common face of indices 
 
 	DEdge* getEdge(int start, int end); // returns the common edge of indices 
-	DEdge* getEdge(DVertex* start,DVertex* end); // returns the common edge of vertices 
+	DEdge* getEdge(DVertex* start, DVertex* end); // returns the common edge of vertices 
 
 
 	void Draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES) override;
@@ -115,7 +134,7 @@ public:
 
 	std::unordered_set<DVertex*> linearSubdivision();
 
-	void loopCut(DEdge* edge,int numberOfCuts);
+	void loopCut(DEdge* edge, int numberOfCuts);
 	void mergeVertices(std::vector<int>& verts);
 
 	std::vector<glm::vec3> getSlideClampMax(std::unordered_set<DVertex*> neighbours);
@@ -223,6 +242,14 @@ public:
 	std::vector<int>& getSelectedVertices();
 	std::vector<DEdge*>& getSelectedEdges();
 	std::vector<DFace*>& getSelectedFaces();
+
+	std::vector<std::shared_ptr<UVVertex>>& getSelectedUVs() { return selectedUVVertices; }
+
+	std::vector<std::shared_ptr<UVVertex>>& getUVCoords() { return uvCoords; }
+	std::shared_ptr<UVVertex> getUVVertex(int index) { return uvCoords[index]; }
+	void findUVIslands(std::vector<std::unordered_set<DFace*>>& islands);
+
+	std::vector<GLuint>& getUVEdgeIndices() { return uvEdgeindices; }
 
 
 	std::vector<int> getFaceIndices(DFace* face);
