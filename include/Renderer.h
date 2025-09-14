@@ -8,6 +8,13 @@
 class Renderer {
 	Window& window;
 	MyGUI& gui;
+
+	void viewportEditor();
+	void uvEditor();
+	void shaderEditor();
+	
+
+
 public:
 
 	Renderer(Window& window, MyGUI& gui);
@@ -17,6 +24,6 @@ public:
 
 
 
-	void RenderUVEditor();
+	
 
 };

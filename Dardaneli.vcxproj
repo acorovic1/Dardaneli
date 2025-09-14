@@ -144,6 +144,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\engine\ShadingNodes\ColorOutputNode.cpp" />
+    <ClCompile Include="src\engine\ShadingNodes\Material.cpp" />
+    <ClCompile Include="src\engine\ShadingNodes\MaterialManager.cpp" />
+    <ClCompile Include="src\engine\ShadingNodes\ShadingNodesManager.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\ImGuiFileDialog.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\imnodes.cpp" />
     <ClCompile Include="src\engine\AABB.cpp" />
     <ClCompile Include="src\engine\Application.cpp" />
     <ClCompile Include="src\engine\BasicObjects.cpp" />
@@ -209,6 +215,8 @@
     <None Include="src\shaders\selectEdit.vert" />
     <None Include="src\shaders\selectObject.frag" />
     <None Include="src\shaders\selectObject.vert" />
+    <None Include="src\shaders\textureTest.frag" />
+    <None Include="src\shaders\textureTest.vert" />
     <None Include="src\shaders\UV.frag" />
     <None Include="src\shaders\UV.vert" />
   </ItemGroup>
@@ -231,7 +239,22 @@
     <ClInclude Include="include\FaceBVH.h" />
     <ClInclude Include="include\FaceBVHNode.h" />
     <ClInclude Include="include\GeometryUtils.h" />
+    <ClInclude Include="include\GPUVertex.h" />
     <ClInclude Include="include\PairHash.h" />
+    <ClInclude Include="include\ShadingNodes\AmbientOcclusionOutputNode.h" />
+    <ClInclude Include="include\ShadingNodes\ColorNode.h" />
+    <ClInclude Include="include\ShadingNodes\ColorOutputNode.h" />
+    <ClInclude Include="include\ShadingNodes\Material.h" />
+    <ClInclude Include="include\ShadingNodes\MaterialManager.h" />
+    <ClInclude Include="include\ShadingNodes\MathNode.h" />
+    <ClInclude Include="include\ShadingNodes\MetallicOutputNode.h" />
+    <ClInclude Include="include\ShadingNodes\NormalOutputNode.h" />
+    <ClInclude Include="include\ShadingNodes\RoughnessOutputNode.h" />
+    <ClInclude Include="include\ShadingNodes\ShaderBuilder.h" />
+    <ClInclude Include="include\ShadingNodes\ShadingNodes.h" />
+    <ClInclude Include="include\ShadingNodes\ShadingNodesManager.h" />
+    <ClInclude Include="include\ShadingNodes\TextureNode.h" />
+    <ClInclude Include="include\ShadingNodes\ValueNode.h" />
     <ClInclude Include="include\UnorderedPair.h" />
     <ClInclude Include="include\UVVertex.h" />
     <ClInclude Include="include\UVVertexBVH.h" />
@@ -243,10 +266,14 @@
     <ClInclude Include="libraries\include\ImGUIZMO\ImZoomSlider.h" />
     <ClInclude Include="libraries\include\ImGUI\imconfig.h" />
     <ClInclude Include="libraries\include\ImGUI\imgui.h" />
+    <ClInclude Include="libraries\include\ImGUI\ImGuiFileDialog.h" />
+    <ClInclude Include="libraries\include\ImGUI\ImGuiFileDialogConfig.h" />
     <ClInclude Include="libraries\include\ImGUI\imgui_impl_glfw.h" />
     <ClInclude Include="libraries\include\ImGUI\imgui_impl_opengl3.h" />
     <ClInclude Include="libraries\include\ImGUI\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="libraries\include\ImGUI\imgui_internal.h" />
+    <ClInclude Include="libraries\include\ImGUI\imnodes.h" />
+    <ClInclude Include="libraries\include\ImGUI\imnodes_internal.h" />
     <ClInclude Include="libraries\include\ImGUI\imstb_rectpack.h" />
     <ClInclude Include="libraries\include\ImGUI\imstb_textedit.h" />
     <ClInclude Include="libraries\include\ImGUI\imstb_truetype.h" />
@@ -265,6 +292,8 @@
     <ClInclude Include="include\VBO.h" />
     <ClInclude Include="include\Window.h" />
     <ClInclude Include="include\WindowManager.h" />
+    <ClInclude Include="libraries\include\stb\stb_image.h" />
+    <ClInclude Include="libraries\include\stb\stb_image_resize2.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\planks.png" />

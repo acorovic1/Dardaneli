@@ -1,10 +1,24 @@
-#include "MyGUI.h"
+﻿#include "MyGUI.h"
 #include <iomanip>
 #include "glad/glad.h"
 #include "Window.h"
 #include "DFace.h"
 #include "DLoop.h"
 #include <unordered_set>
+#include "ShadingNodes/MaterialManager.h"
+
+
+#include "ShadingNodes/TextureNode.h"
+#include "ShadingNodes/MathNode.h"
+#include "ShadingNodes/ValueNode.h"
+#include "ShadingNodes/ColorOutputNode.h"
+#include "ShadingNodes/NormalOutputNode.h"
+#include "ShadingNodes/RoughnessOutputNode.h"
+#include "ShadingNodes/MetallicOutputNode.h"
+#include "ShadingNodes/AmbientOcclusionOutputNode.h"
+#include "ShadingNodes/ColorNode.h"
+
+
 
 MyGUI::MyGUI(Window* window) :io(nullptr), gizmoIo(nullptr), window(window) {}
 
@@ -17,6 +31,8 @@ void MyGUI::Init()
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(window->getWindow(), true);
 	ImGui_ImplOpenGL3_Init("#version 460");
+
+	ImNodes::CreateContext();
 
 	InitializeGrid2D();
 	InitializeGrid3D();
@@ -37,6 +53,8 @@ void MyGUI::Shutdown()
 {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
+
+	ImNodes::DestroyContext();
 	ImGui::DestroyContext();
 }
 
@@ -117,7 +135,7 @@ void MyGUI::DrawUI()
 		if (ImGui::IsItemClicked())
 		{
 			ImGui::SetTooltip("Clear seam for selected edges");
-			
+
 			for (DEdge* edge : static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()))->getSelectedEdges())
 				edge->isSeam = false;
 
@@ -177,7 +195,7 @@ void MyGUI::DrawUI()
 	{
 		ImGui::Checkbox("BVHTree", &BVHTree);
 
-		Mesh *mesh = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()));
+		Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()));
 		UVVertexBVHSingleton->BuildBottomUp(*mesh); // prebaci ovo na unwrap funkciju
 
 		if (BVHTree)
@@ -185,11 +203,121 @@ void MyGUI::DrawUI()
 			UVVertexBVHSingleton->DrawLeaves(UVVertexBVHSingleton->getRoot(), *cameraSingleton->getCamera("UV"), shaderSingleton->getShader("AABB"));
 		}
 	}
+	else if (app->mode == Mode::SHADER_EDITOR)
+	{
+		Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()));
+		if (showAddMenu)
+		{
 
+			addShadingNodes();
+		}
+
+		ImGui::Begin("Materials");
+
+		static int current = 0;
+
+
+		std::vector<Material*> materials;
+
+		// prave se (nepotrebne?) kopije pokazivaca na materijale
+		if (current == 0)
+		{
+			for (auto mat : *mesh->getAllMaterials())
+				materials.push_back(mat.first);
+		}
+		else
+			materials = materialSingleton->getAllMaterials();
+
+		std::sort(materials.begin(), materials.end(),
+			[](Material* a, Material* b) {
+				return a->getName() < b->getName();
+			});
+
+
+
+		ImGui::RadioButton("Object Materials", &current, 0);
+		ImGui::SameLine();
+		if (ImGui::Button("Assign Material")) {
+
+			mesh->assignMaterial(app->activeMaterial);
+
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Remove Material")) {
+
+			mesh->removeMaterial(app->activeMaterial);
+
+		}
+		ImGui::RadioButton("All Materials", &current, 1);
+		ImGui::SameLine();
+		if (ImGui::Button("Add new material")) {
+			std::string matName = "Material " + std::to_string(materials.size());
+			mesh->addMaterial(new Material(matName));
+
+		}
+
+		static int selectedIndex = -1;
+		static int renameIndex = -1; // index of the material being renamed
+		static char renameBuf[128] = {};
+
+		for (int i = 0; i < materials.size(); ++i) {
+			bool isSelected = (selectedIndex == i);
+
+			if (ImGui::Selectable(materials[i]->getName().c_str(), isSelected)) {
+
+				if (selectedIndex != i) {
+					renameIndex = -1;
+				}
+				selectedIndex = i;
+
+				app->activeMaterial->getNodePositions();   // save old material node positions
+				app->activeMaterial = materials[i];
+				app->activeMaterial->setNodePositions();   // set new material node positions
+			}
+
+
+			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
+				renameIndex = i;
+				std::string currentName = materials[i]->getName();
+				strncpy_s(renameBuf, sizeof(renameBuf), currentName.c_str(), _TRUNCATE);
+			}
+
+			if (isSelected) {
+				ImGui::SetItemDefaultFocus();
+			}
+
+
+			if (renameIndex == i) {
+				ImGui::Indent();
+				if (ImGui::InputText("##Rename", renameBuf, IM_ARRAYSIZE(renameBuf),
+					ImGuiInputTextFlags_EnterReturnsTrue)) {
+					materials[i]->setName(std::string(renameBuf));
+					renameIndex = -1;
+				}
+				ImGui::Unindent();
+			}
+		}
+
+		ImGui::End();
+	}
 	ImGui::End();
 
 	if (app->mode == Mode::EDIT)
 		DMesh();
+
+
+	if (ImGui::Begin("Render Mode"))
+	{
+		int current = static_cast<int>(app->renderMode);
+
+		if (ImGui::RadioButton("Wireframe", &current, 0)) app->renderMode = RenderMode::WIREFRAME;
+		if (ImGui::RadioButton("Solid", &current, 1)) app->renderMode = RenderMode::SOLID;
+		if (ImGui::RadioButton("Material Preview", &current, 2)) app->renderMode = RenderMode::MATERIAL_PREVIEW;
+		if (ImGui::RadioButton("Render", &current, 3)) app->renderMode = RenderMode::RENDER;
+
+	}
+	ImGui::End();
+
 
 }
 
@@ -847,10 +975,10 @@ void MyGUI::InitializeGrid2D(int width)
 	}
 
 	gridIndices2D.push_back(0);
-	gridIndices2D.push_back(2*width);
+	gridIndices2D.push_back(2 * width);
 
 	gridIndices2D.push_back(1);
-	gridIndices2D.push_back(2*width+1);
+	gridIndices2D.push_back(2 * width + 1);
 
 	grid2DVAO.Bind();
 	VBO VBO(gridVertices2D);
@@ -897,7 +1025,7 @@ void MyGUI::Grid2D()
 
 void MyGUI::Modes()
 {
-	static const char* modes[] = { "Object mode","Edit mode","Sculpt mode","Weight paint","Texture paint ","UV Editor" };
+	static const char* modes[] = { "Object mode","Edit mode","Sculpt mode","Weight paint","Texture paint ","UV Editor","Shader Editor" };
 
 	if (ImGui::Button("Mode - "))
 		ImGui::OpenPopup("Modes");
@@ -914,10 +1042,23 @@ void MyGUI::Modes()
 			}
 			else
 				if (ImGui::Selectable(modes[i]))
+
+				{
 					app->mode = Mode(i);
+
+					if (app->mode == Mode::UV_EDITOR)
+						window->setCamera(cameraSingleton->getCamera("UV"));
+					else if (app->mode == Mode::SHADER_EDITOR)
+						window->setCamera(cameraSingleton->getCamera("Shader"));
+					else
+						window->setCamera(cameraSingleton->getCamera("Viewport"));
+				}
+
 
 		ImGui::EndPopup();
 	}
+
+
 }
 
 void MyGUI::DMesh()
@@ -1291,3 +1432,171 @@ void MyGUI::DMesh()
 	ImGui::End();
 
 }
+
+void MyGUI::ShowShaderEditor()
+{
+	// ovo negdje drugo prebaciti
+	ImNodesStyle& style = ImNodes::GetStyle();
+	style.Colors[ImNodesCol_TitleBarSelected] = IM_COL32(200, 200, 0, 255);
+
+	ImGui::Begin("Shader Editor");
+
+	ImNodes::BeginNodeEditor();
+
+	app->activeMaterial->drawNodes();
+
+	auto& links = app->activeMaterial->getLinks();
+	for (int i = 0; i < links.size(); ++i)
+	{
+		const std::pair<int, int> p = links[i];
+		// in this case, we just use the array index of the link
+		// as the unique identifier
+		ImNodes::Link(i, p.first, p.second);
+	}
+
+	ImNodes::MiniMap(0.25f, ImNodesMiniMapLocation_BottomRight);
+
+	ImNodes::EndNodeEditor();
+
+
+
+	///////////////////////////////////
+		// link creation logic \\
+	///////////////////////////////////
+
+	int outputAttribute, inputAttribute;
+	if (ImNodes::IsLinkCreated(&outputAttribute, &inputAttribute))
+	{
+		if (ImNodes::GetAttributePinShape(outputAttribute) == ImNodes::GetAttributePinShape(inputAttribute))
+		{
+
+			links.push_back(std::make_pair(outputAttribute, inputAttribute));
+
+			std::cout << "\n Link created from attr " << outputAttribute << " to attr " << inputAttribute;
+		}
+	}
+
+	// selection logic \\
+
+	int node_id;
+	const int num_selected_nodes = ImNodes::NumSelectedNodes();
+	auto& selectedNodes = app->activeMaterial->getSelectedNodes();
+	if (num_selected_nodes > 0)
+	{
+
+		selectedNodes.resize(num_selected_nodes);
+		ImNodes::GetSelectedNodes(selectedNodes.data());
+	}
+	else selectedNodes.clear();
+
+	int num_selected_links = ImNodes::NumSelectedLinks();
+	auto& selectedLinks = app->activeMaterial->getSelectedLinks();
+	if (num_selected_links > 0)
+	{
+		selectedLinks.resize(num_selected_links);
+		ImNodes::GetSelectedLinks(selectedLinks.data());
+	}
+	else selectedLinks.clear();
+
+	//std::cout << "\n Selected links: "<<selectedLinks.size();
+
+	ImGui::End();
+}
+
+void MyGUI::addShadingNodes()
+{
+
+
+	hoverTime = glfwGetTime();
+
+	ImGui::OpenPopup("Add popup");
+
+	if (ImGui::BeginPopup("Add popup"))
+	{
+		ImGui::SeparatorText("Add");
+		ImGui::Separator();
+		ImGui::InputText("WIP", searchText, IM_ARRAYSIZE(searchText));
+		ImGui::Separator();
+
+		if (ImGui::BeginMenu("Node"))
+		{
+			ImGui::SeparatorText("Primitives");
+
+			if (ImGui::MenuItem("Tex"))
+			{
+				app->activeMaterial->createNode<TextureNode>();
+				std::cout << "Texture node added \n";
+			}
+			if (ImGui::MenuItem("Math"))
+			{
+				app->activeMaterial->createNode<MathNode>();
+				std::cout << "Math node added \n";
+			}
+			if (ImGui::MenuItem("Value"))
+			{
+				app->activeMaterial->createNode<ValueNode>();
+				std::cout << "Value node added \n";
+			}
+			if (ImGui::MenuItem("Color Output"))
+			{
+				app->activeMaterial->createNode<ColorOutputNode>();
+				std::cout << "Color Output node added \n";
+			}
+			if (ImGui::MenuItem("Normal Output"))
+			{
+				app->activeMaterial->createNode<NormalOutputNode>();
+				std::cout << "Normal Output node added \n";
+			}
+			if (ImGui::MenuItem("Roughness Output"))
+			{
+				app->activeMaterial->createNode<RoughnessOutputNode>();
+				std::cout << "Roughness Output node added \n";
+			}
+			if (ImGui::MenuItem("Metallic Output"))
+			{
+				app->activeMaterial->createNode<MetallicOutputNode>();
+				std::cout << "Metallic Output node added \n";
+			}
+			if (ImGui::MenuItem("Ambient Occlusion Output"))
+			{
+				app->activeMaterial->createNode<AmbientOcclusionOutputNode>();
+				std::cout << "AmbientOcclusion Output node added \n";
+			}
+			if (ImGui::MenuItem("Color"))
+			{
+				app->activeMaterial->createNode<ColorNode>();
+				std::cout << "Color node added \n";
+			}
+
+			ImGui::EndMenu();
+		}
+
+
+		if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) && !ImGui::IsAnyItemHovered() && hoverTime > 1.4)
+		{
+			glfwSetTime(0);
+			hoverTime = 0;
+
+			window->getKeys()[GLFW_KEY_A] = 0;
+
+			showAddMenu = false;
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+

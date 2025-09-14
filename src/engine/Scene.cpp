@@ -39,8 +39,17 @@ void Scene::Init(Window&window)
 	new Shader("ActiveEdit", "src/shaders/activeEdit.vert", "src/shaders/activeEdit.frag");
 
 	new Shader("UV", "src/shaders/UV.vert", "src/shaders/UV.frag");
+	new Shader("TextureTest", "src/shaders/textureTest.vert", "src/shaders/textureTest.frag");
 
-	addCube();
+	addPlane();
+
+	
+	// valjda materiali zavrseni
+
+	// sada napraviti  outpute kako treba ( kao sto je u substance designeru)
+	// napravljen output za color 
+	// compilirati ostale outpute kada je render preview, ali prvo napravi svjetla
+	
 	
 	//objectSingleton->getObject(0)->Rotate(45.0f, glm::vec3(1.0f, 0.0f, 1.0f));
 

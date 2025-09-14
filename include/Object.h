@@ -19,10 +19,10 @@ protected:
 	std::vector<DVertex*> vertices;
 
 	// used for updating VBO
-	std::vector<DVertex> gpuVertices;
+	//std::vector<DVertex> vboverts;
 
-	VAO VAO;
-	VBO VBO;
+	VAO vao;
+	VBO vbo;
 	EBO ebo;
 
 	GLuint index{};

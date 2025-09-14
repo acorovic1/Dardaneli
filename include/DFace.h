@@ -25,6 +25,7 @@ struct DFace {
 
 
 	std::unordered_set<DLoop*>getLoops()const;
+	std::vector<DLoop*>getLoopsVector()const;
 
 	std::unordered_set<DFace*>getAdjecentFaces()const;
 

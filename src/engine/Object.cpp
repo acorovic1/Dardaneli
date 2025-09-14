@@ -1,7 +1,7 @@
 #include "Object.h"
 #include "ObjectModeBVH.h"
 
-Object::Object(std::string name) : VBO(), ebo()
+Object::Object(std::string name) : vbo(), ebo()
 {
 	Object::index = objectSingleton->getAvailableIndex();
 	objectSingleton->addObject(this);
@@ -16,12 +16,12 @@ glm::mat4 Object::getModelReference() { return model; }
 
 glm::vec3 Object::getPosition() { return glm::vec3(model[3][0], model[3][1], model[3][2]); }
 
-void Object::bindVAO() { VAO.Bind(); }
+void Object::bindVAO() { vao.Bind(); }
 
 
 void Object::UpdateVertexBuffer(int i)
 {
-	VBO.Bind();
+	vbo.Bind();
 	glBufferSubData(GL_ARRAY_BUFFER, i * sizeof(DVertex), sizeof(DVertex), vertices[i]);
 }
 

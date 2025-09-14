@@ -16,12 +16,19 @@ VBO::VBO(std::vector<glm::vec2>& vertices) {
 }
 void VBO::bufferData(std::vector<DVertex*>& vertices)
 {
-	std::vector<DVertex> gpuVertices;
+	std::vector<DVertex> vboVerts;
 	for(auto x:vertices)
-		gpuVertices.push_back(*x);
+		vboVerts.push_back(*x);
 
 	this->Bind();
-	glBufferData(GL_ARRAY_BUFFER, gpuVertices.size() * sizeof(DVertex), gpuVertices.data(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vboVerts.size() * sizeof(DVertex), vboVerts.data(), GL_DYNAMIC_DRAW);
+}
+void VBO::bufferData(std::vector<GPUVertex>& vertices)
+{
+
+
+	this->Bind();
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GPUVertex), vertices.data(), GL_DYNAMIC_DRAW);
 }
 
 void VBO::Bind() {

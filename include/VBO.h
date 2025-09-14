@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include "DVertex.h"
+#include "GPUVertex.h"
 
 class VBO {
 public:
@@ -13,6 +14,7 @@ public:
 	VBO(std::vector<glm::vec2>& vertices);
 
 	void bufferData(std::vector<DVertex*>& vertices);
+	void bufferData(std::vector<GPUVertex>& vertices);
 	void Bind();
 	void Unbind();
 	void Delete();

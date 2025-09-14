@@ -18,8 +18,12 @@
 #include "Object.h"
 #include "BasicObjects.h"
 #include "Application.h"
+#include "ImGUI/imnodes.h"
+#include "ShadingNodes/Material.h"
+//#include "ImNODES/imnodes.cpp"
+//#include "ImNODES/imnodes_internal.h"
 
-class MyGUI /* :public Dardaneli...varijable pod protected staviti*/ {
+class MyGUI /* :public Dardaneli...varijable pod protected staviti*/ /* mozda app i gui da su odvojene (kao sto su i do sada) i obje da budu singleton(samo jos gui napravit da je singleton )*/ {
 	ImGuiIO* io;
 	ImGuiIO* gizmoIo;
 	Window* window;
@@ -52,6 +56,8 @@ class MyGUI /* :public Dardaneli...varijable pod protected staviti*/ {
 
 	VAO grid2DVAO;
 	EBO grid2DEBO;
+
+	
 
 public:
 	bool showAddMenu = false;
@@ -98,4 +104,9 @@ public:
 	void Modes();
 
 	void DMesh();
+
+	void ShowShaderEditor();
+	void addShadingNodes();
+
+
 };

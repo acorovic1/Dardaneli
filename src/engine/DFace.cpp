@@ -61,6 +61,21 @@ std::unordered_set<DLoop*> DFace::getLoops()const
 
 	return returnSet;
 }
+std::vector<DLoop*> DFace::getLoopsVector() const
+{
+	std::vector<DLoop*>returnVec;
+
+	DLoop* temp = loop;
+
+	do {
+		returnVec.push_back(temp);
+		temp = temp->next;
+	} while (temp != loop);
+
+	return returnVec;
+
+	
+}
 std::unordered_set<DFace*> DFace::getAdjecentFaces() const
 {
 	std::unordered_set<DFace*>returnSet;

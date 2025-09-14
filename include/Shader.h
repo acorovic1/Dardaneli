@@ -25,6 +25,10 @@ class Shader {
 public:
 
 	Shader(std::string name, const char* vertexFile, const char* fragmentFile);
+	~Shader() {
+		//check for errors with deleteAllShaders();
+		//Delete();
+	}
 
 	void Activate();
 	GLuint getID();

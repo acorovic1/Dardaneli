@@ -1,7 +1,9 @@
 #pragma once
 
+// Methods I added have a comment // My Addition above them
+
 #include <stddef.h>
-#include <imgui.h>
+#include <ImGUI/imgui.h>
 
 #ifdef IMNODES_USER_CONFIG
 #include IMNODES_USER_CONFIG
@@ -312,6 +314,13 @@ void EndInputAttribute();
 // Create an output attribute block. The pin is rendered on the right side.
 void BeginOutputAttribute(int id, ImNodesPinShape shape = ImNodesPinShape_CircleFilled);
 void EndOutputAttribute();
+
+// My Addition
+ImNodesPinShape GetAttributePinShape(int id);
+
+
+
+
 // Create a static attribute block. A static attribute has no pin, and therefore can't be linked to
 // anything. However, you can still use IsAttributeActive() and IsAnyAttributeActive() to check for
 // attribute activity.

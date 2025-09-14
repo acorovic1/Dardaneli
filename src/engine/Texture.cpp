@@ -1,13 +1,17 @@
 #include "Texture.h"
 
-Texture::Texture(const char* image, const char* textureType,
+Texture::Texture(const char* image,
 	GLuint slot, GLenum format, GLenum pixelType) {
-	type = textureType;
+
 	int imgWidth, imgHeight, numColorChannels;
 
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* data = stbi_load(image, &imgWidth, &imgHeight, &numColorChannels, 0);
-
+	if (!data) {
+		std::cerr << "Failed to load texture: " << image << "\n";
+		return;
+	}
+	format = (numColorChannels == 4) ? GL_RGBA : GL_RGB;
 	glGenTextures(1, &ID);
 	glActiveTexture(GL_TEXTURE0 + slot);
 	unit = slot;
@@ -27,6 +31,9 @@ Texture::Texture(const char* image, const char* textureType,
 
 	stbi_image_free(data);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+
+	std::cout << "\n\n Texture created successfully with ID: " << ID;
 }
 
 void Texture::textureUniform(Shader& shader, const char* uniform, GLuint unit) {
@@ -35,6 +42,8 @@ void Texture::textureUniform(Shader& shader, const char* uniform, GLuint unit) {
 
 void Texture::Bind()
 {
+	//std::cout << "Texture ID: " << ID << " unit: " << unit << std::endl;
+
 	glActiveTexture(GL_TEXTURE0 + unit);
 	glBindTexture(GL_TEXTURE_2D, ID);
 }

@@ -14,21 +14,25 @@
 #include "Window.h"
 #include "FaceBVH.h"
 
+#include "ShadingNodes/Material.h"
+
 #define radian 180/3.14159265358979323846f
 #define myEpsilon 0.00001
 
-enum class Mode { OBJECT, EDIT, SCULPT, WEIGHT_PAINT, TEXTURE_PAINT, UV_EDITOR };
+enum class Mode { OBJECT, EDIT, SCULPT, WEIGHT_PAINT, TEXTURE_PAINT, UV_EDITOR, SHADER_EDITOR };
 enum class SelectMode { VERTEX, EDGE, FACE };
+enum class RenderMode { WIREFRAME, SOLID, MATERIAL_PREVIEW, RENDER };
 
 class MyGUI;
 
 // cut off one head two more shall take its place
-class Application {
+class Application { // prebaciti u struct(tj da je vecina ovih atributa public, izuzev onih koji trebaju singletonu)
 	static Application* instance;
 	Application() {};
 
-	Mode mode = Mode::EDIT;
+	Mode mode = Mode::SHADER_EDITOR;
 	SelectMode selectMode = SelectMode::VERTEX;
+
 
 	std::vector<int> objectIndices = std::vector<int>(1);
 
@@ -44,7 +48,7 @@ class Application {
 
 	glm::mat4 model = glm::mat4(1.0f); // treba GUIu... nez zasto je ovde.. pogledaj nekad
 
-	bool slide=false;
+	bool slide = false;
 	bool slideFirstClick;
 	double slideStartX, slideStartY;
 	std::vector< std::vector<glm::vec3>>slideLengths;
@@ -54,12 +58,16 @@ class Application {
 	std::vector<glm::vec3> startPositions;
 
 public:
+	Material* activeMaterial = new Material("Default");
+	RenderMode renderMode = RenderMode::SOLID;
 
 	static Application* getInstance();
 
 	Application(const Application& copy) = delete;
 	void operator=(const Application& copy) = delete;
 
+
+	Mode getMode() { return mode; }
 
 	void setSelectMode(SelectMode mode);
 
@@ -70,6 +78,7 @@ public:
 	void ObjectMode(GLFWwindow* window, MyGUI& gui); //Inputs
 	void EditMode(GLFWwindow* window, MyGUI& gui); //Inputs
 	void UVMode(GLFWwindow* window, MyGUI& gui); //Inputs
+	void MaterialEditor(GLFWwindow* window, MyGUI& gui); //Inputs
 	void Inputs(GLFWwindow* window, MyGUI& gui); //Inputs
 
 	Object* getActiveObject() {
@@ -80,7 +89,7 @@ public:
 
 	void deleteObjects();
 
-	
+
 
 	friend class MyGUI;
 };

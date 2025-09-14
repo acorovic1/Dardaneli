@@ -15,37 +15,57 @@ std::string get_file_contents(const char* filename) {
 	throw (errno);
 }
 
+#include <fstream>
+#include <string>
+
+// Helper function to check if a file exists
+bool fileExists(const char* path) {
+	std::ifstream f(path);
+	return f.is_open();
+}
+
 Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFile)
 {
+	// Vertex shader must always come from a file
 	std::string vertexCode = get_file_contents(vertexFile);
-	std::string fragmentCode = get_file_contents(fragmentFile);
 	const char* vertexSource = vertexCode.c_str();
+
+	std::string fragmentCode;
+	if (fileExists(fragmentFile)) {
+		// Treat as file path
+		fragmentCode = get_file_contents(fragmentFile);
+	}
+	else {
+		// Treat as raw GLSL code
+		fragmentCode = fragmentFile;
+	}
 	const char* fragmentSource = fragmentCode.c_str();
 
-	GLuint vertexShader, fragmentShader;
-
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	// Compile vertex shader
+	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexSource, NULL);
 	glCompileShader(vertexShader);
 	compileErrors(vertexShader, "VERTEX");
 
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	// Compile fragment shader
+	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
 	glCompileShader(fragmentShader);
 	compileErrors(fragmentShader, "FRAGMENT");
 
+	// Link program
 	ID = glCreateProgram();
 	glAttachShader(ID, vertexShader);
 	glAttachShader(ID, fragmentShader);
 	glLinkProgram(ID);
-
 	compileErrors(ID, "PROGRAM");
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
 	shaderSingleton->addShader(name, this);
-};
+}
+
 
 void Shader::Activate() {
 	glUseProgram(ID);

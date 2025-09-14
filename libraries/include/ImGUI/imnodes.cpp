@@ -6,7 +6,7 @@
 // [SECTION] render helpers
 // [SECTION] API implementation
 
-#include "imnodes_internal.h"
+#include "ImGUI/imnodes_internal.h"
 
 // Check minimum ImGui version
 #define MINIMUM_COMPATIBLE_IMGUI_VERSION 17400
@@ -2554,6 +2554,18 @@ void BeginOutputAttribute(const int id, const ImNodesPinShape shape)
 }
 
 void EndOutputAttribute() { EndPinAttribute(); }
+
+ImNodesPinShape GetAttributePinShape(int id)
+{
+
+    ImNodesEditorContext& editor = EditorContextGet();
+    GImNodes->CurrentAttributeId = id;
+
+    const int pin_idx = ObjectPoolFindOrCreateIndex(editor.Pins, id);
+    GImNodes->CurrentPinIdx = pin_idx;
+    ImPinData& pin = editor.Pins.Pool[pin_idx];
+    return pin.Shape;
+}
 
 void BeginStaticAttribute(const int id)
 {

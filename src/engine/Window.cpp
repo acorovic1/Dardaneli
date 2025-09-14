@@ -69,13 +69,13 @@ void Window::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	Window* classWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
 	Camera* camera = classWindow->getCamera();
 
-	std::cout << "\n\t" << camera->getName() << " ";
+	//std::cout << "\n\t" << camera->getName() << " ";
 
 	glm::vec3 offset = camera->getPosition() + (static_cast<float>(yoffset) / 2) * glm::normalize(camera->getOrientation());
 
 	camera->setPosition(offset);
 
-	std::cout << camera->getPosition().z;
+	//std::cout << camera->getPosition().z;
 }
 
 void Window::setCallbacks()

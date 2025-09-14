@@ -1,10 +1,10 @@
 #pragma once
 
 #define IMGUI_DEFINE_MATH_OPERATORS
-#include <imgui.h>
-#include <imgui_internal.h>
+#include <ImGUI/imgui.h>
+#include <ImGUI/imgui_internal.h>
 
-#include "imnodes.h"
+#include "ImGUI/imnodes.h"
 
 #include <limits.h>
 

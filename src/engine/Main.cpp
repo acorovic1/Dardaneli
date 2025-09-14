@@ -3,6 +3,7 @@
 #include "MyGUI.h"
 #include "Scene.h"
 #include "windows.h"
+#include "Application.h"
 
 // sastaviti edge/face za UVove
 // napraviti UV selection vert/edge/face
@@ -124,7 +125,7 @@ int main() {
 
 		renderer.Render();
 
-		if (!gui.getIO()->WantCaptureMouse) {
+		if (!gui.getIO()->WantCaptureMouse || app->getMode() == Mode::SHADER_EDITOR) {
 			app->Inputs(window.getWindow(), gui);
 		}
 

@@ -4,11 +4,17 @@
 #include "GeometryUtils.h"
 #include "unordered_set"
 #include "UVVertex.h"
+#include "ShadingNodes/Material.h"
+#include "GPUVertex.h"
+#include "map"
 
 
 class Mesh : public Object {
 
-	std::vector<Texture>textures;
+	std::unordered_map<Material*, std::unordered_set<DFace*>>materials;
+	std::unordered_map < Material*, std::tuple < VAO, VBO, EBO, std::vector<GPUVertex>, std::vector<GLuint >> > renderBuffers;
+
+
 
 
 
@@ -20,7 +26,12 @@ class Mesh : public Object {
 	std::vector<DFace*>selectedFaces;
 	std::vector<DEdge*>selectedEdges;
 
-
+	// attributes used to render a mesh that is uv unwrapped
+	VAO gpuVAO;
+	VBO gpuVBO;
+	EBO gpuEBO;
+	std::vector<GPUVertex> renderVerts;
+	std::vector<GLuint> renderIndices;
 
 	std::vector<std::shared_ptr<UVVertex>>uvCoords;
 	std::vector<GLuint>uvEdgeindices;
@@ -68,6 +79,32 @@ class Mesh : public Object {
 
 	void lscmFaceIndicesHelper(std::vector<GLuint>& F, int index, DLoop* loop);
 public:
+	void renderDraw( Camera& camera, GLenum mode = GL_TRIANGLES);
+	void updateGpuVBO() { gpuVBO.bufferData(renderVerts); }
+	void buildGPUVertices();
+	std::unordered_map<Material*, std::unordered_set<DFace*>>* getAllMaterials() { return &materials; }
+	void addMaterial(Material* mat) {
+		if (materials.size() == 0)
+		{
+			materials.insert({ mat,getAllFaces() });
+			buildGPUVertices();
+		}
+		else
+			materials.insert({ mat,{} });
+
+	}
+	void assignMaterial(Material* mat);
+
+	void removeMaterial(Material* mat);
+
+
+	std::vector<GLuint>getFaceTriangles(DFace* face);
+
+
+
+	void Draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES) override;
+
+
 	void spitUVsAlongSeams();
 	void mergeUVs();
 	void formUVTopology();
@@ -87,6 +124,7 @@ public:
 
 
 	std::unordered_set<DFace*> getAllFaces();
+	//std::vector<DFace*> getAllFacesVector();
 	std::unordered_set<DEdge*> getAllEdges();
 
 	DFace* getFace(std::unordered_set<int> indices); // returns the common face of indices 
@@ -95,7 +133,6 @@ public:
 	DEdge* getEdge(DVertex* start, DVertex* end); // returns the common edge of vertices 
 
 
-	void Draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES) override;
 
 	void Translate(glm::vec3& translateVector)override;
 	void Translate(float x, float y, float z)override;

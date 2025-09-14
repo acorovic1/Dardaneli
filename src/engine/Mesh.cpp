@@ -22,6 +22,9 @@
 #include "igl/lscm.h"
 #include "igl/boundary_loop.h"
 
+#include "Application.h"
+#include "ShadingNodes/MaterialManager.h"
+
 
 #include <glm/glm.hpp>
 #include <glm/gtx/hash.hpp>  // this includes the definition of hash for glm types
@@ -33,23 +36,24 @@ Mesh::Mesh(std::string&& name, std::vector <DVertex*> vertices,
 	Mesh::vertices = vertices;
 	Mesh::indices = indices;
 	Mesh::edgeIndices = edgeIndices;
-	Mesh::textures = textures;
 
-	VAO.Bind();
-	VBO.bufferData(Mesh::vertices);
+
+	vao.Bind();
+	vbo.bufferData(Mesh::vertices);
 	ebo.bufferData(Mesh::indices);
 	edgeEBO.bufferData(Mesh::edgeIndices);
 
-	VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0); //position
-	VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float))); //normal
+	vao.LinkAttribute(vbo, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0); //position
+	vao.LinkAttribute(vbo, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float))); //normal
 
-
-
-	VAO.Unbind();
-	VBO.Unbind();
+	vao.Unbind();
+	vbo.Unbind();
 	ebo.Unbind();
 
 	objectBVHSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
+
+
+
 }
 
 Mesh::~Mesh() {}
@@ -96,6 +100,16 @@ std::unordered_set<DFace*> Mesh::getAllFaces()
 
 	return returnSet;
 }
+
+//std::vector<DFace*> Mesh::getAllFacesVector()
+//{
+//	std::vector<DFace*> returnVec;
+//	for (DFace* face : getAllFaces())
+//	{
+//		returnVec.push_back(face);
+//	}
+//	return returnVec;
+//}
 
 std::unordered_set<DEdge*> Mesh::getAllEdges()
 {
@@ -200,30 +214,193 @@ DEdge* Mesh::getEdge(DVertex* start, DVertex* end)
 
 
 
+void Mesh::renderDraw(Camera& camera, GLenum mode)
+{
+	//shader.Activate();
+
+	//std::cout << "First time "<<app->mat.textures.size()<<"\n";
+	//for (auto& tex : app->mat.textures)
+	//{
+	//	tex.get()->textureUniform(shader, "tex2", tex.get()->unit);
+	//	tex.get()->Bind();
+	//}
+
+
+
+
+	for (auto& buff : renderBuffers)
+	{
+		Material* mat = buff.first;
+		VAO& matVAO = std::get<0>(buff.second);
+		VBO& matVBO = std::get<1>(buff.second);
+		EBO& matEBO = std::get<2>(buff.second);
+		//std::vector<GPUVertex>& matVerts = std::get<3>(buff.second);
+		std::vector<GLuint >& matIndices = std::get<4>(buff.second);
+
+		auto shaderr = *mat->compileShader().get();
+		//auto& shaderr = shaderSingleton->getShader("TextureTest");
+		shaderr.Activate();
+		camera.CameraUniform(shaderr, "cameraMatrix");
+		shaderr.setVector3f(true, "camPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+		shaderr.setMat4(true, "model", model);
+		if (mat->textures.size())
+		{
+			for (auto& tex : mat->textures)
+			{
+				tex.get()->textureUniform(shaderr, ("tex" + std::to_string(tex.get()->ID)).c_str(), tex.get()->unit);
+				tex.get()->Bind();
+
+			}
+		}
+		if (mode == GL_TRIANGLES)
+		{
+			matVAO.Bind();
+			matEBO.Bind();
+
+			std::cout << "\n\t Drawing material " << mat->getName() << " with " << matIndices.size() << " indices";
+			for (auto x : matIndices)
+				std::cout << "\t" << x;
+
+			glDrawElements(mode, matIndices.size(), GL_UNSIGNED_INT, 0);
+			matEBO.Unbind();
+			matVAO.Unbind();
+		}
+	}
+
+	//if (mode == GL_TRIANGLES)
+	//{
+
+
+
+	//	gpuVAO.Bind();
+	//	gpuEBO.Bind();
+	//	glDrawElements(mode, renderIndices.size(), GL_UNSIGNED_INT, 0);
+	//	gpuEBO.Unbind();
+	//	gpuVAO.Unbind();
+
+	//}
+	if (mode == GL_LINES)
+	{
+		vao.Bind();
+		edgeEBO.Bind();
+		glDrawElements(mode, edgeIndices.size(), GL_UNSIGNED_INT, 0);
+	}
+	else if (mode == GL_POINTS)
+	{
+		vao.Bind();
+		vbo.Bind();
+		glDrawArrays(mode, 0, vertices.size());
+	}
+
+	//vao.Unbind();
+
+}
+
+void Mesh::buildGPUVertices()
+{
+
+	for (auto& it : renderBuffers)
+	{
+		Material* mat = it.first;
+		VAO& matVAO = std::get<0>(it.second);
+		VBO& matVBO = std::get<1>(it.second);
+		EBO& matEBO = std::get<2>(it.second);
+		std::vector<GPUVertex>& matVerts = std::get<3>(it.second);
+		std::vector<GLuint >& matIndices = std::get<4>(it.second);
+
+		matVerts.clear();
+		matIndices.clear();
+
+		for (DFace* face : materials[mat])
+		{
+			std::vector<GLuint> tempHelper;
+			for (DLoop* loop : face->getLoopsVector())
+			{
+				GPUVertex gpv;
+				gpv.position = loop->tip->position;
+				gpv.normal = loop->tip->normal;
+				gpv.uv = loop->uvVertex->uv;
+
+
+				std::cout << "\n\t" << gpv.position.x << " " << gpv.position.y << " " << gpv.position.z << "  |  ";
+				tempHelper.push_back(matVerts.size());
+				matVerts.push_back(gpv);
+
+			}
+			// only quads for now
+			matIndices.push_back(tempHelper[1]);
+			matIndices.push_back(tempHelper[2]);
+			matIndices.push_back(tempHelper[0]);
+
+			matIndices.push_back(tempHelper[0]);
+			matIndices.push_back(tempHelper[2]);
+			matIndices.push_back(tempHelper[3]);
+
+		}
+
+		matVAO.Bind();
+		matVBO.bufferData(matVerts);
+		matEBO.bufferData(matIndices);
+
+	}
+
+
+
+}
+
+void Mesh::assignMaterial(Material* mat)
+{
+	// if there were no materials, assign this material to all faces
+	if (materials.size() == 0)
+	{
+		materials.insert({ mat,getAllFaces() });
+
+	}
+	else
+	{
+
+
+
+		for (auto face : selectedFaces)
+		{
+			for (auto& it : materials)
+			{
+				it.second.erase(face);
+			}
+			materials[mat].insert(face);
+		}
+
+	}
+	renderBuffers.emplace(
+		mat,
+		std::make_tuple(VAO{}, VBO{}, EBO{}, std::vector<GPUVertex>{}, std::vector<GLuint>{})
+	);
+
+	VAO& matVAO = std::get<0>(renderBuffers[mat]);
+	VBO& matVBO = std::get<1>(renderBuffers[mat]);
+
+	matVAO.Bind();
+	matVAO.LinkAttribute(matVBO, 0, 3, GL_FLOAT, sizeof(GPUVertex), (void*)0); //position
+	matVAO.LinkAttribute(matVBO, 1, 3, GL_FLOAT, sizeof(GPUVertex), (void*)(3 * sizeof(float))); //normal
+	matVAO.LinkAttribute(matVBO, 2, 2, GL_FLOAT, sizeof(GPUVertex), (void*)(6 * sizeof(float))); //uvs
+
+	matVAO.Unbind();
+
+	buildGPUVertices();
+}
+
+void Mesh::removeMaterial(Material* mat)
+{
+	materials.erase(mat);
+	renderBuffers.erase(mat);
+	// TODO
+}
+
 void Mesh::Draw(Shader& shader, Camera& camera, GLenum mode) {
 	shader.Activate();
-	VAO.Bind();
+	vao.Bind();
 
-	unsigned int numDiffuse = 0;
-	unsigned int numSpecular = 0;
 
-	for (unsigned int i = 0; i < textures.size(); i++) {
-		std::string num;
-		std::string type = textures[i].type;
-
-		if (type == "diffuse")
-		{
-			num = std::to_string(numDiffuse++);
-		}
-		else if (type == "specular")
-		{
-			num = std::to_string(numSpecular++);
-		}
-
-		textures[i].textureUniform(shader, (type + num).c_str(), i);
-		textures[i].Bind();
-	}
-	//shader.setVector3f(false, "camPos", camera.Position);
 	camera.CameraUniform(shader, "cameraMatrix");
 	shader.setVector3f(true, "camPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
 	shader.setMat4(true, "model", model);
@@ -232,6 +409,7 @@ void Mesh::Draw(Shader& shader, Camera& camera, GLenum mode) {
 	{
 		ebo.Bind();
 		glDrawElements(mode, indices.size(), GL_UNSIGNED_INT, 0);
+
 	}
 	else if (mode == GL_LINES)
 	{
@@ -240,11 +418,11 @@ void Mesh::Draw(Shader& shader, Camera& camera, GLenum mode) {
 	}
 	else if (mode == GL_POINTS)
 	{
-		VBO.Bind();
+		vbo.Bind();
 		glDrawArrays(mode, 0, vertices.size());
 	}
 
-	VAO.Unbind();
+	vao.Unbind();
 }
 
 void Mesh::Translate(glm::vec3& translateVector)
@@ -291,7 +469,7 @@ void Mesh::edgeScale(DEdge* edge, float delta, bool update)
 	if (!update)return;
 
 
-	VBO.bufferData(vertices);
+	vbo.bufferData(vertices);
 
 	EdgeBVHSingleton->Refit(*this);
 
@@ -519,7 +697,7 @@ void Mesh::insetIndividual(std::vector<DFace*> faces)
 
 	this->updateEBO();
 	this->updateEdgeEBO();
-	VBO.bufferData(vertices);
+	vbo.bufferData(vertices);
 
 	//this->getSelectedVertices().clear();
 
@@ -812,7 +990,7 @@ std::unordered_set<DVertex*> Mesh::linearSubdivision()
 
 	this->updateEBO();
 	this->updateEdgeEBO();
-	VBO.bufferData(vertices);
+	vbo.bufferData(vertices);
 
 	this->getSelectedVertices().clear();
 	this->getSelectedEdges().clear();
@@ -1022,7 +1200,7 @@ void Mesh::loopCut(DEdge* edge, int numberOfCuts)
 
 	this->updateEBO();
 	this->updateEdgeEBO();
-	VBO.bufferData(vertices);
+	vbo.bufferData(vertices);
 
 	this->getSelectedVertices().clear();
 	this->getSelectedEdges().clear();
@@ -1133,7 +1311,7 @@ void Mesh::mergeVertices(std::vector<int>& verts)
 
 	this->updateEBO();
 	this->updateEdgeEBO();
-	VBO.bufferData(vertices);
+	vbo.bufferData(vertices);
 
 	this->getSelectedVertices().clear();
 	this->getSelectedEdges().clear();
@@ -1770,8 +1948,8 @@ void Mesh::lscmUVUnwrap()
 			if (flag)
 			{
 
-			//	std::cout << "\n Vert the uv  " << index1 << " belongs to " << getVertexIndex(tempV[index1]);
-			//	std::cout << "\n Vert the uv  " << index2 << " belongs to " << getVertexIndex(tempV[index2]);
+				//	std::cout << "\n Vert the uv  " << index1 << " belongs to " << getVertexIndex(tempV[index1]);
+				//	std::cout << "\n Vert the uv  " << index2 << " belongs to " << getVertexIndex(tempV[index2]);
 			}
 			uvEdgeindices.push_back(index1);
 			uvEdgeindices.push_back(index2);
@@ -1842,6 +2020,8 @@ void Mesh::lscmUVUnwrap()
 
 		}
 	}
+
+	buildGPUVertices();
 }
 
 //if (V_uv.rows() == 4) std::cout << "\n\n\tQUAD\n";
@@ -1874,7 +2054,7 @@ void Mesh::extrudeVertices(std::vector<int>& verts, bool update)
 		selectedVertexIndices.push_back(i);
 
 	updateEdgeEBO();
-	VBO.bufferData(vertices);
+	vbo.bufferData(vertices);
 
 	VertexBVHSingleton->BuildBottomUp(*this);
 	EdgeBVHSingleton->BuildBottomUp(*this);
@@ -1920,7 +2100,7 @@ void Mesh::pokeFaces(Container& faces, bool update)
 	}
 	if (!update)return;
 
-	VBO.bufferData(vertices);
+	vbo.bufferData(vertices);
 	updateEBO();
 	updateEdgeEBO();
 
@@ -2367,7 +2547,7 @@ std::unordered_set<DEdge*>  Mesh::extrudeEdges(Container& edges, bool update)
 		selectedVertexIndices.push_back(i);
 
 	updateEdgeEBO();
-	VBO.bufferData(vertices);
+	vbo.bufferData(vertices);
 	updateEBO();
 
 	VertexBVHSingleton->BuildBottomUp(*this);
@@ -2465,7 +2645,7 @@ void Mesh::extrudeFaces(Container& faces, bool update)
 
 	this->updateEBO();
 	this->updateEdgeEBO();
-	VBO.bufferData(vertices);
+	vbo.bufferData(vertices);
 
 	//this->getSelectedVertices().clear();
 	//this->getSelectedEdges().clear();
@@ -2490,7 +2670,7 @@ void Mesh::extrudeIndividualFaces(Container& faces, bool update)
 
 	this->updateEBO();
 	this->updateEdgeEBO();
-	VBO.bufferData(vertices);
+	vbo.bufferData(vertices);
 
 	//this->getSelectedVertices().clear();
 	//this->getSelectedEdges().clear();
@@ -2541,7 +2721,7 @@ std::vector<DFace*> Mesh::separate(Container faces)
 
 	setSelectedVertexIndicesFromFaces(selectedFaces);
 
-	VBO.bufferData(vertices);
+	vbo.bufferData(vertices);
 	updateEBO();
 	updateEdgeEBO();
 
@@ -2566,7 +2746,7 @@ std::vector<DVertex*> Mesh::duplicateVertices(std::vector<int>& verts, bool upda
 
 
 	selectedVertexIndices = vertIndices;
-	VBO.bufferData(vertices);
+	vbo.bufferData(vertices);
 
 	VertexBVHSingleton->BuildBottomUp(*this);
 
@@ -2624,7 +2804,7 @@ std::vector<DEdge*> Mesh::duplicateEdges(Container& edges, bool update)
 	selectedVertexIndices.clear();
 	selectedVertexIndices.insert(selectedVertexIndices.begin(), vertIndices.begin(), vertIndices.end());
 
-	VBO.bufferData(vertices);
+	vbo.bufferData(vertices);
 	//updateEBO();
 	updateEdgeEBO();
 
@@ -2671,7 +2851,7 @@ std::vector<DFace*> Mesh::duplicateFaces(Container& faces, bool update)
 	selectedVertexIndices.clear();
 	selectedVertexIndices.insert(selectedVertexIndices.begin(), vertIndices.begin(), vertIndices.end());
 
-	VBO.bufferData(vertices);
+	vbo.bufferData(vertices);
 	updateEBO();
 	updateEdgeEBO();
 
@@ -2732,7 +2912,7 @@ void Mesh::deleteEdges(Container& edges, bool update)
 
 	this->updateEBO();
 	this->updateEdgeEBO();
-	VBO.bufferData(vertices);
+	vbo.bufferData(vertices);
 
 	this->getSelectedVertices().clear();
 	edges.clear();
@@ -2775,7 +2955,7 @@ void Mesh::deleteFaces(Container& faces, bool update)
 
 	this->updateEBO();
 	this->updateEdgeEBO();
-	VBO.bufferData(vertices);
+	vbo.bufferData(vertices);
 
 	this->getSelectedVertices().clear();
 	this->getSelectedEdges().clear();

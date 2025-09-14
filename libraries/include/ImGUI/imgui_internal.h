@@ -48,7 +48,7 @@ Index of this file:
 //-----------------------------------------------------------------------------
 
 #ifndef IMGUI_VERSION
-#include "imgui.h"
+#include "ImGUI/imgui.h"
 #endif
 
 #include <stdio.h>      // FILE*, sscanf
@@ -96,6 +96,12 @@ Index of this file:
 #pragma GCC diagnostic ignored "-Wclass-memaccess"      // [__GNUC__ >= 8] warning: 'memset/memcpy' clearing/writing an object of type 'xxxx' with no trivial copy-assignment; use assignment or value-initialization instead
 #pragma GCC diagnostic ignored "-Wdeprecated-enum-enum-conversion"  // warning: bitwise operation between different enumeration types ('XXXFlags_' and 'XXXFlagsPrivate_') is deprecated
 #endif
+
+//#define IMGUI_DEFINE_MATH_OPERATORS
+//#include "ImGUI/imgui.h"      // must come first
+//#define IMNODES_IMPL
+//#include "ImNODES/imnodes.cpp"  // or imnodes.h with IMNODES_IMPL
+
 
 // In 1.89.4, we moved the implementation of "courtesy maths operators" from imgui_internal.h in imgui.h
 // As they are frequently requested, we do not want to encourage to many people using imgui_internal.h

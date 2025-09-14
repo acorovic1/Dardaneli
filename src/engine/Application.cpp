@@ -965,6 +965,8 @@ void Application::UVMode(GLFWwindow* window, MyGUI& gui)
 			UVVertexBVHSingleton->Refit(*mesh);
 			//EdgeBVHSingleton->Refit(*mesh);
 			//FaceBVHSingleton->Refit(*mesh);
+
+			mesh->buildGPUVertices();
 			keys[GLFW_KEY_G] = 0;
 			return;
 		}
@@ -1317,6 +1319,48 @@ void Application::UVMode(GLFWwindow* window, MyGUI& gui)
 	}
 
 }
+void Application::MaterialEditor(GLFWwindow* window, MyGUI& gui)
+{
+	Window* classWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	std::vector<int>& mouseButtons = classWindow->getMouseButtons();
+	std::vector<int>& mouseButtonsProcessed = classWindow->getMouseButtonsProcessed();
+	std::vector<int>& keys = classWindow->getKeys();
+	std::vector<int>& keysProcessed = classWindow->getKeysProcessed();
+	bool& firstClick = classWindow->getFirstClick();
+	double& posX = classWindow->getPosX();
+	double& posY = classWindow->getPosY();
+	double& previousX = classWindow->getPreviousX();
+	double& previousY = classWindow->getPreviousY();
+
+	static double time = glfwGetTime();
+
+
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+	{
+		gui.AddMenu();
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_X))
+	{
+
+		activeMaterial->deleteSelectedNodes();
+		activeMaterial->deleteSelectedLinks();
+
+		keys[GLFW_KEY_X] = 0;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_C))
+	{
+		if (glfwGetTime() - time < 0.3) return;
+		time = glfwGetTime();
+
+
+		activeMaterial->compileShader();
+		keys[GLFW_KEY_C] = 0;
+	}
+
+
+}
 void Application::Inputs(GLFWwindow* window, MyGUI& gui)
 {
 	Window* classWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
@@ -1335,6 +1379,10 @@ void Application::Inputs(GLFWwindow* window, MyGUI& gui)
 		Application::EditMode(window, gui);
 	else if (mode == Mode::UV_EDITOR)
 		Application::UVMode(window, gui);
+	else if (mode == Mode::SHADER_EDITOR)
+	{
+		Application::MaterialEditor(window, gui);
+	}
 }
 
 void Application::deleteObjects() {}
