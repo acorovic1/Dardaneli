@@ -1,9 +1,24 @@
+#define _CRT_SECURE_NO_WARNINGS
 #pragma once
+
+
 
 
 #include "ShadingNodes.h"
 #include "ImGUI/ImGuiFileDialog.h"
 
+
+
+std::string getDownloadsPath() {
+	char* buffer = nullptr;
+	size_t len = 0;
+	if (_dupenv_s(&buffer, &len, "USERPROFILE") == 0 && buffer != nullptr) {
+		std::string path(buffer);
+		free(buffer); // must free the buffer allocated by _dupenv_s
+		return path + "\\Downloads";
+	}
+	return ".";
+}
 
 
 
@@ -68,7 +83,7 @@ struct TextureNode : public ShadingNodes {
 		if (ImGui::Button("Browse"))
 		{
 			IGFD::FileDialogConfig cfg;
-			cfg.path = ".";
+			cfg.path = getDownloadsPath();
 			ImGuiFileDialog::Instance()->OpenDialog(
 				dlgId.c_str(),
 				"Select Texture",
@@ -87,6 +102,7 @@ struct TextureNode : public ShadingNodes {
 			}
 			ImGuiFileDialog::Instance()->Close();
 		}
+
 		ImNodes::BeginOutputAttribute(id + 1, ImNodesPinShape_TriangleFilled); // unique pin id
 		ImGui::Text("Out");
 		ImNodes::EndOutputAttribute();
@@ -96,3 +112,4 @@ struct TextureNode : public ShadingNodes {
 		ImNodes::PopColorStyle();
 	}
 };
+

@@ -19,6 +19,12 @@
 #include "ShadingNodes/ColorNode.h"
 
 
+#include "Lights/Light.h"
+#include "Lights/DirectionalLight.h"
+#include "Lights/PointLight.h"
+#include "Lights/SpotLight.h"
+
+
 
 MyGUI::MyGUI(Window* window) :io(nullptr), gizmoIo(nullptr), window(window) {}
 
@@ -108,11 +114,12 @@ void MyGUI::DrawUI()
 		Mesh* mesh = nullptr;
 		if (edit)
 		{
+			double time = glfwGetTime();
 			mesh = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]));
 			VertexBVHSingleton->BuildBottomUp(*objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]));
 			EdgeBVHSingleton->BuildBottomUp(*mesh);
 			FaceBVHSingleton->BuildBottomUp(*mesh);
-			std::cout << "built";
+			std::cout << "All 3 BVHs built in "<<glfwGetTime()-time<<" seconds";
 			edit = false;
 		}
 
@@ -417,7 +424,23 @@ void MyGUI::Add() {
 
 		if (ImGui::BeginMenu("Light"))
 		{
-			ImGui::MenuItem("Light test");
+			if (ImGui::MenuItem("Point light"))
+			{
+				new PointLight("Point Light");
+				std::cout << "\n\nPoint light added";
+			}
+			if (ImGui::MenuItem("Directional light"))
+			{
+
+				new DirectionalLight("Directional Light");
+				std::cout << "\n\nDirectional light added";
+			}
+			if (ImGui::MenuItem("Spot light"))
+			{
+
+				new SpotLight("Spot Light");
+				std::cout << "\n\nSpot light added";
+			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Force Field")) {

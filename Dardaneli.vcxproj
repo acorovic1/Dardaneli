@@ -211,6 +211,8 @@
     <None Include="src\shaders\editMode.vert" />
     <None Include="src\shaders\BVH.frag" />
     <None Include="src\shaders\BVH.vert" />
+    <None Include="src\shaders\light.frag" />
+    <None Include="src\shaders\light.vert" />
     <None Include="src\shaders\selectEdit.frag" />
     <None Include="src\shaders\selectEdit.vert" />
     <None Include="src\shaders\selectObject.frag" />
@@ -240,6 +242,10 @@
     <ClInclude Include="include\FaceBVHNode.h" />
     <ClInclude Include="include\GeometryUtils.h" />
     <ClInclude Include="include\GPUVertex.h" />
+    <ClInclude Include="include\Lights\DirectionalLight.h" />
+    <ClInclude Include="include\Lights\Light.h" />
+    <ClInclude Include="include\Lights\PointLight.h" />
+    <ClInclude Include="include\Lights\SpotLight.h" />
     <ClInclude Include="include\PairHash.h" />
     <ClInclude Include="include\ShadingNodes\AmbientOcclusionOutputNode.h" />
     <ClInclude Include="include\ShadingNodes\ColorNode.h" />

@@ -30,7 +30,7 @@ class Application { // prebaciti u struct(tj da je vecina ovih atributa public, 
 	static Application* instance;
 	Application() {};
 
-	Mode mode = Mode::SHADER_EDITOR;
+	Mode mode = Mode::OBJECT;
 	SelectMode selectMode = SelectMode::VERTEX;
 
 

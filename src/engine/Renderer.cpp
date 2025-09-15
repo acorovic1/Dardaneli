@@ -36,6 +36,9 @@ void Renderer::viewportEditor()
 		{
 			if (gui.getMode() == Mode::OBJECT)
 			{
+				// OUTLINE STENCIL BUFFER TECHNIQUE
+
+
 				glStencilFunc(GL_ALWAYS, 1, 0xFF);
 				glStencilMask(0xFF);
 				glPointSize(5.0f);

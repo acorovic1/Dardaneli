@@ -15,6 +15,7 @@ public:
 
 	void bufferData(std::vector<DVertex*>& vertices);
 	void bufferData(std::vector<GPUVertex>& vertices);
+	void bufferData(float* vertices,int size);
 	void Bind();
 	void Unbind();
 	void Delete();

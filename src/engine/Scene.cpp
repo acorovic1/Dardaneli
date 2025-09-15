@@ -1,6 +1,9 @@
 #include "Scene.h"
 #include "DFace.h"
 #include "Window.h"
+#include "Lights/PointLight.h"
+#include "Lights/DirectionalLight.h"
+#include "Lights/SpotLight.h"
 Scene::Scene() {}
 
 void Scene::Init(Window&window)
@@ -39,16 +42,20 @@ void Scene::Init(Window&window)
 	new Shader("ActiveEdit", "src/shaders/activeEdit.vert", "src/shaders/activeEdit.frag");
 
 	new Shader("UV", "src/shaders/UV.vert", "src/shaders/UV.frag");
+	new Shader("Light", "src/shaders/light.vert", "src/shaders/light.frag");
 	new Shader("TextureTest", "src/shaders/textureTest.vert", "src/shaders/textureTest.frag");
 
-	addPlane();
+	//new PointLight("test");
+	new SpotLight("test");
 
 	
-	// valjda materiali zavrseni
 
-	// sada napraviti  outpute kako treba ( kao sto je u substance designeru)
+
 	// napravljen output za color 
 	// compilirati ostale outpute kada je render preview, ali prvo napravi svjetla
+
+
+	// svjetla napravljena ostalo jos SCALE I ROTATE metode da se naprave, koristi model matricu
 	
 	
 	//objectSingleton->getObject(0)->Rotate(45.0f, glm::vec3(1.0f, 0.0f, 1.0f));

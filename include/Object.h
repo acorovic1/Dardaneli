@@ -17,6 +17,7 @@ class Object {
 protected:
 
 	std::vector<DVertex*> vertices;
+	glm::mat4 model;
 
 	// used for updating VBO
 	//std::vector<DVertex> vboverts;
@@ -27,7 +28,6 @@ protected:
 
 	GLuint index{};
 	std::string name;
-	glm::mat4 model;
 
 
 	

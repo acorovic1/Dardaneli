@@ -31,6 +31,12 @@ void VBO::bufferData(std::vector<GPUVertex>& vertices)
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GPUVertex), vertices.data(), GL_DYNAMIC_DRAW);
 }
 
+void VBO::bufferData(float* vertices, int size)
+{
+	this->Bind();
+	glBufferData(GL_ARRAY_BUFFER, size * sizeof(float), vertices, GL_DYNAMIC_DRAW);
+}
+
 void VBO::Bind() {
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
 }

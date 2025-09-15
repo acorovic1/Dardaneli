@@ -533,6 +533,8 @@ void addCircle(int numSegments, float radius)
 
 void addSphere(int segments, int rings, float radius)
 {
+	double time = glfwGetTime();
+
 	std::vector<DVertex*> vertices;
 	std::vector<GLuint> indices;
 	std::vector<GLuint> edgeIndices;
@@ -566,6 +568,7 @@ void addSphere(int segments, int rings, float radius)
 
 	for (int i = 0; i < rings - 1; i++)
 	{
+		std::cout << "\nRing: " << i;
 		y = radius * sinf(halfPI - ringStep * (i + 1)); // found from the XY/ZY plane (side view)
 
 		radiusStep = radius * cosf(halfPI - ringStep * (i + 1));  // found from the XY/ZY plane (side view)
@@ -654,6 +657,7 @@ void addSphere(int segments, int rings, float radius)
 	float currentVertex;
 	for (int j = 0; j < segments; j++)// last ring of faces (triangles)
 	{
+		std::cout << "\nBottom ring, segment: " << j;
 		currentVertex = (rings - 2) * (segments)+1 + j;
 
 		edgeIndices.push_back(bottomVertex);
@@ -702,6 +706,7 @@ void addSphere(int segments, int rings, float radius)
 
 	for (int i = 0; i < indices.size();)
 	{
+		std::cout << "\nIndex: " << i;
 		DFace* face = new DFace();
 		if (i < 3 * segments || i >= 3 * segments + 6 * segments * (rings - 2)) // triangles
 		{
@@ -808,6 +813,8 @@ void addSphere(int segments, int rings, float radius)
 
 	for (int i = 0; i < edgeIndices.size(); i += 2)
 	{
+		std::cout << "\nEdge: " << i;
+
 		/*
 			equal_range returns iterators to the original map
 			where iterator points to the "first" element with that key
@@ -828,6 +835,7 @@ void addSphere(int segments, int rings, float radius)
 	}
 	for (int i = 0; i < vertices.size(); i++)
 	{
+		std::cout << "\n\n\nDisk edges for vertex: " << i;
 		for (int j = 0; j < diskEdges[i].size(); j++)
 		{
 			DEdge* e = diskEdges[i][j];
@@ -881,7 +889,7 @@ void addSphere(int segments, int rings, float radius)
 	vertices.back()->e = edgeMap[UnorderedPair<int>(vertices.size() - 1, vertices.size() - 2)];
 
 	//std::cout << "\n\n Number of indices = " << indices.size()<<"\n";
-
+	std::cout << "\nTime to create sphere: " << glfwGetTime() - time << " seconds\n";
 	new Mesh(
 		"Sphere",
 		vertices,

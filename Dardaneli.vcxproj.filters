@@ -270,6 +270,8 @@
     <None Include="src\shaders\UV.frag" />
     <None Include="src\shaders\textureTest.vert" />
     <None Include="src\shaders\textureTest.frag" />
+    <None Include="src\shaders\light.vert" />
+    <None Include="src\shaders\light.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Camera.h">
@@ -489,6 +491,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\ShadingNodes\ColorNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lights\Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lights\PointLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lights\DirectionalLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lights\SpotLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

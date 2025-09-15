@@ -393,7 +393,7 @@ void Mesh::removeMaterial(Material* mat)
 {
 	materials.erase(mat);
 	renderBuffers.erase(mat);
-	// TODO
+	
 }
 
 void Mesh::Draw(Shader& shader, Camera& camera, GLenum mode) {
@@ -404,6 +404,11 @@ void Mesh::Draw(Shader& shader, Camera& camera, GLenum mode) {
 	camera.CameraUniform(shader, "cameraMatrix");
 	shader.setVector3f(true, "camPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
 	shader.setMat4(true, "model", model);
+	auto view = camera.getViewMatrix();
+	auto proj = camera.getProjectionMatrix();
+	shader.setMat4(true, "view", view);
+	shader.setMat4(true, "projection", proj);
+	shader.setFloat(true, "size", 1);
 
 	if (mode == GL_TRIANGLES)
 	{
