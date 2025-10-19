@@ -5,6 +5,7 @@
 #include "DFace.h"
 #include "DLoop.h"
 #include <unordered_set>
+#include "stb/stb_image_write.h"
 #include "ShadingNodes/MaterialManager.h"
 
 
@@ -17,12 +18,59 @@
 #include "ShadingNodes/MetallicOutputNode.h"
 #include "ShadingNodes/AmbientOcclusionOutputNode.h"
 #include "ShadingNodes/ColorNode.h"
+#include "ShadingNodes/ColorMixNode.h"
 
 
 #include "Lights/Light.h"
 #include "Lights/DirectionalLight.h"
 #include "Lights/PointLight.h"
 #include "Lights/SpotLight.h"
+
+#include <windows.h>
+
+void MyGUI::SaveFinalRender(const char* filename, int width, int height)
+{
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, width, height);
+
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f); // your background color
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	for (int i = 0; i < objectSingleton->getNumberOfObjects(); i++)
+	{
+		Object* object = objectSingleton->getObject(i);
+		if (!dynamic_cast<Mesh*>(object))continue;
+		Mesh* mesh = dynamic_cast<Mesh*>(object);
+
+
+		mesh->renderDraw(*window->getCamera());
+	}
+
+	glFinish();
+
+
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+
+	std::vector<unsigned char> pixels(width * height * 3);
+	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
+
+	// Flip vertically (OpenGL origin is bottom-left, images expect top-left)
+	std::vector<unsigned char> flipped(width * height * 3);
+	for (int y = 0; y < height; ++y)
+	{
+		memcpy(&flipped[y * width * 3],
+			&pixels[(height - 1 - y) * width * 3],
+			width * 3);
+	}
+
+	stbi_write_png(filename, width, height, 3, flipped.data(), width * 3);
+
+
+	ShellExecuteA(NULL, "open", filename, NULL, NULL, SW_SHOWNORMAL);
+
+}
 
 
 
@@ -78,6 +126,15 @@ std::vector<int>& MyGUI::getObjectIndex() { return app->objectIndices; }
 void MyGUI::DrawUI()
 {
 	ImGui::Begin("Dardaneli - ImGUI");
+
+	if (ImGui::Button("Save Final Render"))
+	{
+		int fbWidth, fbHeight;
+    glfwGetFramebufferSize(window->getWindow(), &fbWidth, &fbHeight); // not window size!
+    SaveFinalRender("final_render.png", fbWidth, fbHeight);
+	}
+
+
 
 	Modes();
 
@@ -247,6 +304,8 @@ void MyGUI::DrawUI()
 		if (ImGui::Button("Assign Material")) {
 
 			mesh->assignMaterial(app->activeMaterial);
+
+			std::cout << "\nMaterial assigned" << "\t  number of materials: "<<mesh->getAllMaterials()->size();
 
 		}
 		ImGui::SameLine();
@@ -1483,14 +1542,16 @@ void MyGUI::ShowShaderEditor()
 
 
 
-	///////////////////////////////////
+	/////////////////////////////////////////////////////////////////////
 		// link creation logic \\
-	///////////////////////////////////
-
+	/////////////////////////////////////////////////////////////////////
+	    // types of viable links are noted in ShadingNodes.h \\
+	////////////////////////////////////////////////////////////////////
 	int outputAttribute, inputAttribute;
 	if (ImNodes::IsLinkCreated(&outputAttribute, &inputAttribute))
 	{
-		if (ImNodes::GetAttributePinShape(outputAttribute) == ImNodes::GetAttributePinShape(inputAttribute))
+		if (ImNodes::GetAttributePinShape(outputAttribute) == ImNodes::GetAttributePinShape(inputAttribute) ||
+			ImNodes::GetAttributePinShape(inputAttribute) == ImNodesPinShape_Triangle)
 		{
 
 			links.push_back(std::make_pair(outputAttribute, inputAttribute));
@@ -1590,6 +1651,11 @@ void MyGUI::addShadingNodes()
 				app->activeMaterial->createNode<ColorNode>();
 				std::cout << "Color node added \n";
 			}
+			if (ImGui::MenuItem("ColorMix"))
+			{
+				app->activeMaterial->createNode<ColorMixNode>();
+				std::cout << "ColorMix node added \n";
+			}
 
 			ImGui::EndMenu();
 		}
@@ -1612,6 +1678,8 @@ void MyGUI::addShadingNodes()
 
 
 }
+
+
 
 
 

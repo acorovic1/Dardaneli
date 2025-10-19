@@ -8,6 +8,9 @@
 
 // Pin shapes ImNodesPinShape_TriangleFilled are of type Vec3
 // Pin shapes ImNodesPinShape_CircleFilled are of type Float
+// 
+// Pin shapes ImNodesPinShape_Triangle can be of type Float or of type Vec3
+
 
 
 
@@ -23,7 +26,7 @@ public:
     
     }
     virtual ~ShadingNodes() = default;
-    virtual void emitCode(ShaderBuilder& builder) = 0;
+    virtual void emitCode(ShaderBuilder& builder,bool visited) = 0;
 
 
     virtual void draw() = 0;

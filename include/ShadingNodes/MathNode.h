@@ -13,7 +13,7 @@ struct MathNode : public ShadingNodes {
 
 
 
-	void emitCode(ShaderBuilder& builder) override
+	void emitCode(ShaderBuilder& builder, bool visited) override
 	{
 
 		const std::vector<std::pair<int, int>>& links = app->activeMaterial->getLinks();

@@ -139,9 +139,9 @@ int main() {
 
 	gui.Shutdown();
 
-	DeleteAllShaders();
 
 	window.Terminate();
+	DeleteAllShaders();
 	glfwTerminate();
 
 	return 0;

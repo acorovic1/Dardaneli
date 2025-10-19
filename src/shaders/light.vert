@@ -20,5 +20,5 @@ void main()
     vec3 pos = worldPos + right * aPos.x * size
                           + up    * aPos.y * size;
 
-    gl_Position = projection * view * vec4(pos, 1.0);
+    gl_Position =  vec4(pos, 1.0);
 }

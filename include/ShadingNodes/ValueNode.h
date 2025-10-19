@@ -16,7 +16,7 @@ struct ValueNode : public ShadingNodes {
 
 
 
-	void emitCode(ShaderBuilder& builder) override
+	void emitCode(ShaderBuilder& builder, bool visited) override
 	{
 		std::string varName = "tmp" + std::to_string(builder.tempCounter++);
 		builder.body << "\tfloat " << varName << " = " << value << ";\n";

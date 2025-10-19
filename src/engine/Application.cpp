@@ -71,19 +71,23 @@ void Application::ObjectMode(GLFWwindow* window, MyGUI& gui)
 		{
 			indexVec.erase(std::remove(indexVec.begin(), indexVec.end(), -1), indexVec.end());
 
-			index = indexVec[0];
-			if (indexVec.size() > 1)
+			if (indexVec.size())
 			{
-				auto cameraPosition = cameraSingleton->getCamera(0)->getPosition();
-				auto closestPosition = glm::distance(cameraPosition, objectSingleton->getObject(indexVec[0])->getPosition());
 
-				for (int i = 1; i < indexVec.size(); i++)
+				index = indexVec[0];
+				if (indexVec.size() > 1)
 				{
-					auto position = glm::distance(cameraPosition, objectSingleton->getObject(indexVec[i])->getPosition());
-					if (position < closestPosition)
+					auto cameraPosition = cameraSingleton->getCamera(0)->getPosition();
+					auto closestPosition = glm::distance(cameraPosition, objectSingleton->getObject(indexVec[0])->getPosition());
+
+					for (int i = 1; i < indexVec.size(); i++)
 					{
-						closestPosition = position;
-						index = indexVec[i];
+						auto position = glm::distance(cameraPosition, objectSingleton->getObject(indexVec[i])->getPosition());
+						if (position < closestPosition)
+						{
+							closestPosition = position;
+							index = indexVec[i];
+						}
 					}
 				}
 			}
@@ -237,6 +241,9 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		firstClick = true;
 		if (keys[GLFW_KEY_LEFT_ALT])return;
 		keys[GLFW_KEY_S] = 0;
+		keys[GLFW_KEY_X] = 0;
+		keys[GLFW_KEY_Y] = 0;
+		keys[GLFW_KEY_Z] = 0;
 		if (keys[GLFW_KEY_G])
 		{
 			VertexBVHSingleton->Refit(*mesh);
@@ -586,7 +593,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 	if (keys[GLFW_KEY_S])
 	{
 
-		/*	glfwGetCursorPos(window, &posX, &posY);
+			glfwGetCursorPos(window, &posX, &posY);
 
 			static std::vector<glm::vec3> directions;
 
@@ -616,7 +623,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 			}
 			std::cout << "\nSCALE";
 			previousX = posX;
-			previousY = posY;*/
+			previousY = posY;
 	}
 
 	// TRANSLATE
@@ -796,7 +803,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 		gui.InsetMenu();
 
 		keys[GLFW_KEY_I] = 0;
-		//	keys[GLFW_KEY_S] = 1;
+		keys[GLFW_KEY_S] = 1;
 	}
 
 	// SEPARATE
@@ -924,7 +931,7 @@ void Application::EditMode(GLFWwindow* window, MyGUI& gui)
 	// LOOP CUT
 	if (keys[GLFW_KEY_R] && keys[GLFW_KEY_LEFT_CONTROL])
 	{
-		mesh->loopCut(mesh->getSelectedEdges().back(), 3);
+		mesh->loopCut(mesh->getSelectedEdges().back(), 1);
 		keys[GLFW_KEY_R] = 0;
 		keys[GLFW_KEY_LEFT_CONTROL] = 0;
 	}
@@ -1013,9 +1020,9 @@ void Application::UVMode(GLFWwindow* window, MyGUI& gui)
 			std::cout << "\nSELECTED ---> " << index[0];
 
 
-			for(auto x: mesh->getAllFaces())
+			for (auto x : mesh->getAllFaces())
 
-				for(auto y:x->getLoops())
+				for (auto y : x->getLoops())
 					if (y->uvVertex == uvReference[index[0]])
 						std::cout << "\n Vert the uv belongs to " << mesh->getVertexIndex(y->tip);
 

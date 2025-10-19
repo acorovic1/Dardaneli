@@ -1,33 +1,16 @@
 #version 460 core
 
-
-out vec4 FragColor;
-
-
-in vec3 crntPos;
+in vec2 fragUV;
+in vec3 WorldPos;
 in vec3 Normal;
-
-
-uniform vec3 camPos;
+out vec4 FragColor;
 
 
 
 void main()
 {
+        vec3 ColorFinal = vec3(1.0,1.0,1.0);
 
-	
-	if (gl_FrontFacing)
-    {
-        // Front face color
-        FragColor = vec4(0.83f, 0.83f, 0.83f, 1.0f);
-    }
-    else
-    {
-        // Back face color
-        FragColor = vec4(0.75f, 0.0f, 0.0f, 1.0f); 
-    }
-	
-
-
-
+        FragColor= vec4(ColorFinal-0.25,1.0);
+        
 }

@@ -177,10 +177,10 @@ public:
 	void buildShader(ShadingNodes* node, ShaderBuilder& builder, std::unordered_set<int>& visited)
 	{
 		if (!node || visited.count(node->getId()))
-			return; // already processed
+			return;
 
-		// Visit all inputs first
-		for (auto input : node->getInputIds()) // you'd need getInputs() returning input pin IDs
+
+		for (auto input : node->getInputIds())
 		{
 			int connectedId;
 			if (getOutputAttributeId(input, connectedId))
@@ -190,8 +190,8 @@ public:
 			}
 		}
 
-		// Now emit this node's code
-		node->emitCode(builder);
+		bool visitedFlag = visited.count(node->getId());
+		node->emitCode(builder, visitedFlag);
 
 		visited.insert(node->getId());
 	}

@@ -10,7 +10,7 @@ struct ColorOutputNode : public ShadingNodes
 
 	ColorOutputNode(int n) : ShadingNodes(n),enabled(false) {}
 
-	void emitCode(ShaderBuilder& builder) override
+	void emitCode(ShaderBuilder& builder, bool visited) override
 	{
 
 		int inputId;

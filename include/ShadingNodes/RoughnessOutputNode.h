@@ -10,14 +10,19 @@ struct RoughnessOutputNode : public ShadingNodes
 
 	RoughnessOutputNode(int n) : ShadingNodes(n), enabled(false) {}
 
-	void emitCode(ShaderBuilder& builder) override
+	void emitCode(ShaderBuilder& builder, bool visited) override
 	{
 
 		int inputId;
-		bool found = app->activeMaterial->getOutputAttributeId(id + 2, inputId);
+		bool found = app->activeMaterial->getOutputAttributeId(id + 1, inputId);
 		std::string roughness = builder.nodeVars[inputId];
 
-		builder.body << "\RoughnessFinal = " << roughness << ";\n";
+
+		auto shape = ImNodes::GetAttributePinShape(inputId);
+		if (shape == ImNodesPinShape_CircleFilled)
+			builder.body << "\t float RoughnessFinal = " << roughness << ";\n";
+		else if (shape == ImNodesPinShape_TriangleFilled)
+			builder.body << "\t float RoughnessFinal = " << roughness << ".r;\n";
 
 	}
 	std::vector<int>getInputIds() override
@@ -47,7 +52,7 @@ struct RoughnessOutputNode : public ShadingNodes
 			enabled = false;
 
 
-		ImNodes::BeginInputAttribute(id + 1);
+		ImNodes::BeginInputAttribute(id + 1, ImNodesPinShape_Triangle);
 		ImGui::Text("Roughness");
 		ImNodes::EndInputAttribute();
 
@@ -58,4 +63,3 @@ struct RoughnessOutputNode : public ShadingNodes
 };
 
 
-int RoughnessOutputNode::activeNodeId = -1;

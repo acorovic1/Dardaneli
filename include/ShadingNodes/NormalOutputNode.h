@@ -10,14 +10,14 @@ struct NormalOutputNode : public ShadingNodes
 
 	NormalOutputNode(int n) : ShadingNodes(n), enabled(false) {}
 
-	void emitCode(ShaderBuilder& builder) override
+	void emitCode(ShaderBuilder& builder, bool visited) override
 	{
 
 		int inputId;
-		bool found = app->activeMaterial->getOutputAttributeId(id + 2, inputId);
+		bool found = app->activeMaterial->getOutputAttributeId(id + 1, inputId);
 		std::string normal = builder.nodeVars[inputId];
 
-		builder.body << "\NormalFinal = vec3(" << normal << ".xyz);\n";
+		builder.body << "\tvec3 NormalFinal = vec3(" << normal << ".xyz);\n";
 
 	}
 	std::vector<int>getInputIds() override
@@ -47,7 +47,7 @@ struct NormalOutputNode : public ShadingNodes
 			enabled = false;
 
 
-		ImNodes::BeginInputAttribute(id + 1);
+		ImNodes::BeginInputAttribute(id + 1, ImNodesPinShape_TriangleFilled);
 		ImGui::Text("Color");
 		ImNodes::EndInputAttribute();
 
@@ -58,4 +58,3 @@ struct NormalOutputNode : public ShadingNodes
 };
 
 
-int NormalOutputNode::activeNodeId = -1;

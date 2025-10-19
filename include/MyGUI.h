@@ -40,6 +40,8 @@ class MyGUI /* :public Dardaneli...varijable pod protected staviti*/ /* mozda ap
 
 	bool gizmo = true;
 
+
+
 	DLoop* selectedLoop= nullptr;
 	//DFace* selectedFace = nullptr;
 
@@ -60,6 +62,7 @@ class MyGUI /* :public Dardaneli...varijable pod protected staviti*/ /* mozda ap
 	
 
 public:
+	void SaveFinalRender(const char* filename, int width, int height);
 	bool showAddMenu = false;
 	bool showDeleteMenu = false;
 	bool showExtrudeMenu = false;

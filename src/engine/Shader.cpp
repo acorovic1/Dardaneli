@@ -66,6 +66,58 @@ Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFil
 	shaderSingleton->addShader(name, this);
 }
 
+Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFile, const char* geometryFile)
+{
+
+	std::string vertexCode = get_file_contents(vertexFile);
+	std::string fragmentCode;
+
+	if (fileExists(fragmentFile)) {
+		// Treat as file path
+		fragmentCode = get_file_contents(fragmentFile);
+	}
+	else {
+		// Treat as raw GLSL code
+		fragmentCode = fragmentFile;
+	}
+	std::string geometryCode = get_file_contents(geometryFile);
+
+	const char* vertexSource = vertexCode.c_str();
+	const char* fragmentSource = fragmentCode.c_str();
+	const char* geometrySource = geometryCode.c_str();
+
+	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexSource, NULL);
+	glCompileShader(vertexShader);
+	compileErrors(vertexShader, "VERTEX");
+
+	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
+	glCompileShader(fragmentShader);
+	compileErrors(fragmentShader, "FRAGMENT");
+
+	GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+	glShaderSource(geometryShader, 1, &geometrySource, NULL);
+	glCompileShader(geometryShader);
+	compileErrors(geometryShader, "GEOMETRY");
+
+	ID = glCreateProgram();
+	glAttachShader(ID, vertexShader);
+	glAttachShader(ID, fragmentShader);
+	glAttachShader(ID, geometryShader);
+	
+	glLinkProgram(ID);
+	
+	compileErrors(ID, "PROGRAM");
+
+	
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+	glDeleteShader(geometryShader);
+
+
+}
+
 
 void Shader::Activate() {
 	glUseProgram(ID);
@@ -175,6 +227,8 @@ void Shader::compileErrors(unsigned int shader, const char* type)
 
 void DeleteAllShaders()
 {
+	std::cout << "Deleting all shaders. Shaders created: " << shaderSingleton->getNumberOfShaders() << std::endl;
+
 	for (auto it = shaderSingleton->shaders.begin(); it != shaderSingleton->shaders.end(); ++it)
 		it->second->Del();
 

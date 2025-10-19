@@ -216,6 +216,18 @@
     <ClCompile Include="src\engine\ShadingNodes\ColorOutputNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\engine\ShadingNodes\AmbientOcclusionOutputNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\ShadingNodes\MetallicOutputNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\ShadingNodes\RoughnessOutputNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\ShadingNodes\NormalOutputNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\basic.vert">
@@ -272,6 +284,9 @@
     <None Include="src\shaders\textureTest.frag" />
     <None Include="src\shaders\light.vert" />
     <None Include="src\shaders\light.frag" />
+    <None Include="src\shaders\pbr.geom" />
+    <None Include="src\shaders\pbr.vert" />
+    <None Include="src\shaders\pbr.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Camera.h">
@@ -503,6 +518,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Lights\SpotLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ShadingNodes\ColorBurnNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libraries\include\stb\stb_image_write.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ShadingNodes\ColorMixNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

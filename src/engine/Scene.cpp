@@ -46,13 +46,20 @@ void Scene::Init(Window&window)
 	new Shader("TextureTest", "src/shaders/textureTest.vert", "src/shaders/textureTest.frag");
 
 	//new PointLight("test");
-	new SpotLight("test");
+	
+	addCube();
+
+	
+	auto obj = static_cast<Mesh*>(objectSingleton->getObject(0));
+
+	for(auto vert: obj->getVertices())
+		std::cout << vert->normal.x << " " << vert->normal.y << " " << vert->normal.z << "\n";
 
 	
 
+	// problem je u TBN matrici.. ima victorGordan tutorial.. koristiti geometry shader
 
-	// napravljen output za color 
-	// compilirati ostale outpute kada je render preview, ali prvo napravi svjetla
+
 
 
 	// svjetla napravljena ostalo jos SCALE I ROTATE metode da se naprave, koristi model matricu

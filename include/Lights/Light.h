@@ -6,8 +6,8 @@ class Light : public Object
 {
 protected:
 
-	glm::vec3 color;
-	float intensity = 1.0f;
+	glm::vec3 color=glm::vec3(1.0f);
+	float intensity = 3.0f;
 
 public:
     Light(const std::string& name) : Object(name) {}

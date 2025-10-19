@@ -14,7 +14,7 @@ public:
 
         int latSegments = 16;   // latitude lines
         int longSegments = 8;  // longitude lines
-        float radius = 1.0f;
+        float radius = 0.1f;
 
 
         std::vector<GLuint> indices;
@@ -85,6 +85,8 @@ public:
         shader.setMat4(true, "view", view);
         shader.setMat4(true, "projection", proj);
         shader.setFloat(true, "size", 1);
+
+        camera.CameraUniform(shader, "cameraMatrix");
 
 		vao.Bind();
         ebo.Bind();

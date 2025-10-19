@@ -11,7 +11,13 @@ Texture::Texture(const char* image,
 		std::cerr << "Failed to load texture: " << image << "\n";
 		return;
 	}
-	format = (numColorChannels == 4) ? GL_RGBA : GL_RGB;
+	if (numColorChannels == 4)
+		format = GL_RGBA;
+	else if (numColorChannels == 3)
+		format = GL_RGB;
+	else if (numColorChannels == 1)
+		format = GL_RED;
+	else std::cout << "\n\n\tInvalid number of color channels\n\n\n";
 	glGenTextures(1, &ID);
 	glActiveTexture(GL_TEXTURE0 + slot);
 	unit = slot;

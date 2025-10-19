@@ -10,14 +10,18 @@ struct AmbientOcclusionOutputNode : public ShadingNodes
 
 	AmbientOcclusionOutputNode(int n) : ShadingNodes(n), enabled(false) {}
 
-	void emitCode(ShaderBuilder& builder) override
+	void emitCode(ShaderBuilder& builder, bool visited) override
 	{
 
 		int inputId;
-		bool found = app->activeMaterial->getOutputAttributeId(id + 2, inputId);
+		bool found = app->activeMaterial->getOutputAttributeId(id + 1, inputId);
 		std::string ao = builder.nodeVars[inputId];
 
-		builder.body << "\AoFinal = " << ao << ";\n";
+		auto shape = ImNodes::GetAttributePinShape(inputId);
+		if (shape == ImNodesPinShape_CircleFilled)
+			builder.body << "\t float AoFinal = " << ao << ";\n";
+		else if (shape == ImNodesPinShape_TriangleFilled)
+			builder.body << "\t float AoFinal = " << ao << ".r;\n";
 
 	}
 	std::vector<int>getInputIds() override
@@ -47,7 +51,7 @@ struct AmbientOcclusionOutputNode : public ShadingNodes
 			enabled = false;
 
 
-		ImNodes::BeginInputAttribute(id + 1);
+		ImNodes::BeginInputAttribute(id + 1, ImNodesPinShape_Triangle);
 		ImGui::Text("AmbientOcclusion");
 		ImNodes::EndInputAttribute();
 
@@ -58,4 +62,3 @@ struct AmbientOcclusionOutputNode : public ShadingNodes
 };
 
 
-int AmbientOcclusionOutputNode::activeNodeId = -1;

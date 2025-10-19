@@ -24,6 +24,10 @@
 
 #include "Application.h"
 #include "ShadingNodes/MaterialManager.h"
+#include "Lights/Light.h"
+#include "Lights/DirectionalLight.h"
+#include "Lights/PointLight.h"
+#include "Lights/SpotLight.h"
 
 
 #include <glm/glm.hpp>
@@ -216,16 +220,53 @@ DEdge* Mesh::getEdge(DVertex* start, DVertex* end)
 
 void Mesh::renderDraw(Camera& camera, GLenum mode)
 {
-	//shader.Activate();
-
-	//std::cout << "First time "<<app->mat.textures.size()<<"\n";
-	//for (auto& tex : app->mat.textures)
-	//{
-	//	tex.get()->textureUniform(shader, "tex2", tex.get()->unit);
-	//	tex.get()->Bind();
-	//}
+	for (auto x : vertices)
+		x->normal = glm::normalize(x->position);
 
 
+
+
+	struct GPULight {
+		int type;
+		glm::vec3 position;
+		glm::vec3 direction;
+		glm::vec3 color;
+		float intensity;
+		float innerCutoff;
+		float outerCutoff;
+	};
+
+	GPULight gpuLights[32];
+	int activeLights = 0;
+
+	for (Object* l : objectSingleton->getAllObjects())
+	{
+		GPULight g{};
+		if (auto* d = dynamic_cast<DirectionalLight*>(l)) {
+			g.type = 0;
+			g.direction = d->getDirection();
+			g.color = d->getColor();
+			g.intensity = d->getIntensity();
+		}
+		else if (auto* p = dynamic_cast<PointLight*>(l)) {
+			g.type = 1;
+			g.position = p->getPosition();
+			g.color = p->getColor();
+			g.intensity = p->getIntensity();
+		}
+		else if (auto* s = dynamic_cast<SpotLight*>(l)) {
+			g.type = 2;
+			g.position = s->getPosition();
+			g.direction = s->getDirection();
+			g.color = s->getColor();
+			g.intensity = s->getIntensity();
+			g.innerCutoff = glm::cos(glm::radians(s->getInnerCutoff()));
+			g.outerCutoff = glm::cos(glm::radians(s->getOuterCutoff()));
+		}
+
+		if (activeLights < 32)
+			gpuLights[activeLights++] = g;
+	}
 
 
 	for (auto& buff : renderBuffers)
@@ -252,14 +293,25 @@ void Mesh::renderDraw(Camera& camera, GLenum mode)
 
 			}
 		}
+
+		shaderr.setInteger(true, "numLights", activeLights);
+
+		for (int i = 0; i < activeLights; ++i) {
+			std::string prefix = "lights[" + std::to_string(i) + "].";
+
+			shaderr.setInteger(true, (prefix + "type").c_str(), gpuLights[i].type);
+			shaderr.setVector3f(true, (prefix + "position").c_str(), gpuLights[i].position.x, gpuLights[i].position.y, gpuLights[i].position.z);
+			shaderr.setVector3f(true, (prefix + "direction").c_str(), gpuLights[i].direction.x, gpuLights[i].direction.y, gpuLights[i].direction.z);
+			shaderr.setVector3f(true, (prefix + "color").c_str(), gpuLights[i].color.x, gpuLights[i].color.y, gpuLights[i].color.z);
+			shaderr.setFloat(true, (prefix + "intensity").c_str(), gpuLights[i].intensity);
+			shaderr.setFloat(true, (prefix + "innerCutoff").c_str(), gpuLights[i].innerCutoff);
+			shaderr.setFloat(true, (prefix + "outerCutoff").c_str(), gpuLights[i].outerCutoff);
+		}
+
 		if (mode == GL_TRIANGLES)
 		{
 			matVAO.Bind();
 			matEBO.Bind();
-
-			std::cout << "\n\t Drawing material " << mat->getName() << " with " << matIndices.size() << " indices";
-			for (auto x : matIndices)
-				std::cout << "\t" << x;
 
 			glDrawElements(mode, matIndices.size(), GL_UNSIGNED_INT, 0);
 			matEBO.Unbind();
@@ -267,18 +319,7 @@ void Mesh::renderDraw(Camera& camera, GLenum mode)
 		}
 	}
 
-	//if (mode == GL_TRIANGLES)
-	//{
 
-
-
-	//	gpuVAO.Bind();
-	//	gpuEBO.Bind();
-	//	glDrawElements(mode, renderIndices.size(), GL_UNSIGNED_INT, 0);
-	//	gpuEBO.Unbind();
-	//	gpuVAO.Unbind();
-
-	//}
 	if (mode == GL_LINES)
 	{
 		vao.Bind();
@@ -292,7 +333,7 @@ void Mesh::renderDraw(Camera& camera, GLenum mode)
 		glDrawArrays(mode, 0, vertices.size());
 	}
 
-	//vao.Unbind();
+
 
 }
 
@@ -409,6 +450,77 @@ void Mesh::Draw(Shader& shader, Camera& camera, GLenum mode) {
 	shader.setMat4(true, "view", view);
 	shader.setMat4(true, "projection", proj);
 	shader.setFloat(true, "size", 1);
+
+	struct GPULight {
+		int type;
+		glm::vec3 position;
+		glm::vec3 direction;
+		glm::vec3 color;
+		float intensity;
+		float innerCutoff;
+		float outerCutoff;
+	};
+
+	GPULight gpuLights[32];
+	int activeLights = 0;
+
+	for (Object* l : objectSingleton->getAllObjects())
+	{
+		GPULight g{};
+		if (auto* d = dynamic_cast<DirectionalLight*>(l)) {
+			g.type = 0;
+			g.direction = d->getDirection();
+			g.color = d->getColor();
+			g.intensity = d->getIntensity();
+
+
+			if (activeLights < 32)
+				gpuLights[activeLights++] = g;
+		}
+		else if (auto* p = dynamic_cast<PointLight*>(l)) {
+			g.type = 1;
+			g.position = p->getPosition();
+			g.color = p->getColor();
+			g.intensity = p->getIntensity();
+
+			if (activeLights < 32)
+				gpuLights[activeLights++] = g;
+		}
+		else if (auto* s = dynamic_cast<SpotLight*>(l)) {
+			g.type = 2;
+			g.position = s->getPosition();
+			g.direction = s->getDirection();
+			g.color = s->getColor();
+			g.intensity = s->getIntensity();
+			g.innerCutoff = glm::cos(glm::radians(s->getInnerCutoff()));
+			g.outerCutoff = glm::cos(glm::radians(s->getOuterCutoff()));
+
+
+			if (activeLights < 32)
+				gpuLights[activeLights++] = g;
+
+		}	
+	}
+
+
+	shader.setInteger(true, "numLights", activeLights);
+
+	for (int i = 0; i < activeLights; ++i) {
+		std::string prefix = "lights[" + std::to_string(i) + "].";
+
+		shader.setInteger(true, (prefix + "type").c_str(), gpuLights[i].type);
+		shader.setVector3f(true, (prefix + "position").c_str(), gpuLights[i].position.x, gpuLights[i].position.y, gpuLights[i].position.z);
+		shader.setVector3f(true, (prefix + "direction").c_str(), gpuLights[i].direction.x, gpuLights[i].direction.y, gpuLights[i].direction.z);
+		shader.setVector3f(true, (prefix + "color").c_str(), gpuLights[i].color.x, gpuLights[i].color.y, gpuLights[i].color.z);
+		shader.setFloat(true, (prefix + "intensity").c_str(), gpuLights[i].intensity);
+		shader.setFloat(true, (prefix + "innerCutoff").c_str(), gpuLights[i].innerCutoff);
+		shader.setFloat(true, (prefix + "outerCutoff").c_str(), gpuLights[i].outerCutoff);
+	}
+
+
+
+
+
 
 	if (mode == GL_TRIANGLES)
 	{

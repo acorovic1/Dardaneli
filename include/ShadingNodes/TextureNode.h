@@ -35,21 +35,25 @@ struct TextureNode : public ShadingNodes {
 	std::string getFilePath() { return filePath; }
 
 
-	void emitCode(ShaderBuilder& builder) override
+	void emitCode(ShaderBuilder& builder, bool visited) override
 	{
+		if (visited)return;
+
+
 		std::string var = "tmp" + std::to_string(builder.tempCounter++);
 		std::string uniformName = "tex" + std::to_string(texID);
 
 
 		// insert returns a pair<iterator, bool>, where iterator points to the element 
 		// and bool is set according to wheter the elemnt is newly inserted 
-		builder.header << "uniform sampler2D " << uniformName << ";\n";
-		/*if (builder.declaredUniforms.insert(uniformName).second)
+		
+		if (builder.declaredUniforms.insert(uniformName).second)
 		{
-		}*/
+			builder.header << "uniform sampler2D " << uniformName << ";\n";
+		}
 
 		builder.body << "\tvec4 " << var << " = texture(" << uniformName << ", fragUV);\n";
-		builder.nodeVars[id+1] = var;
+		builder.nodeVars[id + 1] = var;
 
 	}
 

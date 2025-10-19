@@ -25,6 +25,7 @@ class Shader {
 public:
 
 	Shader(std::string name, const char* vertexFile, const char* fragmentFile);
+	Shader(std::string name, const char* vertexFile, const char* fragmentFile, const char* geometryFile);
 	~Shader() {
 		//check for errors with deleteAllShaders();
 		//Delete();

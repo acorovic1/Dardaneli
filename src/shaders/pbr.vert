@@ -5,9 +5,9 @@ layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 uvCoords;
 
 
-out vec3 WorldPos;
-out vec3 Normal;
-out vec2 fragUV;
+out vec3 gWorldPos;
+out vec3 gNormal;
+out vec2 gfragUV;
 
 uniform mat4 model;
 uniform mat4 cameraMatrix;
@@ -17,9 +17,9 @@ uniform mat4 cameraMatrix;
 void main()
 {
     
-    fragUV = uvCoords;
-    WorldPos = vec3(model * vec4( aPos,1.0f));
-    Normal = aNormal;
+    gfragUV = uvCoords;
+    gWorldPos = vec3(model * vec4( aPos,1.0f));
+    gNormal = aNormal;
 
 
  	gl_Position = cameraMatrix * model * vec4(aPos, 1.0);

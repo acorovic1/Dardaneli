@@ -230,6 +230,7 @@ void Renderer::viewportEditor()
 		}
 		else
 		{
+			if (!dynamic_cast<Mesh*>(object))continue;
 			Mesh* mesh = dynamic_cast<Mesh*>(object);
 			
 			
