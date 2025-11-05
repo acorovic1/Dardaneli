@@ -12,46 +12,43 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "Window.h"
+//#include "Window.h"
 #include "FaceBVH.h"
+#include "EditorModes.h"
 
 #include "ShadingNodes/Material.h"
 
 #define radian 180/3.14159265358979323846f
 #define myEpsilon 0.00001
 
-enum class Mode { OBJECT, EDIT, SCULPT, WEIGHT_PAINT, TEXTURE_PAINT, UV_EDITOR, SHADER_EDITOR };
-enum class SelectMode { VERTEX, EDGE, FACE };
-enum class RenderMode { WIREFRAME, SOLID, MATERIAL_PREVIEW, RENDER };
+
 
 class MyGUI;
+class Window;
 
 // cut off one head two more shall take its place
-class Application { // prebaciti u struct(tj da je vecina ovih atributa public, izuzev onih koji trebaju singletonu)
+class Application { 
 	static Application* instance;
 	Application() {};
 
 	Mode mode = Mode::OBJECT;
 	SelectMode selectMode = SelectMode::VERTEX;
 
+	RenderMode renderMode = RenderMode::SOLID;
+
 
 	std::vector<int> objectIndices = std::vector<int>(1);
 
-	float translate[3] = { 0.0f, 0.0f, 0.0f };
-	float translatePrev[3] = { 0.0f, 0.0f, 0.0f };
-	float rotate[3] = { 0.0f, 0.0f, 0.0f };
-	float rotatePrev[3] = { 0.0f, 0.0f, 0.0f };
-	float scale[3] = { 1.0f, 1.0f, 1.0f };
-	float scalePrev[3] = { 1.0f, 1.0f, 1.0f };
+
 
 	float vertexPosition[3] = { 0.0f,0.0f,0.0f };
 	float vertexPrevPosition[3] = { 0.0f,0.0f,0.0f };
 
-	glm::mat4 model = glm::mat4(1.0f); // treba GUIu... nez zasto je ovde.. pogledaj nekad
+
 
 	bool slide = false;
-	bool slideFirstClick;
-	double slideStartX, slideStartY;
+	bool slideFirstClick=false;
+	double slideStartX=0, slideStartY=0;
 	std::vector< std::vector<glm::vec3>>slideLengths;
 	std::vector< std::vector<glm::vec3>> slideDirections;
 	std::vector< std::vector<glm::vec2>> slideUnProjectedDirections;
@@ -60,7 +57,6 @@ class Application { // prebaciti u struct(tj da je vecina ovih atributa public, 
 
 public:
 	Material* activeMaterial = new Material("Default");
-	RenderMode renderMode = RenderMode::SOLID;
 
 	static Application* getInstance();
 
@@ -69,6 +65,7 @@ public:
 
 
 	Mode getMode() { return mode; }
+	RenderMode getRenderMode() { return renderMode; }
 
 	void setSelectMode(SelectMode mode);
 
@@ -76,14 +73,14 @@ public:
 
 	void updateVertexPosition(glm::vec3 offset);
 
-	void ObjectMode(GLFWwindow* window, MyGUI& gui); //Inputs
-	void EditMode(GLFWwindow* window, MyGUI& gui); //Inputs
-	void UVMode(GLFWwindow* window, MyGUI& gui); //Inputs
-	void MaterialEditor(GLFWwindow* window, MyGUI& gui); //Inputs
-	void Inputs(GLFWwindow* window, MyGUI& gui); //Inputs
+	void objectMode(Window* window); //Inputs
+	void editMode(Window* window); //Inputs
+	void uVMode(Window* window); //Inputs
+	void materialEditor(Window* window); //Inputs
+	void inputs(Window* window); //Inputs
 
 	Object* getActiveObject() {
-		if (objectIndices.size() == 0 || objectIndices.back() < 0 || objectIndices.back() >= objectSingleton->getNumberOfObjects())
+		if (!objectIndices.size() /*|| objectIndices.back() < 0 || objectIndices.back() >= objectSingleton->getNumberOfObjects()*/)
 			return nullptr;
 		return objectSingleton->getObject(objectIndices.back());
 	}

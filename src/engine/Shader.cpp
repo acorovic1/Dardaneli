@@ -1,4 +1,6 @@
 #include "Shader.h"
+#include <fstream>
+#include <string>
 
 std::string get_file_contents(const char* filename) {
 	std::ifstream in(filename, std::ios::binary);
@@ -12,11 +14,14 @@ std::string get_file_contents(const char* filename) {
 		in.close();
 		return (contents);
 	}
-	throw (errno);
+	else
+	{
+		std::cout << "Failed to open file: " << filename;
+		throw std::runtime_error(std::string("Failed to open file: ") + filename);
+	}
 }
 
-#include <fstream>
-#include <string>
+
 
 // Helper function to check if a file exists
 bool fileExists(const char* path) {
@@ -26,14 +31,17 @@ bool fileExists(const char* path) {
 
 Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFile)
 {
-	// Vertex shader must always come from a file
-	std::string vertexCode = get_file_contents(vertexFile);
+	std::string vertexPath = std::string("src/shaders/") + vertexFile;
+	std::string fragmentPath = std::string("src/shaders/") + fragmentFile;
+
+
+	std::string vertexCode = get_file_contents(vertexPath.c_str());
 	const char* vertexSource = vertexCode.c_str();
 
 	std::string fragmentCode;
-	if (fileExists(fragmentFile)) {
+	if (fileExists(fragmentPath.c_str())) {
 		// Treat as file path
-		fragmentCode = get_file_contents(fragmentFile);
+		fragmentCode = get_file_contents(fragmentPath.c_str());
 	}
 	else {
 		// Treat as raw GLSL code
@@ -68,19 +76,22 @@ Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFil
 
 Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFile, const char* geometryFile)
 {
+	std::string vertexPath = std::string("src/shaders/") + vertexFile;
+	std::string fragmentPath = std::string("src/shaders/") + fragmentFile;
+	std::string geometryPath = std::string("src/shaders/") + geometryFile;
 
-	std::string vertexCode = get_file_contents(vertexFile);
+	std::string vertexCode = get_file_contents(vertexPath.c_str());
 	std::string fragmentCode;
 
-	if (fileExists(fragmentFile)) {
+	if (fileExists(fragmentPath.c_str())) {
 		// Treat as file path
-		fragmentCode = get_file_contents(fragmentFile);
+		fragmentCode = get_file_contents(fragmentPath.c_str());
 	}
 	else {
 		// Treat as raw GLSL code
 		fragmentCode = fragmentFile;
 	}
-	std::string geometryCode = get_file_contents(geometryFile);
+	std::string geometryCode = get_file_contents(geometryPath.c_str());
 
 	const char* vertexSource = vertexCode.c_str();
 	const char* fragmentSource = fragmentCode.c_str();
@@ -105,12 +116,12 @@ Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFil
 	glAttachShader(ID, vertexShader);
 	glAttachShader(ID, fragmentShader);
 	glAttachShader(ID, geometryShader);
-	
+
 	glLinkProgram(ID);
-	
+
 	compileErrors(ID, "PROGRAM");
 
-	
+
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 	glDeleteShader(geometryShader);
@@ -119,13 +130,10 @@ Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFil
 }
 
 
-void Shader::Activate() {
+void Shader::activate() {
 	glUseProgram(ID);
 }
-void Shader::Del() {
-	//shaderSingleton->deleteShader(this);
-	glDeleteProgram(ID);
-}
+
 void Shader::Delete() {
 	shaderSingleton->deleteShader(this);
 	glDeleteProgram(ID);
@@ -136,62 +144,62 @@ GLuint Shader::getID() { return ID; }
 void Shader::setBool(bool activated, const char* uniform, bool value)
 {
 	if (!activated)
-		this->Activate();
+		this->activate();
 	glUniform1i(glGetUniformLocation(this->ID, uniform), value);
 }
 
 void Shader::setFloat(bool activated, const char* uniform, float value)
 {
 	if (!activated)
-		this->Activate();
+		this->activate();
 	glUniform1f(glGetUniformLocation(this->ID, uniform), value);
 }
 void Shader::setInteger(bool activated, const char* uniform, int value)
 {
 	if (!activated)
-		this->Activate();
+		this->activate();
 	glUniform1i(glGetUniformLocation(this->ID, uniform), value);
 }
 void Shader::setVector2f(bool activated, const char* uniform, float x, float y)
 {
 	if (!activated)
-		this->Activate();
+		this->activate();
 	glUniform2f(glGetUniformLocation(this->ID, uniform), x, y);
 }
-void Shader::setVector2f(bool activated, const char* uniform, glm::vec2& vec)
+void Shader::setVector2f(bool activated, const char* uniform, const glm::vec2& vec)
 {
 	if (!activated)
-		this->Activate();
+		this->activate();
 	glUniform2f(glGetUniformLocation(this->ID, uniform), vec.x, vec.y);
 }
 void Shader::setVector3f(bool activated, const char* uniform, float x, float y, float z)
 {
 	if (!activated)
-		this->Activate();
+		this->activate();
 	glUniform3f(glGetUniformLocation(this->ID, uniform), x, y, z);
 }
-void Shader::setVector3f(bool activated, const char* uniform, glm::vec3& vec)
+void Shader::setVector3f(bool activated, const char* uniform, const glm::vec3& vec)
 {
 	if (!activated)
-		this->Activate();
+		this->activate();
 	glUniform3f(glGetUniformLocation(this->ID, uniform), vec.x, vec.y, vec.z);
 }
 void Shader::setVector4f(bool activated, const char* uniform, float x, float y, float z, float w)
 {
 	if (!activated)
-		this->Activate();
+		this->activate();
 	glUniform4f(glGetUniformLocation(this->ID, uniform), x, y, z, w);
 }
-void Shader::setVector4f(bool activated, const char* uniform, glm::vec4& vec)
+void Shader::setVector4f(bool activated, const char* uniform, const glm::vec4& vec)
 {
 	if (!activated)
-		this->Activate();
+		this->activate();
 	glUniform4f(glGetUniformLocation(this->ID, uniform), vec.x, vec.y, vec.z, vec.w);
 }
-void Shader::setMat4(bool activated, const char* uniform, glm::mat4& mat)
+void Shader::setMat4(bool activated, const char* uniform, const glm::mat4& mat)
 {
 	if (!activated)
-		this->Activate();
+		this->activate();
 	glUniformMatrix4fv(glGetUniformLocation(this->ID, uniform), 1, false, glm::value_ptr(mat));
 }
 
@@ -225,12 +233,3 @@ void Shader::compileErrors(unsigned int shader, const char* type)
 	}
 }
 
-void DeleteAllShaders()
-{
-	std::cout << "Deleting all shaders. Shaders created: " << shaderSingleton->getNumberOfShaders() << std::endl;
-
-	for (auto it = shaderSingleton->shaders.begin(); it != shaderSingleton->shaders.end(); ++it)
-		it->second->Del();
-
-	shaderSingleton->shaders.clear();
-}

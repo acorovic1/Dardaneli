@@ -11,17 +11,45 @@ Object::Object(std::string name) : vbo(), ebo()
 std::string Object::getName() { return name; }
 GLuint Object::getIndex()const { return index; }
 
-//!!!!!!!!!!!!!!!!!!!!does not return a reference!!!!!!!!!!!!!1
-glm::mat4 Object::getModelReference() { return model; }
-
-glm::vec3 Object::getPosition() { return glm::vec3(model[3][0], model[3][1], model[3][2]); }
-
-void Object::bindVAO() { vao.Bind(); }
 
 
-void Object::UpdateVertexBuffer(int i)
+
+
+void Object::fillModel()
 {
-	vbo.Bind();
+	
+	float x = rotation.x, y = rotation.y, z = rotation.z, w = rotation.w;
+
+	float r00 = 1 - 2 * (y * y + z * z);
+	float r01 = 2 * (x * y - z * w);
+	float r02 = 2 * (x * z + y * w);
+
+	float r10 = 2 * (x * y + z * w);
+	float r11 = 1 - 2 * (x * x + z * z);
+	float r12 = 2 * (y * z - x * w);
+
+	float r20 = 2 * (x * z - y * w);
+	float r21 = 2 * (y * z + x * w);
+	float r22 = 1 - 2 * (x * x + y * y);
+
+
+	model[0][0] = r00 * scaling.x;  model[0][1] = r10 * scaling.x;  model[0][2] = r20 * scaling.x;  model[0][3] = 0.0f;
+	model[1][0] = r01 * scaling.y;  model[1][1] = r11 * scaling.y;  model[1][2] = r21 * scaling.y;  model[1][3] = 0.0f;
+	model[2][0] = r02 * scaling.z;  model[2][1] = r12 * scaling.z;  model[2][2] = r22 * scaling.z;  model[2][3] = 0.0f;
+
+	model[3][0] = position.x;
+	model[3][1] = position.y;
+	model[3][2] = position.z;
+	model[3][3] = 1.0f;
+
+}
+
+void Object::bindVAO() { vao.bind(); }
+
+
+void Object::updateVertexBuffer(int i)
+{
+	vbo.bind();
 	glBufferSubData(GL_ARRAY_BUFFER, i * sizeof(DVertex), sizeof(DVertex), vertices[i]);
 }
 

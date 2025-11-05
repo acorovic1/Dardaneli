@@ -16,55 +16,51 @@ class MyGUI;
 class Window;
 
 class Camera {
-	glm::vec3 Position;
-	glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::vec3 Orientation = glm::vec3(0.3f, -0.3f, -1.0f); // orientation is reversed
-	//glm::vec3 Orientation = glm::vec3(0.0f,-0.5f,0.0f); // orientation is reversed
-
 	std::string name;
 
-	glm::mat4 Projection;
+	glm::vec3 position;
+	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 orientation = glm::vec3(0.3f, -0.3f, -1.0f); // orientation is reversed
 
-	glm::mat4 cameraMatrix = glm::mat4(1.0f); // projection * view
 	int width, height;
-	float fov, near, far;
+	float fov, near, far; // field of view, near plane, far plane
 	float speed = 0.001f, sensitivity = 100.0f;
 
-	double posX, posY;
-	double previousX, previousY;
-	bool firstClick = true;
+	glm::mat4 projection;
+	glm::mat4 cameraMatrix = glm::mat4(1.0f); // projection * view
+
+
 public:
 
-	Camera(int width, int height, glm::vec3 Position,std::string name);
-	void Update();
-	void CameraUniform(Shader& shader, const char* uniform);
+	Camera(int width, int height, glm::vec3 Position, std::string name);
+	void update();
+	void cameraUniform(bool activated, Shader& shader, const char* uniform);
 
-	void setOrientation(glm::vec3 ori);
+
+
+	glm::mat4  getViewMatrix()const { return glm::lookAt(position, position + orientation, up); };
+	glm::mat4  getProjectionMatrix()const { return projection; }
+	std::string getName() const { return name; }
+	int getWidth()const { return width; }
+	int getHeight()const { return height; }
+	glm::vec3 getPosition() const { return position; };
+	glm::vec3 getOrientation()const { return orientation; };
+	float getFOV()const { return fov; };
+
+	void setWidth(int width) { Camera::width = width; };
+	void setHeight(int height) { Camera::height = height; };
+	void setFOV(float fov) { setPerspectiveProjection(fov, float(getWidth()) / float(getHeight()), near, far); }
+	void setPosition(glm::vec3 position) { Camera::position = position; };
+	void setOrientation(glm::vec3 ori) { Camera::orientation = ori; };
+	void setProjection(glm::mat4 projection) { Camera::projection = projection; };
 
 	void setPerspectiveProjection(float fovy, float aspect, float near, float far);
 	void setOrthographicProjection();
-	void setProjection(glm::mat4 projection) { this->Projection = projection; }
 
-	glm::mat4  getViewMatrix()const;
-	glm::mat4  getProjectionMatrix()const;
-	std::string getName() const { return name; }
+	Ray createRay(GLFWwindow* window);
 
-	int getWidth()const;
-	int getHeight()const;
-	glm::vec3 getPosition() const;
-	glm::vec3 getOrientation()const;
-	float getFOV()const;
-
-	void setWidth(int width);
-	void setHeight(int height);
-
-	void setFOV(float fov);
-	void setPosition(glm::vec3 position);
-
-	Ray CreateRay(GLFWwindow* window);
-
-	void Movement3D(GLFWwindow* glfwWindow, MyGUI& gui);
-	void Movement2D(GLFWwindow* glfwWindow, MyGUI& gui);
+	void movement3D(GLFWwindow* glfwWindow);
+	void movement2D(GLFWwindow* glfwWindow);
 
 
 	void setCamera2D();

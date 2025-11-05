@@ -28,82 +28,40 @@
 
 #include <windows.h>
 
-void MyGUI::SaveFinalRender(const char* filename, int width, int height)
-{
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, width, height);
-
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f); // your background color
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	for (int i = 0; i < objectSingleton->getNumberOfObjects(); i++)
-	{
-		Object* object = objectSingleton->getObject(i);
-		if (!dynamic_cast<Mesh*>(object))continue;
-		Mesh* mesh = dynamic_cast<Mesh*>(object);
-
-
-		mesh->renderDraw(*window->getCamera());
-	}
-
-	glFinish();
-
-
-	glPixelStorei(GL_PACK_ALIGNMENT, 1);
-
-
-	std::vector<unsigned char> pixels(width * height * 3);
-	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
-
-	// Flip vertically (OpenGL origin is bottom-left, images expect top-left)
-	std::vector<unsigned char> flipped(width * height * 3);
-	for (int y = 0; y < height; ++y)
-	{
-		memcpy(&flipped[y * width * 3],
-			&pixels[(height - 1 - y) * width * 3],
-			width * 3);
-	}
-
-	stbi_write_png(filename, width, height, 3, flipped.data(), width * 3);
-
-
-	ShellExecuteA(NULL, "open", filename, NULL, NULL, SW_SHOWNORMAL);
-
-}
 
 
 
-MyGUI::MyGUI(Window* window) :io(nullptr), gizmoIo(nullptr), window(window) {}
 
-void MyGUI::Init()
+MyGUI::MyGUI(GLFWwindow* glfwWindow) :io(nullptr), gizmoIo(nullptr), glfwWindow(glfwWindow) { MyGUI::init(); }
+
+void MyGUI::init()
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	io = &ImGui::GetIO(); (void)io;
 	gizmoIo = &ImGui::GetIO();
 	ImGui::StyleColorsDark();
-	ImGui_ImplGlfw_InitForOpenGL(window->getWindow(), true);
+	ImGui_ImplGlfw_InitForOpenGL(this->glfwWindow, true);
 	ImGui_ImplOpenGL3_Init("#version 460");
 
 	ImNodes::CreateContext();
 
-	InitializeGrid2D();
-	InitializeGrid3D();
+	initializeGrid2D();
+	initializeGrid3D();
 }
-void MyGUI::NewFrame()
+void MyGUI::newFrame()
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 	ImGuizmo::BeginFrame();
 }
-void MyGUI::Render()
+void MyGUI::render()
 {
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
-void MyGUI::Shutdown()
+void MyGUI::shutdown()
 {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
@@ -112,284 +70,291 @@ void MyGUI::Shutdown()
 	ImGui::DestroyContext();
 }
 
-ImGuiIO* MyGUI::getIO() { return io; }
-Mode MyGUI::getMode()
-{
-	return app->mode;
-}
-SelectMode MyGUI::getSelectMode()
-{
-	return app->selectMode;
-}
-std::vector<int>& MyGUI::getObjectIndex() { return app->objectIndices; }
 
-void MyGUI::DrawUI()
+
+void MyGUI::drawUI()
 {
 	ImGui::Begin("Dardaneli - ImGUI");
 
-	if (ImGui::Button("Save Final Render"))
+	Mode pastMode = app->mode;
+	modes();
+	ImGui::SameLine();
+	Mode currentMode = app->mode;
+	if (ImGui::Button("Render Scene"))
 	{
 		int fbWidth, fbHeight;
-    glfwGetFramebufferSize(window->getWindow(), &fbWidth, &fbHeight); // not window size!
-    SaveFinalRender("final_render.png", fbWidth, fbHeight);
+		glfwGetFramebufferSize(glfwWindow, &fbWidth, &fbHeight); // not window size!
+		saveFinalRender("final_render.png", fbWidth, fbHeight);
 	}
 
 
-
-	Modes();
-
-	static bool edit = true;
-
-	if (app->mode == Mode::OBJECT)
-	{
-		edit = true;
-		ImGui::Checkbox("BVHTree", &BVHTree);
-		ImGui::SameLine();
-		ImGui::Checkbox("FaceCulling", &faceCulling);
-		ImGui::InputInt("BVHTreeSubdivision", &BVHSubd);
-		ImGui::Checkbox("Gizmo", &gizmo);
-
-		if (gizmo)
-			Gizmos();
-
-		if (showAddMenu)
-			Add();
+	int current = static_cast<int>(app->renderMode);
+	ImGui::SameLine();
+	if (ImGui::RadioButton("Wireframe", &current, 0)) app->renderMode = RenderMode::WIREFRAME; ImGui::SameLine();
+	if (ImGui::RadioButton("Solid", &current, 1)) app->renderMode = RenderMode::SOLID; ImGui::SameLine();
+	if (ImGui::RadioButton("Material Preview", &current, 2)) app->renderMode = RenderMode::MATERIAL_PREVIEW; ImGui::SameLine();
+	if (ImGui::RadioButton("Render", &current, 3)) app->renderMode = RenderMode::RENDER; ImGui::SameLine();
 
 
-
-		if (BVHTree)
-			DrawBVH();
-
-		if (app->objectIndices.size())
-			if (ImGui::InputInt("Index", &app->objectIndices[app->objectIndices.size() - 1]))
-				SelectObject();
-
-		Transformations();
-	}
-	else if (app->mode == Mode::EDIT)
-	{
-		Mesh* mesh = nullptr;
-		if (edit)
-		{
-			double time = glfwGetTime();
-			mesh = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]));
-			VertexBVHSingleton->BuildBottomUp(*objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]));
-			EdgeBVHSingleton->BuildBottomUp(*mesh);
-			FaceBVHSingleton->BuildBottomUp(*mesh);
-			std::cout << "All 3 BVHs built in "<<glfwGetTime()-time<<" seconds";
-			edit = false;
-		}
+	ImGui::End();
 
 
-		ImGui::Checkbox("BVHTree", &BVHTree);
-		ImGui::SameLine();
-		ImGui::InputInt("BVHTreeSubdivision", &eBVHSubd);
-		ImGui::Checkbox("FaceCulling", &faceCulling);
-		ImGui::Button("Mark seam");
-		if (ImGui::IsItemClicked())
-		{
-			ImGui::SetTooltip("Mark seam for selected edges");
-			std::cout << "\n\nSeams marked";
-			for (DEdge* edge : static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()))->getSelectedEdges())
-				edge->isSeam = true;
+	ImGui::Begin("Tools");
 
-			static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()))->lscmUVUnwrap();
-		}
-		ImGui::Button("Clear seam");
-		if (ImGui::IsItemClicked())
-		{
-			ImGui::SetTooltip("Clear seam for selected edges");
+	if (currentMode == Mode::OBJECT)drawObjectModeUI(pastMode != currentMode);
+	else if (currentMode == Mode::EDIT)drawEditModeUI(pastMode != currentMode);
+	else if (currentMode == Mode::UV_EDIT)drawUVModeUI(pastMode != currentMode);
+	else if (currentMode == Mode::SHADER_EDIT)drawShaderEditorUI(pastMode != currentMode);
 
-			for (DEdge* edge : static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()))->getSelectedEdges())
-				edge->isSeam = false;
-
-			static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()))->mergeUVs();
-		}
-
-		if (BVHTree)
-		{
-			//VertexBVHSingleton->Draw(*cameraSingleton->getCamera(0),shaderSingleton->getShader("AABB"),eBVHSubd);
-			if (app->selectMode == SelectMode::VERTEX)
-			{
-				VertexBVHSingleton->DrawLeaves(VertexBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
-
-			}
-			if (app->selectMode == SelectMode::EDGE)
-			{
-				EdgeBVHSingleton->DrawLeaves(EdgeBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
-
-			}
-			if (app->selectMode == SelectMode::FACE)
-			{
-				FaceBVHSingleton->DrawLeaves(FaceBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
-
-			}
-			//if(app->selectMode==SelectMode::FACE)EdgeBVHSingleton->DrawLeaves(VertexBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
-
-		}
-
-
-		auto& vertexIndicesTemp = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]))->getSelectedVertices();
-		if (vertexIndicesTemp.size())
-			(ImGui::InputInt("Index", &vertexIndicesTemp[vertexIndicesTemp.size() - 1]));
-
-		static int e = 0;
-		e = (int)app->selectMode;
-		ImGui::RadioButton("DVertex select", &e, 0); ImGui::SameLine();
-		ImGui::RadioButton("Edge select", &e, 1); ImGui::SameLine();
-		ImGui::RadioButton("DFace select", &e, 2);
-
-		if (e == 0)app->selectMode = SelectMode::VERTEX;
-		else if (e == 1)app->selectMode = SelectMode::EDGE;
-		else if (e == 2)app->selectMode = SelectMode::FACE;
-
-		VertexTransform();
-
-
-		if (showDeleteMenu)
-			Delete();
-
-		if (showExtrudeMenu)
-			Extrude();
-
-		if (showInsetMenu)
-			Inset();
-	}
-	else if (app->mode == Mode::UV_EDITOR)
-	{
-		ImGui::Checkbox("BVHTree", &BVHTree);
-
-		Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()));
-		UVVertexBVHSingleton->BuildBottomUp(*mesh); // prebaci ovo na unwrap funkciju
-
-		if (BVHTree)
-		{
-			UVVertexBVHSingleton->DrawLeaves(UVVertexBVHSingleton->getRoot(), *cameraSingleton->getCamera("UV"), shaderSingleton->getShader("AABB"));
-		}
-	}
-	else if (app->mode == Mode::SHADER_EDITOR)
-	{
-		Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()));
-		if (showAddMenu)
-		{
-
-			addShadingNodes();
-		}
-
-		ImGui::Begin("Materials");
-
-		static int current = 0;
-
-
-		std::vector<Material*> materials;
-
-		// prave se (nepotrebne?) kopije pokazivaca na materijale
-		if (current == 0)
-		{
-			for (auto mat : *mesh->getAllMaterials())
-				materials.push_back(mat.first);
-		}
-		else
-			materials = materialSingleton->getAllMaterials();
-
-		std::sort(materials.begin(), materials.end(),
-			[](Material* a, Material* b) {
-				return a->getName() < b->getName();
-			});
-
-
-
-		ImGui::RadioButton("Object Materials", &current, 0);
-		ImGui::SameLine();
-		if (ImGui::Button("Assign Material")) {
-
-			mesh->assignMaterial(app->activeMaterial);
-
-			std::cout << "\nMaterial assigned" << "\t  number of materials: "<<mesh->getAllMaterials()->size();
-
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Remove Material")) {
-
-			mesh->removeMaterial(app->activeMaterial);
-
-		}
-		ImGui::RadioButton("All Materials", &current, 1);
-		ImGui::SameLine();
-		if (ImGui::Button("Add new material")) {
-			std::string matName = "Material " + std::to_string(materials.size());
-			mesh->addMaterial(new Material(matName));
-
-		}
-
-		static int selectedIndex = -1;
-		static int renameIndex = -1; // index of the material being renamed
-		static char renameBuf[128] = {};
-
-		for (int i = 0; i < materials.size(); ++i) {
-			bool isSelected = (selectedIndex == i);
-
-			if (ImGui::Selectable(materials[i]->getName().c_str(), isSelected)) {
-
-				if (selectedIndex != i) {
-					renameIndex = -1;
-				}
-				selectedIndex = i;
-
-				app->activeMaterial->getNodePositions();   // save old material node positions
-				app->activeMaterial = materials[i];
-				app->activeMaterial->setNodePositions();   // set new material node positions
-			}
-
-
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
-				renameIndex = i;
-				std::string currentName = materials[i]->getName();
-				strncpy_s(renameBuf, sizeof(renameBuf), currentName.c_str(), _TRUNCATE);
-			}
-
-			if (isSelected) {
-				ImGui::SetItemDefaultFocus();
-			}
-
-
-			if (renameIndex == i) {
-				ImGui::Indent();
-				if (ImGui::InputText("##Rename", renameBuf, IM_ARRAYSIZE(renameBuf),
-					ImGuiInputTextFlags_EnterReturnsTrue)) {
-					materials[i]->setName(std::string(renameBuf));
-					renameIndex = -1;
-				}
-				ImGui::Unindent();
-			}
-		}
-
-		ImGui::End();
-	}
 	ImGui::End();
 
 	if (app->mode == Mode::EDIT)
-		DMesh();
+		dMesh();
 
 
-	if (ImGui::Begin("Render Mode"))
-	{
-		int current = static_cast<int>(app->renderMode);
 
-		if (ImGui::RadioButton("Wireframe", &current, 0)) app->renderMode = RenderMode::WIREFRAME;
-		if (ImGui::RadioButton("Solid", &current, 1)) app->renderMode = RenderMode::SOLID;
-		if (ImGui::RadioButton("Material Preview", &current, 2)) app->renderMode = RenderMode::MATERIAL_PREVIEW;
-		if (ImGui::RadioButton("Render", &current, 3)) app->renderMode = RenderMode::RENDER;
 
-	}
-	ImGui::End();
 
 
 }
 
-void MyGUI::DrawBVH() { objectBVHSingleton->Draw(*cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"), BVHSubd); }
+void MyGUI::drawObjectModeUI(bool change)
+{
 
-void MyGUI::Add() {
+	ImGui::Checkbox("BVHTree", &BVHTree);
+	ImGui::SameLine();
+	ImGui::Checkbox("FaceCulling", &faceCulling);
+	ImGui::InputInt("BVHTreeSubdivision", &BVHSubd);
+	ImGui::Checkbox("Gizmo", &gizmo);
+
+	if (gizmo)
+		gizmos();
+
+	if (showAddMenuFlag)
+		addMenu();
+
+	if (BVHTree)
+		drawBVH();
+
+	if (app->objectIndices.size())
+		if (ImGui::InputInt("Index", &app->objectIndices.back()))
+			selectObject();
+
+	transformations();
+
+}
+
+void MyGUI::drawEditModeUI(bool change)
+{
+	Mesh* mesh = dynamic_cast<Mesh*>(app->getActiveObject());
+	if (change)
+	{
+		double time = glfwGetTime();
+
+		VertexBVHSingleton->BuildBottomUp(*mesh);
+		EdgeBVHSingleton->BuildBottomUp(*mesh);
+		FaceBVHSingleton->BuildBottomUp(*mesh);
+
+		std::cout << "All 3 BVHs built in " << glfwGetTime() - time << " seconds";
+
+	}
+
+	if (BVHTree)
+	{
+		if (app->selectMode == SelectMode::VERTEX)
+			VertexBVHSingleton->DrawLeaves(VertexBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
+		else if (app->selectMode == SelectMode::EDGE)
+			EdgeBVHSingleton->DrawLeaves(EdgeBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
+		else if (app->selectMode == SelectMode::FACE)
+			FaceBVHSingleton->DrawLeaves(FaceBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
+
+	}
+
+	if (showDeleteMenuFlag)
+		deleteMenu();
+
+	if (showExtrudeMenuFlag)
+		extrudeMenu();
+
+
+	ImGui::Checkbox("BVHTree", &BVHTree);
+	ImGui::SameLine();
+	ImGui::InputInt("BVHTreeSubdivision", &eBVHSubd);
+	ImGui::Checkbox("FaceCulling", &faceCulling);
+
+	ImGui::Button("Mark seam");
+	if (ImGui::IsItemClicked())
+	{
+		ImGui::SetTooltip("Mark seam for selected edges");
+
+		std::cout << "\nSeams marked";
+
+		for (DEdge* edge : mesh->getSelectedEdges())
+			edge->isSeam = true;
+
+		mesh->lscmUVUnwrap();
+	}
+
+
+	ImGui::Button("Clear seam");
+	if (ImGui::IsItemClicked())
+	{
+		ImGui::SetTooltip("Clear seam for selected edges");
+
+		for (DEdge* edge : mesh->getSelectedEdges())
+			edge->isSeam = false;
+
+		mesh->mergeUVs();
+	}
+
+	int e = (int)app->selectMode;
+	
+	ImGui::RadioButton("DVertex select", &e, 0); ImGui::SameLine();
+	ImGui::RadioButton("Edge select", &e, 1); ImGui::SameLine();
+	ImGui::RadioButton("DFace select", &e, 2);
+
+	if (e == 0)app->selectMode = SelectMode::VERTEX;
+	else if (e == 1)app->selectMode = SelectMode::EDGE;
+	else if (e == 2)app->selectMode = SelectMode::FACE;
+	
+
+	std::vector<int>& vertexIndicesTemp = mesh->getSelectedVertices();
+	int size = vertexIndicesTemp.size();
+
+	if (size)
+	{
+		int& lastIndex = vertexIndicesTemp.back();
+		(ImGui::InputInt("Index", &lastIndex));
+		if (lastIndex < 0) lastIndex = 0;
+		if (lastIndex >= mesh->getVertices().size()) lastIndex = mesh->getVertices().size() - 1;
+	}
+
+
+
+	vertexTransform();
+
+
+
+}
+
+void MyGUI::drawUVModeUI(bool change)
+{
+	ImGui::Checkbox("BVHTree", &BVHTree);
+
+	Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()));
+	UVVertexBVHSingleton->BuildBottomUp(*mesh); // prebaci ovo na unwrap funkciju
+
+	if (BVHTree)
+	{
+		UVVertexBVHSingleton->DrawLeaves(UVVertexBVHSingleton->getRoot(), *cameraSingleton->getCamera("UV"), shaderSingleton->getShader("AABB"));
+	}
+
+}
+
+void MyGUI::drawShaderEditorUI(bool change)
+{
+	if (showAddMenuFlag) addShadingNodes();
+	
+
+	Mesh* mesh = dynamic_cast<Mesh*>(app->getActiveObject());
+
+
+	//ImGui::Begin("Materials");
+
+	static int current = 0;
+
+
+
+	//**************
+	// extremely inefficient code, however materials rarely have a large count so it should be fine 
+	std::vector<Material*> materials;
+	if (current == 0)
+	{
+		if (mesh)
+			for (auto mat : *mesh->getAllMaterials())
+				materials.push_back(mat.first);
+	}
+	else
+		materials = materialSingleton->getAllMaterials();
+
+	std::sort(materials.begin(), materials.end(),
+		[](Material* a, Material* b) {
+			return a->getName() < b->getName();
+		});
+	//**************
+
+
+	ImGui::RadioButton("All Materials", &current, 1);
+	ImGui::SameLine();
+	ImGui::RadioButton("Object Materials", &current, 0);
+
+	if (mesh)
+	{
+		if (ImGui::Button("Assign Material")) mesh->assignMaterial(app->activeMaterial);
+		ImGui::SameLine();
+
+		if (ImGui::Button("Remove Material")) mesh->removeMaterial(app->activeMaterial);
+		ImGui::SameLine();
+	}
+
+	if (ImGui::Button("Add new material")) mesh->addMaterial(new Material("Material " + std::to_string(materials.size())));
+
+
+	static int selectedIndex = -1;
+	static int renameIndex = -1; // index of the material being renamed
+	static char renameBuf[128] = {};
+
+	for (int i = 0; i < materials.size(); ++i) {
+		bool isSelected = (selectedIndex == i);
+
+		if (ImGui::Selectable(materials[i]->getName().c_str(), isSelected)) {
+
+			if (selectedIndex != i) {
+				renameIndex = -1;
+			}
+			selectedIndex = i;
+
+			app->activeMaterial->getNodePositions();   // save old material node positions
+			app->activeMaterial = materials[i];
+			app->activeMaterial->setNodePositions();   // set new material node positions
+		}
+
+
+		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
+			renameIndex = i;
+			std::string currentName = materials[i]->getName();
+			strncpy_s(renameBuf, sizeof(renameBuf), currentName.c_str(), _TRUNCATE);
+		}
+
+		if (isSelected) {
+			ImGui::SetItemDefaultFocus();
+		}
+
+
+		if (renameIndex == i) {
+			ImGui::Indent();
+			if (ImGui::InputText("##Rename", renameBuf, IM_ARRAYSIZE(renameBuf),
+				ImGuiInputTextFlags_EnterReturnsTrue)) {
+				materials[i]->setName(std::string(renameBuf));
+				renameIndex = -1;
+			}
+			ImGui::Unindent();
+		}
+	}
+
+
+
+
+}
+
+
+
+void MyGUI::showAddMenu() { showAddMenuFlag = true; }
+void MyGUI::showDeleteMenu() { showDeleteMenuFlag = true; }
+void MyGUI::showExtrudeMenu() { showExtrudeMenuFlag = true; }
+void MyGUI::showInsetMenu() { showInsetMenuFlag = true; }
+
+void MyGUI::addMenu() {
 	hoverTime = glfwGetTime();
 
 	ImGui::OpenPopup("Add popup");
@@ -516,16 +481,16 @@ void MyGUI::Add() {
 			glfwSetTime(0);
 			hoverTime = 0;
 
-			window->getKeys()[GLFW_KEY_Q] = 0;
+			getWindow()->getKeys()[GLFW_KEY_Q] = 0;
 			//std::cout << "HEHEHAHA ";
-			showAddMenu = false;
+			showAddMenuFlag = false;
 			ImGui::CloseCurrentPopup();
 		}
 
 		ImGui::EndPopup();
 	}
 }
-void MyGUI::Delete()
+void MyGUI::deleteMenu()
 {
 
 	hoverTime = glfwGetTime();
@@ -577,30 +542,16 @@ void MyGUI::Delete()
 			glfwSetTime(0);
 			hoverTime = 0;
 
-			window->getKeys()[GLFW_KEY_X] = 0;
+			getWindow()->getKeys()[GLFW_KEY_X] = 0;
 			//std::cout << "HEHEHAHA ";
-			showDeleteMenu = false;
+			showDeleteMenuFlag = false;
 			ImGui::CloseCurrentPopup();
 		}
 
 		ImGui::EndPopup();
 	}
 }
-void MyGUI::AddMenu() { showAddMenu = true; }
-
-void MyGUI::DeleteMenu()
-{
-	showDeleteMenu = true;
-
-
-}
-
-void MyGUI::ExtrudeMenu()
-{
-	showExtrudeMenu = true;
-}
-
-void MyGUI::Extrude()
+void MyGUI::extrudeMenu()
 {
 	//std::cout << "\n\n\tEXTRUDEEEE";
 
@@ -653,9 +604,8 @@ void MyGUI::Extrude()
 			glfwSetTime(0);
 			hoverTime = 0;
 
-			window->getKeys()[GLFW_KEY_E] = 0;
-			//std::cout << "HEHEHAHA ";
-			showExtrudeMenu = false;
+			getWindow()->getKeys()[GLFW_KEY_E] = 0;
+			showExtrudeMenuFlag = false;
 			ImGui::CloseCurrentPopup();
 		}
 
@@ -665,70 +615,13 @@ void MyGUI::Extrude()
 
 }
 
-void MyGUI::InsetMenu()
+
+void MyGUI::drawBVH() { objectBVHSingleton->Draw(*cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"), BVHSubd); }
+
+
+void MyGUI::gizmos()
 {
-	showInsetMenu = true;
-}
-
-void MyGUI::Inset()
-{
-	hoverTime = glfwGetTime();
-	static int selected_option = -1;
-	const char* options[] = { "Group", "Individual" };
-
-	ImGui::OpenPopup("Inset popup");
-
-	if (ImGui::BeginPopup("Inset popup"))
-	{
-		ImGui::SeparatorText("Inset");
-		ImGui::Separator();
-
-		Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()));
-		if (!mesh)return;
-
-		for (int i = 0; i < 2; ++i) {
-			if (i == 6) {
-				//ImGui::Separator();
-			}
-
-			if (ImGui::Selectable(options[i])) {
-				selected_option = i;
-			}
-		}
-
-
-		if (selected_option == 0)
-		{
-			mesh->inset(mesh->getSelectedFaces());
-			window->getKeys()[GLFW_KEY_S] = 1;
-
-		}
-		else if (selected_option == 1)
-		{
-			mesh->insetIndividual(mesh->getSelectedFaces());
-			window->getKeys()[GLFW_KEY_S] = 1;
-
-		}
-
-
-
-
-		if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) && !ImGui::IsAnyItemHovered() && hoverTime > 1.4)
-		{
-			glfwSetTime(0);
-			hoverTime = 0;
-			showInsetMenu = false;
-			ImGui::CloseCurrentPopup();
-		}
-		selected_option = -1;
-		ImGui::EndPopup();
-	}
-
-}
-
-void MyGUI::Gizmos()
-{
-	Camera* camera = window->getCamera();
+	Camera* camera = getWindow()->getCamera();
 
 	ImGuizmo::SetOrthographic(false);
 
@@ -736,11 +629,12 @@ void MyGUI::Gizmos()
 
 	glm::mat4 viewMatrix = camera->getViewMatrix();
 	glm::mat4 projMatrix = camera->getProjectionMatrix();
-	//OVDE
+
 	static glm::mat4 transform = glm::mat4(1.0f);
 	if (app->objectIndices.size())
 		if (app->objectIndices[app->objectIndices.size() - 1] != -1 && app->objectIndices[app->objectIndices.size() - 1] < objectSingleton->getNumberOfObjects())
-			transform = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1])->getModelReference();
+			transform = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1])->getModel();
+
 	static glm::mat4 previousTransform = glm::mat4(1.0f);
 
 	ImGuizmo::SetRect(0, 0, io->DisplaySize.x, io->DisplaySize.y);
@@ -751,23 +645,23 @@ void MyGUI::Gizmos()
 	if (ImGuizmo::IsUsingAny()) {
 		if (operation == ImGuizmo::OPERATION::TRANSLATE)
 			if (previousTransform != transform) {
-				app->translatePrev[0] = app->translate[0];
-				app->translatePrev[1] = app->translate[1];
-				app->translatePrev[2] = app->translate[2];
+				positionPrev[0] = position[0];
+				positionPrev[1] = position[1];
+				positionPrev[2] = position[2];
 
-				app->translate[0] = transform[3][0];
-				app->translate[1] = transform[3][1];
-				app->translate[2] = transform[3][2];
+				position[0] = transform[3][0];
+				position[1] = transform[3][1];
+				position[2] = transform[3][2];
 				//std::cout << "\n Translate ";
 				auto delta = glm::vec3(transform[3]) - glm::vec3(previousTransform[3]);
 
 				for (auto x : app->objectIndices)
-					objectSingleton->getObject(x)->Translate(delta);
+					objectSingleton->getObject(x)->translate(delta);
 			}
 
 		if (operation == ImGuizmo::OPERATION::ROTATE)
 		{
-			// compare matrices with an myEpsilon, not direct !=
+
 			bool transformsDifferent = false;
 			const float matrixmyEpsilon = 1e-5f;
 			for (int i = 0; i < 4 && !transformsDifferent; ++i)
@@ -780,61 +674,57 @@ void MyGUI::Gizmos()
 
 			if (transformsDifferent)
 			{
-				// Get quaternions from transforms
 				glm::quat currentQuat = glm::quat_cast(transform);
 				glm::quat prevQuat = glm::quat_cast(previousTransform);
 
-				// Delta rotation: how to go from previous to current
 				glm::quat deltaQuat = currentQuat * glm::inverse(prevQuat);
-				deltaQuat = glm::normalize(deltaQuat); // stability
+				deltaQuat = glm::normalize(deltaQuat);
 
-				// Update Euler angles for UI (if you need to display them)
-				glm::vec3 euler = glm::eulerAngles(currentQuat); // radians, order: XYZ
-				app->rotate[0] = euler.x * radian;
-				app->rotate[1] = euler.y * radian;
-				app->rotate[2] = euler.z * radian;
+				glm::vec3 euler = glm::eulerAngles(currentQuat);
+				rotation[0] = euler.x * radian;
+				rotation[1] = euler.y * radian;
+				rotation[2] = euler.z * radian;
 
-				if (fabs(app->rotate[0]) < myEpsilon) app->rotate[0] = 0.0f;
-				if (fabs(app->rotate[1]) < myEpsilon) app->rotate[1] = 0.0f;
-				if (fabs(app->rotate[2]) < myEpsilon) app->rotate[2] = 0.0f;
+				if (fabs(rotation[0]) < myEpsilon) rotation[0] = 0.0f;
+				if (fabs(rotation[1]) < myEpsilon) rotation[1] = 0.0f;
+				if (fabs(rotation[2]) < myEpsilon) rotation[2] = 0.0f;
 
-				std::cout << app->rotate[0] << " " << app->rotate[1] << " " << app->rotate[2] << " ";
+				std::cout << rotation[0] << " " << rotation[1] << " " << rotation[2] << " ";
 
-				// Apply the delta rotation to each selected object as axis-angle
-				float angle = glm::angle(deltaQuat); // radians
+
+				float angle = glm::angle(deltaQuat);
 				if (angle > myEpsilon)
 				{
 					glm::vec3 axis = glm::axis(deltaQuat);
 					for (auto x : app->objectIndices)
 					{
 						auto object = objectSingleton->getObject(x);
-						object->Rotate(glm::degrees(angle), axis); // assumes Rotate(angle, axis) expects radians
+						object->rotate(glm::degrees(angle), axis);
 					}
 				}
 
-				// Store for next frame
+
 				previousTransform = transform;
 			}
 		}
 
 		if (operation == ImGuizmo::OPERATION::SCALE)
 			if (previousTransform != transform) {
-				//std::cout << "\n Scale ";
 
-				app->scalePrev[0] = app->scale[0];
-				app->scalePrev[1] = app->scale[1];
-				app->scalePrev[2] = app->scale[2];
+				scalePrev[0] = scale[0];
+				scalePrev[1] = scale[1];
+				scalePrev[2] = scale[2];
 
-				app->scale[0] = transform[0][0];
-				app->scale[1] = transform[1][1];
-				app->scale[2] = transform[2][2];
-				if (app->scale[0] == 0)app->scale[0] = 1;
-				if (app->scale[1] == 0)app->scale[1] = 1;
-				if (app->scale[2] == 0)app->scale[2] = 1;
+				scale[0] = transform[0][0];
+				scale[1] = transform[1][1];
+				scale[2] = transform[2][2];
+				if (scale[0] == 0)scale[0] = 0.00001;
+				if (scale[1] == 0)scale[1] = 0.00001;
+				if (scale[2] == 0)scale[2] = 0.00001;
 
 				auto delta = transform / previousTransform;
 				for (auto x : app->objectIndices)
-					objectSingleton->getObject(x)->Scale(delta[0][0], delta[1][1], delta[2][2]);
+					objectSingleton->getObject(x)->scale(delta[0][0], delta[1][1], delta[2][2]);
 			}
 		objectBVHSingleton->Refit();
 		//VertexBVHSingleton->Refit();
@@ -842,11 +732,11 @@ void MyGUI::Gizmos()
 	previousTransform = transform;
 }
 
-void MyGUI::VertexTransform()
+void MyGUI::vertexTransform()
 {
 	static float offset[3];
 
-	Object* activeObject = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]);
+	Object* activeObject = objectSingleton->getObject(app->objectIndices.back());
 	std::vector<DVertex*>& vertices = activeObject->getVertices();
 	int numberOfVertices = activeObject->getNumberOfVertices();
 
@@ -860,7 +750,7 @@ void MyGUI::VertexTransform()
 	ImGui::InputFloat3("DVertex position", app->vertexPosition);
 	if (ImGui::IsItemDeactivatedAfterEdit())
 	{
-		//std::cout << " DVertex moved ";
+
 
 		offset[0] = app->vertexPosition[0] - app->vertexPrevPosition[0];
 		offset[1] = app->vertexPosition[1] - app->vertexPrevPosition[1];
@@ -868,132 +758,178 @@ void MyGUI::VertexTransform()
 
 		for (int i = 0; i < selectedVertices.size(); i++)
 		{
-			vertices[selectedVertices[i]]->Translate(offset);
-			activeObject->UpdateVertexBuffer(selectedVertices[i]);
+			vertices[selectedVertices[i]]->translate(offset);
+			activeObject->updateVertexBuffer(selectedVertices[i]);
 		}
 
 		app->vertexPrevPosition[0] = app->vertexPosition[0];
 		app->vertexPrevPosition[1] = app->vertexPosition[1];
 		app->vertexPrevPosition[2] = app->vertexPosition[2];
-		//
+
 		VertexBVHSingleton->Refit(*activeObject);
 	}
 }
 
-void MyGUI::Transformations()
+void MyGUI::transformations()
 {
-	if (!app->objectIndices.size())return;
-	Object* activeObject = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1]);
+	if (!app->objectIndices.size()) return;
 
-	ImGui::InputFloat3("Location", app->translate);
+	Object* activeObject = objectSingleton->getObject(app->objectIndices.back());
+
+	ImGui::InputFloat3("Position", position);
 	if (ImGui::IsItemDeactivatedAfterEdit())
 	{
 		std::cout << " Object moved ";
 
-		activeObject->Translate(app->translate[0] - app->translatePrev[0], app->translate[1] - app->translatePrev[1], app->translate[2] - app->translatePrev[2]);
+		activeObject->translate(position[0] - positionPrev[0], position[1] - positionPrev[1], position[2] - positionPrev[2]);
 
-		app->translatePrev[0] = app->translate[0];
-		app->translatePrev[1] = app->translate[1];
-		app->translatePrev[2] = app->translate[2];
+		positionPrev[0] = position[0];
+		positionPrev[1] = position[1];
+		positionPrev[2] = position[2];
 
 		objectBVHSingleton->Refit();
 	}
 
-	ImGui::InputFloat3("Rotation", app->rotate);
+	ImGui::InputFloat3("Rotation", rotation);
 	if (ImGui::IsItemDeactivatedAfterEdit())
 	{
-		std::cout << " Object rotated ";
+		std::cout << " Object rotationd ";
 
-		if (app->rotatePrev[0] != app->rotate[0])
-			activeObject->Rotate(app->rotate[0] - app->rotatePrev[0], glm::vec3(1.0f, 0.0f, 0.0f));
-		else if (app->rotatePrev[1] != app->rotate[1])
-			activeObject->Rotate(app->rotate[1] - app->rotatePrev[1], glm::vec3(0.0f, 1.0f, 0.0f));
-		else if (app->rotatePrev[2] != app->rotate[2])
-			activeObject->Rotate(app->rotate[2] - app->rotatePrev[2], glm::vec3(0.0f, 0.0f, 1.0f));
+
+		if (rotationPrev[0] != rotation[0])
+			activeObject->rotate(rotation[0] - rotationPrev[0], glm::vec3(1.0f, 0.0f, 0.0f));
+		else if (rotationPrev[1] != rotation[1])
+			activeObject->rotate(rotation[1] - rotationPrev[1], glm::vec3(0.0f, 1.0f, 0.0f));
+		else if (rotationPrev[2] != rotation[2])
+			activeObject->rotate(rotation[2] - rotationPrev[2], glm::vec3(0.0f, 0.0f, 1.0f));
 
 		objectBVHSingleton->Refit();
 
-		app->rotatePrev[0] = app->rotate[0];
-		app->rotatePrev[1] = app->rotate[1];
-		app->rotatePrev[2] = app->rotate[2];
+		rotationPrev[0] = rotation[0];
+		rotationPrev[1] = rotation[1];
+		rotationPrev[2] = rotation[2];
+
+
+		//glm::mat4& model = objectSingleton->getObject(app->objectIndices.back())->getModel();
+
+		//std::cout << std::endl;
+		//std::cout << std::fixed << std::setprecision(4);
+
+		//for (int row = 0; row < 4; row++)
+		//{
+		//	std::cout << "[ ";
+		//	for (int col = 0; col < 4; col++)
+		//	{
+		//		std::cout << std::setw(9) << model[col][row] << " ";
+		//	}
+		//	std::cout << "]\n";
+		//}
 	}
 
-	ImGui::InputFloat3("Scale", app->scale);
+	ImGui::InputFloat3("Scale", scale);
 	if (ImGui::IsItemDeactivatedAfterEdit())
 	{
 		std::cout << " Object scaled ";
 
-		if (app->scalePrev[0] != app->scale[0])
-			activeObject->Scale(app->scale[0] / app->scalePrev[0], 1.0f, 1.0f);
-		else if (app->scalePrev[1] != app->scale[1])
-			activeObject->Scale(1.0f, app->scale[1] / app->scalePrev[1], 1.0f);
-		else if (app->scalePrev[2] != app->scale[2])
-			activeObject->Scale(1.0f, 1.0f, app->scale[2] / app->scalePrev[2]);
+		if (scalePrev[0] != scale[0])
+			activeObject->scale(scale[0] / scalePrev[0], 1.0f, 1.0f);
+		else if (scalePrev[1] != scale[1])
+			activeObject->scale(1.0f, scale[1] / scalePrev[1], 1.0f);
+		else if (scalePrev[2] != scale[2])
+			activeObject->scale(1.0f, 1.0f, scale[2] / scalePrev[2]);
 
 		objectBVHSingleton->Refit();
 
-		app->scalePrev[0] = app->scale[0];
-		app->scalePrev[1] = app->scale[1];
-		app->scalePrev[2] = app->scale[2];
+		scalePrev[0] = scale[0];
+		scalePrev[1] = scale[1];
+		scalePrev[2] = scale[2];
 	}
 }
 
-void MyGUI::SelectObject()
+void MyGUI::selectObject()
 {
 	if (!app->objectIndices.size())return;
-	if (app->objectIndices[app->objectIndices.size() - 1] < objectSingleton->getNumberOfObjects() && app->objectIndices[app->objectIndices.size() - 1] >= 0)
+
+	int selectedObjectIndex = app->objectIndices.back();
+
+	if (selectedObjectIndex < objectSingleton->getNumberOfObjects() && selectedObjectIndex >= 0)
 	{
-		gizmo = false;
+		glm::mat4& model = objectSingleton->getObject(selectedObjectIndex)->getModel();
+		const glm::vec3& positionVec = objectSingleton->getObject(selectedObjectIndex)->getPosition();
+		const glm::vec3& rotationVec = objectSingleton->getObject(selectedObjectIndex)->getRotationVec();
+		const glm::vec3& scaleVec = objectSingleton->getObject(selectedObjectIndex)->getScale();
+
+		std::cout << std::endl;
+		std::cout << std::fixed << std::setprecision(4);
+
+		for (int row = 0; row < 4; row++)
+		{
+			std::cout << "[ ";
+			for (int col = 0; col < 4; col++)
+			{
+				std::cout << std::setw(9) << model[col][row] << " ";
+			}
+			std::cout << "]\n";
+		}
+
+		std::cout << std::endl;
+		//gizmo = false;
 		//std::cout << "\nSELECTED ---> " << objectSingleton->getObject(objectIndex[objectIndex.size()-1])->getName();
 
-		app->model = objectSingleton->getObject(app->objectIndices[app->objectIndices.size() - 1])->getModelReference();
 
-		app->translate[0] = app->translatePrev[0] = app->model[3][0];
-		app->translate[1] = app->translatePrev[1] = app->model[3][1];
-		app->translate[2] = app->translatePrev[2] = app->model[3][2];
+		// pauk
 
-		app->rotate[0] = std::atan2(-app->model[2][1], app->model[2][2]) * radian;
-		app->rotate[1] = std::atan2(app->model[2][0], std::sqrt(app->model[0][0] * app->model[0][0] + app->model[1][0] * app->model[1][0])) * radian;
-		app->rotate[2] = std::atan2(-app->model[1][0], app->model[0][0]) * radian;
+		position[0] = positionPrev[0] = positionVec.x;
+		position[1] = positionPrev[1] = positionVec.y;
+		position[2] = positionPrev[2] = positionVec.z;
 
-		if (app->rotate[0] < myEpsilon)
-			app->rotate[0] = app->rotatePrev[0] = 0;
-		else app->rotatePrev[0] = app->rotate[0];
-		if (app->rotate[1] < myEpsilon)
-			app->rotate[1] = app->rotatePrev[1] = 0;
-		else app->rotatePrev[1] = app->rotate[1];
-		if (app->rotate[2] < myEpsilon)
-			app->rotate[2] = app->rotatePrev[2] = 0;
-		else app->rotatePrev[2] = app->rotate[2];
+		scale[0] = scalePrev[0] = scaleVec.x;
+		scale[1] = scalePrev[1] = scaleVec.y;
+		scale[2] = scalePrev[2] = scaleVec.z;
 
-		app->scale[0] = app->scalePrev[0] = sqrt(app->model[0][0] * app->model[0][0] + app->model[0][1] * app->model[0][1] + app->model[0][2] * app->model[0][2]);
-		app->scale[1] = app->scalePrev[1] = sqrt(app->model[1][0] * app->model[1][0] + app->model[1][1] * app->model[1][1] + app->model[1][2] * app->model[1][2]);
-		app->scale[2] = app->scalePrev[2] = sqrt(app->model[2][0] * app->model[2][0] + app->model[2][1] * app->model[2][1] + app->model[2][2] * app->model[2][2]);
+		//std::cout << "\nRotation quat " << objectSingleton->getObject(selectedObjectIndex)->getRotation().x << " "
+		//	<< objectSingleton->getObject(selectedObjectIndex)->getRotation().y << " "
+		//	<< objectSingleton->getObject(selectedObjectIndex)->getRotation().z << " "
+		//	<< objectSingleton->getObject(selectedObjectIndex)->getRotation().w << " ";
+		//std::cout << "\nRotation vec: " << rotationVec.x << " " << rotationVec.y << " " << rotationVec.z;
+
+		rotation[0] = rotationVec.x;
+		rotation[1] = rotationVec.y;
+		rotation[2] = rotationVec.z;
+
+		if (rotation[0] < myEpsilon)
+			rotation[0] = rotationPrev[0] = 0;
+		else rotationPrev[0] = rotation[0];
+		if (rotation[1] < myEpsilon)
+			rotation[1] = rotationPrev[1] = 0;
+		else rotationPrev[1] = rotation[1];
+		if (rotation[2] < myEpsilon)
+			rotation[2] = rotationPrev[2] = 0;
+		else rotationPrev[2] = rotation[2];
+
+
 	}
 	else {
 		std::cout << "\nSELECTED ---> nothing";
 		gizmo = false;
 
-		app->translate[0] = app->translatePrev[0] = -1000000;
-		app->translate[1] = app->translatePrev[1] = -1000000;
-		app->translate[2] = app->translatePrev[2] = -1000000;
+		position[0] = positionPrev[0] = -1000000;
+		position[1] = positionPrev[1] = -1000000;
+		position[2] = positionPrev[2] = -1000000;
 
-		app->rotate[0] = app->rotatePrev[0] = -1000000;
-		app->rotate[1] = app->rotatePrev[1] = -1000000;
-		app->rotate[2] = app->rotatePrev[2] = -1000000;
+		rotation[0] = rotationPrev[0] = -1000000;
+		rotation[1] = rotationPrev[1] = -1000000;
+		rotation[2] = rotationPrev[2] = -1000000;
 
-		app->scale[0] = app->scalePrev[0] = -1000000;
-		app->scale[1] = app->scalePrev[1] = -1000000;
-		app->scale[2] = app->scalePrev[2] = -1000000;
+		scale[0] = scalePrev[0] = -1000000;
+		scale[1] = scalePrev[1] = -1000000;
+		scale[2] = scalePrev[2] = -1000000;
 	}
 }
 
-void MyGUI::setGizmoOperation(ImGuizmo::OPERATION op)
-{
-	operation = op;
-}
+void MyGUI::setGizmoOperation(ImGuizmo::OPERATION op) { operation = op; }
 
-void MyGUI::InitializeGrid3D(int width)
+void MyGUI::initializeGrid3D(int width)
 {
 	int z = 0;
 
@@ -1019,19 +955,19 @@ void MyGUI::InitializeGrid3D(int width)
 	gridIndices3D.push_back(1);
 	gridIndices3D.push_back(width * 2 + 1);
 
-	grid3DVAO.Bind();
+	grid3DVAO.bind();
 	VBO VBO(gridVertices3D);
 	grid3DEBO.bufferData(gridIndices3D);
 
-	grid3DVAO.LinkAttribute(VBO, 0, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
+	grid3DVAO.linkAttribute(VBO, 0, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
 
-	grid3DVAO.Unbind();
-	VBO.Unbind();
-	grid3DEBO.Unbind();
+	grid3DVAO.unbind();
+	VBO.unbind();
+	grid3DEBO.unbind();
 
 
 }
-void MyGUI::InitializeGrid2D(int width)
+void MyGUI::initializeGrid2D(int width)
 {
 
 	// Horizontal lines 
@@ -1062,88 +998,80 @@ void MyGUI::InitializeGrid2D(int width)
 	gridIndices2D.push_back(1);
 	gridIndices2D.push_back(2 * width + 1);
 
-	grid2DVAO.Bind();
+	grid2DVAO.bind();
 	VBO VBO(gridVertices2D);
 	grid2DEBO.bufferData(gridIndices2D);
 
-	grid2DVAO.LinkAttribute(VBO, 0, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
+	grid2DVAO.linkAttribute(VBO, 0, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
 
-	grid2DVAO.Unbind();
-	VBO.Unbind();
-	grid2DEBO.Unbind();
+	grid2DVAO.unbind();
+	VBO.unbind();
+	grid2DEBO.unbind();
 
 
 }
-void MyGUI::Grid3D()
+void MyGUI::drawGrid3D()
 {
 	static auto& shader = shaderSingleton->getShader("Grid");
-	shader.Activate();
+	shader.activate();
 
-	grid3DVAO.Bind();
-	grid3DEBO.Bind();
+	grid3DVAO.bind();
+	grid3DEBO.bind();
 
 	shader.setBool(true, "DDD", true);
 
 
-	window->getCamera()->CameraUniform(shader, "cameraMatrix");
+	getWindow()->getCamera()->cameraUniform(true,shader, "cameraMatrix");
 
 	glDrawElements(GL_LINES, gridIndices3D.size(), GL_UNSIGNED_INT, 0);
 }
-
-void MyGUI::Grid2D()
+void MyGUI::drawGrid2D()
 {
 	static auto& shader = shaderSingleton->getShader("Grid");
-	shader.Activate();
+	shader.activate();
 
-	grid2DVAO.Bind();
-	grid2DEBO.Bind();
+	grid2DVAO.bind();
+	grid2DEBO.bind();
 
 	shader.setBool(true, "DDD", false);
 
-	window->getCamera()->CameraUniform(shader, "cameraMatrix");
+	getWindow()->getCamera()->cameraUniform(true,shader, "cameraMatrix");
 
 	glDrawElements(GL_LINES, gridIndices2D.size(), GL_UNSIGNED_INT, 0);
 }
 
-void MyGUI::Modes()
+void MyGUI::modes()
 {
 	static const char* modes[] = { "Object mode","Edit mode","Sculpt mode","Weight paint","Texture paint ","UV Editor","Shader Editor" };
 
-	if (ImGui::Button("Mode - "))
+	if (ImGui::Button(modes[int(app->mode)]))
 		ImGui::OpenPopup("Modes");
-
-	ImGui::SameLine();
-	ImGui::TextUnformatted(modes[int(app->mode)]);
 
 	if (ImGui::BeginPopup("Modes"))
 	{
 		ImGui::SeparatorText("Mode");
 		for (int i = 0; i < IM_ARRAYSIZE(modes); i++)
-			if (i == 4) {
+			if (i == 4)
 				ImGui::Separator();
-			}
 			else
 				if (ImGui::Selectable(modes[i]))
-
 				{
 					app->mode = Mode(i);
 
-					if (app->mode == Mode::UV_EDITOR)
-						window->setCamera(cameraSingleton->getCamera("UV"));
-					else if (app->mode == Mode::SHADER_EDITOR)
-						window->setCamera(cameraSingleton->getCamera("Shader"));
+					if (app->mode == Mode::UV_EDIT)
+						getWindow()->setCamera(cameraSingleton->getCamera("UV"));
+					else if (app->mode == Mode::SHADER_EDIT)
+						getWindow()->setCamera(cameraSingleton->getCamera("Shader"));
 					else
-						window->setCamera(cameraSingleton->getCamera("Viewport"));
+						getWindow()->setCamera(cameraSingleton->getCamera("Viewport"));
 				}
-
-
 		ImGui::EndPopup();
 	}
 
 
 }
 
-void MyGUI::DMesh()
+void MyGUI::dMesh()
 {
 
 	ImGui::Begin("DMesh");
@@ -1515,13 +1443,15 @@ void MyGUI::DMesh()
 
 }
 
-void MyGUI::ShowShaderEditor()
+
+
+void MyGUI::shaderNodeEditor()
 {
 	// ovo negdje drugo prebaciti
 	ImNodesStyle& style = ImNodes::GetStyle();
 	style.Colors[ImNodesCol_TitleBarSelected] = IM_COL32(200, 200, 0, 255);
 
-	ImGui::Begin("Shader Editor");
+	ImGui::Begin("Shader Node Editor ");
 
 	ImNodes::BeginNodeEditor();
 
@@ -1545,20 +1475,17 @@ void MyGUI::ShowShaderEditor()
 	/////////////////////////////////////////////////////////////////////
 		// link creation logic \\
 	/////////////////////////////////////////////////////////////////////
-	    // types of viable links are noted in ShadingNodes.h \\
+		// types of viable links are noted in ShadingNodes.h \\
 	////////////////////////////////////////////////////////////////////
 	int outputAttribute, inputAttribute;
 	if (ImNodes::IsLinkCreated(&outputAttribute, &inputAttribute))
-	{
 		if (ImNodes::GetAttributePinShape(outputAttribute) == ImNodes::GetAttributePinShape(inputAttribute) ||
 			ImNodes::GetAttributePinShape(inputAttribute) == ImNodesPinShape_Triangle)
-		{
-
 			links.push_back(std::make_pair(outputAttribute, inputAttribute));
 
-			std::cout << "\n Link created from attr " << outputAttribute << " to attr " << inputAttribute;
-		}
-	}
+
+
+
 
 	// selection logic \\
 
@@ -1567,7 +1494,6 @@ void MyGUI::ShowShaderEditor()
 	auto& selectedNodes = app->activeMaterial->getSelectedNodes();
 	if (num_selected_nodes > 0)
 	{
-
 		selectedNodes.resize(num_selected_nodes);
 		ImNodes::GetSelectedNodes(selectedNodes.data());
 	}
@@ -1590,7 +1516,6 @@ void MyGUI::ShowShaderEditor()
 void MyGUI::addShadingNodes()
 {
 
-
 	hoverTime = glfwGetTime();
 
 	ImGui::OpenPopup("Add popup");
@@ -1602,77 +1527,103 @@ void MyGUI::addShadingNodes()
 		ImGui::InputText("WIP", searchText, IM_ARRAYSIZE(searchText));
 		ImGui::Separator();
 
-		if (ImGui::BeginMenu("Node"))
+		// Color Nodes
+		if (ImGui::BeginMenu("Color"))
 		{
-			ImGui::SeparatorText("Primitives");
-
-			if (ImGui::MenuItem("Tex"))
-			{
-				app->activeMaterial->createNode<TextureNode>();
-				std::cout << "Texture node added \n";
-			}
-			if (ImGui::MenuItem("Math"))
-			{
-				app->activeMaterial->createNode<MathNode>();
-				std::cout << "Math node added \n";
-			}
-			if (ImGui::MenuItem("Value"))
-			{
-				app->activeMaterial->createNode<ValueNode>();
-				std::cout << "Value node added \n";
-			}
-			if (ImGui::MenuItem("Color Output"))
-			{
-				app->activeMaterial->createNode<ColorOutputNode>();
-				std::cout << "Color Output node added \n";
-			}
-			if (ImGui::MenuItem("Normal Output"))
-			{
-				app->activeMaterial->createNode<NormalOutputNode>();
-				std::cout << "Normal Output node added \n";
-			}
-			if (ImGui::MenuItem("Roughness Output"))
-			{
-				app->activeMaterial->createNode<RoughnessOutputNode>();
-				std::cout << "Roughness Output node added \n";
-			}
-			if (ImGui::MenuItem("Metallic Output"))
-			{
-				app->activeMaterial->createNode<MetallicOutputNode>();
-				std::cout << "Metallic Output node added \n";
-			}
-			if (ImGui::MenuItem("Ambient Occlusion Output"))
-			{
-				app->activeMaterial->createNode<AmbientOcclusionOutputNode>();
-				std::cout << "AmbientOcclusion Output node added \n";
-			}
 			if (ImGui::MenuItem("Color"))
 			{
 				app->activeMaterial->createNode<ColorNode>();
-				std::cout << "Color node added \n";
+				std::cout << "Color node added\n";
 			}
 			if (ImGui::MenuItem("ColorMix"))
 			{
 				app->activeMaterial->createNode<ColorMixNode>();
-				std::cout << "ColorMix node added \n";
+				std::cout << "ColorMix node added\n";
 			}
 
 			ImGui::EndMenu();
 		}
 
-
-		if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) && !ImGui::IsAnyItemHovered() && hoverTime > 1.4)
+		// Math Nodes
+		if (ImGui::BeginMenu("Math"))
 		{
-			glfwSetTime(0);
-			hoverTime = 0;
+			if (ImGui::MenuItem("Math"))
+			{
+				app->activeMaterial->createNode<MathNode>();
+				std::cout << "Math node added\n";
+			}
+			ImGui::EndMenu();
+		}
 
-			window->getKeys()[GLFW_KEY_A] = 0;
+		// Texture Nodes
+		if (ImGui::BeginMenu("Texture"))
+		{
+			if (ImGui::MenuItem("Texture"))
+			{
+				app->activeMaterial->createNode<TextureNode>();
+				std::cout << "Texture node added\n";
+			}
+			ImGui::EndMenu();
+		}
 
-			showAddMenu = false;
-			ImGui::CloseCurrentPopup();
+		// Input Nodes
+		if (ImGui::BeginMenu("Input"))
+		{
+			if (ImGui::MenuItem("Value"))
+			{
+				app->activeMaterial->createNode<ValueNode>();
+				std::cout << "Value node added\n";
+			}
+			ImGui::EndMenu();
+		}
+
+		// Output Nodes
+		if (ImGui::BeginMenu("Output"))
+		{
+			if (ImGui::MenuItem("Color Output"))
+			{
+				app->activeMaterial->createNode<ColorOutputNode>();
+				std::cout << "Color Output node added\n";
+			}
+			if (ImGui::MenuItem("Normal Output"))
+			{
+				app->activeMaterial->createNode<NormalOutputNode>();
+				std::cout << "Normal Output node added\n";
+			}
+			if (ImGui::MenuItem("Roughness Output"))
+			{
+				app->activeMaterial->createNode<RoughnessOutputNode>();
+				std::cout << "Roughness Output node added\n";
+			}
+			if (ImGui::MenuItem("Metallic Output"))
+			{
+				app->activeMaterial->createNode<MetallicOutputNode>();
+				std::cout << "Metallic Output node added\n";
+			}
+			if (ImGui::MenuItem("Ambient Occlusion Output"))
+			{
+				app->activeMaterial->createNode<AmbientOcclusionOutputNode>();
+				std::cout << "Ambient Occlusion Output node added\n";
+			}
+
+			ImGui::EndMenu();
 		}
 
 		ImGui::EndPopup();
+	}
+
+	// auto-close logic
+	if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)
+		&& !ImGui::IsAnyItemHovered()
+		&& hoverTime > 1.4)
+	{
+		glfwSetTime(0);
+		hoverTime = 0;
+
+		getWindow()->getKeys()[GLFW_KEY_A] = 0;
+
+		showAddMenuFlag = false;
+		ImGui::CloseCurrentPopup();
 	}
 
 
@@ -1680,7 +1631,49 @@ void MyGUI::addShadingNodes()
 }
 
 
+void MyGUI::saveFinalRender(const char* filename, int width, int height)
+{
 
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, width, height);
+
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f); // your background color
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	for (int i = 0; i < objectSingleton->getNumberOfObjects(); i++)
+	{
+		Object* object = objectSingleton->getObject(i);
+		if (!dynamic_cast<Mesh*>(object))continue;
+		Mesh* mesh = dynamic_cast<Mesh*>(object);
+
+
+		mesh->renderDraw(*getWindow()->getCamera());
+	}
+
+	glFinish();
+
+
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+
+	std::vector<unsigned char> pixels(width * height * 3);
+	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
+
+	// Flip vertically (OpenGL origin is bottom-left, images expect top-left)
+	std::vector<unsigned char> flipped(width * height * 3);
+	for (int y = 0; y < height; ++y)
+	{
+		memcpy(&flipped[y * width * 3],
+			&pixels[(height - 1 - y) * width * 3],
+			width * 3);
+	}
+
+	stbi_write_png(filename, width, height, 3, flipped.data(), width * 3);
+
+
+	ShellExecuteA(NULL, "open", filename, NULL, NULL, SW_SHOWNORMAL);
+
+}
 
 
 

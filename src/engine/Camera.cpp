@@ -3,17 +3,26 @@
 #include "CameraManager.h"
 #include "Window.h"
 
-Camera::Camera(int width, int height, glm::vec3 Position,std::string name)
+Camera::Camera(int width, int height, glm::vec3 position, std::string name)
 {
 	Camera::width = width;
 	Camera::height = height;
-	Camera::Position = Position;
+	Camera::position = position;
 	Camera::name = name;
 
 	fov = 45.0, near = 0.01f, far = 100.0f;
-	posX = 0, posY = 0, previousX = 0, previousY = 0;
 
 	cameraSingleton->addCamera(this);
+}
+
+void Camera::update()
+{
+	cameraMatrix = projection * getViewMatrix(); // projection * view
+}
+void Camera::cameraUniform(bool activated, Shader& shader, const char* uniform) {
+	if (!activated)
+		shader.activate();
+	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), uniform), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
 }
 
 void Camera::setPerspectiveProjection(float fov, float aspect, float near, float far)
@@ -21,8 +30,8 @@ void Camera::setPerspectiveProjection(float fov, float aspect, float near, float
 	Camera::fov = fov;
 	Camera::near = near;
 	Camera::far = far;
-	this->Projection = glm::perspective(glm::radians(fov), aspect, near, far);
-	this->Update();
+	this->projection = glm::perspective(glm::radians(fov), aspect, near, far);
+	this->update();
 }
 
 void Camera::setOrthographicProjection()
@@ -30,46 +39,16 @@ void Camera::setOrthographicProjection()
 	float orthoScale = 5.0f; // controls zoom level
 	float aspect = (float)width / (float)height;
 
-	this->Projection = glm::ortho(
+	this->projection = glm::ortho(
 		-orthoScale * aspect, orthoScale * aspect,  // left, right
 		-orthoScale, orthoScale,                    // bottom, top
 		-100.0f, 100.0f                             // near, far
 	); // top-left origin
-	this->Update();
+	this->update();
 }
 
-glm::mat4 Camera::getViewMatrix()const {
-	
-	return glm::lookAt(Position, Position + Orientation, Up);
-}
-glm::mat4 Camera::getProjectionMatrix()const {
-	return Projection;
-}
-void Camera::Update()
-{
-	cameraMatrix = Projection * getViewMatrix(); // projection * view
-}
-void Camera::CameraUniform(Shader& shader, const char* uniform) {
-	shader.Activate();
-	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), uniform), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
-}
-void Camera::setOrientation(glm::vec3 ori)
-{
-	this->Orientation = ori;
-}
-int Camera::getWidth()const { return width; }
-int Camera::getHeight()const { return height; }
-glm::vec3 Camera::getPosition()const { return Position; }
 
-glm::vec3 Camera::getOrientation() const
-{
-	return Orientation;
-}
-
-void Camera::setWidth(int width) { Camera::width = width; }
-void Camera::setHeight(int height) { Camera::height = height; }
-
-Ray Camera::CreateRay(GLFWwindow* window)
+Ray Camera::createRay(GLFWwindow* window)
 {
 	double mouseX, mouseY, mouseZ;
 
@@ -81,31 +60,26 @@ Ray Camera::CreateRay(GLFWwindow* window)
 
 	glm::vec4 temp(mouseX, mouseY, -1.0, 1.0); // Homogeneous Clip Coordinates
 
-	temp = glm::inverse(Projection) * temp;
+	temp = glm::inverse(projection) * temp;
 	temp = glm::vec4(temp.x, temp.y, -1.0, 0.0);	// Camera coordinates
 
-	glm::vec4 A = (glm::inverse(glm::inverse(Projection) * cameraMatrix) * temp); // World coordinates
+	glm::vec4 A = (glm::inverse(glm::inverse(projection) * cameraMatrix) * temp); // World coordinates
 
-	return Ray(Position, glm::normalize(glm::vec3(A.x, A.y, A.z)));
+	return Ray(position, glm::normalize(glm::vec3(A.x, A.y, A.z)));
 }
 
-void Camera::setFOV(float fov)
-{
-	setPerspectiveProjection(fov, float(getWidth()) / float(getHeight()), near, far);
-}
-void Camera::setPosition(glm::vec3 position)
-{
-	Position = position;
-}
-float Camera::getFOV()const { return fov; }
-
-void Camera::Movement3D(GLFWwindow* glfwWindow, MyGUI& gui)
+void Camera::movement3D(GLFWwindow* glfwWindow)
 {
 	Window* window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
 	std::vector<int>& keys = window->getKeys();
 	std::vector<int>& keysProcessed = window->getKeysProcessed();
 	std::vector<int>& buttons = window->getMouseButtons();
 	std::vector<int>& buttonsProcessed = window->getMouseButtonsProcessed();
+	bool& firstClick = window->getFirstClick();
+	double& posX = window->getPosX();
+	double& posY = window->getPosY();
+	double& previousX = window->getPreviousX();
+	double& previousY = window->getPreviousY();
 
 	//MOUSE LEFT ROTATE
 	//MOUSE RIGHT PAN
@@ -118,7 +92,7 @@ void Camera::Movement3D(GLFWwindow* glfwWindow, MyGUI& gui)
 			if (firstClick)
 			{
 				//std::cout << "HAHAHAH";
-				glfwSetCursorPos(window->getWindow(), (width / 2), (height / 2));
+				glfwSetCursorPos(window->getGLFWwindow(), (width / 2), (height / 2));
 				firstClick = false;
 			}
 
@@ -126,31 +100,31 @@ void Camera::Movement3D(GLFWwindow* glfwWindow, MyGUI& gui)
 			double mouseX;
 			double mouseY;
 			// Fetches the coordinates of the cursor
-			glfwGetCursorPos(window->getWindow(), &mouseX, &mouseY);
+			glfwGetCursorPos(window->getGLFWwindow(), &mouseX, &mouseY);
 
 			// Normalizes and shifts the coordinates of the cursor such that they begin in the middle of the screen
 			// and then "transforms" them into degrees
 			float rotX = sensitivity * (float)(mouseY - (height / 2)) / height;
 			float rotY = sensitivity * (float)(mouseX - (width / 2)) / width;
 
-			// Calculates upcoming vertical change in the Orientation
-			glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(-rotX), glm::normalize(glm::cross(Orientation, Up)));
+			// Calculates upcoming vertical change in the orientation
+			glm::vec3 newOrientation = glm::rotate(orientation, glm::radians(-rotX), glm::normalize(glm::cross(orientation, up)));
 
-			// Decides whether or not the next vertical Orientation is legal or not
-			if (abs(glm::angle(newOrientation, Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
+			// Decides whether or not the next vertical orientation is legal or not
+			if (abs(glm::angle(newOrientation, up) - glm::radians(90.0f)) <= glm::radians(85.0f))
 			{
-				Orientation = newOrientation;
+				orientation = newOrientation;
 			}
 
-			// Rotates the Orientation left and right
-			Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
+			// Rotates the orientation left and right
+			orientation = glm::rotate(orientation, glm::radians(-rotY), up);
 
-			glfwSetCursorPos(window->getWindow(), (width / 2), (height / 2)); //NEKADA IZBACITI OVO I STAVITI ROTXPREVIOUS I ROTYPREVIOUS
+			glfwSetCursorPos(window->getGLFWwindow(), (width / 2), (height / 2)); //NEKADA IZBACITI OVO I STAVITI ROTXPREVIOUS I ROTYPREVIOUS
 		}
 		else if (buttons[GLFW_MOUSE_BUTTON_RIGHT])
 		{
 			// Fetches the coordinates of the cursor
-			glfwGetCursorPos(window->getWindow(), &posX, &posY);
+			glfwGetCursorPos(window->getGLFWwindow(), &posX, &posY);
 
 			// Prevents camera from jumping on the first click
 			if (firstClick)
@@ -166,8 +140,8 @@ void Camera::Movement3D(GLFWwindow* glfwWindow, MyGUI& gui)
 			float deltaY = (posY - previousY) / 150;
 
 			//std::cout << deltaX << " " << posX << " " << previousX << "\n";
-			Position += -deltaX * glm::normalize(glm::cross(Orientation, Up));
-			Position += deltaY * Up;
+			position += -deltaX * glm::normalize(glm::cross(orientation, up));
+			position += deltaY * up;
 
 			previousX = posX;
 			previousY = posY;
@@ -181,7 +155,7 @@ void Camera::Movement3D(GLFWwindow* glfwWindow, MyGUI& gui)
 		// Makes sure the next time the camera looks around it doesn't jump
 		firstClick = true;
 
-		if (glfwGetKey(window->getWindow(), GLFW_KEY_LEFT_ALT) != GLFW_PRESS)
+		if (glfwGetKey(window->getGLFWwindow(), GLFW_KEY_LEFT_ALT) != GLFW_PRESS)
 		{
 			//std::cout << "asdasdasda";
 			keys[GLFW_KEY_LEFT_ALT] = 0;
@@ -191,20 +165,24 @@ void Camera::Movement3D(GLFWwindow* glfwWindow, MyGUI& gui)
 	}
 }
 
-void Camera::Movement2D(GLFWwindow* glfwWindow, MyGUI& gui)
+void Camera::movement2D(GLFWwindow* glfwWindow)
 {
 	Window* window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
 	std::vector<int>& keys = window->getKeys();
 	std::vector<int>& keysProcessed = window->getKeysProcessed();
 	std::vector<int>& buttons = window->getMouseButtons();
 	std::vector<int>& buttonsProcessed = window->getMouseButtonsProcessed();
+	bool& firstClick = window->getFirstClick();
+	double& posX = window->getPosX();
+	double& posY = window->getPosY();
+	double& previousX = window->getPreviousX();
+	double& previousY = window->getPreviousY();
 
-
-	if (keys[GLFW_KEY_LEFT_ALT]) 
+	if (keys[GLFW_KEY_LEFT_ALT])
 		if (buttons[GLFW_MOUSE_BUTTON_RIGHT]) // PAN
 		{
 			// Fetches the coordinates of the cursor
-			glfwGetCursorPos(window->getWindow(), &posX, &posY);
+			glfwGetCursorPos(window->getGLFWwindow(), &posX, &posY);
 
 			// Prevents camera from jumping on the first click
 			if (firstClick)
@@ -220,19 +198,19 @@ void Camera::Movement2D(GLFWwindow* glfwWindow, MyGUI& gui)
 			float deltaY = (posY - previousY) / 150;
 
 			//std::cout << deltaX << " " << posX << " " << previousX << "\n";
-			Position.x += -deltaX ;
-			Position.y += deltaY ;
+			position.x += -deltaX;
+			position.y += deltaY;
 
 			previousX = posX;
 			previousY = posY;
 		}
 	//RESET
-	if ( !buttons[GLFW_MOUSE_BUTTON_RIGHT])
+	if (!buttons[GLFW_MOUSE_BUTTON_RIGHT])
 	{
 		// Makes sure the next time the camera looks around it doesn't jump
 		firstClick = true;
 
-		if (glfwGetKey(window->getWindow(), GLFW_KEY_LEFT_ALT) != GLFW_PRESS)
+		if (glfwGetKey(window->getGLFWwindow(), GLFW_KEY_LEFT_ALT) != GLFW_PRESS)
 		{
 			//std::cout << "asdasdasda";
 			keys[GLFW_KEY_LEFT_ALT] = 0;
@@ -245,14 +223,13 @@ void Camera::Movement2D(GLFWwindow* glfwWindow, MyGUI& gui)
 void Camera::setCamera2D()
 {
 	std::cout << "SetCamera2D";
-	
 
 	// View from above, looking down -Z
-	this->Position= glm::vec3(0.0f, 0.0f, +3.0f); // Z = +1
-	Orientation= glm::vec3(0.0f, 0.0f, -1.0f);
-	Up= glm::vec3(0.0f, -1.0f, 0.0f);
+	this->position = glm::vec3(0.0f, 0.0f, +3.0f); // Z = +1
+	orientation = glm::vec3(0.0f, 0.0f, -1.0f);
+	up = glm::vec3(0.0f, -1.0f, 0.0f);
 
-	this->Update();
+	this->update();
 
-	
+
 }

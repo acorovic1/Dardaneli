@@ -11,9 +11,8 @@ struct DDiskLink {
 
 	DDiskLink() : next(nullptr), prev(nullptr) {}
 	DDiskLink(DEdge* n, DEdge* p) : next(n), prev(p) {}
-	DDiskLink(const DDiskLink&  disk) {
-		
-		next = disk.next;prev = disk.prev; };
+
+	DDiskLink(const DDiskLink& disk) { next = disk.next;prev = disk.prev; };
 	DDiskLink& operator=(const DDiskLink& other) {
 		if (this != &other) {
 			next = other.next;

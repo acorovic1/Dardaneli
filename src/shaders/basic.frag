@@ -5,12 +5,18 @@ in vec3 WorldPos;
 in vec3 Normal;
 out vec4 FragColor;
 
-
+uniform sampler2D texture0;
+uniform bool hasTexture;
 
 void main()
 {
-        vec3 ColorFinal = vec3(1.0,1.0,1.0);
 
-        FragColor= vec4(ColorFinal-0.25,1.0);
+
+        if(hasTexture)
+        {
+            FragColor=texture(texture0,fragUV);
+        }
+        else
+            FragColor= vec4(0.75f,0.75f,0.75f,1.0);
         
 }

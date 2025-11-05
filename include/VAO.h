@@ -15,9 +15,7 @@ public:
 	VAO(const VAO&) = delete;
 	VAO& operator=(const VAO&) = delete;
 	// move constructor
-	VAO(VAO&& other) noexcept : ID(other.ID) {
-		other.ID = 0;
-	}
+	VAO(VAO&& other) noexcept : ID(other.ID) {other.ID = 0;}
 
 	// move assignment
 	VAO& operator=(VAO&& other) noexcept {
@@ -29,14 +27,14 @@ public:
 		return *this;
 	}
 
-	void LinkAttribute(VBO VBO, GLuint layout, GLint componentNumber, GLenum type,
+	void linkAttribute(VBO VBO, GLuint layout, GLint componentNumber, GLenum type,
 		GLsizei stride, const GLvoid* pointer);
 
-	void Bind();
-	void Unbind();
+	void bind();
+	void unbind();
 	void Delete();
 
-	void Generate();
+	void generate();
 
 	GLuint getID() { return ID; }
 };

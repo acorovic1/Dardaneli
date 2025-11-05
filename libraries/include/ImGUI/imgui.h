@@ -1235,7 +1235,7 @@ enum ImGuiSelectableFlags_
 	ImGuiSelectableFlags_None = 0,
 	ImGuiSelectableFlags_NoAutoClosePopups = 1 << 0,   // Clicking this doesn't close parent popup window (overrides ImGuiItemFlags_AutoClosePopups)
 	ImGuiSelectableFlags_SpanAllColumns = 1 << 1,   // Frame will span all columns of its container table (text will still fit in current column)
-	ImGuiSelectableFlags_AllowDoubleClick = 1 << 2,   // Generate press events on double clicks too
+	ImGuiSelectableFlags_AllowDoubleClick = 1 << 2,   // generate press events on double clicks too
 	ImGuiSelectableFlags_Disabled = 1 << 3,   // Cannot be selected, display grayed out text
 	ImGuiSelectableFlags_AllowOverlap = 1 << 4,   // (WIP) Hit testing to allow subsequent widgets to overlap this one
 	ImGuiSelectableFlags_Highlight = 1 << 5,   // Make the item be displayed as if it is hovered
@@ -1485,7 +1485,7 @@ enum ImGuiKey : int
 	ImGuiKey_GamepadFaceLeft,       // X (Xbox)         Y (Switch)   Square (PS)        // Tap: Toggle Menu. Hold: Windowing mode (Focus/Move/Resize windows)
 	ImGuiKey_GamepadFaceRight,      // B (Xbox)         A (Switch)   Circle (PS)        // Cancel / Close / Exit
 	ImGuiKey_GamepadFaceUp,         // Y (Xbox)         X (Switch)   Triangle (PS)      // Text Input / On-screen Keyboard
-	ImGuiKey_GamepadFaceDown,       // A (Xbox)         B (Switch)   Cross (PS)         // Activate / Open / Toggle / Tweak
+	ImGuiKey_GamepadFaceDown,       // A (Xbox)         B (Switch)   Cross (PS)         // activate / Open / Toggle / Tweak
 	ImGuiKey_GamepadDpadLeft,       // D-pad Left                                       // Move / Tweak / Resize Window (in Windowing mode)
 	ImGuiKey_GamepadDpadRight,      // D-pad Right                                      // Move / Tweak / Resize Window (in Windowing mode)
 	ImGuiKey_GamepadDpadUp,         // D-pad Up                                         // Move / Tweak / Resize Window (in Windowing mode)
@@ -2239,7 +2239,7 @@ struct ImGuiIO
 	// Miscellaneous options
 	bool        MouseDrawCursor;                // = false          // Request ImGui to draw a mouse cursor for you (if you are on a platform without a mouse cursor). Cannot be easily renamed to 'io.ConfigXXX' because this is frequently used by backend implementations.
 	bool        ConfigMacOSXBehaviors;          // = defined(__APPLE__) // Swap Cmd<>Ctrl keys + OS X style text editing cursor movement using Alt instead of Ctrl, Shortcuts using Cmd/Super instead of Ctrl, Line/Text Start and End using Cmd+Arrows instead of Home/End, Double click selects by word instead of selecting whole text, Multi-selection in lists uses Cmd/Super instead of Ctrl.
-	bool        ConfigNavSwapGamepadButtons;    // = false          // Swap Activate<>Cancel (A<>B) buttons, matching typical "Nintendo/Japanese style" gamepad layout.
+	bool        ConfigNavSwapGamepadButtons;    // = false          // Swap activate<>Cancel (A<>B) buttons, matching typical "Nintendo/Japanese style" gamepad layout.
 	bool        ConfigInputTrickleEventQueue;   // = true           // Enable input queue trickling: some types of events submitted during the same frame (e.g. button down + up) will be spread over multiple frames, improving interactions with low framerates.
 	bool        ConfigInputTextCursorBlink;     // = true           // Enable blinking cursor (optional as some users consider it to be distracting).
 	bool        ConfigInputTextEnterKeepActive; // = false          // [BETA] Pressing Enter will keep item active and select contents (single-line only).

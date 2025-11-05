@@ -12,7 +12,8 @@ public:
 	EBO(std::vector<GLuint>& indices);
 	void bufferData(std::vector<GLuint>& indices);
 
-	void Bind();
-	void Unbind();
+	void bind();
+	void unbind();
 	void Delete();
+
 };

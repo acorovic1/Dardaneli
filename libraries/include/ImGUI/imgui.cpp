@@ -153,8 +153,8 @@ CODE
 	 - Tab, SHIFT+Tab:              Cycle through every items.
 	 - Arrow keys                   Move through items using directional navigation. Tweak value.
 	 - Arrow keys + Alt, Shift      Tweak slower, tweak faster (when using arrow keys).
-	 - Enter                        Activate item (prefer text input when possible).
-	 - Space                        Activate item (prefer tweaking with arrows when possible).
+	 - Enter                        activate item (prefer text input when possible).
+	 - Space                        activate item (prefer tweaking with arrows when possible).
 	 - Escape                       Deactivate item, leave child window, close popup.
 	 - Page Up, Page Down           Previous page, next page.
 	 - Home, End                    Scroll to top, scroll to bottom.
@@ -12829,7 +12829,7 @@ void ImGui::NavMoveRequestApplyResult()
 	if ((g.NavMoveFlags & ImGuiNavMoveFlags_IsTabbing) && (result->InFlags & ImGuiItemFlags_Inputable) == 0)
 		g.NavMoveFlags &= ~ImGuiNavMoveFlags_Activate;
 
-	// Activate
+	// activate
 	if (g.NavMoveFlags & ImGuiNavMoveFlags_Activate)
 	{
 		g.NavNextActivateId = result->ID;
@@ -13447,7 +13447,7 @@ bool ImGui::BeginDragDropSource(ImGuiDragDropFlags flags)
 	if (!source_drag_active)
 		return false;
 
-	// Activate drag and drop
+	// activate drag and drop
 	if (!g.DragDropActive)
 	{
 		IM_ASSERT(source_id != 0);

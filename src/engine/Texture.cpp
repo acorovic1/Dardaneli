@@ -46,7 +46,7 @@ void Texture::textureUniform(Shader& shader, const char* uniform, GLuint unit) {
 	shader.setInteger(false, uniform, unit);
 }
 
-void Texture::Bind()
+void Texture::bind()
 {
 	//std::cout << "Texture ID: " << ID << " unit: " << unit << std::endl;
 
@@ -54,12 +54,6 @@ void Texture::Bind()
 	glBindTexture(GL_TEXTURE_2D, ID);
 }
 
-void Texture::Unbind()
-{
-	glBindTexture(GL_TEXTURE_2D, 0);
-}
+void Texture::unbind(){	glBindTexture(GL_TEXTURE_2D, 0);}
 
-void Texture::Delete()
-{
-	glDeleteTextures(1, &ID);
-}
+void Texture::Delete(){	glDeleteTextures(1, &ID);}

@@ -98,3 +98,34 @@ std::unordered_set<DFace*> DVertex::getAdjecentFaces() const {
 
 
 
+DVertex::DVertex() : e(nullptr) {}
+DVertex::DVertex(glm::vec3 pos, glm::vec3 norm ) : position(pos), normal(norm), e(nullptr) {}
+DVertex::DVertex(const DVertex& vertex) {
+
+	this->position = vertex.position;
+	this->normal = vertex.normal;
+	e = nullptr;
+}
+
+
+bool DVertex::operator==(const DVertex& vert) const{	return glm::all(glm::epsilonEqual(position, vert.position, 0.001f));}
+
+void DVertex::translate(glm::vec3 offset) {
+	position += offset;
+	// calculateNormals();
+};
+
+void DVertex::translate(float x, float y, float z) {
+	position.x += x;
+	position.y += y;
+	position.z += z;
+	// calculateNormals();
+};
+
+void DVertex::translate(float* offset) {
+	position.x += offset[0];
+	position.y += offset[1];
+	position.z += offset[2];
+	
+	// calculateNormals();
+};

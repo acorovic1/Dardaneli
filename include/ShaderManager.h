@@ -29,7 +29,7 @@ public:
 
 	Shader& getShader(std::string name);
 
-	friend void DeleteAllShaders();
+	friend void deleteAllShaders();
 };
 
 extern ShaderManager* shaderSingleton;

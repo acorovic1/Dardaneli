@@ -17,16 +17,16 @@ DrawableAABB::DrawableAABB(glm::vec3 min, glm::vec3 max) {
 			0, 4, 1, 5, 2, 6, 3, 7   // Vertical lines
 	};
 
-	VAO.Bind();
+	VAO.bind();
 	VBO VBO(vertices);
 	EBO EBO(indices);
 
-	VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0);
-	VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float)));
+	VAO.linkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0);
+	VAO.linkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float)));
 
-	VAO.Unbind();
-	VBO.Unbind();
-	EBO.Unbind();
+	VAO.unbind();
+	VBO.unbind();
+	EBO.unbind();
 
 	VBO.Delete();
 	EBO.Delete();
@@ -37,16 +37,16 @@ DrawableAABB::DrawableAABB(const DrawableAABB& a)
 	vertices = a.vertices;
 	indices = a.indices;
 
-	VAO.Bind();
+	VAO.bind();
 	VBO VBO(vertices);
 	EBO EBO(indices);
 
-	VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0);
-	VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float)));
+	VAO.linkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0);
+	VAO.linkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float)));
 
-	VAO.Unbind();
-	VBO.Unbind();
-	EBO.Unbind();
+	VAO.unbind();
+	VBO.unbind();
+	EBO.unbind();
 
 	VBO.Delete();
 	EBO.Delete();
@@ -58,18 +58,18 @@ DrawableAABB DrawableAABB::operator=(const DrawableAABB& a)
 	{
 		vertices = a.vertices;
 		indices = a.indices;
-		VAO.Generate();
+		VAO.generate();
 
-		VAO.Bind();
+		VAO.bind();
 		VBO VBO(vertices);
 		EBO EBO(indices);
 
-		VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0);
-		VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float)));
+		VAO.linkAttribute(VBO, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0);
+		VAO.linkAttribute(VBO, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float)));
 
-		VAO.Unbind();
-		VBO.Unbind();
-		EBO.Unbind();
+		VAO.unbind();
+		VBO.unbind();
+		EBO.unbind();
 
 		VBO.Delete();
 		EBO.Delete();
@@ -79,10 +79,10 @@ DrawableAABB DrawableAABB::operator=(const DrawableAABB& a)
 }
 
 void DrawableAABB::Draw(Camera& camera, Shader& shader) {
-	shader.Activate();
+	shader.activate();
 
-	VAO.Bind();
-	camera.CameraUniform(shader, "cameraMatrix");
+	VAO.bind();
+	camera.cameraUniform(true,shader, "cameraMatrix");
 
 	glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0);
 }

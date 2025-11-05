@@ -9,7 +9,4 @@ ShadingNodesManager* ShadingNodesManager::getInstance() {
 	return instancePtr;
 }
 
-void ShadingNodesManager::addNewNode(ShadingNodes* node)
-{
-	nodes.push_back(node);
-}
+void ShadingNodesManager::addNewNode(ShadingNodes* node) { nodes.push_back(node); }

@@ -23,93 +23,110 @@
 //#include "ImNODES/imnodes.cpp"
 //#include "ImNODES/imnodes_internal.h"
 
-class MyGUI /* :public Dardaneli...varijable pod protected staviti*/ /* mozda app i gui da su odvojene (kao sto su i do sada) i obje da budu singleton(samo jos gui napravit da je singleton )*/ {
+class MyGUI  {
 	ImGuiIO* io;
 	ImGuiIO* gizmoIo;
-	Window* window;
-	ImGuizmo::OPERATION operation = ImGuizmo::OPERATION::TRANSLATE;
+	GLFWwindow* glfwWindow;
 
-	float hoverTime = 0.0f;
+	float position[3] = { 0.0f, 0.0f, 0.0f };
+	float positionPrev[3] = { 0.0f, 0.0f, 0.0f };
+	float rotation[3] = { 0.0f, 0.0f, 0.0f };
+	float rotationPrev[3] = { 0.0f, 0.0f, 0.0f };
+	float scale[3] = { 1.0f, 1.0f, 1.0f };
+	float scalePrev[3] = { 1.0f, 1.0f, 1.0f };
 
-	bool BVHTree = false;
-	bool faceCulling = true;
-	int BVHSubd = 0;
-	int eBVHSubd = 0;
+	DLoop* selectedLoop = nullptr;
 
-	char searchText[32] = "Search";
-
-	bool gizmo = true;
-
-
-
-	DLoop* selectedLoop= nullptr;
 	//DFace* selectedFace = nullptr;
 
 	// used only for disk.d1
 	DEdge* vertexEdge = nullptr;
 
-	std::vector<glm::vec2> gridVertices3D;
-	std::vector<GLuint> gridIndices3D;
-	std::vector<glm::vec2> gridVertices2D;
-	std::vector<GLuint> gridIndices2D;
-
 	VAO grid3DVAO;
 	EBO grid3DEBO;
+	std::vector<glm::vec2> gridVertices3D;
+	std::vector<GLuint> gridIndices3D;
 
 	VAO grid2DVAO;
 	EBO grid2DEBO;
+	std::vector<glm::vec2> gridVertices2D;
+	std::vector<GLuint> gridIndices2D;
 
-	
+
+	ImGuizmo::OPERATION operation = ImGuizmo::OPERATION::TRANSLATE;
+
+	float hoverTime = 0.0f;
+	int BVHSubd = 0;
+	int eBVHSubd = 0;
+	char searchText[32] = "Search";
+
+	bool BVHTree = false;
+	bool gizmo = true;
+	bool faceCulling = true;
+
+	bool showAddMenuFlag = false;
+	bool showDeleteMenuFlag = false;
+	bool showExtrudeMenuFlag = false;
+	bool showInsetMenuFlag = false;
+
+
 
 public:
-	void SaveFinalRender(const char* filename, int width, int height);
-	bool showAddMenu = false;
-	bool showDeleteMenu = false;
-	bool showExtrudeMenu = false;
-	bool showInsetMenu = false;
-	MyGUI(Window* window);
-	void Init();
-	void NewFrame();
-	void Render();
-	void Shutdown();
-	void DrawUI();
-	ImGuiIO* getIO();
-	Mode getMode();
-	SelectMode getSelectMode();
+
+	MyGUI(GLFWwindow* glfwWindow);
+	void init();
+	void newFrame();
+	void render();
+	void shutdown();
+
+	void drawUI();
+	void drawObjectModeUI(bool change);
+	void drawEditModeUI(bool change);
+	void drawUVModeUI(bool change);
+	void drawShaderEditorUI(bool change);
+
+	ImGuiIO* getIO() { return io; };
+	GLFWwindow* getGLFWwindow() { return glfwWindow; }
+	Window* getWindow() { return reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow)); }
+	Mode getMode() { return app->mode; };
+	SelectMode getSelectMode() { return app->selectMode; };
 	bool getFaceCulling() { return faceCulling; }
+	std::vector<int>& getObjectIndex() { return app->objectIndices; };
 
-	std::vector<int>& getObjectIndex();
+	void showAddMenu();
+	void showDeleteMenu();
+	void showExtrudeMenu();
+	void showInsetMenu();
 
-	void AddMenu();
-	void Add();
-	void DeleteMenu();
-	void Delete();
-	void ExtrudeMenu();
-	void Extrude();
-	void InsetMenu();
-	void Inset();
+	void addMenu();
+	void deleteMenu();
+	void extrudeMenu();
+	
 
-	void DrawBVH();
+	void drawBVH();
 
-	void Gizmos();
+	void gizmos();
 
-	void VertexTransform();
-	void Transformations();
-	void SelectObject();
+	void vertexTransform();
+	void transformations();
+	void selectObject();
 
-	void InitializeGrid3D(int width = 20);
-	void Grid3D();
-	void InitializeGrid2D(int width = 10);
-	void Grid2D();
+	void initializeGrid3D(int width = 20);
+	void drawGrid3D();
+	void initializeGrid2D(int width = 10);
+	void drawGrid2D();
 
 	void setGizmoOperation(ImGuizmo::OPERATION op);
 
-	void Modes();
+	void modes();
 
-	void DMesh();
+	void dMesh();
 
-	void ShowShaderEditor();
+	void shaderNodeEditor();
 	void addShadingNodes();
+
+
+	void saveFinalRender(const char* filename, int width, int height);
 
 
 };

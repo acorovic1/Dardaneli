@@ -16,7 +16,7 @@ struct Texture {
 
 	GLuint ID;
 	GLuint unit; // GL_TEXTURE0 + unit
-	TextureType type; // diffuse, specular, etc...
+	
 
 	Texture(const char* image, GLuint slot, GLenum format=GL_RGB, GLenum pixelType=GL_UNSIGNED_BYTE);
 	~Texture() {
@@ -25,7 +25,7 @@ struct Texture {
 
 	void textureUniform(Shader& shader, const char* uniform, GLuint unit);
 
-	void Bind();
-	void Unbind();
+	void bind();
+	void unbind();
 	void Delete();
 };

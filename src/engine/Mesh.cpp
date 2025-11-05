@@ -42,17 +42,17 @@ Mesh::Mesh(std::string&& name, std::vector <DVertex*> vertices,
 	Mesh::edgeIndices = edgeIndices;
 
 
-	vao.Bind();
+	vao.bind();
 	vbo.bufferData(Mesh::vertices);
 	ebo.bufferData(Mesh::indices);
 	edgeEBO.bufferData(Mesh::edgeIndices);
 
-	vao.LinkAttribute(vbo, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0); //position
-	vao.LinkAttribute(vbo, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float))); //normal
+	vao.linkAttribute(vbo, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0); //position
+	vao.linkAttribute(vbo, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float))); //normal
 
-	vao.Unbind();
-	vbo.Unbind();
-	ebo.Unbind();
+	vao.unbind();
+	vbo.unbind();
+	ebo.unbind();
 
 	objectBVHSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 
@@ -62,7 +62,48 @@ Mesh::Mesh(std::string&& name, std::vector <DVertex*> vertices,
 
 Mesh::~Mesh() {}
 
-void Mesh::bindEBO() { ebo.Bind(); }
+
+void Mesh::translate(glm::vec3& translateVector)
+{
+	position += translateVector;
+	fillModel();
+
+
+}
+void Mesh::translate(float x, float y, float z)
+{
+	position.x += x;
+	position.y += y;
+	position.z += z;
+
+	fillModel();
+}
+
+void Mesh::rotate(float degrees, const glm::vec3& axisVector)
+{
+	rotation = glm::rotate(rotation, glm::radians(degrees), axisVector);
+
+	std::cout << "\n\n\tMesh.Rotate quaternion: " << rotation.x << " " << rotation.y << " " << rotation.z << "\n\n";
+	fillModel();
+}
+
+void Mesh::scale(glm::vec3& scaleVector)
+{
+	scaling *= scaleVector;
+	fillModel();
+}
+void Mesh::scale(float x, float y, float z) {
+	scaling.x *= x;
+	scaling.y *= y;
+	scaling.z *= z;
+
+	fillModel();
+}
+
+
+
+
+void Mesh::bindEBO() { ebo.bind(); }
 void Mesh::updateEBO() { ebo.bufferData(indices); }
 
 void Mesh::updateEdgeEBO()
@@ -105,15 +146,7 @@ std::unordered_set<DFace*> Mesh::getAllFaces()
 	return returnSet;
 }
 
-//std::vector<DFace*> Mesh::getAllFacesVector()
-//{
-//	std::vector<DFace*> returnVec;
-//	for (DFace* face : getAllFaces())
-//	{
-//		returnVec.push_back(face);
-//	}
-//	return returnVec;
-//}
+
 
 std::unordered_set<DEdge*> Mesh::getAllEdges()
 {
@@ -218,7 +251,51 @@ DEdge* Mesh::getEdge(DVertex* start, DVertex* end)
 
 
 
-void Mesh::renderDraw(Camera& camera, GLenum mode)
+void Mesh::materialDraw(Camera& camera)
+{
+
+	for (auto& buff : renderBuffers)
+	{
+		Material* mat = buff.first;
+		VAO& matVAO = std::get<0>(buff.second);
+		VBO& matVBO = std::get<1>(buff.second);
+		EBO& matEBO = std::get<2>(buff.second);
+		//std::vector<GPUVertex>& matVerts = std::get<3>(buff.second);
+		std::vector<GLuint >& matIndices = std::get<4>(buff.second);
+
+		// may be a redundant call??
+		auto shaderr = *mat->compileShader(RenderMode::MATERIAL_PREVIEW).get();
+
+		shaderr.activate();
+		camera.cameraUniform(true, shaderr, "cameraMatrix");
+		shaderr.setVector3f(true, "camPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+		shaderr.setMat4(true, "model", model);
+		if (mat->textures.size())
+		{
+			for (auto& tex : mat->textures)
+			{
+				tex.get()->textureUniform(shaderr, ("tex" + std::to_string(tex.get()->ID)).c_str(), tex.get()->unit);
+				tex.get()->bind();
+
+			}
+		}
+
+
+		matVAO.bind();
+		matEBO.bind();
+
+		glDrawElements(GL_TRIANGLES, matIndices.size(), GL_UNSIGNED_INT, 0);
+		matEBO.unbind();
+		matVAO.unbind();
+
+	}
+
+
+	if (renderBuffers.size() == 0)
+		draw(shaderSingleton->getShader("Basic"), camera, GL_TRIANGLES);
+}
+
+void Mesh::renderDraw(Camera& camera)
 {
 	for (auto x : vertices)
 		x->normal = glm::normalize(x->position);
@@ -278,10 +355,11 @@ void Mesh::renderDraw(Camera& camera, GLenum mode)
 		//std::vector<GPUVertex>& matVerts = std::get<3>(buff.second);
 		std::vector<GLuint >& matIndices = std::get<4>(buff.second);
 
-		auto shaderr = *mat->compileShader().get();
-		//auto& shaderr = shaderSingleton->getShader("TextureTest");
-		shaderr.Activate();
-		camera.CameraUniform(shaderr, "cameraMatrix");
+		// may be a redundant call??
+		auto shaderr = *mat->compileShader(RenderMode::RENDER).get();
+
+		shaderr.activate();
+		camera.cameraUniform(true, shaderr, "cameraMatrix");
 		shaderr.setVector3f(true, "camPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
 		shaderr.setMat4(true, "model", model);
 		if (mat->textures.size())
@@ -289,7 +367,7 @@ void Mesh::renderDraw(Camera& camera, GLenum mode)
 			for (auto& tex : mat->textures)
 			{
 				tex.get()->textureUniform(shaderr, ("tex" + std::to_string(tex.get()->ID)).c_str(), tex.get()->unit);
-				tex.get()->Bind();
+				tex.get()->bind();
 
 			}
 		}
@@ -308,30 +386,18 @@ void Mesh::renderDraw(Camera& camera, GLenum mode)
 			shaderr.setFloat(true, (prefix + "outerCutoff").c_str(), gpuLights[i].outerCutoff);
 		}
 
-		if (mode == GL_TRIANGLES)
-		{
-			matVAO.Bind();
-			matEBO.Bind();
 
-			glDrawElements(mode, matIndices.size(), GL_UNSIGNED_INT, 0);
-			matEBO.Unbind();
-			matVAO.Unbind();
-		}
+		matVAO.bind();
+		matEBO.bind();
+
+		glDrawElements(GL_TRIANGLES, matIndices.size(), GL_UNSIGNED_INT, 0);
+		matEBO.unbind();
+		matVAO.unbind();
+
 	}
 
-
-	if (mode == GL_LINES)
-	{
-		vao.Bind();
-		edgeEBO.Bind();
-		glDrawElements(mode, edgeIndices.size(), GL_UNSIGNED_INT, 0);
-	}
-	else if (mode == GL_POINTS)
-	{
-		vao.Bind();
-		vbo.Bind();
-		glDrawArrays(mode, 0, vertices.size());
-	}
+	if (renderBuffers.size() == 0)
+		draw(shaderSingleton->getShader("Basic"), camera, GL_TRIANGLES);
 
 
 
@@ -379,13 +445,25 @@ void Mesh::buildGPUVertices()
 
 		}
 
-		matVAO.Bind();
+		matVAO.bind();
 		matVBO.bufferData(matVerts);
 		matEBO.bufferData(matIndices);
 
 	}
 
 
+
+}
+
+void Mesh::addMaterial(Material* mat)
+{
+	if (materials.size() == 0)
+	{
+		materials.insert({ mat,getAllFaces() });
+		buildGPUVertices();
+	}
+	else
+		materials.insert({ mat,{} });
 
 }
 
@@ -420,12 +498,12 @@ void Mesh::assignMaterial(Material* mat)
 	VAO& matVAO = std::get<0>(renderBuffers[mat]);
 	VBO& matVBO = std::get<1>(renderBuffers[mat]);
 
-	matVAO.Bind();
-	matVAO.LinkAttribute(matVBO, 0, 3, GL_FLOAT, sizeof(GPUVertex), (void*)0); //position
-	matVAO.LinkAttribute(matVBO, 1, 3, GL_FLOAT, sizeof(GPUVertex), (void*)(3 * sizeof(float))); //normal
-	matVAO.LinkAttribute(matVBO, 2, 2, GL_FLOAT, sizeof(GPUVertex), (void*)(6 * sizeof(float))); //uvs
+	matVAO.bind();
+	matVAO.linkAttribute(matVBO, 0, 3, GL_FLOAT, sizeof(GPUVertex), (void*)0); //position
+	matVAO.linkAttribute(matVBO, 1, 3, GL_FLOAT, sizeof(GPUVertex), (void*)(3 * sizeof(float))); //normal
+	matVAO.linkAttribute(matVBO, 2, 2, GL_FLOAT, sizeof(GPUVertex), (void*)(6 * sizeof(float))); //uvs
 
-	matVAO.Unbind();
+	matVAO.unbind();
 
 	buildGPUVertices();
 }
@@ -434,135 +512,38 @@ void Mesh::removeMaterial(Material* mat)
 {
 	materials.erase(mat);
 	renderBuffers.erase(mat);
-	
+
 }
 
-void Mesh::Draw(Shader& shader, Camera& camera, GLenum mode) {
-	shader.Activate();
-	vao.Bind();
+void Mesh::draw(Shader& shader, Camera& camera, GLenum mode) {
 
 
-	camera.CameraUniform(shader, "cameraMatrix");
+	shader.activate();
+	vao.bind();
+	camera.cameraUniform(true, shader, "cameraMatrix");
 	shader.setVector3f(true, "camPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
 	shader.setMat4(true, "model", model);
-	auto view = camera.getViewMatrix();
-	auto proj = camera.getProjectionMatrix();
-	shader.setMat4(true, "view", view);
-	shader.setMat4(true, "projection", proj);
-	shader.setFloat(true, "size", 1);
-
-	struct GPULight {
-		int type;
-		glm::vec3 position;
-		glm::vec3 direction;
-		glm::vec3 color;
-		float intensity;
-		float innerCutoff;
-		float outerCutoff;
-	};
-
-	GPULight gpuLights[32];
-	int activeLights = 0;
-
-	for (Object* l : objectSingleton->getAllObjects())
-	{
-		GPULight g{};
-		if (auto* d = dynamic_cast<DirectionalLight*>(l)) {
-			g.type = 0;
-			g.direction = d->getDirection();
-			g.color = d->getColor();
-			g.intensity = d->getIntensity();
-
-
-			if (activeLights < 32)
-				gpuLights[activeLights++] = g;
-		}
-		else if (auto* p = dynamic_cast<PointLight*>(l)) {
-			g.type = 1;
-			g.position = p->getPosition();
-			g.color = p->getColor();
-			g.intensity = p->getIntensity();
-
-			if (activeLights < 32)
-				gpuLights[activeLights++] = g;
-		}
-		else if (auto* s = dynamic_cast<SpotLight*>(l)) {
-			g.type = 2;
-			g.position = s->getPosition();
-			g.direction = s->getDirection();
-			g.color = s->getColor();
-			g.intensity = s->getIntensity();
-			g.innerCutoff = glm::cos(glm::radians(s->getInnerCutoff()));
-			g.outerCutoff = glm::cos(glm::radians(s->getOuterCutoff()));
-
-
-			if (activeLights < 32)
-				gpuLights[activeLights++] = g;
-
-		}	
-	}
-
-
-	shader.setInteger(true, "numLights", activeLights);
-
-	for (int i = 0; i < activeLights; ++i) {
-		std::string prefix = "lights[" + std::to_string(i) + "].";
-
-		shader.setInteger(true, (prefix + "type").c_str(), gpuLights[i].type);
-		shader.setVector3f(true, (prefix + "position").c_str(), gpuLights[i].position.x, gpuLights[i].position.y, gpuLights[i].position.z);
-		shader.setVector3f(true, (prefix + "direction").c_str(), gpuLights[i].direction.x, gpuLights[i].direction.y, gpuLights[i].direction.z);
-		shader.setVector3f(true, (prefix + "color").c_str(), gpuLights[i].color.x, gpuLights[i].color.y, gpuLights[i].color.z);
-		shader.setFloat(true, (prefix + "intensity").c_str(), gpuLights[i].intensity);
-		shader.setFloat(true, (prefix + "innerCutoff").c_str(), gpuLights[i].innerCutoff);
-		shader.setFloat(true, (prefix + "outerCutoff").c_str(), gpuLights[i].outerCutoff);
-	}
-
-
-
-
-
 
 	if (mode == GL_TRIANGLES)
 	{
-		ebo.Bind();
+		ebo.bind();
 		glDrawElements(mode, indices.size(), GL_UNSIGNED_INT, 0);
 
 	}
 	else if (mode == GL_LINES)
 	{
-		edgeEBO.Bind();
+		edgeEBO.bind();
 		glDrawElements(mode, edgeIndices.size(), GL_UNSIGNED_INT, 0);
 	}
 	else if (mode == GL_POINTS)
 	{
-		vbo.Bind();
+		vbo.bind();
 		glDrawArrays(mode, 0, vertices.size());
 	}
 
-	vao.Unbind();
+	vao.unbind();
 }
 
-void Mesh::Translate(glm::vec3& translateVector)
-{
-	model = glm::translate(model, translateVector);
-}
-void Mesh::Translate(float x, float y, float z)
-{
-	model = glm::translate(model, glm::vec3(x, y, z));
-}
-
-void Mesh::Rotate(float degrees, const glm::vec3& axisVector)
-{
-	model = glm::rotate(model, glm::radians(degrees), axisVector);
-}
-
-void Mesh::Scale(glm::vec3& scaleVector)
-{
-	model = glm::scale(model, scaleVector);
-}
-void Mesh::Scale(float x, float y, float z) {
-	model = glm::scale(model, glm::vec3(x, y, z));
-}
 
 void Mesh::edgeScale(DEdge* edge, float delta, bool update)
 {
@@ -1519,20 +1500,6 @@ std::vector<glm::vec2> Mesh::getSlideUnprojectedDirections(DVertex* vert, std::u
 	return directions;
 }
 
-std::vector<int>& Mesh::getSelectedVertices() {
-	return selectedVertexIndices;
-}
-
-std::vector<DEdge*>& Mesh::getSelectedEdges()
-{
-	return selectedEdges;
-}
-
-std::vector<DFace*>& Mesh::getSelectedFaces()
-{
-
-	return selectedFaces;
-}
 
 void Mesh::findUVIslands(std::vector<std::unordered_set<DFace*>>& islands)
 {

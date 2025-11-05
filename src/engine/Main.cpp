@@ -60,17 +60,16 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
-	Window window( "Dardaneli");
-	window.Init();
+	Window window("Dardaneli");
+	window.init();
 
-	MyGUI gui(&window);
-	gui.Init();
+	MyGUI& gui = window.getGui();
 
 	Scene scene;
-	scene.Init(window);
+	scene.init(window);
 
 	Renderer renderer(window,gui);
-	renderer.Init();
+	renderer.init();
 
 	window.setCamera(cameraSingleton->getCamera("Viewport"));
 
@@ -104,7 +103,7 @@ int main() {
 	
 	std::cout << "\n\nDardaneli started successfully!\n";
 
-	while (!window.ShouldClose()) {
+	while (!window.shouldClose()) {
 		crntTime = glfwGetTime();
 		timeDiff = crntTime - prevTime;
 		counter++;
@@ -113,35 +112,36 @@ int main() {
 			std::string FPS = std::to_string((1.0 / timeDiff) * counter);
 			std::string ms = std::to_string((timeDiff / counter) * 1000);
 			std::string newTitle = "Dardaneli - " + FPS + "FPS / " + ms + "ms";
-			glfwSetWindowTitle(window.getWindow(), newTitle.c_str());
+			glfwSetWindowTitle(window.getGLFWwindow(), newTitle.c_str());
 
 			prevTime = crntTime;
 			counter = 0;
 		}
 
-		gui.NewFrame();
+		gui.newFrame();
 
 		//window.getCamera()->Update();
 
-		renderer.Render();
+		renderer.render();
 
-		if (!gui.getIO()->WantCaptureMouse || app->getMode() == Mode::SHADER_EDITOR) {
-			app->Inputs(window.getWindow(), gui);
+		if (!gui.getIO()->WantCaptureMouse || app->getMode() == Mode::SHADER_EDIT) {
+			app->inputs(&window);
 		}
+		//if (gui.getIO()->WantCaptureMouse)std::cout << "\n Mouse captured by GUI		"<<gui.getGLFWwindow();
 
-		gui.DrawUI();
-		gui.Render();
+		gui.drawUI();
+		gui.render();
 
-		window.PollEvents();
+		window.pollEvents();
 	};
 
 	std::cout << "\nTime = " << glfwGetTime();
 
-	gui.Shutdown();
+	
 
 
-	window.Terminate();
-	DeleteAllShaders();
+	window.terminate();
+	deleteAllShaders();
 	glfwTerminate();
 
 	return 0;

@@ -1,57 +1,72 @@
 #include "Window.h"
+#include "MyGUI.h"
 
 Window::Window(const char* title)
-	: name(title), camera(nullptr)
+	: name(title), camera(nullptr), gui(nullptr)
 {
 
 	glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
-	window = glfwCreateWindow(1, 1, title, nullptr, nullptr);
-	glfwSetWindowUserPointer(window, reinterpret_cast<void*>(this));
+	GLFWwindow* glfwWindow = glfwCreateWindow(1, 1, title, nullptr, nullptr);
+	glfwMakeContextCurrent(glfwWindow);
+	gladLoadGL();
 
-	glfwGetWindowSize( window, &width, &height);
+	glfwSetWindowUserPointer(glfwWindow, reinterpret_cast<void*>(this));
+	glfwGetWindowSize(glfwWindow, &width, &height);
+
+	gui = new MyGUI(glfwWindow);
 
 }
 
-void Window::Init() {
-	glfwMakeContextCurrent(window);
-	gladLoadGL();
-	//glViewport(0, 0, camera.getWidth(), camera.getHeight());
+void Window::init() {
 
 	setCallbacks();
 }
 
-bool Window::ShouldClose() {
-	return glfwWindowShouldClose(window);
+void Window::terminate()
+{
+	gui->shutdown();
+	glfwDestroyWindow(gui->getGLFWwindow());
+
+	delete gui;
 }
 
-void Window::Terminate()
-{
-	glfwDestroyWindow(window);
+bool Window::shouldClose() {
+	return glfwWindowShouldClose(gui->getGLFWwindow());
+}
+
+void Window::pollEvents() {
+	static 	int width, height, widthPrev, heightPrev;
+
+	glfwGetWindowSize(gui->getGLFWwindow(), &width, &height);
+	if (width != widthPrev || height != heightPrev)
+	{
+		resizeWindow(width, height);
+		widthPrev = width;
+		heightPrev = height;
+
+		std::cout << "Window resized -- Width: " << width << " Height: " << height << "\n";
+	}
+
+	glfwSwapBuffers(gui->getGLFWwindow());
+	glfwPollEvents();
 }
 
 void Window::key_callback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods)
 {
-	Window* window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
-	if (!window) { std::cout << "NE VALJA PROYOR"; return; }
-	if (key >= 0 && key < 1024) {
-		if (action == GLFW_PRESS) {
-			window->keys[key] = (window->keys[key] + 1) % 3;
-		}
-		else if (action == GLFW_RELEASE) {
-			// window->keys[key] = 0;
-			// window->keysProcessed[key] = false;  // Reset when released
-		}
-	}
+	ImGui_ImplGlfw_KeyCallback(glfwWindow, key, scancode, action, mods);
 
-	//std::cout << "\n Keys pressed: ";
-	//for (int i = 0; i < 1024; i++)
-	//    if (window->keys[i])
-	//        std::cout <<"Value " << window->keys[i] << " Key number " << i << " ";
-	//std::cout << "\n ----- ";
+	Window* window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
+	if (key >= 0 && key < 1024)
+		if (action == GLFW_PRESS)
+			window->keys[key] = (window->keys[key] + 1) % 3;
+
+
 }
 void Window::mouse_button_callback(GLFWwindow* glfwWindow, int button, int action, int mods)
 {
+	ImGui_ImplGlfw_MouseButtonCallback(glfwWindow, button, action, mods);
+	if (button > 2)return;
 	Window* window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
 	if (action == GLFW_PRESS)
 	{
@@ -64,9 +79,12 @@ void Window::mouse_button_callback(GLFWwindow* glfwWindow, int button, int actio
 		window->mouseButtonsProcessed[button] = 1;
 	}
 }
-void Window::scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+void Window::scroll_callback(GLFWwindow* glfwWindow, double xoffset, double yoffset) {
+
+	ImGui_ImplGlfw_ScrollCallback(glfwWindow, xoffset, yoffset);
+
 	//scroll down = -1 ... scroll up = +1
-	Window* classWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	Window* classWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
 	Camera* camera = classWindow->getCamera();
 
 	//std::cout << "\n\t" << camera->getName() << " ";
@@ -80,36 +98,11 @@ void Window::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 void Window::setCallbacks()
 {
-	glfwSetKeyCallback(window, key_callback);
-	glfwSetMouseButtonCallback(window, mouse_button_callback);
-	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetKeyCallback(gui->getGLFWwindow(), key_callback);
+	glfwSetMouseButtonCallback(gui->getGLFWwindow(), mouse_button_callback);
+	glfwSetScrollCallback(gui->getGLFWwindow(), scroll_callback);
 }
 
-void Window::PollEvents() {
-	static 	int width, height, widthPrev, heightPrev;
-
-	glfwGetWindowSize(window, &width, &height);
-	if (width != widthPrev || height != heightPrev)
-	{
-		resizeWindow(width, height);
-		widthPrev = width;
-		heightPrev = height;
-
-		std::cout << "Window resized -- Width: " << width << " Height: " << height << "\n";
-	}
-
-	glfwSwapBuffers(window);
-	glfwPollEvents();
-}
-
-GLFWwindow* Window::getWindow() {
-	return window;
-}
-
-Camera* Window::getCamera()
-{
-	return camera;
-}
 
 void Window::setCamera(Camera* cam)
 {
@@ -124,7 +117,7 @@ void Window::setCamera(Camera* cam)
 void Window::resizeWindow(int width, int height)
 {
 	if (width == 0 || height == 0)
-		glfwIconifyWindow(window);
+		glfwIconifyWindow(gui->getGLFWwindow());
 	else
 	{
 		this->width = width;
@@ -148,5 +141,3 @@ void Window::splitWindow(int width, int height)
 }
 
 
-
-//Camera& Window::getCamera() { return camera; }

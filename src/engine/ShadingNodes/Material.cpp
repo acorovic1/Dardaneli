@@ -206,7 +206,7 @@ Material::Material(std::string n) {
 
 }
 
-std::unique_ptr<Shader> Material::compileShader()
+std::unique_ptr<Shader> Material::compileShader(RenderMode mode)
 {
 	std::stringstream baseHeader;
 	ShaderBuilder builder;
@@ -218,8 +218,10 @@ std::unique_ptr<Shader> Material::compileShader()
 		<< "in vec2 fragUV;\n"
 		<< "in vec3 WorldPos;\n"
 		<< "in vec3 Normal;\n"
-		<< "out vec4 FragColor;\n"
-		<< pbrFunctions;
+		<< "out vec4 FragColor;\n";
+
+	if (mode == RenderMode::RENDER)
+		baseHeader << pbrFunctions;
 
 
 	std::unordered_set<int> visited;
@@ -306,11 +308,14 @@ std::unique_ptr<Shader> Material::compileShader()
 		<< baseHeader.str() << "\n\n"
 		<< builder.header.str() << "\n\n"
 		<< "\nvoid main() \n{\n"
-		<< builder.body.str() << "\n\n"
-		//<< "    FragColor = vec4(pbr(NormalFinal, normalize(camPos - WorldPos), ColorFinal, MetallicFinal, RoughnessFinal, AoFinal), 1.0);\n"
-		<< "    FragColor = vec4(pbr(getNormalFromMap(NormalFinal), normalize(camPos - WorldPos), ColorFinal, MetallicFinal, RoughnessFinal, AoFinal), 1.0);\n"
-		//<< "FragColor = vec4(ColorFinal,1.0);\n"
-		<< "}\n";
+		<< builder.body.str() << "\n\n";
+
+	if (mode == RenderMode::RENDER)
+		shaderCode << "\tFragColor = vec4(pbr(getNormalFromMap(NormalFinal), normalize(camPos - WorldPos), ColorFinal, MetallicFinal, RoughnessFinal, AoFinal), 1.0);\n}\n";
+			//<< "    FragColor = vec4(pbr(NormalFinal, normalize(camPos - WorldPos), ColorFinal, MetallicFinal, RoughnessFinal, AoFinal), 1.0);\n"
+	else shaderCode << "FragColor = vec4(ColorFinal,1.0);\n}\n";
+			
+	
 
 
 	std::string shaderCodeString = shaderCode.str();
@@ -323,7 +328,7 @@ std::unique_ptr<Shader> Material::compileShader()
 		std::cout << "\n\n========================\n" << shaderCodeString << "\n========================\n\n";
 		firstTime = false;
 	}
-	return std::make_unique<Shader>(name, "src/shaders/pbr.vert", shaderCodeString.c_str(),"src/shaders/pbr.geom");
+	return std::make_unique<Shader>(name, "pbr.vert", shaderCodeString.c_str(), "pbr.geom");
 
 }
 

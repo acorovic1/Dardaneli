@@ -19,8 +19,8 @@ public:
 
 	Renderer(Window& window, MyGUI& gui);
 
-	void Init();
-	void Render();
+	void init();
+	void render();
 
 
 

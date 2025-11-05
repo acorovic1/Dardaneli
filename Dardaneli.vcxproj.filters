@@ -213,19 +213,34 @@
     <ClCompile Include="src\engine\ShadingNodes\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ShadingNodes\ColorOutputNode.cpp">
+    <ClCompile Include="src\engine\ShadingNodes\Output\ColorOutputNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ShadingNodes\AmbientOcclusionOutputNode.cpp">
+    <ClCompile Include="src\engine\ShadingNodes\Output\AmbientOcclusionOutputNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ShadingNodes\MetallicOutputNode.cpp">
+    <ClCompile Include="src\engine\ShadingNodes\Output\MetallicOutputNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ShadingNodes\RoughnessOutputNode.cpp">
+    <ClCompile Include="src\engine\ShadingNodes\Output\RoughnessOutputNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ShadingNodes\NormalOutputNode.cpp">
+    <ClCompile Include="src\engine\ShadingNodes\Output\NormalOutputNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\Lights\PointLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\Lights\DirectionalLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\Lights\SpotLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DLoop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\ShadingNodes\Input\ValueNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -466,10 +481,10 @@
     <ClInclude Include="include\ShadingNodes\ShadingNodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\TextureNode.h">
+    <ClInclude Include="include\ShadingNodes\Texture\TextureNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\MathNode.h">
+    <ClInclude Include="include\ShadingNodes\Math\MathNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\ShadingNodes\ShadingNodesManager.h">
@@ -487,25 +502,25 @@
     <ClInclude Include="include\ShadingNodes\MaterialManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\ValueNode.h">
+    <ClInclude Include="include\ShadingNodes\Input\ValueNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\ColorOutputNode.h">
+    <ClInclude Include="include\ShadingNodes\Output\ColorOutputNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\NormalOutputNode.h">
+    <ClInclude Include="include\ShadingNodes\Output\NormalOutputNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\MetallicOutputNode.h">
+    <ClInclude Include="include\ShadingNodes\Output\MetallicOutputNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\RoughnessOutputNode.h">
+    <ClInclude Include="include\ShadingNodes\Output\RoughnessOutputNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\AmbientOcclusionOutputNode.h">
+    <ClInclude Include="include\ShadingNodes\Output\AmbientOcclusionOutputNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\ColorNode.h">
+    <ClInclude Include="include\ShadingNodes\Input\ColorNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Lights\Light.h">
@@ -520,13 +535,19 @@
     <ClInclude Include="include\Lights\SpotLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\ColorBurnNode.h">
+    <ClInclude Include="include\ShadingNodes\Color\ColorBurnNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="libraries\include\stb\stb_image_write.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\ColorMixNode.h">
+    <ClInclude Include="include\ShadingNodes\Color\ColorMixNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EditorModes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Aliases.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

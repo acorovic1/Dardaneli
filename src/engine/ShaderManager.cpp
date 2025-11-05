@@ -1,4 +1,5 @@
 #include "ShaderManager.h"
+#include "Shader.h"
 
 ShaderManager* ShaderManager::instancePtr = nullptr;
 ShaderManager* shaderSingleton = ShaderManager::getInstance();
@@ -38,4 +39,15 @@ Shader& ShaderManager::getShader(std::string name)
 	if (shaders.find(name) != shaders.end())
 		return *(shaders[name]);
 	else std::cout << "Shader '" << name << "' does not exist.\n";
+}
+
+void deleteAllShaders()
+{
+	std::cout << "Deleting all shaders. Shaders created: " << shaderSingleton->getNumberOfShaders() << std::endl;
+
+	for (auto it = shaderSingleton->shaders.begin(); it != shaderSingleton->shaders.end(); ++it)
+		glDeleteProgram(it->second->getID());
+
+
+	shaderSingleton->shaders.clear();
 }

@@ -10,5 +10,5 @@ class Scene {
 public:
 
 	Scene();
-	void Init(Window &window);
+	void init(Window &window);
 };

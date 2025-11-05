@@ -6,7 +6,7 @@
 #include "Lights/SpotLight.h"
 Scene::Scene() {}
 
-void Scene::Init(Window&window)
+void Scene::init(Window&window)
 {
 
 	
@@ -27,29 +27,30 @@ void Scene::Init(Window&window)
 	float aspect = float(window.getWidth()) / float(window.getHeight());
 	camera->setProjection(glm::ortho(aspect * -1.0f, aspect * 1.0f, -1.0f, 1.0f, -2000.0f, 300000.0f));
 
-	// uljepsaj ovo svega ti
-	// nek ide samo name.vert/name.frag a onda u konstruktoru dodaj ovu putanju ostalu
-	new Shader("EditMode", "src/shaders/editMode.vert", "src/shaders/editMode.frag");
-	new Shader("AABB", "src/shaders/BVH.vert", "src/shaders/BVH.frag");
-	new Shader("Grid", "src/shaders/grid.vert", "src/shaders/grid.frag");
 
-	new Shader("Basic", "src/shaders/basic.vert", "src/shaders/basic.frag");
+	new Shader("EditMode", "editMode.vert", "editMode.frag");
+	new Shader("AABB", "BVH.vert", "BVH.frag");
+	new Shader("Grid", "grid.vert", "grid.frag");
 
-	new Shader("Select", "src/shaders/selectObject.vert", "src/shaders/selectObject.frag");
-	new Shader("ActiveSelect", "src/shaders/activeObject.vert", "src/shaders/activeObject.frag");
+	new Shader("Basic", "basic.vert", "basic.frag");
 
-	new Shader("SelectEdit", "src/shaders/selectEdit.vert", "src/shaders/selectEdit.frag");
-	new Shader("ActiveEdit", "src/shaders/activeEdit.vert", "src/shaders/activeEdit.frag");
+	new Shader("Select", "selectObject.vert", "selectObject.frag");
+	new Shader("ActiveSelect", "activeObject.vert", "activeObject.frag");
 
-	new Shader("UV", "src/shaders/UV.vert", "src/shaders/UV.frag");
-	new Shader("Light", "src/shaders/light.vert", "src/shaders/light.frag");
-	new Shader("TextureTest", "src/shaders/textureTest.vert", "src/shaders/textureTest.frag");
+	new Shader("SelectEdit", "selectEdit.vert", "selectEdit.frag");
+	new Shader("ActiveEdit", "activeEdit.vert", "activeEdit.frag");
+
+	new Shader("UV", "UV.vert", "UV.frag");
+	new Shader("Light", "light.vert", "light.frag");
+	new Shader("TextureTest", "textureTest.vert", "textureTest.frag");
 
 	//new PointLight("test");
 	
 	addCube();
 
-	
+	// ostalo jos refactorisati ShadingNodes folder i sve vezano za BVH
+
+
 	auto obj = static_cast<Mesh*>(objectSingleton->getObject(0));
 
 	for(auto vert: obj->getVertices())

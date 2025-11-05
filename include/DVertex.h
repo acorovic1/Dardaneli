@@ -20,14 +20,9 @@ struct DVertex {
 
 	DEdge* e;
 
-	DVertex() : e(nullptr) {}
-	DVertex(glm::vec3 pos, glm::vec3 norm = glm::vec3()) : position(pos), normal(norm), e(nullptr) {}
-	DVertex(const DVertex& vertex){
-	
-		this->position = vertex.position;
-		this->normal = vertex.normal;
-		e = nullptr;
-	}
+	DVertex();
+	DVertex(glm::vec3 pos, glm::vec3 norm = glm::vec3());
+	DVertex(const DVertex& vertex);
 
 
 
@@ -37,31 +32,13 @@ struct DVertex {
 
 
 
-	bool operator==(const DVertex& vert) const
+	bool operator==(const DVertex& vert) const;
 
-	{
-		return glm::all(glm::epsilonEqual(position, vert.position, 0.001f));
-	}
+	void translate(glm::vec3 offset);
 
-	void Translate(glm::vec3 offset) {
-		position += offset;
-		// calculateNormals();
-	};
+	void translate(float x, float y, float z);
 
-	void Translate(float x, float y, float z) {
-		position.x += x;
-		position.y += y;
-		position.z += z;
-		// calculateNormals();
-	};
-
-	void Translate(float* offset) {
-		position.x += offset[0];
-		position.y += offset[1];
-		position.z += offset[2];
-		std::cout << "\nV.translate " << position.x;
-		// calculateNormals();
-	};
+	void translate(float* offset);
 };
 
 

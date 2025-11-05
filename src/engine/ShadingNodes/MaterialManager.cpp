@@ -13,15 +13,9 @@ MaterialManager* MaterialManager::getInstance()
 	return instancePtr;
 }
 
-void MaterialManager::addMaterial(Material* mat)
-{
-	materials.push_back(mat);
-}
+void MaterialManager::addMaterial(Material* mat) { materials.push_back(mat); }
 
-void MaterialManager::deleteMaterial(GLuint index)
-{
-	materials.erase(materials.begin() + index);
-}
+void MaterialManager::deleteMaterial(GLuint index) { materials.erase(materials.begin() + index); }
 
 Material* MaterialManager::getMaterial(std::string name)
 {
@@ -30,7 +24,4 @@ Material* MaterialManager::getMaterial(std::string name)
 			return mat;
 }
 
-std::vector<Material*>& MaterialManager::getAllMaterials()
-{
-	return materials;
-}
+std::vector<Material*>& MaterialManager::getAllMaterials() { return materials; }

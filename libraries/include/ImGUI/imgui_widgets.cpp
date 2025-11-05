@@ -840,7 +840,7 @@ bool ImGui::CloseButton(ImGuiID id, const ImVec2& pos)
 	if (area_to_visible_ratio < 1.5f)
 		bb_interact.Expand(ImTrunc(bb_interact.GetSize() * -0.25f));
 
-	// Tweak 2: We intentionally allow interaction when clipped so that a mechanical Alt,Right,Activate sequence can always close a window.
+	// Tweak 2: We intentionally allow interaction when clipped so that a mechanical Alt,Right,activate sequence can always close a window.
 	// (this isn't the common behavior of buttons, but it doesn't affect the user because navigation tends to keep items visible in scrolling layer).
 	bool is_clipped = !ItemAdd(bb_interact, id);
 
@@ -7191,7 +7191,7 @@ static void BoxSelectPreStartDrag(ImGuiID id, ImGuiSelectionUserData clicked_ite
 static void BoxSelectActivateDrag(ImGuiBoxSelectState* bs, ImGuiWindow* window)
 {
 	ImGuiContext& g = *GImGui;
-	IMGUI_DEBUG_LOG_SELECTION("[selection] BeginBoxSelect() 0X%08X: Activate\n", bs->ID);
+	IMGUI_DEBUG_LOG_SELECTION("[selection] BeginBoxSelect() 0X%08X: activate\n", bs->ID);
 	bs->IsActive = true;
 	bs->Window = window;
 	bs->IsStarting = false;
@@ -7395,7 +7395,7 @@ ImGuiMultiSelectIO* ImGui::BeginMultiSelect(ImGuiMultiSelectFlags flags, int sel
 	if (flags & ImGuiMultiSelectFlags_NoRangeSelect)
 		ms->KeyMods &= ~ImGuiMod_Shift;
 
-	// Bind storage
+	// bind storage
 	ImGuiMultiSelectState* storage = g.MultiSelectStorage.GetOrAddByKey(id);
 	storage->ID = id;
 	storage->LastFrameActive = g.FrameCount;

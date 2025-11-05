@@ -144,13 +144,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\engine\ShadingNodes\AmbientOcclusionOutputNode.cpp" />
-    <ClCompile Include="src\engine\ShadingNodes\ColorOutputNode.cpp" />
+    <ClCompile Include="src\DLoop.cpp" />
+    <ClCompile Include="src\engine\Lights\DirectionalLight.cpp" />
+    <ClCompile Include="src\engine\Lights\PointLight.cpp" />
+    <ClCompile Include="src\engine\Lights\SpotLight.cpp" />
+    <ClCompile Include="src\engine\ShadingNodes\Output\AmbientOcclusionOutputNode.cpp" />
+    <ClCompile Include="src\engine\ShadingNodes\Output\ColorOutputNode.cpp" />
     <ClCompile Include="src\engine\ShadingNodes\Material.cpp" />
     <ClCompile Include="src\engine\ShadingNodes\MaterialManager.cpp" />
-    <ClCompile Include="src\engine\ShadingNodes\MetallicOutputNode.cpp" />
-    <ClCompile Include="src\engine\ShadingNodes\NormalOutputNode.cpp" />
-    <ClCompile Include="src\engine\ShadingNodes\RoughnessOutputNode.cpp" />
+    <ClCompile Include="src\engine\ShadingNodes\Output\MetallicOutputNode.cpp" />
+    <ClCompile Include="src\engine\ShadingNodes\Output\NormalOutputNode.cpp" />
+    <ClCompile Include="src\engine\ShadingNodes\Output\RoughnessOutputNode.cpp" />
     <ClCompile Include="src\engine\ShadingNodes\ShadingNodesManager.cpp" />
     <ClCompile Include="libraries\include\ImGUI\ImGuiFileDialog.cpp" />
     <ClCompile Include="libraries\include\ImGUI\imnodes.cpp" />
@@ -170,6 +174,7 @@
     <ClCompile Include="src\engine\FaceBVH.cpp" />
     <ClCompile Include="src\engine\FaceBVHNode.cpp" />
     <ClCompile Include="src\engine\GeometryUtils.cpp" />
+    <ClCompile Include="src\engine\ShadingNodes\Input\ValueNode.cpp" />
     <ClCompile Include="src\engine\UVVertexBVH.cpp" />
     <ClCompile Include="src\engine\VertexBVH.cpp" />
     <ClCompile Include="src\engine\glad.c" />
@@ -231,6 +236,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AABB.h" />
+    <ClInclude Include="include\Aliases.h" />
     <ClInclude Include="include\Application.h" />
     <ClInclude Include="include\BasicObjects.h" />
     <ClInclude Include="include\BVHNode.h" />
@@ -254,22 +260,23 @@
     <ClInclude Include="include\Lights\PointLight.h" />
     <ClInclude Include="include\Lights\SpotLight.h" />
     <ClInclude Include="include\PairHash.h" />
-    <ClInclude Include="include\ShadingNodes\AmbientOcclusionOutputNode.h" />
-    <ClInclude Include="include\ShadingNodes\ColorBurnNode.h" />
-    <ClInclude Include="include\ShadingNodes\ColorMixNode.h" />
-    <ClInclude Include="include\ShadingNodes\ColorNode.h" />
-    <ClInclude Include="include\ShadingNodes\ColorOutputNode.h" />
+    <ClInclude Include="include\EditorModes.h" />
+    <ClInclude Include="include\ShadingNodes\Output\AmbientOcclusionOutputNode.h" />
+    <ClInclude Include="include\ShadingNodes\Color\ColorBurnNode.h" />
+    <ClInclude Include="include\ShadingNodes\Color\ColorMixNode.h" />
+    <ClInclude Include="include\ShadingNodes\Input\ColorNode.h" />
+    <ClInclude Include="include\ShadingNodes\Output\ColorOutputNode.h" />
     <ClInclude Include="include\ShadingNodes\Material.h" />
     <ClInclude Include="include\ShadingNodes\MaterialManager.h" />
-    <ClInclude Include="include\ShadingNodes\MathNode.h" />
-    <ClInclude Include="include\ShadingNodes\MetallicOutputNode.h" />
-    <ClInclude Include="include\ShadingNodes\NormalOutputNode.h" />
-    <ClInclude Include="include\ShadingNodes\RoughnessOutputNode.h" />
+    <ClInclude Include="include\ShadingNodes\Math\MathNode.h" />
+    <ClInclude Include="include\ShadingNodes\Output\MetallicOutputNode.h" />
+    <ClInclude Include="include\ShadingNodes\Output\NormalOutputNode.h" />
+    <ClInclude Include="include\ShadingNodes\Output\RoughnessOutputNode.h" />
     <ClInclude Include="include\ShadingNodes\ShaderBuilder.h" />
     <ClInclude Include="include\ShadingNodes\ShadingNodes.h" />
     <ClInclude Include="include\ShadingNodes\ShadingNodesManager.h" />
-    <ClInclude Include="include\ShadingNodes\TextureNode.h" />
-    <ClInclude Include="include\ShadingNodes\ValueNode.h" />
+    <ClInclude Include="include\ShadingNodes\Texture\TextureNode.h" />
+    <ClInclude Include="include\ShadingNodes\Input\ValueNode.h" />
     <ClInclude Include="include\UnorderedPair.h" />
     <ClInclude Include="include\UVVertex.h" />
     <ClInclude Include="include\UVVertexBVH.h" />

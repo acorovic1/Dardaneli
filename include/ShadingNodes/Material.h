@@ -5,9 +5,11 @@
 
 #include "algorithm"
 #include "Texture.h"
-
+#include "EditorModes.h"
 
 // ONE HELL OF A REFACTOR IS NEEDED
+
+
 
 class Material {
 	std::string name;
@@ -197,7 +199,7 @@ public:
 	}
 
 
-	std::unique_ptr<Shader> compileShader();
+	std::unique_ptr<Shader> compileShader(RenderMode mode);
 	
 
 };
