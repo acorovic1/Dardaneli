@@ -1,5 +1,5 @@
-#include "Window.h"
 #include "Renderer.h"
+#include "Window.h"
 #include "MyGUI.h"
 #include "Scene.h"
 #include "windows.h"

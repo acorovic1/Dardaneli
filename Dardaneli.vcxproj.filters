@@ -60,7 +60,7 @@
     <ClCompile Include="src\engine\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\Camera.cpp">
+    <ClCompile Include="src\engine\Core\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="libraries\include\ImGUI\imgui_widgets.cpp">
@@ -84,67 +84,67 @@
     <ClCompile Include="libraries\include\ImGUI\imgui_tables.cpp">
       <Filter>Source Files\GUI\ImGUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\AABB.cpp">
+    <ClCompile Include="src\engine\AccelerationStructures\BoundingVolumes\AABB.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\BVHNode.cpp">
+    <ClCompile Include="src\engine\AccelerationStructures\BVHNode.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\EBO.cpp">
+    <ClCompile Include="src\engine\GLBuffers\EBO.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\engine\glad.c">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\Mesh.cpp">
+    <ClCompile Include="src\engine\Objects\Mesh\Mesh.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\Object.cpp">
+    <ClCompile Include="src\engine\Objects\Object.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ObjectManager.cpp">
+    <ClCompile Include="src\engine\Objects\ObjectManager.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\Ray.cpp">
+    <ClCompile Include="src\engine\Utilities\Ray.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\Shader.cpp">
+    <ClCompile Include="src\engine\Materials\Shader.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\Texture.cpp">
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Texture\Texture.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\VAO.cpp">
+    <ClCompile Include="src\engine\GLBuffers\VAO.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\VBO.cpp">
+    <ClCompile Include="src\engine\GLBuffers\VBO.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\stb.cpp">
+    <ClCompile Include="src\engine\Utilities\stb.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\Window.cpp">
+    <ClCompile Include="src\engine\Core\Window.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\Renderer.cpp">
+    <ClCompile Include="src\engine\Core\Renderer.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\Scene.cpp">
+    <ClCompile Include="src\engine\Core\Scene.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\BasicObjects.cpp">
+    <ClCompile Include="src\engine\Objects\BasicObjects.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ShaderManager.cpp">
+    <ClCompile Include="src\engine\Materials\ShaderManager.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ObjectModeBVH.cpp">
+    <ClCompile Include="src\engine\AccelerationStructures\ObjectModeBVH.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\DrawableAABB.cpp">
+    <ClCompile Include="src\engine\AccelerationStructures\BoundingVolumes\DrawableAABB.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\CamaraManager.cpp">
+    <ClCompile Include="src\engine\Core\CameraManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="libraries\include\ImGUIZMO\GraphEditor.cpp">
@@ -159,43 +159,43 @@
     <ClCompile Include="libraries\include\ImGUIZMO\ImGuizmo.cpp">
       <Filter>Source Files\GUI\ImGUIZMO</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\VertexBVH.cpp">
+    <ClCompile Include="src\engine\AccelerationStructures\VertexBVH.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\MyGUI.cpp">
+    <ClCompile Include="src\engine\Core\MyGUI.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\Application.cpp">
+    <ClCompile Include="src\engine\Core\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\WindowManager.cpp">
+    <ClCompile Include="src\engine\Core\WindowManager.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\EdgeBVH.cpp">
+    <ClCompile Include="src\engine\AccelerationStructures\EdgeBVH.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\FaceBVH.cpp">
+    <ClCompile Include="src\engine\AccelerationStructures\FaceBVH.cpp">
       <Filter>Source Files\Picking</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\FaceBVHNode.cpp">
+    <ClCompile Include="src\engine\AccelerationStructures\FaceBVHNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\EdgeBVHNode.cpp">
+    <ClCompile Include="src\engine\AccelerationStructures\EdgeBVHNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\DEdge.cpp">
+    <ClCompile Include="src\engine\Objects\Mesh\DEdge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\DVertex.cpp">
+    <ClCompile Include="src\engine\Objects\Mesh\DVertex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\DFace.cpp">
+    <ClCompile Include="src\engine\Objects\Mesh\DFace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\GeometryUtils.cpp">
+    <ClCompile Include="src\engine\Utilities\GeometryUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\UVVertexBVH.cpp">
+    <ClCompile Include="src\engine\AccelerationStructures\UVVertexBVH.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="libraries\include\ImGUI\imnodes.cpp">
@@ -204,28 +204,28 @@
     <ClCompile Include="libraries\include\ImGUI\ImGuiFileDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ShadingNodes\ShadingNodesManager.cpp">
+    <ClCompile Include="src\engine\Materials\ShadingNodes\ShadingNodesManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ShadingNodes\MaterialManager.cpp">
+    <ClCompile Include="src\engine\Materials\MaterialManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ShadingNodes\Material.cpp">
+    <ClCompile Include="src\engine\Materials\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ShadingNodes\Output\ColorOutputNode.cpp">
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Output\ColorOutputNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ShadingNodes\Output\AmbientOcclusionOutputNode.cpp">
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Output\AmbientOcclusionOutputNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ShadingNodes\Output\MetallicOutputNode.cpp">
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Output\MetallicOutputNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ShadingNodes\Output\RoughnessOutputNode.cpp">
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Output\RoughnessOutputNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ShadingNodes\Output\NormalOutputNode.cpp">
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Output\NormalOutputNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\engine\Lights\PointLight.cpp">
@@ -237,10 +237,25 @@
     <ClCompile Include="src\engine\Lights\SpotLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\DLoop.cpp">
+    <ClCompile Include="src\engine\Objects\Mesh\DLoop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\ShadingNodes\Input\ValueNode.cpp">
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Input\ValueNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Color\ColorBurnNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Color\ColorMixNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Input\ColorNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Math\MathNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Texture\TextureNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -304,64 +319,61 @@
     <None Include="src\shaders\pbr.frag" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Camera.h">
+    <ClInclude Include="include\Core\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\EBO.h">
+    <ClInclude Include="include\GLBuffers\EBO.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="include\Shader.h">
+    <ClInclude Include="include\Materials\Shader.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="include\Texture.h">
+    <ClInclude Include="include\Materials\ShadingNodes\Texture\Texture.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="include\VAO.h">
+    <ClInclude Include="include\GLBuffers\VAO.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="include\VBO.h">
+    <ClInclude Include="include\GLBuffers\VBO.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="include\AABB.h">
+    <ClInclude Include="include\AccelerationStructures\BoundingVolumes\AABB.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
-    <ClInclude Include="include\Ray.h">
+    <ClInclude Include="include\Utilities\Ray.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
-    <ClInclude Include="include\BVHNode.h">
+    <ClInclude Include="include\AccelerationStructures\BVHNode.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
-    <ClInclude Include="include\Object.h">
+    <ClInclude Include="include\Objects\Object.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="include\Mesh.h">
+    <ClInclude Include="include\Objects\ObjectManager.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="include\ObjectManager.h">
+    <ClInclude Include="include\Core\Renderer.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Core\Window.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Core\Scene.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Objects\BasicObjects.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="include\Renderer.h">
+    <ClInclude Include="include\Materials\ShaderManager.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="include\Window.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Scene.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\BasicObjects.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ShaderManager.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ObjectModeBVH.h">
+    <ClInclude Include="include\AccelerationStructures\ObjectModeBVH.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
-    <ClInclude Include="include\DrawableAABB.h">
+    <ClInclude Include="include\AccelerationStructures\BoundingVolumes\DrawableAABB.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
-    <ClInclude Include="include\CameraManager.h">
+    <ClInclude Include="include\Core\CameraManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="libraries\include\ImGUIZMO\ImCurveEdit.h">
@@ -406,58 +418,58 @@
     <ClInclude Include="libraries\include\ImGUI\imstb_truetype.h">
       <Filter>Header Files\GUI\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="include\VertexBVH.h">
+    <ClInclude Include="include\AccelerationStructures\VertexBVH.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
-    <ClInclude Include="include\Application.h">
+    <ClInclude Include="include\Core\Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\MyGUI.h">
+    <ClInclude Include="include\Core\MyGUI.h">
       <Filter>Header Files\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="include\WindowManager.h">
+    <ClInclude Include="include\Core\WindowManager.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="include\EdgeBVH.h">
+    <ClInclude Include="include\AccelerationStructures\EdgeBVH.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
-    <ClInclude Include="include\FaceBVH.h">
+    <ClInclude Include="include\AccelerationStructures\FaceBVH.h">
       <Filter>Header Files\Picking</Filter>
     </ClInclude>
-    <ClInclude Include="include\FaceBVHNode.h">
+    <ClInclude Include="include\AccelerationStructures\FaceBVHNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\EdgeBVHNode.h">
+    <ClInclude Include="include\AccelerationStructures\EdgeBVHNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\DDiskLink.h">
+    <ClInclude Include="include\Objects\Mesh\DDiskLink.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\DLoop.h">
+    <ClInclude Include="include\Objects\Mesh\DLoop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\DVertex.h">
+    <ClInclude Include="include\Objects\Mesh\DVertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\DEdge.h">
+    <ClInclude Include="include\Objects\Mesh\DEdge.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\DFace.h">
+    <ClInclude Include="include\Objects\Mesh\DFace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\UnorderedPair.h">
+    <ClInclude Include="include\Utilities\UnorderedPair.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\PairHash.h">
+    <ClInclude Include="include\Utilities\PairHash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\GeometryUtils.h">
+    <ClInclude Include="include\Utilities\GeometryUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\UVVertex.h">
+    <ClInclude Include="include\Objects\Mesh\UVVertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\UVVertexBVH.h">
+    <ClInclude Include="include\AccelerationStructures\UVVertexBVH.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="libraries\include\ImGUI\imnodes.h">
@@ -478,76 +490,79 @@
     <ClInclude Include="libraries\include\stb\stb_image_resize2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\ShadingNodes.h">
+    <ClInclude Include="include\Materials\ShadingNodes\ShadingNodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\Texture\TextureNode.h">
+    <ClInclude Include="include\Materials\ShadingNodes\Texture\TextureNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\Math\MathNode.h">
+    <ClInclude Include="include\Materials\ShadingNodes\Math\MathNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\ShadingNodesManager.h">
+    <ClInclude Include="include\Materials\ShadingNodes\ShadingNodesManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\Material.h">
+    <ClInclude Include="include\Materials\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\ShaderBuilder.h">
+    <ClInclude Include="include\Materials\ShaderBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\GPUVertex.h">
+    <ClInclude Include="include\Objects\Mesh\GPUVertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\MaterialManager.h">
+    <ClInclude Include="include\Materials\MaterialManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\Input\ValueNode.h">
+    <ClInclude Include="include\Materials\ShadingNodes\Input\ValueNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\Output\ColorOutputNode.h">
+    <ClInclude Include="include\Materials\ShadingNodes\Output\ColorOutputNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\Output\NormalOutputNode.h">
+    <ClInclude Include="include\Materials\ShadingNodes\Output\NormalOutputNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\Output\MetallicOutputNode.h">
+    <ClInclude Include="include\Materials\ShadingNodes\Output\MetallicOutputNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\Output\RoughnessOutputNode.h">
+    <ClInclude Include="include\Materials\ShadingNodes\Output\RoughnessOutputNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\Output\AmbientOcclusionOutputNode.h">
+    <ClInclude Include="include\Materials\ShadingNodes\Output\AmbientOcclusionOutputNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\Input\ColorNode.h">
+    <ClInclude Include="include\Materials\ShadingNodes\Input\ColorNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Lights\Light.h">
+    <ClInclude Include="include\Objects\Lights\Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Lights\PointLight.h">
+    <ClInclude Include="include\Objects\Lights\PointLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Lights\DirectionalLight.h">
+    <ClInclude Include="include\Objects\Lights\DirectionalLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Lights\SpotLight.h">
+    <ClInclude Include="include\Objects\Lights\SpotLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\Color\ColorBurnNode.h">
+    <ClInclude Include="include\Materials\ShadingNodes\Color\ColorBurnNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="libraries\include\stb\stb_image_write.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadingNodes\Color\ColorMixNode.h">
+    <ClInclude Include="include\Materials\ShadingNodes\Color\ColorMixNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\EditorModes.h">
+    <ClInclude Include="include\Utilities\EditorModes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Aliases.h">
+    <ClInclude Include="include\Utilities\Aliases.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Objects\Mesh\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
