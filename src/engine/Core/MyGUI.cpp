@@ -26,7 +26,23 @@
 #include "Lights/PointLight.h"
 #include "Lights/SpotLight.h"
 
+#if defined(_WIN32)
 #include <windows.h>
+#endif
+
+void openFile(const char* filename) {
+#if defined(_WIN32)
+	ShellExecuteA(NULL, "open", filename, NULL, NULL, SW_SHOWNORMAL);
+#elif defined(__APPLE__)
+	std::string cmd = "open ";
+	cmd += filename;
+	system(cmd.c_str());
+#elif defined(__linux__)
+	std::string cmd = "xdg-open ";
+	cmd += filename;
+	system(cmd.c_str());
+#endif
+}
 
 
 
@@ -1690,7 +1706,7 @@ void MyGUI::saveFinalRender(const char* filename, int width, int height)
 	stbi_write_png(filename, width, height, 3, flipped.data(), width * 3);
 
 
-	ShellExecuteA(NULL, "open", filename, NULL, NULL, SW_SHOWNORMAL);
+	openFile(filename);
 
 }
 
