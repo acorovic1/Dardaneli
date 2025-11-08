@@ -5,11 +5,11 @@
 #include "Aliases.h"
 #include "unordered_set"
 #include "UVVertex.h"
-#include "Material.h"
+//#include "Material.h"
 #include "GPUVertex.h"
 #include "map"
 
-
+class Material;
 class Mesh : public Object {
 
 
@@ -85,7 +85,7 @@ public:
 	void scale(glm::vec3& scaleVector)override;
 	void scale(float x, float y, float z)override;
 
-	void draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES) override;
+	void draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES,bool outline=false) override;
 	void materialDraw(Camera& camera);
 	void renderDraw(Camera& camera);
 

@@ -1,5 +1,5 @@
 #include "ShadingNodes/Output/AmbientOcclusionOutputNode.h"
-
+#include "Material.h"
 
 int AmbientOcclusionOutputNode::activeNodeId = -1;
 

@@ -244,7 +244,7 @@ void Application::editMode(Window* window)
 	GLFWwindow* glfwWindow = window->getGLFWwindow();
 	MyGUI& gui = window->getGui();
 
-	Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(objectIndices[objectIndices.size() - 1]));
+	Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(objectIndices.back()));
 
 	// SELECT
 	if (mouseButtons[GLFW_MOUSE_BUTTON_LEFT])
@@ -930,7 +930,7 @@ void Application::editMode(Window* window)
 		keys[GLFW_KEY_LEFT_ALT] = 0;
 	}
 
-	// SIMPLE SUBDIVISION
+	// LINEAR SUBDIVISION
 	if (keys[GLFW_KEY_S] && keys[GLFW_KEY_LEFT_CONTROL])
 	{
 		mesh->linearSubdivision();
@@ -1283,11 +1283,7 @@ void Application::uVMode(Window* window)
 	// TRANSLATE
 	if (keys[GLFW_KEY_G])
 	{
-		if (!mesh->getSelectedVertices().size())
-		{
-			keys[GLFW_KEY_G] = 0;
-			return;
-		}
+
 		// Fetches the coordinates of the cursor
 
 		glfwGetCursorPos(glfwWindow, &posX, &posY);
@@ -1303,7 +1299,7 @@ void Application::uVMode(Window* window)
 		float deltaX = (posX - previousX) / 150;
 		float deltaY = (previousY - posY) / 150;
 
-		auto& vertices = mesh->getUVCoords();
+		
 		if (keys[GLFW_KEY_X] == 1)
 		{
 			std::cout << "X";
@@ -1336,6 +1332,9 @@ void Application::uVMode(Window* window)
 		previousX = posX;
 		previousY = posY;
 	}
+
+	// for rotate and scale keys.. add them as conditions in the movement2D method's reset if statement 
+
 
 }
 void Application::materialEditor(Window* window)

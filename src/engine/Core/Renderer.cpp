@@ -6,16 +6,18 @@
 
 void Renderer::viewportEditor()
 {
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 	glClearColor(0.23f, 0.33f, 0.33f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	glStencilMask(0x00);
 
 	gui.drawGrid3D();
 
 	RenderMode renderMode = app->getRenderMode();
 
-	if (!gui.getFaceCulling() || renderMode==RenderMode::WIREFRAME)
+	if (!gui.getFaceCulling() || renderMode == RenderMode::WIREFRAME)
 		glDisable(GL_CULL_FACE);
 	else
 		glEnable(GL_CULL_FACE);
@@ -27,67 +29,78 @@ void Renderer::viewportEditor()
 
 
 	static Shader& basicShader = shaderSingleton->getShader("Basic");
-	static Shader& selectShader = shaderSingleton->getShader("SelectEdit"); // orange color
-	static Shader& activeShader = shaderSingleton->getShader("ActiveEdit"); // red color
 	auto& selectedObjects = gui.getObjectIndex();
 	for (int i = 0; i < objectSingleton->getNumberOfObjects(); i++)
 	{
 		Object* object = objectSingleton->getObject(i);
 		Mesh* mesh = dynamic_cast<Mesh*>(object);
+		basicShader.activate();
+		// setting model and cameraUniform uniforms may be reduntat bcs they are also set in object.draw method
+		basicShader.setMat4(true, "model", mesh->getModel());
+		camera->cameraUniform(true, basicShader, "cameraMatrix");
 		if (std::any_of(selectedObjects.begin(), selectedObjects.end(), [i](int a) {return i == a; }))
 		{
 			if (gui.getMode() == Mode::OBJECT)
 			{
 				// OUTLINE STENCIL BUFFER TECHNIQUE
 
+				// why doesnt this work properly
 
+				/*glEnable(GL_STENCIL_TEST);
 				glStencilFunc(GL_ALWAYS, 1, 0xFF);
 				glStencilMask(0xFF);
-				glPointSize(5.0f);
 
+				glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
-				object->draw(shaderSingleton->getShader("Basic"), *camera, GL_LINES);
+				basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Default));
+				object->draw(basicShader, *camera, GL_TRIANGLES);
+
+				glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
 				glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 				glStencilMask(0x00);
-				glDisable(GL_DEPTH_TEST);
-				if (i == selectedObjects[selectedObjects.size() - 1])
-					object->draw(shaderSingleton->getShader("ActiveSelect"), *camera, GL_LINES);//OUTLINE
+				glDisable(GL_DEPTH_TEST);*/
+				if (i == selectedObjects.back())
+				{
+					basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::ActiveSelection));
+					object->draw(basicShader, *camera, GL_LINES, true); //OUTLINE
+				}
 				else
-					object->draw(shaderSingleton->getShader("Select"), *camera, GL_LINES);//OUTLINE
+				{
+					basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::NonActiveSelection));
+					object->draw(basicShader, *camera, GL_LINES, true); //OUTLINE
+				}
 
-				glStencilMask(0xFF);
+				/*glStencilMask(0xFF);
 				glStencilFunc(GL_ALWAYS, 1, 0xFF);
-				glEnable(GL_DEPTH_TEST);
+				glEnable(GL_DEPTH_TEST);*/
+
+
+
 			}
 			else if (gui.getMode() == Mode::EDIT)
 			{
-
-				mesh->draw(shaderSingleton->getShader("EditMode"), *camera, GL_LINES);
+				glLineWidth(2.0f);
+				basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Black));
+				mesh->draw(basicShader, *camera, GL_LINES);
 
 				if (gui.getSelectMode() == SelectMode::VERTEX)
 				{
 					glPointSize(5.0f);
-					mesh->draw(shaderSingleton->getShader("EditMode"), *camera, GL_POINTS); // black color
+					basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Black));
+					mesh->draw(basicShader, *camera, GL_POINTS);
 
-					auto& selectedVertices = mesh->getSelectedVertices();
 
 					mesh->bindVAO();
-					const glm::mat4& model = mesh->getModel();
 
+					basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::NonActiveSelection));
 
-					selectShader.activate();
-					selectShader.setMat4(true, "model", model);
-					camera->cameraUniform(true, selectShader, "cameraMatrix");
-
+					auto& selectedVertices = mesh->getSelectedVertices();
 					for (int j = 0; j < selectedVertices.size(); j++)
 					{
 						if (j == selectedVertices.size() - 1)
-						{
-							activeShader.activate();
-							activeShader.setMat4(true, "model", model);
-							camera->cameraUniform(true, activeShader, "cameraMatrix");
-						}
+							basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::ActiveSelection));
+
 						glDrawArrays(GL_POINTS, selectedVertices[j], 1);
 					}
 
@@ -108,12 +121,9 @@ void Renderer::viewportEditor()
 
 					}
 					mesh->bindVAO();
-					const glm::mat4& model = mesh->getModel();
 
+					basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::NonActiveSelection));
 
-					selectShader.activate();
-					selectShader.setMat4(true, "model", model);
-					camera->cameraUniform(true, selectShader, "cameraMatrix");
 
 					EBO ebo(edgeVerts);
 					ebo.bind();
@@ -121,13 +131,11 @@ void Renderer::viewportEditor()
 					{
 						glDrawElements(GL_LINES, edgeVerts.size() - 2, GL_UNSIGNED_INT, 0); // draw red
 
-						activeShader.activate();
-						activeShader.setMat4(true, "model", model);
-						camera->cameraUniform(true, activeShader, "cameraMatrix");
+						basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::ActiveSelection));
 						glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, (void*)((edgeVerts.size() - 2) * sizeof(GLuint))); // draw orange
 
 					}
-
+					/////////////////////////////////////////////////////// inneficient for high poly meshes.. inneficient anyways tbh
 					for (DEdge* edge : mesh->getAllEdges())
 						if (edge->isSeam)
 						{
@@ -141,13 +149,7 @@ void Renderer::viewportEditor()
 						EBO seamEBO(seamVerts);
 						seamEBO.bind();
 
-						static Shader& seamShader = shaderSingleton->getShader("SelectEdit");
-						// pauk
-						seamShader.activate();
-						seamShader.setMat4(true, "model", model);
-						camera->cameraUniform(true, seamShader, "cameraMatrix");
-
-						//std::cout << "\n\n\t seamVerts size = "<<seamVerts.size();
+						basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Seams));
 
 						glDrawElements(GL_LINES, seamVerts.size(), GL_UNSIGNED_INT, 0);
 					}
@@ -171,32 +173,24 @@ void Renderer::viewportEditor()
 					if (drawFaces.size())
 					{
 						mesh->bindVAO();
-						const glm::mat4& x = mesh->getModel();
-						
-						selectShader.activate();
-						selectShader.setMat4(true, "model", x);
-						camera->cameraUniform(true, selectShader, "cameraMatrix");
 
 						EBO ebo(drawFaces);
 						ebo.bind();
 
 						int lastFace = selectedVerts[0];
 						for (int i = lastFace + 1; i < selectedVerts.size(); i += selectedVerts[i] + 1)
-						{
 							lastFace = selectedVerts[i];
-						}
 
 						lastFace = (lastFace - 2) * 3; // actual number of indices used to make that face
 
 
 						glDisable(GL_CULL_FACE);
 
-						glDrawElements(GL_TRIANGLES, drawFaces.size() - lastFace, GL_UNSIGNED_INT, 0); 
+						basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::NonActiveSelection));
+						glDrawElements(GL_TRIANGLES, drawFaces.size() - lastFace, GL_UNSIGNED_INT, 0);
 
 
-						activeShader.activate();
-						activeShader.setMat4(true, "model", x);
-						camera->cameraUniform(true, activeShader, "cameraMatrix");
+						basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::ActiveSelection));
 						glDrawElements(GL_TRIANGLES, lastFace, GL_UNSIGNED_INT, (void*)((drawFaces.size() - lastFace) * sizeof(GLuint))); // draw orange
 
 						glEnable(GL_CULL_FACE);
@@ -204,18 +198,23 @@ void Renderer::viewportEditor()
 				}
 			}
 		};
+		
 
-
-
+		glLineWidth(1.0f);
+		basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Default));
 		if (renderMode == RenderMode::WIREFRAME)
 		{
 			if (mesh)
+			{
+				basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Black));
 				mesh->draw(basicShader, *camera, GL_LINES);
+			}
 			else
 				object->draw(basicShader, *camera, GL_TRIANGLES);
 		}
 		else if (renderMode == RenderMode::SOLID)
 		{
+
 			object->draw(basicShader, *camera, GL_TRIANGLES);
 
 		}
@@ -262,9 +261,9 @@ void Renderer::uvEditor()
 	}
 
 
-	Shader selectShader = shaderSingleton->getShader("UV"); // blue color
-	selectShader.activate();
-	camera->cameraUniform(true, selectShader, "cameraMatrix");
+	static Shader uvShader = shaderSingleton->getShader("UV"); // blue color
+	uvShader.activate();
+	camera->cameraUniform(true, uvShader, "cameraMatrix");
 
 	VAO uvVAO;
 	VBO uvVBO(uvCoordsVec);

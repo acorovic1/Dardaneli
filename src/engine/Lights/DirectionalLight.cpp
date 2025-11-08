@@ -58,10 +58,13 @@ void DirectionalLight::rotate(float degrees, const glm::vec3& axisVector)
 
 }
 
-void DirectionalLight::draw(Shader& shader, Camera& camera, GLenum mode)  {
+void DirectionalLight::draw(Shader& shader, Camera& camera, GLenum mode,bool outline)  {
 
 	shader.activate();
-	shader.setMat4(true, "model", model);
+	if (outline)
+		shader.setMat4(true, "model", glm::scale(model, glm::vec3(1.03f)));
+	else
+		shader.setMat4(true, "model", model);
 	shader.setVector3f(true, "color", color);
 
 	auto view = camera.getViewMatrix();

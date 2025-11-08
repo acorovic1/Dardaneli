@@ -52,7 +52,8 @@ void ObjectModeBVH::Draw(Camera& camera, Shader& shader, int subdivision)
 }
 
 void ObjectModeBVH::DrawTree(BVHNode* node, Camera& camera, Shader& shader, int subdivision) {
-	if (subdivision == 0) return;
+	if (subdivision == 0) 
+		return;
 	subdivision--;
 
 	if (node->left)

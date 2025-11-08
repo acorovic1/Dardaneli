@@ -1,6 +1,6 @@
 #pragma once
 #include "ShadingNodes/ShadingNodes.h"
-#include <Application.h>
+#include "Application.h"
 
 struct ColorMixNode : public ShadingNodes {
 

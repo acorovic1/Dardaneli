@@ -1,6 +1,6 @@
 #include "FaceBVHNode.h"
 #include "Mesh/DFace.h"
-
+#include "Mesh/Mesh.h"
 
 FaceBVHNode::FaceBVHNode():box(),left(nullptr),right(nullptr),face(nullptr){}
 

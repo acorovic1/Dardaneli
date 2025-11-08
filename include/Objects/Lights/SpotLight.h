@@ -13,7 +13,7 @@ public:
 	SpotLight(const std::string& name);
 	
 
-	void draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES) override;
+	void draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES, bool outline = false) override;
 
 	glm::vec3 getDirection() const { return direction; }
 	void setDirection(const glm::vec3& d) { direction = d; }

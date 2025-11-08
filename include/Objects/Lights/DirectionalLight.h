@@ -14,6 +14,6 @@ public:
 
 
 	void rotate(float degrees, const glm::vec3& axisVector);
-	void draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES) override;
+	void draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES, bool outline = false) override;
 
 };

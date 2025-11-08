@@ -1,5 +1,5 @@
 #include "ShadingNodes/Output/MetallicOutputNode.h"
-
+#include "Material.h"
 
 int MetallicOutputNode::activeNodeId = -1;
 

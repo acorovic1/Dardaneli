@@ -1,5 +1,5 @@
 #include "ShadingNodes/Output/NormalOutputNode.h"
-
+#include "Material.h"
 int NormalOutputNode::activeNodeId = -1;
 
 

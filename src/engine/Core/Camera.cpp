@@ -81,86 +81,85 @@ void Camera::movement3D(GLFWwindow* glfwWindow)
 	double& previousX = window->getPreviousX();
 	double& previousY = window->getPreviousY();
 
-	//MOUSE LEFT ROTATE
+	//MOUSE MIDDLE ROTATE
 	//MOUSE RIGHT PAN
-	if (keys[GLFW_KEY_LEFT_ALT]) {
-		if (buttons[GLFW_MOUSE_BUTTON_LEFT]) // ROTATE
+	if (buttons[GLFW_MOUSE_BUTTON_MIDDLE] && keys[GLFW_KEY_LEFT_SHIFT])
+	{
+		// Fetches the coordinates of the cursor
+		glfwGetCursorPos(window->getGLFWwindow(), &posX, &posY);
+
+		// Prevents camera from jumping on the first click
+		if (firstClick)
 		{
-			//std::cout << "ASDASD";
-
-			// Prevents camera from jumping on the first click
-			if (firstClick)
-			{
-				//std::cout << "HAHAHAH";
-				glfwSetCursorPos(window->getGLFWwindow(), (width / 2), (height / 2));
-				firstClick = false;
-			}
-
-			// Stores the coordinates of the cursor
-			double mouseX;
-			double mouseY;
-			// Fetches the coordinates of the cursor
-			glfwGetCursorPos(window->getGLFWwindow(), &mouseX, &mouseY);
-
-			// Normalizes and shifts the coordinates of the cursor such that they begin in the middle of the screen
-			// and then "transforms" them into degrees
-			float rotX = sensitivity * (float)(mouseY - (height / 2)) / height;
-			float rotY = sensitivity * (float)(mouseX - (width / 2)) / width;
-
-			// Calculates upcoming vertical change in the orientation
-			glm::vec3 newOrientation = glm::rotate(orientation, glm::radians(-rotX), glm::normalize(glm::cross(orientation, up)));
-
-			// Decides whether or not the next vertical orientation is legal or not
-			if (abs(glm::angle(newOrientation, up) - glm::radians(90.0f)) <= glm::radians(85.0f))
-			{
-				orientation = newOrientation;
-			}
-
-			// Rotates the orientation left and right
-			orientation = glm::rotate(orientation, glm::radians(-rotY), up);
-
-			glfwSetCursorPos(window->getGLFWwindow(), (width / 2), (height / 2)); //NEKADA IZBACITI OVO I STAVITI ROTXPREVIOUS I ROTYPREVIOUS
-		}
-		else if (buttons[GLFW_MOUSE_BUTTON_RIGHT])
-		{
-			// Fetches the coordinates of the cursor
-			glfwGetCursorPos(window->getGLFWwindow(), &posX, &posY);
-
-			// Prevents camera from jumping on the first click
-			if (firstClick)
-			{
-				//glfwSetCursorPos(window, (width / 2), (height / 2));
-				previousX = posX;
-				previousY = posY;
-				firstClick = false;
-				//std::cout << "HAHAHAH";
-				return;
-			}
-			float deltaX = (posX - previousX) / 150;
-			float deltaY = (posY - previousY) / 150;
-
-			//std::cout << deltaX << " " << posX << " " << previousX << "\n";
-			position += -deltaX * glm::normalize(glm::cross(orientation, up));
-			position += deltaY * up;
-
+			//glfwSetCursorPos(window, (width / 2), (height / 2));
 			previousX = posX;
 			previousY = posY;
+			firstClick = false;
+			//std::cout << "HAHAHAH";
+			return;
 		}
+		float deltaX = (posX - previousX) / 150;
+		float deltaY = (posY - previousY) / 150;
+
+		//std::cout << deltaX << " " << posX << " " << previousX << "\n";
+		position += -deltaX * glm::normalize(glm::cross(orientation, up));
+		position += deltaY * up;
+
+		previousX = posX;
+		previousY = posY;
+	}else if (buttons[GLFW_MOUSE_BUTTON_MIDDLE]) // ROTATE
+	{
+		//std::cout << "ASDASD";
+
+		// Prevents camera from jumping on the first click
+		if (firstClick)
+		{
+			//std::cout << "HAHAHAH";
+			glfwSetCursorPos(window->getGLFWwindow(), (width / 2), (height / 2));
+			firstClick = false;
+		}
+
+		// Stores the coordinates of the cursor
+		double mouseX;
+		double mouseY;
+		// Fetches the coordinates of the cursor
+		glfwGetCursorPos(window->getGLFWwindow(), &mouseX, &mouseY);
+
+		// Normalizes and shifts the coordinates of the cursor such that they begin in the middle of the screen
+		// and then "transforms" them into degrees
+		float rotX = sensitivity * (float)(mouseY - (height / 2)) / height;
+		float rotY = sensitivity * (float)(mouseX - (width / 2)) / width;
+
+		// Calculates upcoming vertical change in the orientation
+		glm::vec3 newOrientation = glm::rotate(orientation, glm::radians(-rotX), glm::normalize(glm::cross(orientation, up)));
+
+		// Decides whether or not the next vertical orientation is legal or not
+		if (abs(glm::angle(newOrientation, up) - glm::radians(90.0f)) <= glm::radians(85.0f))
+		{
+			orientation = newOrientation;
+		}
+
+		// Rotates the orientation left and right
+		orientation = glm::rotate(orientation, glm::radians(-rotY), up);
+
+		//std::cout << "\n orientation:" << orientation.x<<" "<<orientation.y << " " << orientation.z;
+
+		glfwSetCursorPos(window->getGLFWwindow(), (width / 2), (height / 2)); //NEKADA IZBACITI OVO I STAVITI ROTXPREVIOUS I ROTYPREVIOUS
 	}
+	 
+
 
 	//RESET
-	if ((buttonsProcessed[GLFW_MOUSE_BUTTON_LEFT] && !buttons[GLFW_MOUSE_BUTTON_RIGHT]) ||
-		(buttonsProcessed[GLFW_MOUSE_BUTTON_RIGHT] && !buttons[GLFW_MOUSE_BUTTON_LEFT]))
+	if (buttonsProcessed[GLFW_MOUSE_BUTTON_MIDDLE])		
 	{
 		// Makes sure the next time the camera looks around it doesn't jump
 		firstClick = true;
 
-		if (glfwGetKey(window->getGLFWwindow(), GLFW_KEY_LEFT_ALT) != GLFW_PRESS)
+		if (glfwGetKey(window->getGLFWwindow(), GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS)
 		{
 			//std::cout << "asdasdasda";
-			keys[GLFW_KEY_LEFT_ALT] = 0;
-			buttonsProcessed[GLFW_MOUSE_BUTTON_LEFT] = 0; // makes it so that this if only goes through 1 iteration
-			buttonsProcessed[GLFW_MOUSE_BUTTON_RIGHT] = 0; // makes it so that this if only goes through 1 iteration
+			keys[GLFW_KEY_LEFT_SHIFT] = 0;
+			buttonsProcessed[GLFW_MOUSE_BUTTON_MIDDLE] = 0; // makes it so that this if only goes through 1 iteration
 		}
 	}
 }
@@ -205,7 +204,7 @@ void Camera::movement2D(GLFWwindow* glfwWindow)
 			previousY = posY;
 		}
 	//RESET
-	if (!buttons[GLFW_MOUSE_BUTTON_RIGHT])
+	if (!buttons[GLFW_MOUSE_BUTTON_RIGHT] && !keys[GLFW_KEY_G])
 	{
 		// Makes sure the next time the camera looks around it doesn't jump
 		firstClick = true;

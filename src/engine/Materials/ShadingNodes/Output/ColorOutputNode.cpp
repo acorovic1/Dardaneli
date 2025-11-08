@@ -1,4 +1,5 @@
 #include "ShadingNodes/Output/ColorOutputNode.h"
+#include "Material.h"
 
 int ColorOutputNode::activeNodeId = -1;
 

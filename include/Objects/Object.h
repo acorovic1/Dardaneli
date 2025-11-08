@@ -18,9 +18,9 @@ protected:
 
 	std::vector<DVertex*> vertices;
 
-	glm::vec3 position = glm::vec3(0.0f);   
+	glm::vec3 position = glm::vec3(0.0f);
 	glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-	glm::vec3 scaling = glm::vec3(1.0f);   
+	glm::vec3 scaling = glm::vec3(1.0f);
 	glm::mat4 model;
 
 	// used for updating VBO
@@ -50,10 +50,7 @@ public:
 	const glm::vec3& getPosition() const { return position; }
 
 	glm::quat& getRotation() { return rotation; }
-	const glm::vec3 getRotationVec() const {
-		std::cout << "\ngetRotationVec " << rotation.x<<" "<< rotation.y << " " << rotation.z << " " << rotation.w;
-		
-		return glm::degrees(glm::eulerAngles(rotation)); }
+	const glm::vec3 getRotationVec() const { return glm::degrees(glm::eulerAngles(rotation)); }
 
 	glm::vec3& getScale() { return scaling; }
 	const glm::vec3& getScale() const { return scaling; }
@@ -78,7 +75,7 @@ public:
 
 	int getVertexIndex(DVertex* v);
 
-	virtual void draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES) = 0;
+	virtual void draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES, bool outline = false) = 0;
 
 	virtual void translate(glm::vec3& translateVector) = 0;
 	virtual void translate(float x, float y, float z) = 0;

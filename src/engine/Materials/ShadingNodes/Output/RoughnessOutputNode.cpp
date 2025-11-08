@@ -1,5 +1,5 @@
 #include "ShadingNodes/Output/RoughnessOutputNode.h"
-
+#include "Material.h"
 int RoughnessOutputNode::activeNodeId = -1;
 
 RoughnessOutputNode::RoughnessOutputNode(int n) : ShadingNodes(n), enabled(false) {}

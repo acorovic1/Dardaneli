@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "DEdge.h"
+
 struct DEdge;
 
 // circular lists

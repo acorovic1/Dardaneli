@@ -80,6 +80,7 @@ void MyGUI::drawUI()
 	modes();
 	ImGui::SameLine();
 	Mode currentMode = app->mode;
+
 	if (ImGui::Button("Render Scene"))
 	{
 		int fbWidth, fbHeight;
@@ -137,8 +138,17 @@ void MyGUI::drawObjectModeUI(bool change)
 		drawBVH();
 
 	if (app->objectIndices.size())
-		if (ImGui::InputInt("Index", &app->objectIndices.back()))
+	{
+			int& lastIndex = app->objectIndices.back();
+		if (ImGui::InputInt("Index", &lastIndex))
+		{
+			(ImGui::InputInt("Index", &lastIndex));
+			if (lastIndex < 0) lastIndex = 0;
+			if (lastIndex >= objectSingleton->getNumberOfObjects()) lastIndex = objectSingleton->getNumberOfObjects() - 1;
+
 			selectObject();
+		}
+	}
 
 	transformations();
 
@@ -161,12 +171,14 @@ void MyGUI::drawEditModeUI(bool change)
 
 	if (BVHTree)
 	{
+		static Shader& basic = shaderSingleton->getShader("Basic");
+		basic.setInteger(false, "colorMode", static_cast<int>(FragColor::BVH));
 		if (app->selectMode == SelectMode::VERTEX)
-			VertexBVHSingleton->DrawLeaves(VertexBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
+			VertexBVHSingleton->DrawLeaves(VertexBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
 		else if (app->selectMode == SelectMode::EDGE)
-			EdgeBVHSingleton->DrawLeaves(EdgeBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
+			EdgeBVHSingleton->DrawLeaves(EdgeBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
 		else if (app->selectMode == SelectMode::FACE)
-			FaceBVHSingleton->DrawLeaves(FaceBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"));
+			FaceBVHSingleton->DrawLeaves(FaceBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
 
 	}
 
@@ -243,10 +255,12 @@ void MyGUI::drawUVModeUI(bool change)
 
 	Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(app->objectIndices.back()));
 	UVVertexBVHSingleton->BuildBottomUp(*mesh); // prebaci ovo na unwrap funkciju
+	static Shader basic = shaderSingleton->getShader("Basic");
 
 	if (BVHTree)
 	{
-		UVVertexBVHSingleton->DrawLeaves(UVVertexBVHSingleton->getRoot(), *cameraSingleton->getCamera("UV"), shaderSingleton->getShader("AABB"));
+		basic.setInteger(false, "colorMode", static_cast<int>(FragColor::BVH));
+		UVVertexBVHSingleton->DrawLeaves(UVVertexBVHSingleton->getRoot(), *cameraSingleton->getCamera("UV"), basic);
 	}
 
 }
@@ -616,7 +630,12 @@ void MyGUI::extrudeMenu()
 }
 
 
-void MyGUI::drawBVH() { objectBVHSingleton->Draw(*cameraSingleton->getCamera(0), shaderSingleton->getShader("AABB"), BVHSubd); }
+void MyGUI::drawBVH() {
+	static Shader& basic = shaderSingleton->getShader("Basic");
+	basic.setInteger(false, "colorMode", static_cast<int>(FragColor::UV));
+	objectBVHSingleton->Draw(*cameraSingleton->getCamera(0), basic, BVHSubd); 
+	basic.setInteger(false, "colorMode", static_cast<int>(FragColor::Seams));
+}
 
 
 void MyGUI::gizmos()
@@ -859,20 +878,20 @@ void MyGUI::selectObject()
 		const glm::vec3& rotationVec = objectSingleton->getObject(selectedObjectIndex)->getRotationVec();
 		const glm::vec3& scaleVec = objectSingleton->getObject(selectedObjectIndex)->getScale();
 
-		std::cout << std::endl;
-		std::cout << std::fixed << std::setprecision(4);
+		//std::cout << std::endl;
+		//std::cout << std::fixed << std::setprecision(4);
 
-		for (int row = 0; row < 4; row++)
-		{
-			std::cout << "[ ";
-			for (int col = 0; col < 4; col++)
-			{
-				std::cout << std::setw(9) << model[col][row] << " ";
-			}
-			std::cout << "]\n";
-		}
+		//for (int row = 0; row < 4; row++)
+		//{
+		//	std::cout << "[ ";
+		//	for (int col = 0; col < 4; col++)
+		//	{
+		//		std::cout << std::setw(9) << model[col][row] << " ";
+		//	}
+		//	std::cout << "]\n";
+		//}
 
-		std::cout << std::endl;
+		//std::cout << std::endl;
 		//gizmo = false;
 		//std::cout << "\nSELECTED ---> " << objectSingleton->getObject(objectIndex[objectIndex.size()-1])->getName();
 

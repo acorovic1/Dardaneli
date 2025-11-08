@@ -266,57 +266,12 @@
     <None Include="src\shaders\basic.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="src\shaders\editMode.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="src\shaders\editMode.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="src\shaders\BVH.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="src\shaders\BVH.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="src\shaders\selectObject.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="src\shaders\selectObject.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="src\shaders\grid.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="src\shaders\grid.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="src\shaders\selectEdit.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="src\shaders\selectEdit.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="src\shaders\activeObject.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="src\shaders\activeEdit.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="src\shaders\activeEdit.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="src\shaders\activeObject.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
     <None Include="src\shaders\UV.vert" />
     <None Include="src\shaders\UV.frag" />
-    <None Include="src\shaders\textureTest.vert" />
-    <None Include="src\shaders\textureTest.frag" />
-    <None Include="src\shaders\light.vert" />
-    <None Include="src\shaders\light.frag" />
     <None Include="src\shaders\pbr.geom" />
     <None Include="src\shaders\pbr.vert" />
-    <None Include="src\shaders\pbr.frag" />
+    <None Include="src\shaders\grid.vert" />
+    <None Include="src\shaders\grid.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Core\Camera.h">

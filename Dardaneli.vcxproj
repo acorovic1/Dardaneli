@@ -87,7 +87,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <ShowIncludes>true</ShowIncludes>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -121,7 +121,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <ShowIncludes>true</ShowIncludes>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -215,29 +215,12 @@
     <ClCompile Include="src\engine\Core\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\shaders\activeEdit.frag" />
-    <None Include="src\shaders\activeEdit.vert" />
-    <None Include="src\shaders\activeObject.frag" />
-    <None Include="src\shaders\activeObject.vert" />
     <None Include="src\shaders\basic.frag" />
     <None Include="src\shaders\basic.vert" />
     <None Include="src\shaders\grid.frag" />
     <None Include="src\shaders\grid.vert" />
-    <None Include="src\shaders\editMode.frag" />
-    <None Include="src\shaders\editMode.vert" />
-    <None Include="src\shaders\BVH.frag" />
-    <None Include="src\shaders\BVH.vert" />
-    <None Include="src\shaders\light.frag" />
-    <None Include="src\shaders\light.vert" />
-    <None Include="src\shaders\pbr.frag" />
     <None Include="src\shaders\pbr.geom" />
     <None Include="src\shaders\pbr.vert" />
-    <None Include="src\shaders\selectEdit.frag" />
-    <None Include="src\shaders\selectEdit.vert" />
-    <None Include="src\shaders\selectObject.frag" />
-    <None Include="src\shaders\selectObject.vert" />
-    <None Include="src\shaders\textureTest.frag" />
-    <None Include="src\shaders\textureTest.vert" />
     <None Include="src\shaders\UV.frag" />
     <None Include="src\shaders\UV.vert" />
   </ItemGroup>

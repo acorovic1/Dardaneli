@@ -35,7 +35,20 @@ public:
 
 
 	template<typename T>
-	T* createNode();
+	T* createNode() {
+
+		auto node = std::make_unique<T>(id);
+		T* ptr = node.get();
+		nodes.push_back(std::move(node));
+
+
+		ImVec2 cursorPos = ImGui::GetMousePos();
+		ImNodes::SetNodeEditorSpacePos(id, cursorPos);
+
+		id += 10;
+
+		return ptr;
+	}
 	void deleteSelectedNodes();
 	void deleteSelectedLinks();
 

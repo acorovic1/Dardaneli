@@ -28,45 +28,26 @@ void Scene::init(Window&window)
 	camera->setProjection(glm::ortho(aspect * -1.0f, aspect * 1.0f, -1.0f, 1.0f, -2000.0f, 300000.0f));
 
 
-	new Shader("EditMode", "editMode.vert", "editMode.frag");
-	new Shader("AABB", "BVH.vert", "BVH.frag");
-	new Shader("Grid", "grid.vert", "grid.frag");
 
 	new Shader("Basic", "basic.vert", "basic.frag");
-
-	new Shader("Select", "selectObject.vert", "selectObject.frag");
-	new Shader("ActiveSelect", "activeObject.vert", "activeObject.frag");
-
-	new Shader("SelectEdit", "selectEdit.vert", "selectEdit.frag");
-	new Shader("ActiveEdit", "activeEdit.vert", "activeEdit.frag");
-
 	new Shader("UV", "UV.vert", "UV.frag");
-	new Shader("Light", "light.vert", "light.frag");
-	new Shader("TextureTest", "textureTest.vert", "textureTest.frag");
+	new Shader("Grid", "grid.vert", "grid.frag");
 
-	//new PointLight("test");
+
+
+	app->activeMaterial = new Material("Default");
+
+
 	
 	addCube();
 
-	// ostalo jos refactorisati ShadingNodes folder i sve vezano za BVH
-
-
-	auto obj = static_cast<Mesh*>(objectSingleton->getObject(0));
-
-	for(auto vert: obj->getVertices())
-		std::cout << vert->normal.x << " " << vert->normal.y << " " << vert->normal.z << "\n";
+	// ostalo jos refactorisati sve vezano za BVH
 
 	
-
-	// problem je u TBN matrici.. ima victorGordan tutorial.. koristiti geometry shader
-
-
 
 
 	// svjetla napravljena ostalo jos SCALE I ROTATE metode da se naprave, koristi model matricu
 	
-	
-	//objectSingleton->getObject(0)->Rotate(45.0f, glm::vec3(1.0f, 0.0f, 1.0f));
 
 
 

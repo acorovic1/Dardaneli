@@ -12,11 +12,11 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-//#include "Window.h"
+
 #include "FaceBVH.h"
 #include "EditorModes.h"
 
-#include "Material.h"
+//#include "Material.h"
 
 #define radian 180/3.14159265358979323846f
 #define myEpsilon 0.00001
@@ -25,7 +25,7 @@
 
 class MyGUI;
 class Window;
-
+class Material;
 // cut off one head two more shall take its place
 class Application { 
 	static Application* instance;
@@ -56,7 +56,7 @@ class Application {
 	std::vector<glm::vec3> startPositions;
 
 public:
-	Material* activeMaterial = new Material("Default");
+	Material* activeMaterial;
 
 	static Application* getInstance();
 

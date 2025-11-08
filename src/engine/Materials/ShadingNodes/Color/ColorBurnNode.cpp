@@ -1,12 +1,7 @@
 #include "ShadingNodes/Color/ColorBurnNode.h"
 
+#include "Material.h"
 
-#pragma once
-
-
-#pragma once
-#include "ShadingNodes/ShadingNodes.h"
-#include <Application.h>
 
 
 

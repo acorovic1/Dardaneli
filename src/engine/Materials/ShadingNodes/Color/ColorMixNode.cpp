@@ -1,4 +1,5 @@
 #include "ShadingNodes/Color/ColorMixNode.h"
+#include "Material.h"
 
 ColorMixNode::ColorMixNode(int n) : ShadingNodes(n) {}
 

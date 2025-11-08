@@ -1,4 +1,4 @@
-#include "Texture.h"
+#include "ShadingNodes/Texture/Texture.h"
 
 Texture::Texture(const char* image,
 	GLuint slot, GLenum format, GLenum pixelType) {

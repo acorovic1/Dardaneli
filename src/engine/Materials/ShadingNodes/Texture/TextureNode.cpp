@@ -1,5 +1,5 @@
 #include "ShadingNodes/Texture/TextureNode.h"
-
+#include "Material.h"
 
 
 TextureNode::TextureNode(int n) : ShadingNodes(n) {}

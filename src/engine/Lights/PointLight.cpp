@@ -51,11 +51,14 @@ PointLight::PointLight(const std::string& name) : Light(name)
 void PointLight::scale(glm::vec3& scaleVector) { model = glm::scale(model, glm::vec3(scaleVector.x)); }
 void PointLight::scale(float x, float y, float z) { model = glm::scale(model, glm::vec3(x, x, x)); }
 
-void PointLight::draw(Shader& shader, Camera& camera, GLenum mode)
+void PointLight::draw(Shader& shader, Camera& camera, GLenum mode, bool outline)
 {
 
 	shader.activate();
-	shader.setMat4(true, "model", model);
+	if (outline)
+		shader.setMat4(true, "model", glm::scale(model, glm::vec3(1.03f)));
+	else
+		shader.setMat4(true, "model", model);
 	shader.setVector3f(true, "color", color);
 
 	auto view = camera.getViewMatrix();

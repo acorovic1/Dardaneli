@@ -1,10 +1,11 @@
 #pragma once
 
 #include "BoundingVolumes\AABB.h"
-#include "Mesh\Mesh.h"
+
 
 #include "algorithm"
 
+class Mesh;
 // treba destructor pod hitno
 struct  FaceBVHNode
 {

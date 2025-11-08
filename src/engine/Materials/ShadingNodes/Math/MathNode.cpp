@@ -1,5 +1,5 @@
 #include "ShadingNodes/Math/MathNode.h"
-
+#include "Material.h"
 MathNode::MathNode(int n) : ShadingNodes(n) {}
 
 

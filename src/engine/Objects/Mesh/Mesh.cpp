@@ -22,6 +22,8 @@
 #include "Lights/PointLight.h"
 #include "Lights/SpotLight.h"
 
+#include "Material.h"
+
 #include "igl/lscm.h"
 #include "igl/boundary_loop.h"
 
@@ -80,7 +82,6 @@ void Mesh::rotate(float degrees, const glm::vec3& axisVector)
 {
 	rotation = glm::rotate(rotation, glm::radians(degrees), axisVector);
 
-	std::cout << "\n\n\tMesh.Rotate quaternion: " << rotation.x << " " << rotation.y << " " << rotation.z << "\n\n";
 	fillModel();
 }
 
@@ -512,14 +513,17 @@ void Mesh::removeMaterial(Material* mat)
 
 }
 
-void Mesh::draw(Shader& shader, Camera& camera, GLenum mode) {
+void Mesh::draw(Shader& shader, Camera& camera, GLenum mode, bool outline) {
 
 
 	shader.activate();
 	vao.bind();
 	camera.cameraUniform(true, shader, "cameraMatrix");
 	shader.setVector3f(true, "camPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
-	shader.setMat4(true, "model", model);
+	if (outline)
+		shader.setMat4(true, "model", glm::scale(model, glm::vec3(1.03f)));
+	else
+		shader.setMat4(true, "model", model);
 
 	if (mode == GL_TRIANGLES)
 	{
