@@ -146,6 +146,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\engine\AccelerationStructures\RaytracingBVH.cpp" />
+    <ClCompile Include="src\engine\AccelerationStructures\RaytracingBVHNode.cpp" />
     <ClCompile Include="src\engine\Objects\Mesh\DLoop.cpp" />
     <ClCompile Include="src\engine\Lights\DirectionalLight.cpp" />
     <ClCompile Include="src\engine\Lights\PointLight.cpp" />
@@ -217,6 +219,8 @@
   <ItemGroup>
     <None Include="src\shaders\basic.frag" />
     <None Include="src\shaders\basic.vert" />
+    <None Include="src\shaders\computeTest.frag" />
+    <None Include="src\shaders\computeTest.vert" />
     <None Include="src\shaders\grid.frag" />
     <None Include="src\shaders\grid.vert" />
     <None Include="src\shaders\pbr.geom" />
@@ -226,6 +230,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AccelerationStructures\BoundingVolumes\AABB.h" />
+    <ClInclude Include="include\AccelerationStructures\RaytracingBVH.h" />
+    <ClInclude Include="include\AccelerationStructures\RaytracingBVHNode.h" />
     <ClInclude Include="include\Objects\Mesh\Mesh.h" />
     <ClInclude Include="include\Utilities\Aliases.h" />
     <ClInclude Include="include\Core\Application.h" />
@@ -268,6 +274,7 @@
     <ClInclude Include="include\Materials\ShadingNodes\ShadingNodesManager.h" />
     <ClInclude Include="include\Materials\ShadingNodes\Texture\TextureNode.h" />
     <ClInclude Include="include\Materials\ShadingNodes\Input\ValueNode.h" />
+    <ClInclude Include="include\Utilities\Triangle.h" />
     <ClInclude Include="include\Utilities\UnorderedPair.h" />
     <ClInclude Include="include\Objects\Mesh\UVVertex.h" />
     <ClInclude Include="include\AccelerationStructures\UVVertexBVH.h" />
@@ -311,6 +318,9 @@
   <ItemGroup>
     <Image Include="assets\planks.png" />
     <Image Include="assets\planksSpec.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\shaders\computeTest.comp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

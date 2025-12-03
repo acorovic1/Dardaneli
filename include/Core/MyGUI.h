@@ -125,7 +125,8 @@ public:
 	void addShadingNodes();
 
 
-	void saveFinalRender(const char* filename, int width, int height);
+	void pbrRender(const char* filename, int width, int height);
+	void raytraceRender(const char* filename, int width, int height);
 
 
 };

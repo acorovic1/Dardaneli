@@ -29,6 +29,33 @@ bool fileExists(const char* path) {
 	return f.is_open();
 }
 
+Shader::Shader(std::string name, const char* computeFile)
+{
+
+	std::string computePath = std::string("src/shaders/") + computeFile;
+	std::string computeCode = get_file_contents(computePath.c_str());
+	const char* computeSource = computeCode.c_str();
+
+	// Compile compute shader
+	GLuint computeShader = glCreateShader(GL_COMPUTE_SHADER);
+	glShaderSource(computeShader, 1, &computeSource, NULL);
+	glCompileShader(computeShader);
+	compileErrors(computeShader, "COMPUTE");
+
+	// Link program
+	ID = glCreateProgram();
+	glAttachShader(ID, computeShader);
+	glLinkProgram(ID);
+	compileErrors(ID, "PROGRAM");
+
+	glDeleteShader(computeShader);
+
+
+	shaderSingleton->addShader(name, this);
+
+
+}
+
 Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFile)
 {
 	std::string vertexPath = std::string("src/shaders/") + vertexFile;
@@ -159,6 +186,18 @@ void Shader::setInteger(bool activated, const char* uniform, int value)
 	if (!activated)
 		this->activate();
 	glUniform1i(glGetUniformLocation(this->ID, uniform), value);
+}
+void Shader::setVector2i(bool activated, const char* uniform, float x, float y)
+{
+	if (!activated)
+		this->activate();
+	glUniform2i(glGetUniformLocation(this->ID, uniform), x, y);
+}
+void Shader::setVector2i(bool activated, const char* uniform, const glm::vec2& vec)
+{
+	if (!activated)
+		this->activate();
+	glUniform2i(glGetUniformLocation(this->ID, uniform), vec.x, vec.y);
 }
 void Shader::setVector2f(bool activated, const char* uniform, float x, float y)
 {

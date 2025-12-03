@@ -258,6 +258,12 @@
     <ClCompile Include="src\engine\Materials\ShadingNodes\Texture\TextureNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\engine\AccelerationStructures\RaytracingBVH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\AccelerationStructures\RaytracingBVHNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\basic.vert">
@@ -272,6 +278,8 @@
     <None Include="src\shaders\pbr.vert" />
     <None Include="src\shaders\grid.vert" />
     <None Include="src\shaders\grid.frag" />
+    <None Include="src\shaders\computeTest.vert" />
+    <None Include="src\shaders\computeTest.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Core\Camera.h">
@@ -520,6 +528,15 @@
     <ClInclude Include="include\Objects\Mesh\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\AccelerationStructures\RaytracingBVH.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Triangle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AccelerationStructures\RaytracingBVHNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\planksSpec.png">
@@ -528,5 +545,8 @@
     <Image Include="assets\planks.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\shaders\computeTest.comp" />
   </ItemGroup>
 </Project>

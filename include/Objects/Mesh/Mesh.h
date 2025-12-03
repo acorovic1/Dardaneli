@@ -5,6 +5,7 @@
 #include "Aliases.h"
 #include "unordered_set"
 #include "UVVertex.h"
+#include "Triangle.h"
 //#include "Material.h"
 #include "GPUVertex.h"
 #include "map"
@@ -27,6 +28,30 @@ class Mesh : public Object {
 
 	std::unordered_map<Material*, std::unordered_set<DFace*>>materials;
 	std::unordered_map < Material*, std::tuple < VAO, VBO, EBO, std::vector<GPUVertex>, std::vector<GLuint >> > renderBuffers;
+
+	std::vector<Triangle> triangles; // used for raytracing
+
+	void formTrianglesForRaytracing()
+	{
+		for (auto& it : materials)
+		{
+			for (auto& face : it.second)
+			{
+				auto faceVerts = face->getVerticesVector();
+				int size = faceVerts.size();
+				for (int i = 1; i < size - 1; ++i)
+				{
+					Triangle tri; 
+					tri.v0 = faceVerts[0]->position;
+					tri.v1 = faceVerts[i]->position;
+					tri.v2 = faceVerts[i + 1]->position;
+					tri.centroid = (tri.v0 + tri.v1 + tri.v2) *0.33f;
+					triangles.push_back(tri); // kopija
+				}
+			}
+		}
+	}
+
 
 
 	// attributes used for UV editing
@@ -262,9 +287,13 @@ public:
 
 
 
+	// raytracing
 
-
-
+	std::vector<Triangle>& getTriangles()
+	{
+		formTrianglesForRaytracing();
+		return triangles;
+	};
 
 
 

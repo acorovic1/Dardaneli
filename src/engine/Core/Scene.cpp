@@ -4,16 +4,25 @@
 #include "Lights/PointLight.h"
 #include "Lights/DirectionalLight.h"
 #include "Lights/SpotLight.h"
+
+#include "RaytracingBVH.h"
+#include <stack>
+
+
+
+
+
+
 Scene::Scene() {}
 
-void Scene::init(Window&window)
+void Scene::init(Window& window)
 {
 
-	
 
-	new Camera (800, 600, glm::vec3(-2.0f, 3.0f, 6.0f), "Viewport");
-	new Camera (800, 600, glm::vec3( 0.5f, 0.5f, 1.0f), "UV");
-	new Camera (800, 600, glm::vec3( 0.0f, 0.0f, 6.0f), "Shader");
+
+	new Camera(800, 600, glm::vec3(-2.0f, 3.0f, 6.0f), "Viewport");
+	new Camera(800, 600, glm::vec3(0.5f, 0.5f, 1.0f), "UV");
+	new Camera(800, 600, glm::vec3(0.0f, 0.0f, 6.0f), "Shader");
 
 
 
@@ -21,7 +30,7 @@ void Scene::init(Window&window)
 	camera->setPerspectiveProjection(45, float(camera->getWidth()) / float(camera->getHeight()), 0.1f, 100.0f);
 
 	camera = cameraSingleton->getCamera("UV");
-	
+
 	camera->setOrientation(glm::vec3(0.0f, 0.0f, -1.0f)); // looking down the -Z axis
 
 	float aspect = float(window.getWidth()) / float(window.getHeight());
@@ -38,16 +47,20 @@ void Scene::init(Window&window)
 	app->activeMaterial = new Material("Default");
 
 
-	
+
 	addCube();
 
-	// ostalo jos refactorisati sve vezano za BVH
+	dynamic_cast<Mesh*>(objectSingleton->getObject(0))->assignMaterial(app->activeMaterial);
 
-	
+
+
+
+
+
 
 
 	// svjetla napravljena ostalo jos SCALE I ROTATE metode da se naprave, koristi model matricu
-	
+
 
 
 

@@ -45,6 +45,7 @@ public:
 	int getHeight()const { return height; }
 	glm::vec3 getPosition() const { return position; };
 	glm::vec3 getOrientation()const { return orientation; };
+	glm::vec3 getUp()const { return up; };
 	float getFOV()const { return fov; };
 
 	void setWidth(int width) { Camera::width = width; };

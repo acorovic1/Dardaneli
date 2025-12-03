@@ -1,13 +1,17 @@
 ﻿#include "MyGUI.h"
+
 #include <iomanip>
+#include <chrono>
+#include <unordered_set>
+
 #include "glad/glad.h"
+#include "stb/stb_image_write.h"
+
 #include "Window.h"
 #include "Mesh/DFace.h"
 #include "Mesh/DLoop.h"
-#include <unordered_set>
-#include "stb/stb_image_write.h"
 #include "MaterialManager.h"
-
+#include "RaytracingBVH.h"
 
 #include "ShadingNodes/Texture/TextureNode.h"
 #include "ShadingNodes/Math/MathNode.h"
@@ -29,6 +33,7 @@
 #if defined(_WIN32)
 #include <windows.h>
 #endif
+#include <stack>
 
 void openFile(const char* filename) {
 #if defined(_WIN32)
@@ -97,12 +102,27 @@ void MyGUI::drawUI()
 	ImGui::SameLine();
 	Mode currentMode = app->mode;
 
+
+
 	if (ImGui::Button("Render Scene"))
 	{
-		int fbWidth, fbHeight;
-		glfwGetFramebufferSize(glfwWindow, &fbWidth, &fbHeight); // not window size!
-		saveFinalRender("final_render.png", fbWidth, fbHeight);
+		ImGui::OpenPopup("RenderSceneMenu");
 	}
+
+	if (ImGui::BeginPopup("RenderSceneMenu"))
+	{
+		int fbWidth, fbHeight;
+		glfwGetFramebufferSize(glfwWindow, &fbWidth, &fbHeight);
+
+		if (ImGui::MenuItem("PBR"))
+			pbrRender("final_render.png", fbWidth, fbHeight);
+
+		if (ImGui::MenuItem("Raytrace"))
+			raytraceRender("final_render.png", fbWidth, fbHeight);
+
+		ImGui::EndPopup();
+	}
+
 
 
 	int current = static_cast<int>(app->renderMode);
@@ -155,7 +175,7 @@ void MyGUI::drawObjectModeUI(bool change)
 
 	if (app->objectIndices.size())
 	{
-			int& lastIndex = app->objectIndices.back();
+		int& lastIndex = app->objectIndices.back();
 		if (ImGui::InputInt("Index", &lastIndex))
 		{
 			(ImGui::InputInt("Index", &lastIndex));
@@ -236,7 +256,7 @@ void MyGUI::drawEditModeUI(bool change)
 	}
 
 	int e = (int)app->selectMode;
-	
+
 	ImGui::RadioButton("DVertex select", &e, 0); ImGui::SameLine();
 	ImGui::RadioButton("Edge select", &e, 1); ImGui::SameLine();
 	ImGui::RadioButton("DFace select", &e, 2);
@@ -244,7 +264,7 @@ void MyGUI::drawEditModeUI(bool change)
 	if (e == 0)app->selectMode = SelectMode::VERTEX;
 	else if (e == 1)app->selectMode = SelectMode::EDGE;
 	else if (e == 2)app->selectMode = SelectMode::FACE;
-	
+
 
 	std::vector<int>& vertexIndicesTemp = mesh->getSelectedVertices();
 	int size = vertexIndicesTemp.size();
@@ -284,7 +304,7 @@ void MyGUI::drawUVModeUI(bool change)
 void MyGUI::drawShaderEditorUI(bool change)
 {
 	if (showAddMenuFlag) addShadingNodes();
-	
+
 
 	Mesh* mesh = dynamic_cast<Mesh*>(app->getActiveObject());
 
@@ -649,7 +669,7 @@ void MyGUI::extrudeMenu()
 void MyGUI::drawBVH() {
 	static Shader& basic = shaderSingleton->getShader("Basic");
 	basic.setInteger(false, "colorMode", static_cast<int>(FragColor::UV));
-	objectBVHSingleton->Draw(*cameraSingleton->getCamera(0), basic, BVHSubd); 
+	objectBVHSingleton->Draw(*cameraSingleton->getCamera(0), basic, BVHSubd);
 	basic.setInteger(false, "colorMode", static_cast<int>(FragColor::Seams));
 }
 
@@ -1056,7 +1076,7 @@ void MyGUI::drawGrid3D()
 	shader.setBool(true, "DDD", true);
 
 
-	getWindow()->getCamera()->cameraUniform(true,shader, "cameraMatrix");
+	getWindow()->getCamera()->cameraUniform(true, shader, "cameraMatrix");
 
 	glDrawElements(GL_LINES, gridIndices3D.size(), GL_UNSIGNED_INT, 0);
 }
@@ -1070,7 +1090,7 @@ void MyGUI::drawGrid2D()
 
 	shader.setBool(true, "DDD", false);
 
-	getWindow()->getCamera()->cameraUniform(true,shader, "cameraMatrix");
+	getWindow()->getCamera()->cameraUniform(true, shader, "cameraMatrix");
 
 	glDrawElements(GL_LINES, gridIndices2D.size(), GL_UNSIGNED_INT, 0);
 }
@@ -1666,7 +1686,7 @@ void MyGUI::addShadingNodes()
 }
 
 
-void MyGUI::saveFinalRender(const char* filename, int width, int height)
+void MyGUI::pbrRender(const char* filename, int width, int height)
 {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -1710,6 +1730,166 @@ void MyGUI::saveFinalRender(const char* filename, int width, int height)
 
 }
 
+
+
+int flatten(RaytracingBVHNode* node, std::vector<flatRTNode>& out, std::vector<Triangle>&trinagles)
+{
+	if (!node) return -1;
+
+	int index = out.size();
+	out.emplace_back(); // placeholder
+
+	int leftIndex = flatten(node->left, out, trinagles);
+	int rightIndex = flatten(node->right, out, trinagles);
+
+	flatRTNode f;
+	f.aabbMin = node->box.min;
+	f.aabbMax = node->box.max;
+	f.left = leftIndex;
+	f.right = rightIndex;
+
+	if (node->left == nullptr && node->right == nullptr) {
+		// leaf
+		f.triIndex = trinagles.size();
+		trinagles.push_back(node->tri);
+		std::cout << node->tri.v0.x << " " << node->tri.v0.y << " " << node->tri.v0.z << "\n";
+		std::cout << node->tri.v1.x << " " << node->tri.v1.y << " " << node->tri.v1.z << "\n";
+		std::cout << node->tri.v2.x << " " << node->tri.v2.y << " " << node->tri.v2.z << "\n\n";
+	}
+	else {
+		f.triIndex = -1;
+	}
+
+	out[index] = f;
+	return index;
+}
+
+void sendData(Shader &shader)
+{
+	RaytracingBVHSingleton->Build(dynamic_cast<Mesh*>(objectSingleton->getObject(0)));
+
+
+	std::stack<const RaytracingBVHNode*> s;
+	s.push(RaytracingBVHSingleton->getRoot());
+
+	int count = 0;
+
+	do {
+		const RaytracingBVHNode* n = s.top();
+		s.pop();
+		++count;
+
+		if (n->left)  s.push(n->left);
+		if (n->right) s.push(n->right);
+
+	} while (!s.empty());
+
+	std::cout << "\n\n\t Broj nodova u raytracing BVH: " << count << "\n\n";
+
+	std::vector<flatRTNode> gpuNodes;
+	std::vector<Triangle> gpuTriangles;
+	flatten(RaytracingBVHSingleton->getRoot(), gpuNodes, gpuTriangles);
+
+	std::cout << "\n\n\t Broj GPU trokutica u raytracing BVH: " << gpuTriangles.size() << "\n\n";
+	for (auto x : gpuNodes)
+		std::cout << x.triIndex << " ";
+
+	GLuint bvhBuffer, triBuffer;
+	//
+	glGenBuffers(1, &bvhBuffer);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvhBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, gpuNodes.size() * sizeof(flatRTNode), gpuNodes.data(), GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bvhBuffer);
+	
+	glGenBuffers(1, &triBuffer);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, triBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, gpuTriangles.size() * sizeof(Triangle), gpuTriangles.data(), GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, triBuffer);
+
+
+	shader.setVector3f(true, "camPos", cameraSingleton->getCamera(0)->getPosition());
+	shader.setVector3f(true, "camDir", cameraSingleton->getCamera(0)->getOrientation());
+	shader.setVector3f(true, "camUp", cameraSingleton->getCamera(0)->getUp());
+	shader.setVector3f(true, "camRight", glm::normalize(glm::cross(cameraSingleton->getCamera(0)->getOrientation(), cameraSingleton->getCamera(0)->getUp())));
+	shader.setFloat(true, "fov", cameraSingleton->getCamera(0)->getFOV());
+	shader.setVector2i(true, "resolution", glm::vec2(cameraSingleton->getCamera(0)->getWidth(), cameraSingleton->getCamera(0)->getHeight()));
+
+}
+
+void MyGUI::raytraceRender(const char* filename, int width, int height)
+{
+	auto t0 = std::chrono::high_resolution_clock::now();
+	Shader computeShader("ComputeShader", "computeTest.comp");
+
+	GLuint texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+	glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+
+	computeShader.activate();
+	sendData(computeShader);
+	//
+	auto s0 = std::chrono::high_resolution_clock::now();
+	//
+	glDispatchCompute(width, height, 1);
+	//
+	//
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+	auto s1 = std::chrono::high_resolution_clock::now();
+	double shader_ms = std::chrono::duration<double, std::milli>(s1 - s0).count();
+
+	// Read back texture 
+	std::vector<float> pixels(width * height * 4);
+
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, pixels.data());
+
+
+
+	// Convert float -> unsigned char
+	std::vector<unsigned char> u8(width * height * 3);
+
+	for (int i = 0; i < width * height; i++)
+	{
+		u8[i * 3 + 0] = (unsigned char)(glm::clamp(pixels[i * 4 + 0], 0.0f, 1.0f) * 255);
+		u8[i * 3 + 1] = (unsigned char)(glm::clamp(pixels[i * 4 + 1], 0.0f, 1.0f) * 255);
+		u8[i * 3 + 2] = (unsigned char)(glm::clamp(pixels[i * 4 + 2], 0.0f, 1.0f) * 255);
+	}
+
+	// Flip vertically
+	std::vector<unsigned char> flipped(width * height * 3);
+	for (int y = 0; y < height; ++y)
+	{
+		memcpy(&flipped[y * width * 3],
+			&u8[(height - 1 - y) * width * 3],
+			width * 3);
+	}
+
+
+	stbi_write_png(filename, width, height, 3, flipped.data(), width * 3);
+
+	auto t1 = std::chrono::high_resolution_clock::now();
+	double total_ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
+
+	std::cout << "Shader time: " << shader_ms << " ms\n";
+	std::cout << "Render time: " << total_ms << " ms\n\n";
+
+	openFile(filename);
+
+	glDeleteTextures(1, &texture);
+
+
+
+
+
+}
 
 
 
