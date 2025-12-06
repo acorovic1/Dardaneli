@@ -1,4 +1,4 @@
-#include "Scene.h"
+﻿#include "Scene.h"
 #include "Mesh/DFace.h"
 #include "Window.h"
 #include "Lights/PointLight.h"
@@ -48,11 +48,44 @@ void Scene::init(Window& window)
 
 
 
-	addCube();
+	int N = 4;                 // cubes per axis → generates N³ cubes
+	float spacing = 2.0f;      // distance between cube centers
 
-	dynamic_cast<Mesh*>(objectSingleton->getObject(0))->assignMaterial(app->activeMaterial);
+	for (int x = 0; x < N; ++x)
+	{
+	    for (int y = 0; y < N; ++y)
+	    {
+	        for (int z = 0; z < N; ++z)
+	        {
+	            int id = objectSingleton->getNumberOfObjects();
+	            addCube();
 
+	            Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getObject(id));
+	            mesh->assignMaterial(app->activeMaterial);
 
+	            // place them centered
+	            float fx = (x - (N - 1) * 0.5f) * spacing;
+	            float fy = (y - (N - 1) * 0.5f) * spacing;
+	            float fz = (z - (N - 1) * 0.5f) * spacing;
+
+				glm::vec3 translateVector = glm::vec3(fx, fy, fz);
+
+	            mesh->translate(translateVector);
+	        }
+	    }
+	}
+
+	//addCube();
+	//addCube();
+	//addCube();
+	//dynamic_cast<Mesh*>(objectSingleton->getObject(0))->assignMaterial(app->activeMaterial);
+	//dynamic_cast<Mesh*>(objectSingleton->getObject(1))->assignMaterial(app->activeMaterial);
+	//dynamic_cast<Mesh*>(objectSingleton->getObject(2))->assignMaterial(app->activeMaterial);
+	//glm::vec3 t1(-3.0f, 0.0f, 0.0f);
+	//glm::vec3 t2(3.0f, 0.0f, 0.0f);
+	////dynamic_cast<Mesh*>(objectSingleton->getObject(0))->translate(t1);
+	//dynamic_cast<Mesh*>(objectSingleton->getObject(1))->translate(t1);
+	//dynamic_cast<Mesh*>(objectSingleton->getObject(2))->translate(t2);
 
 
 

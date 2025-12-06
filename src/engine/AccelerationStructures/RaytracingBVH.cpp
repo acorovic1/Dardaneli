@@ -1,60 +1,74 @@
-#include "AccelerationStructures/RaytracingBVH.h"
+#include "RaytracingBVH.h"
+#include "ObjectModeBVH.h"
 
 #include <algorithm>
 #include <limits>
 
-namespace {
 
-	glm::vec3 ComputeCentroid(const AABB& box)
+
+glm::vec3 ComputeCentroid(const AABB& box)
+{
+	return (box.min + box.max) * 0.5f;
+}
+
+
+int ChooseSplitAxis(const std::vector<flatRTNode>& nodes, int start, int end)
+{
+	glm::vec3 minC(std::numeric_limits<float>::max());
+	glm::vec3 maxC(std::numeric_limits<float>::lowest());
+
+	for (int i = start; i < end; ++i)
 	{
-		return (box.min + box.max) * 0.5f;
+		minC = glm::min(minC, nodes[i].aabbMin);
+		maxC = glm::max(maxC, nodes[i].aabbMax);
 	}
 
-	template <typename NodeType>
-	int ChooseSplitAxis(const std::vector<NodeType*>& nodes, int start, int end)
-	{
-		glm::vec3 minC(std::numeric_limits<float>::max());
-		glm::vec3 maxC(std::numeric_limits<float>::lowest());
+	glm::vec3 extent = maxC - minC;
+	int axis = 0;
+	if (extent.y > extent.x && extent.y >= extent.z) axis = 1;
+	else if (extent.z > extent.x && extent.z >= extent.y) axis = 2;
+	return axis;
+}
 
-		for (int i = start; i < end; ++i)
+
+flatRTNode BuildMedianSplit(std::vector<flatRTNode>& bvhNodes, int start, int end)
+{
+	int count = end - start;
+	if (count <= 0) return nullptr;
+	if (count == 1)
+	{
+
+		RaytracingBVHSingleton->nodes.emplace_back(bvhNodes[start]);
+		return bvhNodes[start];
+
+	}
+
+	int axis = ChooseSplitAxis(bvhNodes, start, end);
+	int mid = start + count / 2;
+	auto comparator = [axis](flatRTNode& a, flatRTNode& b)
 		{
-			glm::vec3 c = ComputeCentroid(nodes[i]->box);
-			minC = glm::min(minC, c);
-			maxC = glm::max(maxC, c);
-		}
+			float ca = (a.aabbMin[axis] + a.aabbMax[axis]) * 0.5f;
+			float cb = (b.aabbMin[axis] + b.aabbMax[axis]) * 0.5f;
+			return ca < cb;
+		};
 
-		glm::vec3 extent = maxC - minC;
-		int axis = 0;
-		if (extent.y > extent.x && extent.y >= extent.z) axis = 1;
-		else if (extent.z > extent.x && extent.z >= extent.y) axis = 2;
-		return axis;
-	}
+	std::nth_element(bvhNodes.begin() + start, bvhNodes.begin() + mid, bvhNodes.begin() + end, comparator);
+	// problem je sto je u findTlasLeaf top down pristup, a ovdje bottom up pa ne znam kako indeksaciju rijesiti
+	// mozda da se ovde stavi element unaprijed a poslije dodijeliti vrijednosti 
+	size_t index = RaytracingBVHSingleton->nodes.size();
+	RaytracingBVHSingleton->nodes.emplace_back(flatRTNode());
+	flatRTNode& parent = RaytracingBVHSingleton->nodes.back();
 
-	template <typename NodeType>
-	NodeType* BuildMedianSplit(std::vector<NodeType*>& nodes, int start, int end)
-	{
-		int count = end - start;
-		if (count <= 0) return nullptr;
-		if (count == 1) return nodes[start];
+	flatRTNode left = BuildMedianSplit(bvhNodes, start, mid);
+	parent.right = RaytracingBVHSingleton->nodes.size() - index; // offset to right child
 
-		int axis = ChooseSplitAxis(nodes, start, end);
-		int mid = start + count / 2;
-		auto comparator = [axis](NodeType* a, NodeType* b)
-			{
-				float ca = (a->box.min[axis] + a->box.max[axis]) * 0.5f;
-				float cb = (b->box.min[axis] + b->box.max[axis]) * 0.5f;
-				return ca < cb;
-			};
+	flatRTNode right = BuildMedianSplit(bvhNodes, mid, end);
 
-		std::nth_element(nodes.begin() + start, nodes.begin() + mid, nodes.begin() + end, comparator);
+	parent.aabbMin = glm::min(left.aabbMin, right.aabbMin);
+	parent.aabbMax = glm::max(left.aabbMax, right.aabbMax);
+}
 
-		NodeType* left = BuildMedianSplit(nodes, start, mid);
-		NodeType* right = BuildMedianSplit(nodes, mid, end);
 
-		return new NodeType(left, right);
-	}
-
-} // namespace
 
 RaytracingBVH* RaytracingBVH::instancePtr = nullptr;
 
@@ -67,32 +81,80 @@ RaytracingBVH* RaytracingBVH::getInstance()
 	return instancePtr;
 }
 
-void RaytracingBVH::Build(Mesh* mesh)
+std::vector<flatRTNode>& RaytracingBVH::getNodes()
 {
-	this->Clear();
-
-	std::vector<Triangle>& triangles= mesh->getTriangles();
-	int numObjects = static_cast<int>(triangles.size());
-	if (!numObjects) return;
-
-
-	std::vector<RaytracingBVHNode*> bvhNodes;
-	bvhNodes.reserve(numObjects);
-
-	for (Triangle& tri : triangles)
-		bvhNodes.push_back(new RaytracingBVHNode(tri));
-
-
-	root = BuildMedianSplit(bvhNodes, 0, static_cast<int>(bvhNodes.size()));
+	return nodes;
 }
 
-RaytracingBVHNode* RaytracingBVH::getRoot() { return root; }
+std::vector<Triangle>& RaytracingBVH::getTriangles()
+{
+	return triangles;
+}
+
+void RaytracingBVH::Build()
+{
+	this->Clear();
+	BVHNode* objRoot = objectBVHSingleton->getRoot();
+
+	// opali dfs, na kraju buildat Triangle BVH
+
+	findTlasLeaf(objRoot);
+
+
+	//root = BuildMedianSplit(bvhNodes, 0, static_cast<int>(bvhNodes.size()));
+}
+
+void RaytracingBVH::findTlasLeaf(BVHNode* objNode)
+{
+	if (!objNode)return;
+
+	// tlas internal nodes
+	if (objNode->left || objNode->right)
+	{
+
+		size_t index = nodes.size();
+		nodes.emplace_back(flatRTNode(objNode));
+		// aabb set, left index is next, right TBD, triIndex = -1
+
+
+		findTlasLeaf(objNode->left);
+		nodes[index].right = nodes.size() - index; // offsetIndex to right child set after left subtree is built
+		findTlasLeaf(objNode->right);
+
+		return;
+	}
+	
+	std::cout << "\nOBJ index = " << objNode->index.back();
+	std::vector<Triangle>& triangles = dynamic_cast<Mesh*>(objectSingleton->getObject(objNode->index.back()))->getTriangles();
+	size_t numObjects = triangles.size();
+	if (!numObjects)
+		return;
+
+
+	std::vector<flatRTNode> bvhNodes;
+	bvhNodes.reserve(numObjects);
+
+
+	for (size_t i = 0; i < numObjects; ++i)
+	{
+		bvhNodes.emplace_back(flatRTNode(triangles[i], this->triangles.size()));
+		this->triangles.push_back(triangles[i]);
+	}
+
+	BuildMedianSplit(bvhNodes, 0, static_cast<int>(bvhNodes.size()));
+
+
+
+
+	return;
+}
+
+
 
 
 void RaytracingBVH::Clear()
 {
-	destroy(root);
-	root = nullptr;
+	nodes.clear();
 }
 
 //void RaytracingBVH::Draw(Camera& camera, Shader& shader, int subdivision)

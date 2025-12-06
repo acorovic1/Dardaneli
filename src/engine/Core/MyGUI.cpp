@@ -1734,65 +1734,59 @@ void MyGUI::pbrRender(const char* filename, int width, int height)
 
 int flatten(RaytracingBVHNode* node, std::vector<flatRTNode>& out, std::vector<Triangle>&trinagles)
 {
-	if (!node) return -1;
+	//if (!node) return -1;
 
-	int index = out.size();
-	out.emplace_back(); // placeholder
+	//int index = out.size();
+	//out.emplace_back(); // placeholder
 
-	int leftIndex = flatten(node->left, out, trinagles);
-	int rightIndex = flatten(node->right, out, trinagles);
+	//int leftIndex = flatten(node->left, out, trinagles);
+	//int rightIndex = flatten(node->right, out, trinagles);
 
-	flatRTNode f;
-	f.aabbMin = node->box.min;
-	f.aabbMax = node->box.max;
-	f.left = leftIndex;
-	f.right = rightIndex;
+	//flatRTNode f;
+	//f.aabbMin = node->box.min;
+	//f.aabbMax = node->box.max;
+	//f.left = leftIndex;
+	//f.right = rightIndex;
 
-	if (node->left == nullptr && node->right == nullptr) {
-		// leaf
-		f.triIndex = trinagles.size();
-		trinagles.push_back(node->tri);
-		std::cout << node->tri.v0.x << " " << node->tri.v0.y << " " << node->tri.v0.z << "\n";
-		std::cout << node->tri.v1.x << " " << node->tri.v1.y << " " << node->tri.v1.z << "\n";
-		std::cout << node->tri.v2.x << " " << node->tri.v2.y << " " << node->tri.v2.z << "\n\n";
-	}
-	else {
-		f.triIndex = -1;
-	}
+	//if (node->left == nullptr && node->right == nullptr) {
+	//	// leaf
+	//	f.triIndex = trinagles.size();
+	//	trinagles.push_back(node->tri);
+	//	/*std::cout << node->tri.v0.x << " " << node->tri.v0.y << " " << node->tri.v0.z << "\n";
+	//	std::cout << node->tri.v1.x << " " << node->tri.v1.y << " " << node->tri.v1.z << "\n";
+	//	std::cout << node->tri.v2.x << " " << node->tri.v2.y << " " << node->tri.v2.z << "\n\n";*/
+	//}
+	//else {
+	//	f.triIndex = -1;
+	//}
 
-	out[index] = f;
-	return index;
+	//out[index] = f;
+	return 0;
 }
 
 void sendData(Shader &shader)
 {
-	RaytracingBVHSingleton->Build(dynamic_cast<Mesh*>(objectSingleton->getObject(0)));
 
 
-	std::stack<const RaytracingBVHNode*> s;
-	s.push(RaytracingBVHSingleton->getRoot());
+	RaytracingBVHSingleton->Build();
 
-	int count = 0;
+	std::vector<flatRTNode>& gpuNodes=RaytracingBVHSingleton->getNodes();
+	std::vector<Triangle> gpuTriangles = RaytracingBVHSingleton->getTriangles();	
 
-	do {
-		const RaytracingBVHNode* n = s.top();
-		s.pop();
-		++count;
+	std::cout << "\nGPU BVH nodes: " << gpuNodes.size() << "\n";
+	std::cout << "Triangle size: " << gpuTriangles.size() << "\n\n";
 
-		if (n->left)  s.push(n->left);
-		if (n->right) s.push(n->right);
+	/*for (auto& tri : gpuTriangles)
+	{
 
-	} while (!s.empty());
+		std::cout << "\n\n"<<tri.v0x << " " << tri.v0y << " " << tri.v0z << "\n";
+		std::cout << tri.v1x << " " << tri.v1y << " " << tri.v1z << "\n";
+		std::cout << tri.v2x << " " << tri.v2y << " " << tri.v2z << "\n";
+	}
 
-	std::cout << "\n\n\t Broj nodova u raytracing BVH: " << count << "\n\n";
-
-	std::vector<flatRTNode> gpuNodes;
-	std::vector<Triangle> gpuTriangles;
-	flatten(RaytracingBVHSingleton->getRoot(), gpuNodes, gpuTriangles);
-
-	std::cout << "\n\n\t Broj GPU trokutica u raytracing BVH: " << gpuTriangles.size() << "\n\n";
-	for (auto x : gpuNodes)
-		std::cout << x.triIndex << " ";
+	for(auto& node:gpuNodes)
+		std::cout << "triIndex = " << node.triIndex << "\n";*/
+	
 
 	GLuint bvhBuffer, triBuffer;
 	//
@@ -1800,18 +1794,20 @@ void sendData(Shader &shader)
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvhBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, gpuNodes.size() * sizeof(flatRTNode), gpuNodes.data(), GL_STATIC_DRAW);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bvhBuffer);
-	
+
 	glGenBuffers(1, &triBuffer);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, triBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, gpuTriangles.size() * sizeof(Triangle), gpuTriangles.data(), GL_STATIC_DRAW);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, triBuffer);
 
 
+
+
 	shader.setVector3f(true, "camPos", cameraSingleton->getCamera(0)->getPosition());
 	shader.setVector3f(true, "camDir", cameraSingleton->getCamera(0)->getOrientation());
 	shader.setVector3f(true, "camUp", cameraSingleton->getCamera(0)->getUp());
 	shader.setVector3f(true, "camRight", glm::normalize(glm::cross(cameraSingleton->getCamera(0)->getOrientation(), cameraSingleton->getCamera(0)->getUp())));
-	shader.setFloat(true, "fov", cameraSingleton->getCamera(0)->getFOV());
+	shader.setFloat(true, "fov", glm::radians(cameraSingleton->getCamera(0)->getFOV()));
 	shader.setVector2i(true, "resolution", glm::vec2(cameraSingleton->getCamera(0)->getWidth(), cameraSingleton->getCamera(0)->getHeight()));
 
 }
@@ -1834,6 +1830,9 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 	glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 
 	computeShader.activate();
+
+
+
 	sendData(computeShader);
 	//
 	auto s0 = std::chrono::high_resolution_clock::now();
@@ -1844,6 +1843,12 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 	auto s1 = std::chrono::high_resolution_clock::now();
 	double shader_ms = std::chrono::duration<double, std::milli>(s1 - s0).count();
+
+	//for (auto x : gpuTriangles)
+	//	std::cout << "Triangle .debug = " << x.hit << "\n";
+	
+
+
 
 	// Read back texture 
 	std::vector<float> pixels(width * height * 4);

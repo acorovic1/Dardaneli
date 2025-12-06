@@ -9,6 +9,7 @@
 #include "VAO.h"
 #include "Object.h"
 #include "DrawableAABB.h"
+#include "Triangle.h"
 
 inline float ffmin(float a, float b) { return a < b ? a : b; }
 inline float ffmax(float a, float b) { return a > b ? a : b; }
@@ -22,6 +23,7 @@ struct AABB {
 	AABB();
 	AABB(glm::vec3 vertex);
 	AABB(glm::vec3 min, glm::vec3 max);
+
 	AABB(std::vector<glm::vec3> vertices);
 	AABB(AABB& a, AABB& b);
 	AABB(Object& object);

@@ -427,7 +427,7 @@ void Mesh::buildGPUVertices()
 				gpv.uv = loop->uvVertex->uv;
 
 
-				std::cout << "\n\t" << gpv.position.x << " " << gpv.position.y << " " << gpv.position.z << "  |  ";
+				//std::cout << "\n\t" << gpv.position.x << " " << gpv.position.y << " " << gpv.position.z << "  |  ";
 				tempHelper.push_back(matVerts.size());
 				matVerts.push_back(gpv);
 

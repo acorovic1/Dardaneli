@@ -6,18 +6,14 @@
 struct RaytracingBVHNode;
 
 class RaytracingBVH {
-	RaytracingBVHNode* root;
+	std::vector<flatRTNode> nodes;
+	std::vector<Triangle> triangles;
 	static RaytracingBVH* instancePtr;
 
-	RaytracingBVH() :root(nullptr) {};
+	RaytracingBVH() :nodes() {};
 
-	void DrawTree(RaytracingBVHNode* node, Camera& camera, Shader& shader, int subdivision);
-	void destroy(RaytracingBVHNode* node) {
-		if (!node) return;
-		destroy(node->left);
-		destroy(node->right);
-		delete node;
-	}
+	//void DrawTree(RaytracingBVHNode* node, Camera& camera, Shader& shader, int subdivision);
+
 
 public:
 
@@ -26,8 +22,10 @@ public:
 	RaytracingBVH(const RaytracingBVH& copy) = delete;
 	void operator=(const RaytracingBVH& copy) = delete;
 
-	RaytracingBVHNode* getRoot();
-	void Build(Mesh* mesh);
+	std::vector<flatRTNode>& getNodes();
+	std::vector<Triangle>& getTriangles();
+	void Build();
+	void findTlasLeaf(BVHNode *objNode);
 	// pokusati staviti default vrijednosti kroz objectManager
 
 	//void Refit(Mesh& mesh);
@@ -35,6 +33,9 @@ public:
 
 	//void Draw(Camera& camera, Shader& shader, int subdivision);
 	//void DrawLeaves(RaytracingBVHNode* node, Camera& camera, Shader& shader);
+
+	friend flatRTNode BuildMedianSplit(std::vector<flatRTNode>& bvhNodes, int start, int end);
+
 };
 
 extern RaytracingBVH* RaytracingBVHSingleton;
