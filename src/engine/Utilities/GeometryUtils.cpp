@@ -189,4 +189,3 @@ bool GeometryUtils::splitQuadAlongMidpointsOpposite(
 }
 
 
-

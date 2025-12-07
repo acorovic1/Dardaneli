@@ -1,9 +1,11 @@
 ﻿#include "Scene.h"
+
 #include "Mesh/DFace.h"
 #include "Window.h"
 #include "Lights/PointLight.h"
 #include "Lights/DirectionalLight.h"
 #include "Lights/SpotLight.h"
+
 
 #include "RaytracingBVH.h"
 #include <stack>
@@ -23,6 +25,7 @@ void Scene::init(Window& window)
 	new Camera(800, 600, glm::vec3(-2.0f, 3.0f, 6.0f), "Viewport");
 	new Camera(800, 600, glm::vec3(0.5f, 0.5f, 1.0f), "UV");
 	new Camera(800, 600, glm::vec3(0.0f, 0.0f, 6.0f), "Shader");
+
 
 
 
@@ -96,6 +99,9 @@ void Scene::init(Window& window)
 
 
 	// svjetla napravljena ostalo jos SCALE I ROTATE metode da se naprave, koristi model matricu
+
+
+	
 
 
 

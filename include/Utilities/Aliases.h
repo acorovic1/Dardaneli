@@ -3,8 +3,10 @@
 #include <type_traits>
 #include <vector>
 #include <unordered_set>
+
 #include "Mesh/DFace.h"
 #include "Mesh/DEdge.h"
+
 
 template <typename Container>
 using EdgeContainer = typename std::enable_if<

@@ -29,6 +29,7 @@ bool fileExists(const char* path) {
 	return f.is_open();
 }
 
+
 Shader::Shader(std::string name, const char* computeFile)
 {
 
@@ -187,6 +188,7 @@ void Shader::setInteger(bool activated, const char* uniform, int value)
 		this->activate();
 	glUniform1i(glGetUniformLocation(this->ID, uniform), value);
 }
+
 void Shader::setVector2i(bool activated, const char* uniform, float x, float y)
 {
 	if (!activated)
@@ -199,6 +201,7 @@ void Shader::setVector2i(bool activated, const char* uniform, const glm::vec2& v
 		this->activate();
 	glUniform2i(glGetUniformLocation(this->ID, uniform), vec.x, vec.y);
 }
+
 void Shader::setVector2f(bool activated, const char* uniform, float x, float y)
 {
 	if (!activated)

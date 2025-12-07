@@ -1,5 +1,6 @@
 ﻿#include "MyGUI.h"
 
+
 #include <iomanip>
 #include <chrono>
 #include <unordered_set>
@@ -12,6 +13,7 @@
 #include "Mesh/DLoop.h"
 #include "MaterialManager.h"
 #include "RaytracingBVH.h"
+
 
 #include "ShadingNodes/Texture/TextureNode.h"
 #include "ShadingNodes/Math/MathNode.h"
@@ -33,7 +35,9 @@
 #if defined(_WIN32)
 #include <windows.h>
 #endif
+
 #include <stack>
+
 
 void openFile(const char* filename) {
 #if defined(_WIN32)
@@ -104,6 +108,7 @@ void MyGUI::drawUI()
 
 
 
+
 	if (ImGui::Button("Render Scene"))
 	{
 		ImGui::OpenPopup("RenderSceneMenu");
@@ -122,7 +127,6 @@ void MyGUI::drawUI()
 
 		ImGui::EndPopup();
 	}
-
 
 
 	int current = static_cast<int>(app->renderMode);
@@ -175,7 +179,9 @@ void MyGUI::drawObjectModeUI(bool change)
 
 	if (app->objectIndices.size())
 	{
+
 		int& lastIndex = app->objectIndices.back();
+
 		if (ImGui::InputInt("Index", &lastIndex))
 		{
 			(ImGui::InputInt("Index", &lastIndex));
@@ -669,7 +675,10 @@ void MyGUI::extrudeMenu()
 void MyGUI::drawBVH() {
 	static Shader& basic = shaderSingleton->getShader("Basic");
 	basic.setInteger(false, "colorMode", static_cast<int>(FragColor::UV));
+
 	objectBVHSingleton->Draw(*cameraSingleton->getCamera(0), basic, BVHSubd);
+
+
 	basic.setInteger(false, "colorMode", static_cast<int>(FragColor::Seams));
 }
 
@@ -1076,7 +1085,9 @@ void MyGUI::drawGrid3D()
 	shader.setBool(true, "DDD", true);
 
 
+
 	getWindow()->getCamera()->cameraUniform(true, shader, "cameraMatrix");
+
 
 	glDrawElements(GL_LINES, gridIndices3D.size(), GL_UNSIGNED_INT, 0);
 }
@@ -1090,7 +1101,9 @@ void MyGUI::drawGrid2D()
 
 	shader.setBool(true, "DDD", false);
 
+
 	getWindow()->getCamera()->cameraUniform(true, shader, "cameraMatrix");
+
 
 	glDrawElements(GL_LINES, gridIndices2D.size(), GL_UNSIGNED_INT, 0);
 }
@@ -1686,7 +1699,9 @@ void MyGUI::addShadingNodes()
 }
 
 
+
 void MyGUI::pbrRender(const char* filename, int width, int height)
+
 {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -1729,6 +1744,7 @@ void MyGUI::pbrRender(const char* filename, int width, int height)
 	openFile(filename);
 
 }
+
 
 
 
@@ -1895,7 +1911,6 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 
 
 }
-
 
 
 

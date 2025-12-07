@@ -39,5 +39,8 @@ imgui.ini
 *.Backup
 
 
+.DS_Store
+
+
 /final_render.png
 

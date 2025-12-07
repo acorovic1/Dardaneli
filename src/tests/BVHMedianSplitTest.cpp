@@ -198,7 +198,9 @@ int main()
 		std::cout << "  Improved : " << improvedMs << " ms\n";
 	}
 
-	std::vector<size_t> vertexCounts = { 65'536, 1'000'000, 2'000'000 };
+
+	std::vector<size_t> vertexCounts = { 256, 1'024, 4'096, 16'384, 65'536 };
+
 
 	std::cout << "\n=== Vertex BVH ===\n";
 	for (size_t count : vertexCounts)
@@ -206,10 +208,12 @@ int main()
 		auto vertices = GenerateRandomVertices(count, rng, 3000.0f);
 		auto bounds = BuildVertexBounds(vertices, 0.01f);
 		std::mt19937 legacyRng(static_cast<uint32_t>(count * 17));
-		//double legacyMs = MeasureBuild([&] { return BuildLegacyBVH(bounds, legacyRng); });
+
+		double legacyMs = MeasureBuild([&] { return BuildLegacyBVH(bounds, legacyRng); });
 		double improvedMs = MeasureBuild([&] { return BuildMedianBVH(bounds); });
 		std::cout << "Vertices: " << count << "\n";
-		//std::cout << "  Legacy   : " << legacyMs << " ms\n";
+		std::cout << "  Legacy   : " << legacyMs << " ms\n";
+
 		std::cout << "  Improved : " << improvedMs << " ms\n";
 	}
 

@@ -5,7 +5,9 @@
 #include "Aliases.h"
 #include "unordered_set"
 #include "UVVertex.h"
+
 #include "Triangle.h"
+
 //#include "Material.h"
 #include "GPUVertex.h"
 #include "map"
@@ -128,7 +130,9 @@ public:
 	void scale(glm::vec3& scaleVector)override;
 	void scale(float x, float y, float z)override;
 
+
 	void draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES, bool outline = false) override;
+
 	void materialDraw(Camera& camera);
 	void renderDraw(Camera& camera);
 
@@ -167,8 +171,10 @@ public:
 	void dissolveFaces();
 
 
+			
+	
+			// EXTRUDE
 
-	// EXTRUDE
 
 	void extrudeVertices(std::vector<int>& verts, bool update = false);
 
@@ -193,7 +199,9 @@ public:
 
 
 
-	// DUPLICATE
+
+			// DUPLICATE
+
 
 	std::vector<DVertex*> duplicateVertices(std::vector<int>& verts, bool update = false);
 
@@ -205,17 +213,23 @@ public:
 
 
 
-	// FILL
+
+			// FILL
+
 
 	DEdge* edgeFill(std::vector<int>& verts, bool update = false);
 	DFace* faceFill(std::vector<int>& verts, bool windingOrderSet = false, bool update = false);
 
-	// INSET
+
+			// INSET
+
 
 	void inset(std::vector<DFace*> faces);
 	void insetIndividual(std::vector<DFace*> faces);
 
-	// OTHER OPERATIONS
+
+			// OTHER OPERATIONS
+
 	template <typename Container, typename = FaceContainer<Container>>
 	void pokeFaces(Container& faces, bool update = false);
 
@@ -305,6 +319,7 @@ public:
 
 
 
+
 	// raytracing
 
 	std::vector<Triangle>& getTriangles()
@@ -312,6 +327,7 @@ public:
 		formTrianglesForRaytracing();
 		return triangles;
 	};
+
 
 
 

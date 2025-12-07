@@ -25,6 +25,7 @@ class Shader {
 public:
 
 	Shader(std::string name, const char* computeFile);
+
 	Shader(std::string name, const char* vertexFile, const char* fragmentFile);
 	Shader(std::string name, const char* vertexFile, const char* fragmentFile, const char* geometryFile);
 	~Shader() {
@@ -40,8 +41,10 @@ public:
 	void setBool(bool activated, const char* uniform, bool value);
 	void setFloat(bool activated, const char* uniform, float value);
 	void setInteger(bool activated, const char* uniform, int value);
+
 	void setVector2i(bool activated, const char* uniform, float x, float y);
 	void setVector2i(bool activated, const char* uniform, const glm::vec2& vec);
+
 	void setVector2f(bool activated, const char* uniform, float x, float y);
 	void setVector2f(bool activated, const char* uniform, const glm::vec2& vec);
 	void setVector3f(bool activated, const char* uniform, float x, float y, float z);

@@ -1,10 +1,10 @@
-﻿#include "Renderer.h"
+#include "Renderer.h"
+
 #include "Window.h"
 #include "MyGUI.h"
 #include "Scene.h"
 #include "windows.h"
 #include "Application.h"
-
 
 
 // sastaviti edge/face za UVove
@@ -70,7 +70,9 @@ int main() {
 	Scene scene;
 	scene.init(window);
 
+
 	Renderer renderer(window, gui);
+
 	renderer.init();
 
 	window.setCamera(cameraSingleton->getCamera("Viewport"));
@@ -87,6 +89,7 @@ int main() {
 	else
 		std::cout << "Debug context not enabled." << std::endl;
 
+
 	glfwSetTime(0);
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -97,6 +100,7 @@ int main() {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
+
 
 
 	std::cout << "\nDardaneli started successfully!\n\n";
@@ -133,6 +137,7 @@ int main() {
 	//glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 	//glDeleteBuffers(1, &ssbo);
 
+
 	while (!window.shouldClose()) {
 		crntTime = glfwGetTime();
 		timeDiff = crntTime - prevTime;
@@ -166,7 +171,6 @@ int main() {
 	};
 
 	std::cout << "\nTime = " << glfwGetTime();
-
 
 
 

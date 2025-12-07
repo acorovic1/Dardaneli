@@ -36,7 +36,9 @@ void Renderer::viewportEditor()
 		Mesh* mesh = dynamic_cast<Mesh*>(object);
 		basicShader.activate();
 		// setting model and cameraUniform uniforms may be reduntat bcs they are also set in object.draw method
+
 		basicShader.setMat4(true, "model", object->getModel());
+
 		camera->cameraUniform(true, basicShader, "cameraMatrix");
 		if (std::any_of(selectedObjects.begin(), selectedObjects.end(), [i](int a) {return i == a; }))
 		{
