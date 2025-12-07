@@ -1,0 +1,44 @@
+# Ignore Visual Studio user-specific files
+*.vcxproj.user
+
+# Ignore build output folders (adjust names as needed)
+x64/Debug/
+Dardaneli/x64/
+.vs/
+
+# Ignore ImGui runtime config
+imgui.ini
+
+# Ignore other common Visual Studio files
+*.obj
+*.pch
+*.pdb
+*.ipdb
+*.iobj
+*.idb
+*.log
+*.suo
+*.user
+*.userosscache
+*.sdf
+*.cache
+*.ilk
+*.meta
+*.exp
+*.tlog/
+*.lastbuildstate
+*.db
+*.opendb
+*.VC.db
+
+# Ignore temporary files and folders
+*.tmp
+*.temp
+~$*
+*.bak
+*.Backup
+
+.DS_Store
+
+/final_render.png
+

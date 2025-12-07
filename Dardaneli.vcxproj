@@ -1,0 +1,330 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{e828ccc7-5c62-47e2-8989-d6038346f780}</ProjectGuid>
+    <RootNamespace>Dardaneli</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>false</EnableASAN>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(ProjectDir)libraries\include;$(ProjectDir)include\;$(ProjectDir)include\AccelerationStructures;$(ProjectDir)include\Utilities;$(ProjectDir)include\Objects;$(ProjectDir)include\Materials;$(ProjectDir)include\GLBuffers;$(ProjectDir)include\Core;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)libraries\lib;C:\Users\Korisnik\OneDrive\Radna površina\Dardaneli\Dardaneli\Libraries\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(ProjectDir)libraries\include;$(ProjectDir)include\;$(ProjectDir)include\AccelerationStructures;$(ProjectDir)include\Utilities;$(ProjectDir)include\Objects;$(ProjectDir)include\Materials;$(ProjectDir)include\GLBuffers;$(ProjectDir)include\Core;C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)libraries\lib;C:\Users\adnan\Desktop\VISUAL STUDIO PROJECTS\Dardaneli\Libraries\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <ShowIncludes>false</ShowIncludes>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <ShowIncludes>false</ShowIncludes>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\engine\AccelerationStructures\Improved\EdgeBVHImproved.cpp" />
+    <ClCompile Include="src\engine\AccelerationStructures\Improved\FaceBVHImproved.cpp" />
+    <ClCompile Include="src\engine\AccelerationStructures\Improved\ObjectModeBVHImproved.cpp" />
+    <ClCompile Include="src\engine\AccelerationStructures\Improved\UVVertexBVHImproved.cpp" />
+    <ClCompile Include="src\engine\AccelerationStructures\Improved\VertexBVHImproved.cpp" />
+    <ClCompile Include="src\engine\Objects\Mesh\DLoop.cpp" />
+    <ClCompile Include="src\engine\Lights\DirectionalLight.cpp" />
+    <ClCompile Include="src\engine\Lights\PointLight.cpp" />
+    <ClCompile Include="src\engine\Lights\SpotLight.cpp" />
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Color\ColorBurnNode.cpp" />
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Color\ColorMixNode.cpp" />
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Input\ColorNode.cpp" />
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Math\MathNode.cpp" />
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Output\AmbientOcclusionOutputNode.cpp" />
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Output\ColorOutputNode.cpp" />
+    <ClCompile Include="src\engine\Materials\Material.cpp" />
+    <ClCompile Include="src\engine\Materials\MaterialManager.cpp" />
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Output\MetallicOutputNode.cpp" />
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Output\NormalOutputNode.cpp" />
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Output\RoughnessOutputNode.cpp" />
+    <ClCompile Include="src\engine\Materials\ShadingNodes\ShadingNodesManager.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\ImGuiFileDialog.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\imnodes.cpp" />
+    <ClCompile Include="src\engine\AccelerationStructures\BoundingVolumes\AABB.cpp" />
+    <ClCompile Include="src\engine\Core\Application.cpp" />
+    <ClCompile Include="src\engine\Objects\BasicObjects.cpp" />
+    <ClCompile Include="src\engine\AccelerationStructures\BVHNode.cpp" />
+    <ClCompile Include="src\engine\Core\CameraManager.cpp" />
+    <ClCompile Include="src\engine\Core\Camera.cpp" />
+    <ClCompile Include="src\engine\Objects\Mesh\DEdge.cpp" />
+    <ClCompile Include="src\engine\Objects\Mesh\DFace.cpp" />
+    <ClCompile Include="src\engine\AccelerationStructures\BoundingVolumes\DrawableAABB.cpp" />
+    <ClCompile Include="src\engine\Objects\Mesh\DVertex.cpp" />
+    <ClCompile Include="src\engine\GLBuffers\EBO.cpp" />
+    <ClCompile Include="src\engine\AccelerationStructures\EdgeBVH.cpp" />
+    <ClCompile Include="src\engine\AccelerationStructures\EdgeBVHNode.cpp" />
+    <ClCompile Include="src\engine\AccelerationStructures\FaceBVH.cpp" />
+    <ClCompile Include="src\engine\AccelerationStructures\FaceBVHNode.cpp" />
+    <ClCompile Include="src\engine\Utilities\GeometryUtils.cpp" />
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Input\ValueNode.cpp" />
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Texture\TextureNode.cpp" />
+    <ClCompile Include="src\engine\AccelerationStructures\UVVertexBVH.cpp" />
+    <ClCompile Include="src\engine\AccelerationStructures\VertexBVH.cpp" />
+    <ClCompile Include="src\engine\glad.c" />
+    <ClCompile Include="libraries\include\ImGUIZMO\GraphEditor.cpp" />
+    <ClCompile Include="libraries\include\ImGUIZMO\ImCurveEdit.cpp" />
+    <ClCompile Include="libraries\include\ImGUIZMO\ImGradient.cpp" />
+    <ClCompile Include="libraries\include\ImGUIZMO\ImGuizmo.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\imgui.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\imgui_demo.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\imgui_draw.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\imgui_impl_glfw.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\imgui_tables.cpp" />
+    <ClCompile Include="libraries\include\ImGUI\imgui_widgets.cpp" />
+    <ClCompile Include="src\engine\Main.cpp" />
+    <ClCompile Include="src\engine\Objects\Mesh\Mesh.cpp" />
+    <ClCompile Include="src\engine\Core\MyGUI.cpp" />
+    <ClCompile Include="src\engine\Objects\Object.cpp" />
+    <ClCompile Include="src\engine\Objects\ObjectManager.cpp" />
+    <ClCompile Include="src\engine\AccelerationStructures\ObjectModeBVH.cpp" />
+    <ClCompile Include="src\engine\Utilities\Ray.cpp" />
+    <ClCompile Include="src\engine\Core\Renderer.cpp" />
+    <ClCompile Include="src\engine\Core\Scene.cpp" />
+    <ClCompile Include="src\engine\Materials\Shader.cpp" />
+    <ClCompile Include="src\engine\Materials\ShaderManager.cpp" />
+    <ClCompile Include="src\engine\Utilities\stb.cpp" />
+    <ClCompile Include="src\engine\Materials\ShadingNodes\Texture\Texture.cpp" />
+    <ClCompile Include="src\engine\GLBuffers\VAO.cpp" />
+    <ClCompile Include="src\engine\GLBuffers\VBO.cpp" />
+    <ClCompile Include="src\engine\Core\Window.cpp" />
+    <ClCompile Include="src\engine\Core\WindowManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shaders\basic.frag" />
+    <None Include="src\shaders\basic.vert" />
+    <None Include="src\shaders\grid.frag" />
+    <None Include="src\shaders\grid.vert" />
+    <None Include="src\shaders\pbr.geom" />
+    <None Include="src\shaders\pbr.vert" />
+    <None Include="src\shaders\UV.frag" />
+    <None Include="src\shaders\UV.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\AccelerationStructures\BoundingVolumes\AABB.h" />
+    <ClInclude Include="include\AccelerationStructures\Improved\BVHBuilder.h" />
+    <ClInclude Include="include\AccelerationStructures\Improved\EdgeBVHImproved.h" />
+    <ClInclude Include="include\AccelerationStructures\Improved\FaceBVHImproved.h" />
+    <ClInclude Include="include\AccelerationStructures\Improved\ObjectModeBVHImproved.h" />
+    <ClInclude Include="include\AccelerationStructures\Improved\ParallelBVHBuilder.h" />
+    <ClInclude Include="include\AccelerationStructures\Improved\UVVertexBVHImproved.h" />
+    <ClInclude Include="include\AccelerationStructures\Improved\VertexBVHImproved.h" />
+    <ClInclude Include="include\Objects\Mesh\Mesh.h" />
+    <ClInclude Include="include\Utilities\Aliases.h" />
+    <ClInclude Include="include\Core\Application.h" />
+    <ClInclude Include="include\Objects\BasicObjects.h" />
+    <ClInclude Include="include\AccelerationStructures\BVHNode.h" />
+    <ClInclude Include="include\Core\Camera.h" />
+    <ClInclude Include="include\Core\CameraManager.h" />
+    <ClInclude Include="include\Objects\Mesh\DDiskLink.h" />
+    <ClInclude Include="include\Objects\Mesh\DEdge.h" />
+    <ClInclude Include="include\Objects\Mesh\DFace.h" />
+    <ClInclude Include="include\Objects\Mesh\DLoop.h" />
+    <ClInclude Include="include\AccelerationStructures\BoundingVolumes\DrawableAABB.h" />
+    <ClInclude Include="include\Objects\Mesh\DVertex.h" />
+    <ClInclude Include="include\GLBuffers\EBO.h" />
+    <ClInclude Include="include\AccelerationStructures\EdgeBVH.h" />
+    <ClInclude Include="include\AccelerationStructures\EdgeBVHNode.h" />
+    <ClInclude Include="include\AccelerationStructures\FaceBVH.h" />
+    <ClInclude Include="include\AccelerationStructures\FaceBVHNode.h" />
+    <ClInclude Include="include\Utilities\GeometryUtils.h" />
+    <ClInclude Include="include\Objects\Mesh\GPUVertex.h" />
+    <ClInclude Include="include\Objects\Lights\DirectionalLight.h" />
+    <ClInclude Include="include\Objects\Lights\Light.h" />
+    <ClInclude Include="include\Objects\Lights\PointLight.h" />
+    <ClInclude Include="include\Objects\Lights\SpotLight.h" />
+    <ClInclude Include="include\Utilities\PairHash.h" />
+    <ClInclude Include="include\Utilities\EditorModes.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Output\AmbientOcclusionOutputNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Color\ColorBurnNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Color\ColorMixNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Input\ColorNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Output\ColorOutputNode.h" />
+    <ClInclude Include="include\Materials\Material.h" />
+    <ClInclude Include="include\Materials\MaterialManager.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Math\MathNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Output\MetallicOutputNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Output\NormalOutputNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Output\RoughnessOutputNode.h" />
+    <ClInclude Include="include\Materials\ShaderBuilder.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\ShadingNodes.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\ShadingNodesManager.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Texture\TextureNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Input\ValueNode.h" />
+    <ClInclude Include="include\Utilities\UnorderedPair.h" />
+    <ClInclude Include="include\Objects\Mesh\UVVertex.h" />
+    <ClInclude Include="include\AccelerationStructures\UVVertexBVH.h" />
+    <ClInclude Include="include\AccelerationStructures\VertexBVH.h" />
+    <ClInclude Include="libraries\include\ImGUIZMO\GraphEditor.h" />
+    <ClInclude Include="libraries\include\ImGUIZMO\ImCurveEdit.h" />
+    <ClInclude Include="libraries\include\ImGUIZMO\ImGradient.h" />
+    <ClInclude Include="libraries\include\ImGUIZMO\ImGuizmo.h" />
+    <ClInclude Include="libraries\include\ImGUIZMO\ImZoomSlider.h" />
+    <ClInclude Include="libraries\include\ImGUI\imconfig.h" />
+    <ClInclude Include="libraries\include\ImGUI\imgui.h" />
+    <ClInclude Include="libraries\include\ImGUI\ImGuiFileDialog.h" />
+    <ClInclude Include="libraries\include\ImGUI\ImGuiFileDialogConfig.h" />
+    <ClInclude Include="libraries\include\ImGUI\imgui_impl_glfw.h" />
+    <ClInclude Include="libraries\include\ImGUI\imgui_impl_opengl3.h" />
+    <ClInclude Include="libraries\include\ImGUI\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="libraries\include\ImGUI\imgui_internal.h" />
+    <ClInclude Include="libraries\include\ImGUI\imnodes.h" />
+    <ClInclude Include="libraries\include\ImGUI\imnodes_internal.h" />
+    <ClInclude Include="libraries\include\ImGUI\imstb_rectpack.h" />
+    <ClInclude Include="libraries\include\ImGUI\imstb_textedit.h" />
+    <ClInclude Include="libraries\include\ImGUI\imstb_truetype.h" />
+    <ClInclude Include="include\Core\MyGUI.h" />
+    <ClInclude Include="include\Objects\Object.h" />
+    <ClInclude Include="include\Objects\ObjectManager.h" />
+    <ClInclude Include="include\AccelerationStructures\ObjectModeBVH.h" />
+    <ClInclude Include="include\Utilities\Ray.h" />
+    <ClInclude Include="include\Core\Renderer.h" />
+    <ClInclude Include="include\Core\Scene.h" />
+    <ClInclude Include="include\Materials\Shader.h" />
+    <ClInclude Include="include\Materials\ShaderManager.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Texture\Texture.h" />
+    <ClInclude Include="include\GLBuffers\VAO.h" />
+    <ClInclude Include="include\GLBuffers\VBO.h" />
+    <ClInclude Include="include\Core\Window.h" />
+    <ClInclude Include="include\Core\WindowManager.h" />
+    <ClInclude Include="libraries\include\stb\stb_image.h" />
+    <ClInclude Include="libraries\include\stb\stb_image_resize2.h" />
+    <ClInclude Include="libraries\include\stb\stb_image_write.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\planks.png" />
+    <Image Include="assets\planksSpec.png" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
