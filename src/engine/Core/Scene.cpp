@@ -47,14 +47,15 @@ void Scene::init(Window& window)
 	app->activeMaterial = new Material("Default");
 
 
-
-	int N = 4;                 // cubes per axis → generates N³ cubes
+	// for n= 4 or higher driver malfunctions lol?
+	int N = 3;                 // cubes per axis → generates N³ cubes
 	float spacing = 2.0f;      // distance between cube centers
 
 	for (int x = 0; x < N; ++x)
 	{
 	    for (int y = 0; y < N; ++y)
 	    {
+			//if (y % 2 == 0)continue;
 	        for (int z = 0; z < N; ++z)
 	        {
 	            int id = objectSingleton->getNumberOfObjects();
@@ -81,14 +82,16 @@ void Scene::init(Window& window)
 	//dynamic_cast<Mesh*>(objectSingleton->getObject(0))->assignMaterial(app->activeMaterial);
 	//dynamic_cast<Mesh*>(objectSingleton->getObject(1))->assignMaterial(app->activeMaterial);
 	//dynamic_cast<Mesh*>(objectSingleton->getObject(2))->assignMaterial(app->activeMaterial);
-	//glm::vec3 t1(-3.0f, 0.0f, 0.0f);
-	//glm::vec3 t2(3.0f, 0.0f, 0.0f);
-	////dynamic_cast<Mesh*>(objectSingleton->getObject(0))->translate(t1);
-	//dynamic_cast<Mesh*>(objectSingleton->getObject(1))->translate(t1);
+	//glm::vec3 t1(-3.0f, 3.0f, 0.0f);
+	//glm::vec3 t2(3.0f, -3.0f, 0.0f);
+	//dynamic_cast<Mesh*>(objectSingleton->getObject(0))->translate(t1);
+	//dynamic_cast<Mesh*>(objectSingleton->getObject(1))->translate(t2);
 	//dynamic_cast<Mesh*>(objectSingleton->getObject(2))->translate(t2);
 
+	//objectBVHSingleton->Refit();
 
 
+	// pa jebem ti majku i bvh.build
 
 
 

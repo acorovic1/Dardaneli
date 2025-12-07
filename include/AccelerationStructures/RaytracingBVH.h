@@ -34,7 +34,7 @@ public:
 	//void Draw(Camera& camera, Shader& shader, int subdivision);
 	//void DrawLeaves(RaytracingBVHNode* node, Camera& camera, Shader& shader);
 
-	friend flatRTNode BuildMedianSplit(std::vector<flatRTNode>& bvhNodes, int start, int end);
+	friend int BuildMedianSplit(std::vector<flatRTNode>& bvhNodes, int start, int end);
 
 };
 

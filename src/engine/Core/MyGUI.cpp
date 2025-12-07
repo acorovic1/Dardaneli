@@ -1774,7 +1774,7 @@ void sendData(Shader &shader)
 	std::vector<Triangle> gpuTriangles = RaytracingBVHSingleton->getTriangles();	
 
 	std::cout << "\nGPU BVH nodes: " << gpuNodes.size() << "\n";
-	std::cout << "Triangle size: " << gpuTriangles.size() << "\n\n";
+	std::cout << "Triangles size: " << gpuTriangles.size() << "\n\n";
 
 	/*for (auto& tri : gpuTriangles)
 	{
@@ -1783,9 +1783,9 @@ void sendData(Shader &shader)
 		std::cout << tri.v1x << " " << tri.v1y << " " << tri.v1z << "\n";
 		std::cout << tri.v2x << " " << tri.v2y << " " << tri.v2z << "\n";
 	}
-
-	for(auto& node:gpuNodes)
-		std::cout << "triIndex = " << node.triIndex << "\n";*/
+	*/
+	for (auto& node : gpuNodes)
+		std::cout << "node.triIndex = " << node.triIndex << "\t node.right = "<<node.right << "\n";
 	
 
 	GLuint bvhBuffer, triBuffer;

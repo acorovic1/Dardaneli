@@ -6,7 +6,6 @@ layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 layout(rgba32f, binding = 0) uniform image2D imgOutput;
 
 
-
 struct Triangle{
     float V0x, V0y, V0z;
 	float V1x, V1y, V1z;
@@ -16,21 +15,34 @@ struct Triangle{
 };
 
 struct flatRTNode {
-    vec3 aabbMin;
-    vec3 aabbMax;
-    int left;
+    float aabbMinX, aabbMinY, aabbMinZ;
     int right;
+    float aabbMaxX, aabbMaxY, aabbMaxZ;
     int triIndex;
 };
 
-bool rayAABB(vec3 orig, vec3 dir, vec3 minB, vec3 maxB, out float tNear, out float tFar) {
+bool rayAABB(vec3 orig, vec3 dir, flatRTNode node, out float tNear, out float tFar)
+{
     vec3 invDir = 1.0 / dir;
-    vec3 t0s = (minB - orig) * invDir;
-    vec3 t1s = (maxB - orig) * invDir;
+
+    vec3 t0s = vec3(
+        (node.aabbMinX - orig.x) * invDir.x,
+        (node.aabbMinY - orig.y) * invDir.y,
+        (node.aabbMinZ - orig.z) * invDir.z
+    );
+
+    vec3 t1s = vec3(
+        (node.aabbMaxX - orig.x) * invDir.x,
+        (node.aabbMaxY - orig.y) * invDir.y,
+        (node.aabbMaxZ - orig.z) * invDir.z
+    );
+
     vec3 tsmaller = min(t0s, t1s);
     vec3 tbigger  = max(t0s, t1s);
+    
     tNear = max(max(tsmaller.x, tsmaller.y), tsmaller.z);
     tFar  = min(min(tbigger.x, tbigger.y), tbigger.z);
+
     return tNear <= tFar;
 }
 
@@ -73,6 +85,9 @@ uniform vec3 camUp;
 uniform float fov;
 uniform ivec2 resolution;
 
+// max height of the BVH, size 32 amounts to over 2 bilion triangles
+ const int MAX_STACK_SIZE = 32; 
+
 
 
 int counter = 0;
@@ -93,27 +108,62 @@ void main()
                             ndc.x * camRight * tan(fov * 0.5) +
                             ndc.y * camUp    * tan(fov * 0.5));
 
+
+
     vec3 color = vec3(0.0);
     float closestT = 1e30;
     vec3 bestN = vec3(0);
 
-    
-  
-    // brute-force intersect
-    for(int i = 0; i < tris.length(); ++i) {
-        float t;
-        vec3 n;
+    float tNear, tFar;
 
-        if(rayTriangle(rayOrig, rayDir, tris[i], t, n)) {           
-            if (t < closestT) {
-                closestT = t;
-                bestN = n;
+    int stack[MAX_STACK_SIZE];
+    int stackPtr = 0;
+    
+    stack[stackPtr++] = 0;
+
+   while(stackPtr>0)
+   {
+        int nodeIndex = stack[--stackPtr];       
+        if(nodes[nodeIndex].triIndex<0)
+        {
+           if(rayAABB(rayOrig,rayDir,nodes[nodeIndex],tNear,tFar))
+           {
+                stack[stackPtr++] = nodeIndex + nodes[nodeIndex].right;
+                stack[stackPtr++] = nodeIndex + 1;
+           }
+        }
+        else{
+            float t;
+            vec3 n;
+            if(rayTriangle(rayOrig,rayDir,tris[nodes[nodeIndex].triIndex],t,n))
+            {
+                if (t < closestT) {
+                    closestT = t;
+                    bestN = n;
+                }
             }
         }
-    }
+   }
 
-    if (closestT < 1e29)
-        color = abs(bestN);
+
+
+
+  
+//    // brute-force intersect
+//    for(int i = 0; i < tris.length(); ++i) {
+//        float t;
+//        vec3 n;
+//
+//        if(rayTriangle(rayOrig, rayDir, tris[i], t, n)) {           
+//            if (t < closestT) {
+//                closestT = t;
+//                bestN = n;
+//            }
+//        }
+//    }
+            if (closestT < 1e29)
+            color = abs(bestN);
+
 
     
 
