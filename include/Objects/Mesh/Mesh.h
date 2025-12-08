@@ -11,6 +11,9 @@
 //#include "Material.h"
 #include "GPUVertex.h"
 #include "map"
+#include "json/json.h"
+
+using json = nlohmann::json;
 
 class Material;
 class Mesh : public Object {
@@ -119,6 +122,7 @@ class Mesh : public Object {
 public:
 
 	Mesh(std::string&& name, std::vector <DVertex*> vertices, std::vector <GLuint>& indices, const std::vector<GLuint>& edgeIndices = std::vector<GLuint>(), const  std::vector <Texture>& textures = std::vector<Texture>());
+	Mesh(const char* file);
 
 	~Mesh();
 

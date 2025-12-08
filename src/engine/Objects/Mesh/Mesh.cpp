@@ -23,6 +23,7 @@
 #include "Lights/SpotLight.h"
 
 #include "Material.h"
+#include "Loader.h"
 
 #include "igl/lscm.h"
 #include "igl/boundary_loop.h"
@@ -55,6 +56,35 @@ Mesh::Mesh(std::string&& name, std::vector <DVertex*> vertices,
 
 	objectBVHSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 
+
+
+}
+#include <chrono>
+Mesh::Mesh(const char* file) :Object("objLoad")
+{
+	using Clock = std::chrono::high_resolution_clock;
+
+	auto start = Clock::now();
+	Loader::obj(file, vertices, indices, edgeIndices);
+	auto end = Clock::now();
+
+	std::chrono::duration<double, std::milli> ms = end - start;
+	
+	std::cout << "\nLoaded mesh from " << file << " with " << vertices.size() << " vertices and " << indices.size() / 3 << " faces in "<< ms.count() << " ms\n";;
+
+	vao.bind();
+	vbo.bufferData(Mesh::vertices);
+	ebo.bufferData(Mesh::indices);
+	edgeEBO.bufferData(Mesh::edgeIndices);
+
+	vao.linkAttribute(vbo, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0); //position
+	vao.linkAttribute(vbo, 1, 3, GL_FLOAT, sizeof(DVertex), (void*)(3 * sizeof(float))); //normal
+
+	vao.unbind();
+	vbo.unbind();
+	ebo.unbind();
+
+	objectBVHSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 
 
 }

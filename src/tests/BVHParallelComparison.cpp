@@ -3,6 +3,7 @@
 #include <limits>
 #include <random>
 #include <vector>
+#include <string>
 #include <array>
 
 #include "glm/glm.hpp"
@@ -159,6 +160,16 @@ void RunScenario(const std::string& label, const Payloads& payloads, LeafFactory
 
 int main()
 {
+    omp_set_num_threads(16);
+#pragma omp parallel
+    {
+        // Only one thread prints the total number of threads
+#pragma omp parallel
+        {
+            int n = omp_get_num_threads();
+            std::cout << "Number of threads in parallel region: " << n << "\n";
+        }
+    }
     std::mt19937 rng(42);
     const size_t objectCounts[] = { 10'000, 400'000 };
     const size_t vertexCounts[] = { 50'000, 1'000'000 };
@@ -166,27 +177,27 @@ int main()
     const size_t faceCounts[] = { 12'000, 1'000'000 };
     const size_t uvCounts[] = { 50'000, 200'000 };
 
-    for (size_t count : objectCounts)
-    {
-        auto positions = GeneratePositions(count, 1500.0f, rng);
-        RunScenario("Objects: " + std::to_string(count), positions,
-            [](const glm::vec3& p)
-            {
-                return new BenchNode(MakePointBox(p, 2.0f));
-            });
-    }
+    //for (size_t count : objectCounts)
+    //{
+    //    auto positions = GeneratePositions(count, 1500.0f, rng);
+    //    RunScenario("Objects: " + std::to_string(count), positions,
+    //        [](const glm::vec3& p)
+    //        {
+    //            return new BenchNode(MakePointBox(p, 2.0f));
+    //        });
+    //}
 
     for (size_t count : vertexCounts)
     {
         auto positions = GeneratePositions(count, 2000.0f, rng);
-        RunScenario("Vertices: " + std::to_string(count), positions,
+        RunScenario("Vertices: " , positions,
             [](const glm::vec3& p)
             {
                 return new BenchNode(MakePointBox(p, 0.05f));
             });
     }
 
-    for (size_t count : edgeCounts)
+ /*   for (size_t count : edgeCounts)
     {
         auto endpoints = GenerateEdges(count, rng, 1800.0f);
         RunScenario("Edges: " + std::to_string(count), endpoints,
@@ -214,7 +225,7 @@ int main()
             {
                 return new BenchNode(MakeUVBox(uv));
             });
-    }
+    }*/
 
     return 0;
 }

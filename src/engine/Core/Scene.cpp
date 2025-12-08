@@ -9,6 +9,7 @@
 
 #include "RaytracingBVH.h"
 #include <stack>
+#include <Improved/ObjectModeBVHImproved.h>
 
 
 
@@ -51,6 +52,7 @@ void Scene::init(Window& window)
 
 
 	// for n= 4 or higher driver malfunctions lol?
+
 	int N = 3;                 // cubes per axis → generates N³ cubes
 	float spacing = 2.0f;      // distance between cube centers
 
@@ -94,6 +96,8 @@ void Scene::init(Window& window)
 	//objectBVHSingleton->Refit();
 
 
+	objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
+
 	// pa jebem ti majku i bvh.build
 
 
@@ -102,7 +106,7 @@ void Scene::init(Window& window)
 
 
 	
-
+	// postavi nove BVHove svugdje i stavi logn max dubinu u edit modu
 
 
 

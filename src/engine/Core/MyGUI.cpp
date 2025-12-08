@@ -37,6 +37,7 @@
 #endif
 
 #include <stack>
+#include <Improved/ObjectModeBVHImproved.h>
 
 
 void openFile(const char* filename) {
@@ -107,6 +108,21 @@ void MyGUI::drawUI()
 	Mode currentMode = app->mode;
 
 
+	if (ImGui::Button("File "))
+	{
+		ImGui::OpenPopup("FileMenu");
+	}
+
+	if (ImGui::BeginPopup("FileMenu"))
+	{
+		if (ImGui::MenuItem("Import"))
+			showImportDialog = true;
+
+
+		ImGui::EndPopup();
+	}
+	if (showImportDialog)
+		importObject();
 
 
 	if (ImGui::Button("Render Scene"))
@@ -166,6 +182,10 @@ void MyGUI::drawObjectModeUI(bool change)
 	ImGui::SameLine();
 	ImGui::Checkbox("FaceCulling", &faceCulling);
 	ImGui::InputInt("BVHTreeSubdivision", &BVHSubd);
+	if (BVHSubd > log(objectSingleton->getNumberOfObjects()) / log(2))
+		BVHSubd = static_cast<int>(log(objectSingleton->getNumberOfObjects()) / log(2));
+	if (BVHSubd < 0)
+		BVHSubd = 0;
 	ImGui::Checkbox("Gizmo", &gizmo);
 
 	if (gizmo)
@@ -232,6 +252,10 @@ void MyGUI::drawEditModeUI(bool change)
 
 
 	ImGui::Checkbox("BVHTree", &BVHTree);
+	if (BVHSubd < 0)
+		BVHSubd = 0;
+	if (BVHSubd > log(objectSingleton->getNumberOfObjects()) / log(2))
+		BVHSubd = static_cast<int>(log(objectSingleton->getNumberOfObjects()) / log(2));
 	ImGui::SameLine();
 	ImGui::InputInt("BVHTreeSubdivision", &eBVHSubd);
 	ImGui::Checkbox("FaceCulling", &faceCulling);
@@ -676,7 +700,7 @@ void MyGUI::drawBVH() {
 	static Shader& basic = shaderSingleton->getShader("Basic");
 	basic.setInteger(false, "colorMode", static_cast<int>(FragColor::UV));
 
-	objectBVHSingleton->Draw(*cameraSingleton->getCamera(0), basic, BVHSubd);
+	objectBVHImprovedSingleton->Draw(*cameraSingleton->getCamera(0), basic, BVHSubd);
 
 
 	basic.setInteger(false, "colorMode", static_cast<int>(FragColor::Seams));
@@ -1748,7 +1772,7 @@ void MyGUI::pbrRender(const char* filename, int width, int height)
 
 
 
-int flatten(RaytracingBVHNode* node, std::vector<flatRTNode>& out, std::vector<Triangle>&trinagles)
+int flatten(RaytracingBVHNode* node, std::vector<flatRTNode>& out, std::vector<Triangle>& trinagles)
 {
 	//if (!node) return -1;
 
@@ -1780,14 +1804,14 @@ int flatten(RaytracingBVHNode* node, std::vector<flatRTNode>& out, std::vector<T
 	return 0;
 }
 
-void sendData(Shader &shader)
+void sendData(Shader& shader)
 {
 
 
 	RaytracingBVHSingleton->Build();
 
-	std::vector<flatRTNode>& gpuNodes=RaytracingBVHSingleton->getNodes();
-	std::vector<Triangle> gpuTriangles = RaytracingBVHSingleton->getTriangles();	
+	std::vector<flatRTNode>& gpuNodes = RaytracingBVHSingleton->getNodes();
+	std::vector<Triangle> gpuTriangles = RaytracingBVHSingleton->getTriangles();
 
 	std::cout << "\nGPU BVH nodes: " << gpuNodes.size() << "\n";
 	std::cout << "Triangles size: " << gpuTriangles.size() << "\n\n";
@@ -1801,8 +1825,8 @@ void sendData(Shader &shader)
 	}
 	*/
 	for (auto& node : gpuNodes)
-		std::cout << "node.triIndex = " << node.triIndex << "\t node.right = "<<node.right << "\n";
-	
+		std::cout << "node.triIndex = " << node.triIndex << "\t node.right = " << node.right << "\n";
+
 
 	GLuint bvhBuffer, triBuffer;
 	//
@@ -1862,7 +1886,7 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 
 	//for (auto x : gpuTriangles)
 	//	std::cout << "Triangle .debug = " << x.hit << "\n";
-	
+
 
 
 
@@ -1910,6 +1934,34 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 
 
 
+}
+
+void MyGUI::importObject()
+{
+
+	std::string dlgId = "ChooseObj"; // unique per node
+
+
+	IGFD::FileDialogConfig cfg;
+	cfg.path = getDownloadsPath();
+	ImGuiFileDialog::Instance()->OpenDialog(
+		dlgId.c_str(),
+		"Select OBJ File",
+		"OBJ Files (*.obj){.obj}",
+		cfg
+	);
+
+
+	// File dialog update
+	if (ImGuiFileDialog::Instance()->Display(dlgId.c_str()))
+	{
+		if (ImGuiFileDialog::Instance()->IsOk())
+			new Mesh(ImGuiFileDialog::Instance()->GetFilePathName().c_str());
+
+		ImGuiFileDialog::Instance()->Close();
+
+		showImportDialog = false;
+	}
 }
 
 
