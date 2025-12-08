@@ -73,14 +73,17 @@ std::vector<glm::vec3> Object::getModelXVertices()
 
 	return position;
 }
+// kako je lijepo biti glup
 glm::vec3 Object::getModelXVertex(GLuint vertexIndex)
 {
-	return glm::vec3(model * glm::vec4(vertices[vertexIndex]->position, 1.0f));
+	return getModelXVertex(vertices[vertexIndex]);
+	//return glm::vec3(model * glm::vec4(vertices[vertexIndex]->position, 1.0f));
 }
-
+// kako je lijepo biti glup
 glm::vec3 Object::getModelXVertex(DVertex* vertex)
 {
-	return getModelXVertex(this->getVertexIndex(vertex));
+	return glm::vec3(model * glm::vec4(vertex->position, 1.0f));
+	//return getModelXVertex(this->getVertexIndex(vertex));
 }
 
 int Object::getVertexIndex(DVertex* v)

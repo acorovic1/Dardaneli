@@ -29,6 +29,7 @@ public:
 	void Refit();
 
 	void Draw(Camera& camera, Shader& shader, int subdivision);
+	void DrawRayInteraction(BVHNode* node, const Ray& ray, Camera& camera, Shader& shader);
 };
 
 extern ObjectModeBVHImproved* objectBVHImprovedSingleton;

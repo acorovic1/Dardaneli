@@ -44,6 +44,21 @@ void ObjectModeBVHImproved::Draw(Camera& camera, Shader& shader, int subdivision
 	DrawTree(root, camera, shader, subdivision);
 }
 
+void ObjectModeBVHImproved::DrawRayInteraction(BVHNode* node, const Ray& ray, Camera& camera, Shader& shader)
+{
+
+	if (node->box.intersectRayAABB(ray))
+	{
+		node->Draw(camera, shader);
+		if (node->left)
+			DrawRayInteraction(node->left, ray, camera, shader);
+		if (node->right)
+			DrawRayInteraction(node->right, ray, camera, shader);
+	}
+}
+
+
+
 void ObjectModeBVHImproved::DrawTree(BVHNode* node, Camera& camera, Shader& shader, int subdivision) {
 	if (subdivision == 0)
 		return;

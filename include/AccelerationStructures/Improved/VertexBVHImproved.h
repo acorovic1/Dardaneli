@@ -34,8 +34,9 @@ public:
 	void Refit(Object& object);
 	void Clear();
 
-	void Draw(Camera& camera, Shader& shader, int subdivision);
+	void Draw(Camera& camera, Shader& shader, int subdivision,bool rayInteract=false);
 	void DrawLeaves(BVHNode* node, Camera& camera, Shader& shader);
+	void DrawRayInteraction(BVHNode*node,const Ray& ray, Camera& camera, Shader& shader);
 };
 
 extern VertexBVHImproved* VertexBVHImprovedSingleton;

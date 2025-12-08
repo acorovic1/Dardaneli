@@ -46,7 +46,7 @@ void VertexBVHImproved::Clear()
 	root = nullptr;
 }
 
-void VertexBVHImproved::Draw(Camera& camera, Shader& shader, int subdivision)
+void VertexBVHImproved::Draw(Camera& camera, Shader& shader, int subdivision, bool rayInteract)
 {
 	auto root = VertexBVHImprovedSingleton->getRoot();
 
@@ -66,6 +66,17 @@ void VertexBVHImproved::DrawLeaves(BVHNode* node, Camera& camera, Shader& shader
 			DrawLeaves(node->left, camera, shader);
 			DrawLeaves(node->right, camera, shader);
 		}
+}
+
+void VertexBVHImproved::DrawRayInteraction(BVHNode* node, const Ray& ray, Camera& camera, Shader& shader) {
+	if (node->box.intersectRayAABB(ray))
+	{
+		node->Draw(camera, shader);
+		if (node->left)
+			DrawRayInteraction(node->left, ray, camera, shader);
+		if (node->right)
+			DrawRayInteraction(node->right, ray, camera, shader);
+	}
 }
 
 void VertexBVHImproved::DrawTree(BVHNode* node, Camera& camera, Shader& shader, int subdivision) {

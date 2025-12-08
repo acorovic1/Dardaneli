@@ -35,8 +35,8 @@ bool Loader::obj(const char* file, std::vector<DVertex*>& vertices, std::vector<
 			glm::vec3 pos;
 			ss >> pos.x >> pos.y >> pos.z;
 			vertices.push_back(new DVertex(pos));
-			if (vertices.size() % 100000 == 0)
-				std::cout << "\nLoaded vertices: " << vertices.size();
+			//if (vertices.size() % 100000 == 0)
+			//	std::cout << "\nLoaded vertices: " << vertices.size();
 		}
 		else if (prefix == "vt") {
 			glm::vec2 uv;
@@ -56,20 +56,21 @@ bool Loader::obj(const char* file, std::vector<DVertex*>& vertices, std::vector<
 			while (ss >> vertexStr) {
 				std::replace(vertexStr.begin(), vertexStr.end(), '/', ' ');
 				std::istringstream vs(vertexStr);
-				unsigned int p = 0, t = 0, n = 0;
+				 int p = 0, t = 0, n = 0;
 				vs >> p;
 				if (vs.peek() != EOF) vs >> t;
 				if (vs.peek() != EOF) vs >> n;
-				cornerPos.push_back(p);
+				//std::cout << "p=" << p <<"\n";
+				p >= 0 ? cornerPos.push_back(p) : cornerPos.push_back(vertices.size()+p);
 				//cornerUV.push_back(t);
 				//cornerNorm.push_back(n);
 
 			}
+			counter++;
 
-				counter++;
-			if (counter % 100000 == 0)
-				std::cout << "\nLoaded faces: " << counter;
-			
+			//if (counter % 100000 == 0)
+			//	std::cout << "\nLoaded faces: " << counter;
+
 			for (size_t i = 1; i + 1 < cornerPos.size();i++) {
 				unsigned int v0 = cornerPos[0] - 1;
 				unsigned int v1 = cornerPos[i] - 1;
@@ -81,9 +82,9 @@ bool Loader::obj(const char* file, std::vector<DVertex*>& vertices, std::vector<
 
 				if (cornerPos.size() == 3)
 				{
-					faceEdge.push_back(v0); faceEdge.push_back(v1);
-					faceEdge.push_back(v1); faceEdge.push_back(v2);
-					faceEdge.push_back(v2); faceEdge.push_back(v0);
+					edgeIndices.push_back(v0); edgeIndices.push_back(v1);
+					edgeIndices.push_back(v1); edgeIndices.push_back(v2);
+					edgeIndices.push_back(v2); edgeIndices.push_back(v0);
 					break;
 				}
 				else if (cornerPos.size() == 4)
@@ -101,7 +102,7 @@ bool Loader::obj(const char* file, std::vector<DVertex*>& vertices, std::vector<
 					break;
 				}
 				else { // ngons
-					
+
 					if (i == 1) // first one
 					{
 						edgeIndices.push_back(v0);
@@ -112,7 +113,7 @@ bool Loader::obj(const char* file, std::vector<DVertex*>& vertices, std::vector<
 
 					if (i + 1 == cornerPos.size() - 1) // last one
 					{
-						edgeIndices.push_back(v2); 
+						edgeIndices.push_back(v2);
 						edgeIndices.push_back(v0);
 					}
 				}

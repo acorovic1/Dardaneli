@@ -60,6 +60,7 @@ class MyGUI  {
 	char searchText[32] = "Search";
 
 	bool BVHTree = false;
+	bool BVHRayVisualize = false;
 	bool gizmo = true;
 	bool faceCulling = true;
 
@@ -104,6 +105,7 @@ public:
 	
 
 	void drawBVH();
+	void BVHRayInteraction();
 
 	void gizmos();
 

@@ -60,7 +60,7 @@ class Mesh : public Object {
 					tri.v1y = point1.y;
 					tri.v1z = point1.z;
 
-					glm::vec4 point2 = model * glm::vec4(faceVerts[i+1]->position, 1.0f);
+					glm::vec4 point2 = model * glm::vec4(faceVerts[i + 1]->position, 1.0f);
 					tri.v2x = point2.x;
 					tri.v2z = point2.z;
 					tri.v2y = point2.y;
@@ -145,6 +145,9 @@ public:
 	void updateEdgeEBO();
 
 	std::vector<GLuint>& getIndices() { return indices; }
+	int getNumberOfEdges() { return edgeIndices.size() * 0.5; }
+	// rethink getAllFaces approach later
+	int getNumberOfFaces() { return getAllFaces().size(); };
 	std::vector<GLuint> formTrianglesForDrawing();
 
 
@@ -175,9 +178,9 @@ public:
 	void dissolveFaces();
 
 
-			
-	
-			// EXTRUDE
+
+
+	// EXTRUDE
 
 
 	void extrudeVertices(std::vector<int>& verts, bool update = false);
@@ -204,7 +207,7 @@ public:
 
 
 
-			// DUPLICATE
+	// DUPLICATE
 
 
 	std::vector<DVertex*> duplicateVertices(std::vector<int>& verts, bool update = false);
@@ -218,21 +221,21 @@ public:
 
 
 
-			// FILL
+	// FILL
 
 
 	DEdge* edgeFill(std::vector<int>& verts, bool update = false);
 	DFace* faceFill(std::vector<int>& verts, bool windingOrderSet = false, bool update = false);
 
 
-			// INSET
+	// INSET
 
 
 	void inset(std::vector<DFace*> faces);
 	void insetIndividual(std::vector<DFace*> faces);
 
 
-			// OTHER OPERATIONS
+	// OTHER OPERATIONS
 
 	template <typename Container, typename = FaceContainer<Container>>
 	void pokeFaces(Container& faces, bool update = false);

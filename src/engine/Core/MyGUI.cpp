@@ -38,6 +38,9 @@
 
 #include <stack>
 #include <Improved/ObjectModeBVHImproved.h>
+#include <Improved/EdgeBVHImproved.h>
+#include <Improved/VertexBVHImproved.h>
+#include <Improved/FaceBVHImproved.h>
 
 
 void openFile(const char* filename) {
@@ -102,11 +105,6 @@ void MyGUI::drawUI()
 {
 	ImGui::Begin("Dardaneli - ImGUI");
 
-	Mode pastMode = app->mode;
-	modes();
-	ImGui::SameLine();
-	Mode currentMode = app->mode;
-
 
 	if (ImGui::Button("File "))
 	{
@@ -123,6 +121,12 @@ void MyGUI::drawUI()
 	}
 	if (showImportDialog)
 		importObject();
+
+
+	Mode pastMode = app->mode;
+	modes();
+	ImGui::SameLine();
+	Mode currentMode = app->mode;
 
 
 	if (ImGui::Button("Render Scene"))
@@ -178,14 +182,15 @@ void MyGUI::drawUI()
 void MyGUI::drawObjectModeUI(bool change)
 {
 
-	ImGui::Checkbox("BVHTree", &BVHTree);
-	ImGui::SameLine();
-	ImGui::Checkbox("FaceCulling", &faceCulling);
-	ImGui::InputInt("BVHTreeSubdivision", &BVHSubd);
+	static int choice = 0;
+	ImGui::RadioButton("Option A", &choice, 0);
+	ImGui::RadioButton("Option B", &choice, 1);
+	ImGui::InputInt("BVHDepth", &BVHSubd);
 	if (BVHSubd > log(objectSingleton->getNumberOfObjects()) / log(2))
 		BVHSubd = static_cast<int>(log(objectSingleton->getNumberOfObjects()) / log(2));
 	if (BVHSubd < 0)
 		BVHSubd = 0;
+	ImGui::Checkbox("FaceCulling", &faceCulling);
 	ImGui::Checkbox("Gizmo", &gizmo);
 
 	if (gizmo)
@@ -194,8 +199,14 @@ void MyGUI::drawObjectModeUI(bool change)
 	if (showAddMenuFlag)
 		addMenu();
 
-	if (BVHTree)
+	if (choice == 0)
+	{
 		drawBVH();
+	}
+	else if (choice == 1)
+	{
+		BVHRayInteraction();
+	}
 
 	if (app->objectIndices.size())
 	{
@@ -223,25 +234,45 @@ void MyGUI::drawEditModeUI(bool change)
 	{
 		double time = glfwGetTime();
 
-		VertexBVHSingleton->BuildBottomUp(*mesh);
-		EdgeBVHSingleton->BuildBottomUp(*mesh);
-		FaceBVHSingleton->BuildBottomUp(*mesh);
+		VertexBVHImprovedSingleton->BuildBottomUp(*mesh);
+		//EdgeBVHImprovedSingleton->BuildBottomUp(*mesh);
+		//FaceBVHImprovedSingleton->BuildBottomUp(*mesh);
 
 		std::cout << "All 3 BVHs built in " << glfwGetTime() - time << " seconds";
 
 	}
 
-	if (BVHTree)
+
+
+	static int choice = 0;
+	ImGui::RadioButton("Option A", &choice, 0);
+	ImGui::RadioButton("Option B", &choice, 1);
+
+
+	if (choice==0)
 	{
 		static Shader& basic = shaderSingleton->getShader("Basic");
 		basic.setInteger(false, "colorMode", static_cast<int>(FragColor::BVH));
-		if (app->selectMode == SelectMode::VERTEX)
-			VertexBVHSingleton->DrawLeaves(VertexBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
-		else if (app->selectMode == SelectMode::EDGE)
-			EdgeBVHSingleton->DrawLeaves(EdgeBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
-		else if (app->selectMode == SelectMode::FACE)
-			FaceBVHSingleton->DrawLeaves(FaceBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
+		//if (app->selectMode == SelectMode::VERTEX)
+		//	VertexBVHSingleton->DrawLeaves(VertexBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
+		//else if (app->selectMode == SelectMode::EDGE)
+		//	EdgeBVHSingleton->DrawLeaves(EdgeBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
+		//else if (app->selectMode == SelectMode::FACE)
+		//	FaceBVHSingleton->DrawLeaves(FaceBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
 
+		if (app->selectMode == SelectMode::VERTEX)
+			VertexBVHImprovedSingleton->Draw(*cameraSingleton->getCamera(0), basic, eBVHSubd);
+		/*	else if (app->selectMode == SelectMode::EDGE)
+				EdgeBVHImprovedSingleton->Draw( *cameraSingleton->getCamera(0), basic,eBVHSubd);
+			else if (app->selectMode == SelectMode::FACE)
+				FaceBVHImprovedSingleton->Draw( *cameraSingleton->getCamera(0), basic,eBVHSubd);*/
+
+	}
+	else if (choice == 1)
+	{
+		
+
+		BVHRayInteraction();
 	}
 
 	if (showDeleteMenuFlag)
@@ -251,13 +282,21 @@ void MyGUI::drawEditModeUI(bool change)
 		extrudeMenu();
 
 
-	ImGui::Checkbox("BVHTree", &BVHTree);
-	if (BVHSubd < 0)
-		BVHSubd = 0;
-	if (BVHSubd > log(objectSingleton->getNumberOfObjects()) / log(2))
-		BVHSubd = static_cast<int>(log(objectSingleton->getNumberOfObjects()) / log(2));
 	ImGui::SameLine();
 	ImGui::InputInt("BVHTreeSubdivision", &eBVHSubd);
+	int height;
+	if (app->selectMode == SelectMode::VERTEX)
+		height = log(mesh->getNumberOfVertices()) / log(2);
+	else if (app->selectMode == SelectMode::EDGE)
+		height = log(mesh->getNumberOfEdges()) / log(2);
+	else
+		height = log(mesh->getNumberOfFaces()) / log(2);
+
+	if (eBVHSubd > height)
+		eBVHSubd = height;
+	if (eBVHSubd < 0)
+		eBVHSubd = 0;
+
 	ImGui::Checkbox("FaceCulling", &faceCulling);
 
 	ImGui::Button("Mark seam");
@@ -698,12 +737,26 @@ void MyGUI::extrudeMenu()
 
 void MyGUI::drawBVH() {
 	static Shader& basic = shaderSingleton->getShader("Basic");
-	basic.setInteger(false, "colorMode", static_cast<int>(FragColor::UV));
+	basic.setInteger(false, "colorMode", static_cast<int>(FragColor::BVH));
 
 	objectBVHImprovedSingleton->Draw(*cameraSingleton->getCamera(0), basic, BVHSubd);
 
 
 	basic.setInteger(false, "colorMode", static_cast<int>(FragColor::Seams));
+}
+
+void MyGUI::BVHRayInteraction()
+{
+	static Shader& basic = shaderSingleton->getShader("Basic");
+	basic.setInteger(false, "colorMode", static_cast<int>(FragColor::BVH));
+	std::vector<int> garbage{};
+	static Camera& camera= *cameraSingleton->getCamera(0);
+
+	if (app->mode == Mode::OBJECT)
+		objectBVHImprovedSingleton->DrawRayInteraction(objectBVHImprovedSingleton->getRoot(),camera.createRay(glfwWindow),camera,basic);
+	else if (app->mode == Mode::EDIT && app->selectMode == SelectMode::VERTEX)
+		VertexBVHImprovedSingleton->DrawRayInteraction(VertexBVHImprovedSingleton->getRoot(), camera.createRay(glfwWindow),camera, basic );
+
 }
 
 
@@ -814,7 +867,7 @@ void MyGUI::gizmos()
 				for (auto x : app->objectIndices)
 					objectSingleton->getObject(x)->scale(delta[0][0], delta[1][1], delta[2][2]);
 			}
-		objectBVHSingleton->Refit();
+		objectBVHImprovedSingleton->Refit();
 		//VertexBVHSingleton->Refit();
 	}
 	previousTransform = transform;
@@ -875,7 +928,7 @@ void MyGUI::transformations()
 		positionPrev[1] = position[1];
 		positionPrev[2] = position[2];
 
-		objectBVHSingleton->Refit();
+		objectBVHImprovedSingleton->Refit();
 	}
 
 	ImGui::InputFloat3("Rotation", rotation);
@@ -891,7 +944,7 @@ void MyGUI::transformations()
 		else if (rotationPrev[2] != rotation[2])
 			activeObject->rotate(rotation[2] - rotationPrev[2], glm::vec3(0.0f, 0.0f, 1.0f));
 
-		objectBVHSingleton->Refit();
+		objectBVHImprovedSingleton->Refit();
 
 		rotationPrev[0] = rotation[0];
 		rotationPrev[1] = rotation[1];
@@ -926,7 +979,7 @@ void MyGUI::transformations()
 		else if (scalePrev[2] != scale[2])
 			activeObject->scale(1.0f, 1.0f, scale[2] / scalePrev[2]);
 
-		objectBVHSingleton->Refit();
+		objectBVHImprovedSingleton->Refit();
 
 		scalePrev[0] = scale[0];
 		scalePrev[1] = scale[1];

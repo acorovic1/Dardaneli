@@ -33,7 +33,8 @@
 
 #include "unordered_map"
 #include "queue"
-
+#include <chrono>
+#include <Improved/ObjectModeBVHImproved.h>
 
 Mesh::Mesh(std::string&& name, std::vector <DVertex*> vertices,
 	std::vector <GLuint>& indices, const std::vector<GLuint>& edgeIndices, const  std::vector <Texture>& textures) :Object(name) {
@@ -56,10 +57,10 @@ Mesh::Mesh(std::string&& name, std::vector <DVertex*> vertices,
 
 	objectBVHSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 
-
+	objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 
 }
-#include <chrono>
+
 Mesh::Mesh(const char* file) :Object("objLoad")
 {
 	using Clock = std::chrono::high_resolution_clock;
@@ -84,8 +85,13 @@ Mesh::Mesh(const char* file) :Object("objLoad")
 	vbo.unbind();
 	ebo.unbind();
 
-	objectBVHSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
+	 start = Clock::now();
 
+	objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
+	//objectBVHSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
+	end = Clock::now();
+	ms = end - start;
+	std::cout << "Built BVH for " << file << " in " << ms.count() << " ms\n";;
 
 }
 
@@ -1600,6 +1606,7 @@ std::pair<int, int> Mesh::getEdgeIndices(DEdge* edge)
 {
 	return std::pair<int, int>{this->getVertexIndex(edge->v1), this->getVertexIndex(edge->v2)};
 }
+
 
 
 

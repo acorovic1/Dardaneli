@@ -5,6 +5,10 @@
 #include "Mesh/DLoop.h"
 #include "GeometryUtils.h"
 #include "Window.h"
+#include <Improved/VertexBVHImproved.h>
+#include <Improved/EdgeBVHImproved.h>
+#include <Improved/FaceBVHImproved.h>
+#include <Improved/ObjectModeBVHImproved.h>
 
 
 
@@ -61,14 +65,14 @@ void Application::objectMode(Window* window)
 		if (keys[GLFW_KEY_LEFT_ALT])return;
 		if (keys[GLFW_KEY_G])
 		{
-			objectBVHSingleton->Refit();
+			objectBVHImprovedSingleton->Refit();
 			keys[GLFW_KEY_G] = 0;
 
 			return;
 		}
 
 		std::vector<int> indexVec;
-		objectBVHSingleton->getRoot()->Hit(camera->createRay(glfwWindow), indexVec);
+		objectBVHImprovedSingleton->getRoot()->Hit(camera->createRay(glfwWindow), indexVec);
 
 		int index = indexVec[0];
 		if (indexVec.size() > 1) // if size == 1 it is a miss
@@ -143,9 +147,9 @@ void Application::objectMode(Window* window)
 		if (mesh == nullptr) return;
 		mode = Mode::EDIT;
 
-		VertexBVHSingleton->BuildBottomUp(*mesh);
-		EdgeBVHSingleton->BuildBottomUp(*mesh);
-		FaceBVHSingleton->BuildBottomUp(*mesh);
+		VertexBVHImprovedSingleton->BuildBottomUp(*mesh);
+		//EdgeBVHImprovedSingleton->BuildBottomUp(*mesh);
+		//FaceBVHImprovedSingleton->BuildBottomUp(*mesh);
 	}
 
 	// GIZMO OPERATION
@@ -258,9 +262,9 @@ void Application::editMode(Window* window)
 		keys[GLFW_KEY_Z] = 0;
 		if (keys[GLFW_KEY_G])
 		{
-			VertexBVHSingleton->Refit(*mesh);
-			EdgeBVHSingleton->Refit(*mesh);
-			FaceBVHSingleton->Refit(*mesh);
+			VertexBVHImprovedSingleton->Refit(*mesh);
+			//EdgeImprovedBVHSingleton->Refit(*mesh);
+			//FaceImprovedBVHSingleton->Refit(*mesh);
 			keys[GLFW_KEY_G] = 0;
 			return;
 		}
@@ -272,7 +276,7 @@ void Application::editMode(Window* window)
 
 		if (selectMode == SelectMode::VERTEX)
 		{
-			VertexBVHSingleton->getRoot()->Hit(camera->createRay(glfwWindow), indexVec);
+			VertexBVHImprovedSingleton->getRoot()->Hit(camera->createRay(glfwWindow), indexVec);
 
 			if (indexVec.size() > 1) // if size == 1 it is a miss
 			{
