@@ -60,8 +60,11 @@ namespace ParallelBVHBuilder
 		NodeType* left = nullptr;
 		NodeType* right = nullptr;
 
-		const int taskThreshold = 4096;
-		bool spawnTasks = count > taskThreshold;
+		const int threadCount = omp_in_parallel() ? omp_get_num_threads() : omp_get_max_threads();
+		const int totalCount = static_cast<int>(nodes.size());
+		const int minTaskSize = 4096;
+		const int dynamicThreshold = std::max(minTaskSize, totalCount / std::max(1, threadCount * 4));
+		bool spawnTasks = count > dynamicThreshold;
 
 		if (spawnTasks)
 		{
@@ -93,15 +96,16 @@ namespace ParallelBVHBuilder
 		if (count <= 0) return static_cast<NodeType*>(nullptr);
 
 		std::vector<NodeType*> leaves(count);
-
-#pragma omp parallel for
-		for (ptrdiff_t i = 0; i < count; ++i)
-			leaves[i] = makeLeaf(*(begin + i));
-
 		NodeType* root = nullptr;
+
 #pragma omp parallel
 		{
-#pragma omp single nowait
+
+#pragma omp for
+			for (ptrdiff_t i = 0; i < count; ++i)
+				leaves[i] = makeLeaf(*(begin + i));
+
+#pragma omp single
 			{
 				root = BuildMedianSplit(leaves, 0, static_cast<int>(leaves.size()));
 			}
