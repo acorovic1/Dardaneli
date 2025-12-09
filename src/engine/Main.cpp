@@ -106,37 +106,6 @@ int main() {
 	std::cout << "\nDardaneli started successfully!\n\n";
 
 
-	//Shader compute = Shader("ComputeShader", "computeTest.comp");
-
-	//// ---- SSBO with one int ----
-	//GLuint ssbo;
-	//glGenBuffers(1, &ssbo);
-	//glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
-	//int zero = 0;
-	//glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(int), &zero, GL_DYNAMIC_COPY);
-	//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo); // binding = 0 (matches GLSL)
-
-	//// ---- Run compute shader ----
-	//compute.activate();
-	//glDispatchCompute(1, 1, 1);   // one invocation → your local_size_x = 1 is fine
-
-	//// Make sure writes complete before CPU reads
-	//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-
-	//// ---- Read back ----
-	//glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
-	//int* ptr = (int*)glMapBufferRange(
-	//	GL_SHADER_STORAGE_BUFFER,
-	//	0,
-	//	sizeof(int),
-	//	GL_MAP_READ_BIT
-	//);
-
-	//std::cout << "SSBO value = " << *ptr << std::endl; // Expect 77
-
-	//glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-	//glDeleteBuffers(1, &ssbo);
-
 
 	while (!window.shouldClose()) {
 		crntTime = glfwGetTime();

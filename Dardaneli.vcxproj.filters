@@ -258,13 +258,12 @@
     <ClCompile Include="src\engine\Materials\ShadingNodes\Texture\TextureNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-
     <ClCompile Include="src\engine\AccelerationStructures\RaytracingBVH.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\engine\AccelerationStructures\RaytracingBVHNode.cpp">
-		<Filter>Source Files</Filter>
-	</ClCompile>
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\engine\AccelerationStructures\Improved\EdgeBVHImproved.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -278,7 +277,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\engine\AccelerationStructures\Improved\VertexBVHImproved.cpp">
-
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\Utilities\Loader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -295,10 +296,8 @@
     <None Include="src\shaders\pbr.vert" />
     <None Include="src\shaders\grid.vert" />
     <None Include="src\shaders\grid.frag" />
-
     <None Include="src\shaders\computeTest.vert" />
     <None Include="src\shaders\computeTest.frag" />
-
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Core\Camera.h">
@@ -547,7 +546,6 @@
     <ClInclude Include="include\Objects\Mesh\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-
     <ClInclude Include="include\AccelerationStructures\RaytracingBVH.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -555,8 +553,8 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\AccelerationStructures\RaytracingBVHNode.h">
-		<Filter>Header Files</Filter>
-	</ClInclude>
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\AccelerationStructures\Improved\BVHBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -576,7 +574,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\AccelerationStructures\Improved\VertexBVHImproved.h">
-
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -588,9 +588,10 @@
       <Filter>Resource Files\Textures</Filter>
     </Image>
   </ItemGroup>
-
   <ItemGroup>
     <Text Include="src\shaders\computeTest.comp" />
+    <Text Include="libraries\include\json\json.h">
+      <Filter>Header Files</Filter>
+    </Text>
   </ItemGroup>
-
 </Project>

@@ -61,7 +61,7 @@ class MyGUI  {
 
 	bool BVHTree = false;
 	bool BVHRayVisualize = false;
-	bool gizmo = true;
+	bool gizmo = false;
 	bool faceCulling = true;
 
 	bool showAddMenuFlag = false;

@@ -183,9 +183,10 @@ void MyGUI::drawObjectModeUI(bool change)
 {
 
 	static int choice = 0;
-	ImGui::RadioButton("Option A", &choice, 0);
-	ImGui::RadioButton("Option B", &choice, 1);
-	ImGui::InputInt("BVHDepth", &BVHSubd);
+	ImGui::RadioButton("Default", &choice, 0);ImGui::SameLine();
+	ImGui::RadioButton("BVH", &choice, 1);ImGui::SameLine();
+	ImGui::RadioButton("Ray Interaction", &choice, 2);
+	ImGui::InputInt("BVH Depth", &BVHSubd);
 	if (BVHSubd > log(objectSingleton->getNumberOfObjects()) / log(2))
 		BVHSubd = static_cast<int>(log(objectSingleton->getNumberOfObjects()) / log(2));
 	if (BVHSubd < 0)
@@ -199,11 +200,11 @@ void MyGUI::drawObjectModeUI(bool change)
 	if (showAddMenuFlag)
 		addMenu();
 
-	if (choice == 0)
+	if (choice == 1)
 	{
 		drawBVH();
 	}
-	else if (choice == 1)
+	else if (choice == 2)
 	{
 		BVHRayInteraction();
 	}
@@ -245,11 +246,11 @@ void MyGUI::drawEditModeUI(bool change)
 
 
 	static int choice = 0;
-	ImGui::RadioButton("Option A", &choice, 0);
-	ImGui::RadioButton("Option B", &choice, 1);
+	ImGui::RadioButton("Default", &choice, 0);ImGui::SameLine();
+	ImGui::RadioButton("BVH", &choice, 1);ImGui::SameLine();
+	ImGui::RadioButton("Ray Interaction", &choice, 2);
 
-
-	if (choice==0)
+	if (choice==1)
 	{
 		static Shader& basic = shaderSingleton->getShader("Basic");
 		basic.setInteger(false, "colorMode", static_cast<int>(FragColor::BVH));
@@ -268,7 +269,7 @@ void MyGUI::drawEditModeUI(bool change)
 				FaceBVHImprovedSingleton->Draw( *cameraSingleton->getCamera(0), basic,eBVHSubd);*/
 
 	}
-	else if (choice == 1)
+	else if (choice == 2)
 	{
 		
 
@@ -282,8 +283,8 @@ void MyGUI::drawEditModeUI(bool change)
 		extrudeMenu();
 
 
-	ImGui::SameLine();
-	ImGui::InputInt("BVHTreeSubdivision", &eBVHSubd);
+	
+	ImGui::InputInt("BVH Height", &eBVHSubd);
 	int height;
 	if (app->selectMode == SelectMode::VERTEX)
 		height = log(mesh->getNumberOfVertices()) / log(2);

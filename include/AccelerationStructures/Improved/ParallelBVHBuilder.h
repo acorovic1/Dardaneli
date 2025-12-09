@@ -66,6 +66,8 @@ namespace ParallelBVHBuilder
 		const int dynamicThreshold = std::max(minTaskSize, totalCount / std::max(1, threadCount * 4));
 		bool spawnTasks = count > dynamicThreshold;
 
+		
+
 		if (spawnTasks)
 		{
 #pragma omp task shared(left) firstprivate(start, mid)

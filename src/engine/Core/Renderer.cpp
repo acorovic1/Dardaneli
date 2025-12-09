@@ -82,13 +82,13 @@ void Renderer::viewportEditor()
 			}
 			else if (gui.getMode() == Mode::EDIT)
 			{
-				glLineWidth(2.0f);
+				glLineWidth(0.5f);
 				basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Black));
 				mesh->draw(basicShader, *camera, GL_LINES);
 
 				if (gui.getSelectMode() == SelectMode::VERTEX)
 				{
-					glPointSize(5.0f);
+					glPointSize(3.0f);
 					basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Black));
 					mesh->draw(basicShader, *camera, GL_POINTS);
 
@@ -216,7 +216,10 @@ void Renderer::viewportEditor()
 		}
 		else if (renderMode == RenderMode::SOLID)
 		{
-
+			glLineWidth(0.5f);
+			basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Black));
+			mesh->draw(basicShader, *camera, GL_LINES);
+			basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Default));
 			object->draw(basicShader, *camera, GL_TRIANGLES);
 
 		}
