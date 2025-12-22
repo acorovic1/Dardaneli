@@ -228,13 +228,13 @@
     <ClCompile Include="src\engine\Materials\ShadingNodes\Output\NormalOutputNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\Lights\PointLight.cpp">
+    <ClCompile Include="src\engine\Objects\Lights\PointLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\Lights\DirectionalLight.cpp">
+    <ClCompile Include="src\engine\Objects\Lights\DirectionalLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\Lights\SpotLight.cpp">
+    <ClCompile Include="src\engine\Objects\Lights\SpotLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\engine\Objects\Mesh\DLoop.cpp">
@@ -593,5 +593,8 @@
     <Text Include="libraries\include\json\json.h">
       <Filter>Header Files</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\SeptemberDemo.mp4" />
   </ItemGroup>
 </Project>

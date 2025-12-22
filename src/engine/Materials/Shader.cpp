@@ -2,6 +2,52 @@
 #include <fstream>
 #include <string>
 
+#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#include <experimental/filesystem>
+
+#if defined(_WIN32)
+#include <windows.h>
+#elif defined(__linux__)
+#include <unistd.h>
+#elif defined(__APPLE__)
+#include <mach-o/dyld.h>
+#endif
+
+std::string getExecutablePath() {
+#if defined(_WIN32)
+	char buffer[MAX_PATH];
+	GetModuleFileNameA(NULL, buffer, MAX_PATH);
+	return std::string(buffer);
+#elif defined(__linux__)
+	char buffer[1024];
+	ssize_t len = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
+	if (len == -1) throw std::runtime_error("Cannot get executable path");
+	buffer[len] = '\0';
+	return std::string(buffer);
+#elif defined(__APPLE__)
+	char buffer[1024];
+	uint32_t size = sizeof(buffer);
+	if (_NSGetExecutablePath(buffer, &size) != 0)
+		throw std::runtime_error("Cannot get executable path");
+	return std::string(buffer);
+#else
+	throw std::runtime_error("Unsupported platform");
+#endif
+}
+
+// Remove last N path components to get project directory
+std::string getProjectDir(int levelsUp = 3) {
+	std::string path = getExecutablePath();
+	for (int i = 0; i < levelsUp; ++i) {
+		auto pos = path.find_last_of("/\\");
+		if (pos == std::string::npos) break;
+		path = path.substr(0, pos);
+	}
+	return path;
+}
+
+
+
 std::string get_file_contents(const char* filename) {
 	std::ifstream in(filename, std::ios::binary);
 
@@ -32,8 +78,8 @@ bool fileExists(const char* path) {
 
 Shader::Shader(std::string name, const char* computeFile)
 {
-
-	std::string computePath = std::string("src/shaders/") + computeFile;
+	std::string projectDir = getProjectDir();
+	std::string computePath = projectDir + "/src/shaders/" + computeFile;
 	std::string computeCode = get_file_contents(computePath.c_str());
 	const char* computeSource = computeCode.c_str();
 
@@ -59,8 +105,11 @@ Shader::Shader(std::string name, const char* computeFile)
 
 Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFile)
 {
-	std::string vertexPath = std::string("src/shaders/") + vertexFile;
-	std::string fragmentPath = std::string("src/shaders/") + fragmentFile;
+	std::string projectDir = getProjectDir();
+	std::cout << "\n ExeDir = " << projectDir<<"\n";
+
+	std::string vertexPath = projectDir + "/src/shaders/" + vertexFile;
+	std::string fragmentPath = projectDir + "/src/shaders/" + fragmentFile;
 
 
 	std::string vertexCode = get_file_contents(vertexPath.c_str());
@@ -104,9 +153,11 @@ Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFil
 
 Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFile, const char* geometryFile)
 {
-	std::string vertexPath = std::string("src/shaders/") + vertexFile;
-	std::string fragmentPath = std::string("src/shaders/") + fragmentFile;
-	std::string geometryPath = std::string("src/shaders/") + geometryFile;
+	std::string projectDir = getProjectDir();
+
+	std::string vertexPath = projectDir + "/src/shaders/" + vertexFile;
+	std::string fragmentPath = projectDir +"/src/shaders/" + fragmentFile;
+	std::string geometryPath = projectDir + "/src/shaders/" + geometryFile;
 
 	std::string vertexCode = get_file_contents(vertexPath.c_str());
 	std::string fragmentCode;

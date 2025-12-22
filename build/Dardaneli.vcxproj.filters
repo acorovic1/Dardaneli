@@ -1,0 +1,251 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\ImGuiFileDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imgui_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imgui_draw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imgui_impl_glfw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imgui_impl_opengl3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imgui_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imnodes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUIZMO\GraphEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUIZMO\ImCurveEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUIZMO\ImGradient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUIZMO\ImGuizmo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\BVHNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\BoundingVolumes\AABB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\BoundingVolumes\DrawableAABB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\EdgeBVH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\EdgeBVHNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\FaceBVH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\FaceBVHNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\Improved\EdgeBVHImproved.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\Improved\FaceBVHImproved.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\Improved\ObjectModeBVHImproved.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\Improved\UVVertexBVHImproved.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\Improved\VertexBVHImproved.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\ObjectModeBVH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\RaytracingBVH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\RaytracingBVHNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\UVVertexBVH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\VertexBVH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\CameraManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\MyGUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\WindowManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\GLBuffers\EBO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\GLBuffers\VAO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\GLBuffers\VBO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\MaterialManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShaderManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Color\ColorBurnNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Color\ColorMixNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Input\ColorNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Input\ValueNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Math\MathNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Output\AmbientOcclusionOutputNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Output\ColorOutputNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Output\MetallicOutputNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Output\NormalOutputNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Output\RoughnessOutputNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\ShadingNodesManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Texture\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Texture\TextureNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\BasicObjects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Lights\DirectionalLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Lights\PointLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Lights\SpotLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Mesh\DEdge.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Mesh\DFace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Mesh\DLoop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Mesh\DVertex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Mesh\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\ObjectManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Utilities\GeometryUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Utilities\Loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Utilities\Ray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Utilities\stb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\adnan\Desktop\Dardaneli\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\UV.frag" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\UV.vert" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\basic.frag" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\basic.vert" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeTest.comp" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeTest.frag" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeTest.vert" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\grid.frag" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\grid.vert" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\pbr.geom" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\pbr.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{C5724227-EE50-3E0B-9E60-9547D223E1D8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -161,9 +161,9 @@
     <ClCompile Include="src\engine\AccelerationStructures\Improved\UVVertexBVHImproved.cpp" />
     <ClCompile Include="src\engine\AccelerationStructures\Improved\VertexBVHImproved.cpp" />
     <ClCompile Include="src\engine\Objects\Mesh\DLoop.cpp" />
-    <ClCompile Include="src\engine\Lights\DirectionalLight.cpp" />
-    <ClCompile Include="src\engine\Lights\PointLight.cpp" />
-    <ClCompile Include="src\engine\Lights\SpotLight.cpp" />
+    <ClCompile Include="src\engine\Objects\Lights\DirectionalLight.cpp" />
+    <ClCompile Include="src\engine\Objects\Lights\PointLight.cpp" />
+    <ClCompile Include="src\engine\Objects\Lights\SpotLight.cpp" />
     <ClCompile Include="src\engine\Materials\ShadingNodes\Color\ColorBurnNode.cpp" />
     <ClCompile Include="src\engine\Materials\ShadingNodes\Color\ColorMixNode.cpp" />
     <ClCompile Include="src\engine\Materials\ShadingNodes\Input\ColorNode.cpp" />
@@ -342,6 +342,9 @@
   <ItemGroup>
     <Text Include="libraries\include\json\json.h" />
     <Text Include="src\shaders\computeTest.comp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\SeptemberDemo.mp4" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
