@@ -55,7 +55,7 @@ Mesh::Mesh(std::string&& name, std::vector <DVertex*> vertices,
 	vbo.unbind();
 	ebo.unbind();
 
-	//objectBVHSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
+	objectBVHSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 
 	objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 

@@ -1872,14 +1872,14 @@ void sendData(Shader& shader)
 
 	/*for (auto& tri : gpuTriangles)
 	{
-
+		/// pffffff.....
 		std::cout << "\n\n"<<tri.v0x << " " << tri.v0y << " " << tri.v0z << "\n";
 		std::cout << tri.v1x << " " << tri.v1y << " " << tri.v1z << "\n";
 		std::cout << tri.v2x << " " << tri.v2y << " " << tri.v2z << "\n";
 	}
 	*/
-	for (auto& node : gpuNodes)
-		std::cout << "node.triIndex = " << node.triIndex << "\t node.right = " << node.right << "\n";
+	//for (auto& node : gpuNodes)
+	//	std::cout << "node.triIndex = " << node.triIndex << "\t node.right = " << node.right << "\n";
 
 
 	GLuint bvhBuffer, triBuffer;

@@ -94,7 +94,7 @@ int BuildMedianSplit(std::vector<flatRTNode>& bvhNodes, int start, int end)
 	flatRTNode& left = RaytracingBVHSingleton->nodes[leftIndex];
 	flatRTNode& right = RaytracingBVHSingleton->nodes[rightIndex];
 
-	std::cout << "\n Created parent node at index " << parentIndex << "( " << parent.triIndex<<" )" << " with left child index " << leftIndex << "( " << left.triIndex << " )" << " and right child index " << rightIndex << "( " << right.triIndex << " )";
+	//std::cout << "\n Created parent node at index " << parentIndex << "( " << parent.triIndex<<" )" << " with left child index " << leftIndex << "( " << left.triIndex << " )" << " and right child index " << rightIndex << "( " << right.triIndex << " )";
 
 	parent.aabbMinX = ffmin(left.aabbMinX, right.aabbMinX);
 	parent.aabbMinY = ffmin(left.aabbMinY, right.aabbMinY);

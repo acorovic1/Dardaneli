@@ -594,7 +594,4 @@
       <Filter>Header Files</Filter>
     </Text>
   </ItemGroup>
-  <ItemGroup>
-    <Media Include="..\SeptemberDemo.mp4" />
-  </ItemGroup>
 </Project>

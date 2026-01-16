@@ -51,35 +51,35 @@ void Scene::init(Window& window)
 	app->activeMaterial = new Material("Default");
 
 
-	// for n= 4 or higher driver malfunctions lol?
+	// for n = 4 or higher driver malfunctions lol?
 
-	//int N = 3;                 // cubes per axis → generates N³ cubes
-	//float spacing = 2.0f;      // distance between cube centers
+	int N = 3;                 // cubes per axis → generates N³ cubes
+	float spacing = 2.0f;      // distance between cube centers
 
-	//for (int x = 0; x < N; ++x)
-	//{
-	//    for (int y = 0; y < N; ++y)
-	//    {
-	//		//if (y % 2 == 0)continue;
-	//        for (int z = 0; z < N; ++z)
-	//        {
-	//            int id = objectSingleton->getNumberOfObjects();
-	//            addCube();
+	for (int x = 0; x < N; ++x)
+	{
+		for (int y = 0; y < N; ++y)
+		{
+			//if (y % 2 == 0)continue;
+			for (int z = 0; z < N; ++z)
+			{
+				int id = objectSingleton->getNumberOfObjects();
+				addCube();
 
-	//            Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getObject(id));
-	//            mesh->assignMaterial(app->activeMaterial);
+				Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getObject(id));
+				mesh->assignMaterial(app->activeMaterial);
 
-	//            // place them centered
-	//            float fx = (x - (N - 1) * 0.5f) * spacing;
-	//            float fy = (y - (N - 1) * 0.5f) * spacing;
-	//            float fz = (z - (N - 1) * 0.5f) * spacing;
+				// place them centered
+				float fx = (x - (N - 1) * 0.5f) * spacing;
+				float fy = (y - (N - 1) * 0.5f) * spacing;
+				float fz = (z - (N - 1) * 0.5f) * spacing;
 
-	//			glm::vec3 translateVector = glm::vec3(fx, fy, fz);
+				glm::vec3 translateVector = glm::vec3(fx, fy, fz);
 
-	//            mesh->translate(translateVector);
-	//        }
-	//    }
-	//}
+				mesh->translate(translateVector);
+			}
+		}
+	}
 
 	//addCube();
 	//addCube();
@@ -95,18 +95,18 @@ void Scene::init(Window& window)
 
 	//objectBVHSingleton->Refit();
 
-	new Mesh("C:\\Users\\adnan\\Downloads\\obj\\Cube.obj");
+
+	// u mesh constructoru zamijeni ove BVHove.. kao i svugdje ostalo
 
 	objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 
-	// pa jebem ti majku i bvh.build
 
 
 
 	// svjetla napravljena ostalo jos SCALE I ROTATE metode da se naprave, koristi model matricu
 
 
-	
+
 	// postavi nove BVHove svugdje i stavi logn max dubinu u edit modu
 
 

@@ -14,6 +14,16 @@ struct Triangle{
 
 };
 
+struct TriangleTex{
+    float u0,v0;
+    float u1,v1;
+    float u2,v2;
+    float n1x, n1y, n1z;
+    float n2x, n2y, n2z;
+    float n3x, n3y, n3z;
+    float dummy;
+};
+
 struct flatRTNode {
     float aabbMinX, aabbMinY, aabbMinZ;
     int right;
@@ -76,7 +86,7 @@ bool rayTriangle(vec3 orig, vec3 dir, Triangle tri, out float t, out vec3 hitNor
 
 layout(std430, binding = 0) buffer BVH { flatRTNode nodes[]; };
 layout(std430, binding = 1) buffer Triangles { Triangle tris[]; };
-
+layout(std430, binding = 2) buffer TrianglesTex { TriangleTex trisTex[]; };
 
 uniform vec3 camPos;
 uniform vec3 camDir;
@@ -85,87 +95,125 @@ uniform vec3 camUp;
 uniform float fov;
 uniform ivec2 resolution;
 
+uniform sampler2D tex;
+
 // max height of the BVH, size 32 amounts to over 2 bilion triangles
  const int MAX_STACK_SIZE = 32; 
-
-
 
 int counter = 0;
 
 void main()
 {
-    ivec2 dims = imageSize(imgOutput);
+
+    
+
+    ivec2 dims  = imageSize(imgOutput);
     ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);
-    if(pixel.x >= dims.x || pixel.y >= dims.y) return;
+    if (pixel.x >= dims.x || pixel.y >= dims.y)
+        return;
 
-   float aspect = float(dims.x) / float(dims.y);
-   vec2 ndc = (vec2(pixel) + 0.5) / vec2(dims) * 2.0 - 1.0;
-
+    float aspect = float(dims.x) / float(dims.y);
+    vec2 ndc = (vec2(pixel) + 0.5) / vec2(dims) * 2.0 - 1.0;
     ndc.x *= aspect;
 
     vec3 rayOrig = camPos;
-    vec3 rayDir = normalize(camDir +
-                            ndc.x * camRight * tan(fov * 0.5) +
-                            ndc.y * camUp    * tan(fov * 0.5));
+    vec3 rayDir  = normalize(
+        camDir +
+        ndc.x * camRight * tan(fov * 0.5) +
+        ndc.y * camUp    * tan(fov * 0.5)
+    );
 
-
-
-    vec3 color = vec3(0.0);
     float closestT = 1e30;
-    vec3 bestN = vec3(0);
-
-    float tNear, tFar;
+    vec3  bestN    = vec3(0.0);
 
     int stack[MAX_STACK_SIZE];
     int stackPtr = 0;
-    
-    stack[stackPtr++] = 0;
 
-   while(stackPtr>0)
-   {
-        int nodeIndex = stack[--stackPtr];       
-        if(nodes[nodeIndex].triIndex<0)
+    stack[stackPtr++] = 0; // root
+
+    while (stackPtr > 0)
+    {
+        int nodeIndex = stack[--stackPtr];
+        flatRTNode node  = nodes[nodeIndex];
+
+        float tNear, tFar;
+        if (!rayAABB(rayOrig, rayDir, node, tNear, tFar))
+            continue;
+
+        if (tNear > closestT)
+            continue;
+
+        // Leaf
+        if (node.triIndex >= 0)
         {
-           if(rayAABB(rayOrig,rayDir,nodes[nodeIndex],tNear,tFar))
-           {
-                stack[stackPtr++] = nodeIndex + nodes[nodeIndex].right;
-                stack[stackPtr++] = nodeIndex + 1;
-           }
-        }
-        else{
             float t;
             vec3 n;
-            if(rayTriangle(rayOrig,rayDir,tris[nodes[nodeIndex].triIndex],t,n))
+            if (rayTriangle(rayOrig, rayDir, tris[node.triIndex], t, n))
             {
-                if (t < closestT) {
+                if (t > 0.0 && t < closestT)
+                {
                     closestT = t;
                     bestN = n;
                 }
             }
+            continue;
         }
-   }
 
+        // Internal node
+        int left  = nodeIndex + 1;
+        int right = nodeIndex + node.right;
 
+        float tNearL, tFarL;
+        float tNearR, tFarR;
 
+        bool hitL = rayAABB(rayOrig, rayDir, nodes[left],  tNearL, tFarL);
+        bool hitR = rayAABB(rayOrig, rayDir, nodes[right], tNearR, tFarR);
 
-  
-//    // brute-force intersect
-//    for(int i = 0; i < tris.length(); ++i) {
-//        float t;
-//        vec3 n;
-//
-//        if(rayTriangle(rayOrig, rayDir, tris[i], t, n)) {           
-//            if (t < closestT) {
-//                closestT = t;
-//                bestN = n;
-//            }
-//        }
-//    }
-            if (closestT < 1e29)
-            color = abs(bestN);
+        if (!hitL && !hitR)
+            continue;
 
+        // Near–far ordering
+        int first, second;
+        float tFirst, tSecond;
 
-    
+        if (hitL && hitR)
+        {
+            if (tNearL < tNearR)
+            {
+                first  = left;  tFirst  = tNearL;
+                second = right; tSecond = tNearR;
+            }
+            else
+            {
+                first  = right; tFirst  = tNearR;
+                second = left;  tSecond = tNearL;
+            }
+        }
+        else if (hitL)
+        {
+            first = left;
+            tFirst = tNearL;
+            second = -1;
+        }
+        else
+        {
+            first = right;
+            tFirst = tNearR;
+            second = -1;
+        }
 
+        // Push far node only
+        if (second >= 0 ) //&& stackPtr < MAX_STACK_SIZE
+            stack[stackPtr++] = second;
+
+        // Traverse near node immediately
+        if (tFirst < closestT)
+        {
+//            if (stackPtr < MAX_STACK_SIZE)
+                stack[stackPtr++] = first;
+        }
+    }
+
+    vec3 color = (closestT < 1e29) ? abs(bestN) : vec3(0.0);
     imageStore(imgOutput, pixel, vec4(color, 1.0));
 }

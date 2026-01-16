@@ -343,9 +343,6 @@
     <Text Include="libraries\include\json\json.h" />
     <Text Include="src\shaders\computeTest.comp" />
   </ItemGroup>
-  <ItemGroup>
-    <Media Include="..\SeptemberDemo.mp4" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
