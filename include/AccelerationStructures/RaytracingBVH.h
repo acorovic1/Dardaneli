@@ -8,6 +8,7 @@ struct RaytracingBVHNode;
 class RaytracingBVH {
 	std::vector<flatRTNode> nodes;
 	std::vector<Triangle> triangles;
+	std::vector<TriangleMaterial> triangleMaterialData;
 	static RaytracingBVH* instancePtr;
 
 	RaytracingBVH() :nodes() {};
@@ -24,6 +25,7 @@ public:
 
 	std::vector<flatRTNode>& getNodes();
 	std::vector<Triangle>& getTriangles();
+	std::vector<TriangleMaterial>& getTriangleMaterialData();
 	void Build();
 	void findTlasLeaf(BVHNode *objNode);
 	// pokusati staviti default vrijednosti kroz objectManager

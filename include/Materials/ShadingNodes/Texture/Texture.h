@@ -18,7 +18,7 @@ struct Texture {
 	GLuint unit; // GL_TEXTURE0 + unit
 	
 
-	Texture(const char* image, GLuint slot, GLenum format=GL_RGB, GLenum pixelType=GL_UNSIGNED_BYTE);
+	Texture(const char* image, GLuint slot, GLenum pixelType=GL_UNSIGNED_BYTE);
 	~Texture() {
 		Delete();
 	}

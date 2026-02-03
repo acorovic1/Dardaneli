@@ -51,9 +51,9 @@ void Scene::init(Window& window)
 	app->activeMaterial = new Material("Default");
 
 
-	// for n = 4 or higher driver malfunctions lol?
+	
 
-	int N = 3;                 // cubes per axis → generates N³ cubes
+	int N = 2;                 // cubes per axis → generates N³ cubes
 	float spacing = 2.0f;      // distance between cube centers
 
 	for (int x = 0; x < N; ++x)
@@ -77,9 +77,14 @@ void Scene::init(Window& window)
 				glm::vec3 translateVector = glm::vec3(fx, fy, fz);
 
 				mesh->translate(translateVector);
+
+				//std::cout << "\nAdded cube at (" << fx << "," << fy << "," << fz << ")";
 			}
 		}
 	}
+
+
+
 
 	//addCube();
 	//addCube();

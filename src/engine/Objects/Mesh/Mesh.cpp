@@ -55,7 +55,7 @@ Mesh::Mesh(std::string&& name, std::vector <DVertex*> vertices,
 	vbo.unbind();
 	ebo.unbind();
 
-	objectBVHSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
+	//objectBVHSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 
 	objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 
@@ -70,8 +70,8 @@ Mesh::Mesh(const char* file) :Object("objLoad")
 	auto end = Clock::now();
 
 	std::chrono::duration<double, std::milli> ms = end - start;
-	
-	std::cout << "\nLoaded mesh from " << file << " with " << vertices.size() << " vertices and " << indices.size() / 3 << " faces in "<< ms.count() << " ms\n";;
+
+	std::cout << "\nLoaded mesh from " << file << " with " << vertices.size() << " vertices and " << indices.size() / 3 << " faces in " << ms.count() << " ms\n";;
 
 	vao.bind();
 	vbo.bufferData(Mesh::vertices);
@@ -85,7 +85,7 @@ Mesh::Mesh(const char* file) :Object("objLoad")
 	vbo.unbind();
 	ebo.unbind();
 
-	 start = Clock::now();
+	start = Clock::now();
 
 	objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 	//objectBVHSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
@@ -3398,6 +3398,109 @@ DFace* Mesh::faceFill(std::vector<int>& verts, bool windingOrderSet, bool update
 	return face;
 }
 
+void Mesh::formTrianglesForRaytracing()
+{
+	triangles.clear();
+	triangleMaterialData.clear();
+
+	int rnd = std::rand() % 5;
+
+	for (auto& it : materials)
+	{
+		for (auto& face : it.second)
+		{
+			//auto faceVerts = face->getVerticesVector();
+
+			// napravi razliku ako je trokut, quad ili ngon
+
+
+
+			// ne radi sada
+			// umjesto da ide 0 1 2 , 0 2 3, 0 3 4, itd... ide 012,123,234, itd...
+
+			// duplira trouglove.. ne treba ici puni krug
+
+			DLoop* loop = face->loop;
+
+			DLoop* l0 = loop->prev;
+			
+			DVertex* t0 = l0->tip;
+			
+			glm::vec4 point0 = model * glm::vec4(t0->position, 1.0f);
+
+			do {
+
+				DLoop* l1 = loop, * l2 = loop->next;
+				DVertex* t1 = l1->tip, * t2 = l2->tip;
+
+				Triangle tri;
+
+				tri.v0x = point0.x;
+				tri.v0y = point0.y;
+				tri.v0z = point0.z;
+
+				glm::vec4 point1 = model * glm::vec4(t1->position, 1.0f);
+				tri.v1x = point1.x;
+				tri.v1y = point1.y;
+				tri.v1z = point1.z;
+
+				glm::vec4 point2 = model * glm::vec4(t2->position, 1.0f);
+				tri.v2x = point2.x;
+				tri.v2z = point2.z;
+				tri.v2y = point2.y;
+
+				tri.cx = (tri.v0x + tri.v1x + tri.v2x) * 0.33f;
+				tri.cy = (tri.v0y + tri.v1y + tri.v2y) * 0.33f;
+				tri.cz = (tri.v0z + tri.v1z + tri.v2z) * 0.33f;
+
+				triangles.push_back(tri); // kopija .. koristi emplace back 
+
+
+				TriangleMaterial triMat;
+
+				triMat.u0 = l0->uvVertex->uv.x;
+				triMat.v0 = l0->uvVertex->uv.y;
+
+				triMat.u1 = l1->uvVertex->uv.x;
+				triMat.v1 = l1->uvVertex->uv.y;
+
+				triMat.u2 = l2->uvVertex->uv.x;
+				triMat.v2 = l2->uvVertex->uv.y;
+
+				triMat.n1x = t0->normal.x;
+				triMat.n1y = t0->normal.y;
+				triMat.n1z = t0->normal.z;
+
+				triMat.n2x = t1->normal.x;
+				triMat.n2y = t1->normal.y;
+				triMat.n2z = t1->normal.z;
+
+				triMat.n3x = t2->normal.x;
+				triMat.n3y = t2->normal.y;
+				triMat.n3z = t2->normal.z;
+
+			/*	if (rnd == 0)
+				{
+					triMat.mirror = true;
+					std::cout << "\n\n\t MIRRORING TRIANGLE MATERIAL DATA \t";
+				}*/
+
+
+				triangleMaterialData.push_back(triMat);
+
+			/*	if(loop==face->loop)
+					loop = loop->next;*/
+
+
+				loop = loop->next;
+
+
+
+			} while (loop->next->next != face->loop);
+
+		}
+	}
+}
 void Mesh::eraseFace(DFace* face)
 {
 	if (!face)return;

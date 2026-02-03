@@ -242,6 +242,8 @@
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\grid.vert" />
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\pbr.geom" />
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\pbr.vert" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\quad.frag" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\quad.vert" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

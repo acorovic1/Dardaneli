@@ -216,6 +216,11 @@ void Renderer::viewportEditor()
 		}
 		else if (renderMode == RenderMode::SOLID)
 		{
+			
+			/*Texture tex("planks.png", 0);
+			tex.bind();
+			tex.textureUniform(basicShader, "tex", 0);*/
+
 			glLineWidth(0.5f);
 			basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Black));
 			mesh->draw(basicShader, *camera, GL_LINES);
@@ -232,10 +237,12 @@ void Renderer::viewportEditor()
 		}
 		else if (renderMode == RenderMode::RENDER)
 		{
-			if (mesh)
+			/*if (mesh)
 				mesh->renderDraw(*camera);
 			else
-				object->draw(basicShader, *camera, GL_TRIANGLES);
+				object->draw(basicShader, *camera, GL_TRIANGLES);*/
+
+			gui.raytraceRender("final_render.png", window.getWidth(), window.getHeight());
 		}
 
 	}

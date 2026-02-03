@@ -35,45 +35,9 @@ class Mesh : public Object {
 	std::unordered_map < Material*, std::tuple < VAO, VBO, EBO, std::vector<GPUVertex>, std::vector<GLuint >> > renderBuffers;
 
 	std::vector<Triangle> triangles; // used for raytracing
+	std::vector<TriangleMaterial> triangleMaterialData; // used for raytracing
 
-	void formTrianglesForRaytracing()
-	{
-		triangles.clear();
-
-		for (auto& it : materials)
-		{
-			for (auto& face : it.second)
-			{
-				auto faceVerts = face->getVerticesVector();
-				int size = faceVerts.size();
-				for (int i = 1; i < size - 1; ++i)
-				{
-
-					Triangle tri;
-					glm::vec4 point0 = model * glm::vec4(faceVerts[0]->position, 1.0f);
-					tri.v0x = point0.x;
-					tri.v0y = point0.y;
-					tri.v0z = point0.z;
-
-					glm::vec4 point1 = model * glm::vec4(faceVerts[i]->position, 1.0f);
-					tri.v1x = point1.x;
-					tri.v1y = point1.y;
-					tri.v1z = point1.z;
-
-					glm::vec4 point2 = model * glm::vec4(faceVerts[i + 1]->position, 1.0f);
-					tri.v2x = point2.x;
-					tri.v2z = point2.z;
-					tri.v2y = point2.y;
-
-					tri.cx = (tri.v0x + tri.v1x + tri.v2x) * 0.33f;
-					tri.cy = (tri.v0y + tri.v1y + tri.v2y) * 0.33f;
-					tri.cz = (tri.v0z + tri.v1z + tri.v2z) * 0.33f;
-
-					triangles.push_back(tri); // kopija
-				}
-			}
-		}
-	}
+	
 
 
 
@@ -329,11 +293,10 @@ public:
 
 	// raytracing
 
-	std::vector<Triangle>& getTriangles()
-	{
-		formTrianglesForRaytracing();
-		return triangles;
-	};
+	void formTrianglesForRaytracing();
+
+	std::vector<Triangle>& getRaytracingTriangleData() { return triangles; };
+	std::vector<TriangleMaterial>& getRaytracingMaterialData() { return triangleMaterialData; };
 
 
 

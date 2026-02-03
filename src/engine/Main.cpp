@@ -126,6 +126,7 @@ int main() {
 
 		//window.getCamera()->Update();
 
+
 		renderer.render();
 
 		if (!gui.getIO()->WantCaptureMouse || app->getMode() == Mode::SHADER_EDIT) {

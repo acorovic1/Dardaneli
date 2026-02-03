@@ -298,6 +298,8 @@
     <None Include="src\shaders\grid.frag" />
     <None Include="src\shaders\computeTest.vert" />
     <None Include="src\shaders\computeTest.frag" />
+    <None Include="src\shaders\quad.vert" />
+    <None Include="src\shaders\quad.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Core\Camera.h">
@@ -579,6 +581,12 @@
     <ClInclude Include="include\Utilities\Loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Program Files\RenderDoc\renderdoc_app.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\RenderDocIntegration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\planksSpec.png">
@@ -586,6 +594,24 @@
     </Image>
     <Image Include="assets\planks.png">
       <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="assets\nx.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\ny.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\nz.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\px.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\py.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\pz.png">
+      <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>

@@ -16,6 +16,8 @@ struct TextureNode : public ShadingNodes {
 	std::string filePath;
 
 	std::unique_ptr<Texture> texture;
+	
+	// pa ovo valjda ima vec u Texture strukturi
 	GLuint texID;
 
 

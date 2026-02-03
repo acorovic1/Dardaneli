@@ -1865,25 +1865,23 @@ void sendData(Shader& shader)
 	RaytracingBVHSingleton->Build();
 
 	std::vector<flatRTNode>& gpuNodes = RaytracingBVHSingleton->getNodes();
-	std::vector<Triangle> gpuTriangles = RaytracingBVHSingleton->getTriangles();
+	std::vector<Triangle> triangleData = RaytracingBVHSingleton->getTriangles();
+	std::vector<TriangleMaterial>& triangleMaterialData = RaytracingBVHSingleton->getTriangleMaterialData();
 
 	std::cout << "\nGPU BVH nodes: " << gpuNodes.size() << "\n";
-	std::cout << "Triangles size: " << gpuTriangles.size() << "\n\n";
+	std::cout << "Triangles size: " << triangleData.size() << "\n";
+	std::cout << "TriangleMaterialData size: " << triangleMaterialData.size() << "\n\n"; 
 
-	/*for (auto& tri : gpuTriangles)
-	{
-		/// pffffff.....
-		std::cout << "\n\n"<<tri.v0x << " " << tri.v0y << " " << tri.v0z << "\n";
-		std::cout << tri.v1x << " " << tri.v1y << " " << tri.v1z << "\n";
-		std::cout << tri.v2x << " " << tri.v2y << " " << tri.v2z << "\n";
-	}
-	*/
-	//for (auto& node : gpuNodes)
-	//	std::cout << "node.triIndex = " << node.triIndex << "\t node.right = " << node.right << "\n";
+	//for (auto x : triangleMaterialData)
+	//{
+	//	std::cout << " Normal v1	" << x.n1x << " " << x.n1y << " " << x.n1z << "\n";
+	//	std::cout << " Normal v2	" << x.n2x << " " << x.n2y << " " << x.n2z << "\n";
+	//	std::cout << " Normal v3	" << x.n3x << " " << x.n3y << " " << x.n3z << "\n\n";
+	//}
 
 
-	GLuint bvhBuffer, triBuffer;
-	//
+	GLuint bvhBuffer, triBuffer, matBuffer;
+	
 	glGenBuffers(1, &bvhBuffer);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvhBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, gpuNodes.size() * sizeof(flatRTNode), gpuNodes.data(), GL_STATIC_DRAW);
@@ -1891,9 +1889,14 @@ void sendData(Shader& shader)
 
 	glGenBuffers(1, &triBuffer);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, triBuffer);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, gpuTriangles.size() * sizeof(Triangle), gpuTriangles.data(), GL_STATIC_DRAW);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, triangleData.size() * sizeof(Triangle), triangleData.data(), GL_STATIC_DRAW);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, triBuffer);
 
+
+	glGenBuffers(1, &matBuffer);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, matBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, triangleMaterialData.size() * sizeof(TriangleMaterial), triangleMaterialData.data(), GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, matBuffer);
 
 
 
@@ -1927,14 +1930,87 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 
 
 
+	static Texture tex("planks.png", 1);
+	tex.bind();
+
+	tex.textureUniform(computeShader, "tex", 1);
+
+
+	std::vector<std::string> skybox
+	{
+		"px.png",
+		"nx.png",
+		"py.png",
+		"ny.png",
+		"pz.png",
+		"nz.png"
+	};
+
+	static unsigned int textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+	/*std::string projectDir = getProjectDirr();*/
+
+	
+	
+	int w, h, nrChannels;
+	for (unsigned int i = 0; i < 6; i++)
+	{
+		std::string imagePath = "C:\\Users\\adnan\\Desktop\\Dardaneli\\assets\\" + skybox[i];
+		stbi_set_flip_vertically_on_load(false);
+		unsigned char* data = stbi_load(imagePath.c_str(), &w, &h, &nrChannels, 0);
+		if (data)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+				0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+			);
+			stbi_image_free(data);
+		}
+		else
+		{
+			std::cout << "Cubemap tex failed to load at path: " << skybox[i] << std::endl;
+			stbi_image_free(data);
+		}
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	glUniform1i(glGetUniformLocation(computeShader.getID(), "skybox"), 2);
+
+
 	sendData(computeShader);
 	//
 	auto s0 = std::chrono::high_resolution_clock::now();
 	//
+	//glDispatchCompute(width, height, 1);
+	////
+	////
+	//glMemoryBarrier(
+	//	GL_SHADER_IMAGE_ACCESS_BARRIER_BIT |
+	//	GL_TEXTURE_FETCH_BARRIER_BIT |
+	//	GL_SHADER_STORAGE_BARRIER_BIT
+	//);
+
+	//glMemoryBarrier(GL_TEXTURE_UPDATE_BARRIER_BIT);
+	//glFinish();
+
+
 	glDispatchCompute(width, height, 1);
-	//
-	//
-	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+	
+	glMemoryBarrier(GL_TEXTURE_UPDATE_BARRIER_BIT);
+
+	
+	glFinish();
+
+
 	auto s1 = std::chrono::high_resolution_clock::now();
 	double shader_ms = std::chrono::duration<double, std::milli>(s1 - s0).count();
 
@@ -1983,9 +2059,6 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 	openFile(filename);
 
 	glDeleteTextures(1, &texture);
-
-
-
 
 
 }

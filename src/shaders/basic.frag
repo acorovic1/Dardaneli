@@ -7,6 +7,7 @@ out vec4 FragColor;
 
 uniform int colorMode;
 
+uniform sampler2D tex;
 
 void main()
 {
@@ -34,6 +35,11 @@ void main()
            FragColor= vec4(0.75f,0.0f,0.0f,1.0f); // Seams --> redish
     else 
            FragColor = vec4(1.0f, 0.0f, 1.0f, 1.0f); // Error --> pink
+
+
+
+//
+//    FragColor = vec4(texture(tex, fragUV).xyz,1.0f);
 
     
 }

@@ -237,10 +237,13 @@
     <None Include="src\shaders\grid.vert" />
     <None Include="src\shaders\pbr.geom" />
     <None Include="src\shaders\pbr.vert" />
+    <None Include="src\shaders\quad.frag" />
+    <None Include="src\shaders\quad.vert" />
     <None Include="src\shaders\UV.frag" />
     <None Include="src\shaders\UV.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\Program Files\RenderDoc\renderdoc_app.h" />
     <ClInclude Include="include\AccelerationStructures\BoundingVolumes\AABB.h" />
     <ClInclude Include="include\AccelerationStructures\RaytracingBVH.h" />
     <ClInclude Include="include\AccelerationStructures\RaytracingBVHNode.h" />
@@ -294,6 +297,7 @@
     <ClInclude Include="include\Materials\ShadingNodes\ShadingNodesManager.h" />
     <ClInclude Include="include\Materials\ShadingNodes\Texture\TextureNode.h" />
     <ClInclude Include="include\Materials\ShadingNodes\Input\ValueNode.h" />
+    <ClInclude Include="include\Utilities\RenderDocIntegration.h" />
     <ClInclude Include="include\Utilities\Triangle.h" />
     <ClInclude Include="include\Utilities\UnorderedPair.h" />
     <ClInclude Include="include\Objects\Mesh\UVVertex.h" />
@@ -336,8 +340,14 @@
     <ClInclude Include="libraries\include\stb\stb_image_write.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="assets\nx.png" />
+    <Image Include="assets\ny.png" />
+    <Image Include="assets\nz.png" />
     <Image Include="assets\planks.png" />
     <Image Include="assets\planksSpec.png" />
+    <Image Include="assets\px.png" />
+    <Image Include="assets\py.png" />
+    <Image Include="assets\pz.png" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="libraries\include\json\json.h" />

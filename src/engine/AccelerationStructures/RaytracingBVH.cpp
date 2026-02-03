@@ -1,5 +1,6 @@
 #include "RaytracingBVH.h"
 #include "ObjectModeBVH.h"
+#include <Improved/ObjectModeBVHImproved.h>
 
 #include <algorithm>
 #include <limits>
@@ -45,9 +46,9 @@ int BuildMedianSplit(std::vector<flatRTNode>& bvhNodes, int start, int end)
 	if (count <= 0) return -1;
 	if (count == 1)
 	{
-		
+
 		RaytracingBVHSingleton->nodes.emplace_back(bvhNodes[start]);
-		return RaytracingBVHSingleton->nodes.size()-1;
+		return RaytracingBVHSingleton->nodes.size() - 1;
 
 	}
 
@@ -82,7 +83,7 @@ int BuildMedianSplit(std::vector<flatRTNode>& bvhNodes, int start, int end)
 	//flatRTNode& parent = RaytracingBVHSingleton->nodes.back();
 
 	int leftIndex = BuildMedianSplit(bvhNodes, start, mid);
-//	std::cout << "\n Node with indexX " << index << " has right offset = " << parent.right;
+	//	std::cout << "\n Node with indexX " << index << " has right offset = " << parent.right;
 
 
 	int rightIndex = BuildMedianSplit(bvhNodes, mid, end);
@@ -132,12 +133,19 @@ std::vector<Triangle>& RaytracingBVH::getTriangles()
 	return triangles;
 }
 
+std::vector<TriangleMaterial>& RaytracingBVH::getTriangleMaterialData()
+{
+	return triangleMaterialData;
+}
+
 void RaytracingBVH::Build()
 {
 	this->Clear();
-	BVHNode* objRoot = objectBVHSingleton->getRoot();
+	this->triangles.clear();
+	this->triangleMaterialData.clear();
+	BVHNode* objRoot = objectBVHImprovedSingleton->getRoot();
 
-	// opali dfs, na kraju buildat Triangle BVH
+	
 
 	findTlasLeaf(objRoot);
 
@@ -161,27 +169,39 @@ void RaytracingBVH::findTlasLeaf(BVHNode* objNode)
 		findTlasLeaf(objNode->left);
 		nodes[index].right = nodes.size() - index; // offsetIndex to right child set after left subtree is built
 		//std::cout << "\n Node with index " << index << " has right offset = " << nodes[index].right;
-		
+
 		findTlasLeaf(objNode->right);
 
 		return;
 	}
-	
+
 	std::cout << "\nOBJ index = " << objNode->index.back();
-	std::vector<Triangle>& triangles = dynamic_cast<Mesh*>(objectSingleton->getObject(objNode->index.back()))->getTriangles();
-	size_t numObjects = triangles.size();
+	Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getObject(objNode->index.back()));
+	mesh->formTrianglesForRaytracing();
+	std::vector<Triangle>& triangleData = mesh->getRaytracingTriangleData();
+	std::vector<TriangleMaterial>& triangleMaterialData = mesh->getRaytracingMaterialData();
+
+	size_t numObjects = triangleData.size();
+	
+
 	if (!numObjects)
 		return;
 
-
+	// na nivou aplikacije treba imati podatke o tome koliko cega ima na sceni,
+	// pa iz toga moze odma reserve i da to bude jedini poziv
 	std::vector<flatRTNode> bvhNodes;
+
 	bvhNodes.reserve(numObjects);
+	// treba ovo clearat prije poziva za raytrace
+	this->triangles.reserve(this->triangles.size() + numObjects);
+	this->triangleMaterialData.reserve(this->triangleMaterialData.size() + numObjects);
 
 
 	for (size_t i = 0; i < numObjects; ++i)
 	{
-		bvhNodes.emplace_back(flatRTNode(triangles[i], this->triangles.size()));
-		this->triangles.push_back(triangles[i]);
+		bvhNodes.emplace_back(flatRTNode(triangleData[i], this->triangles.size()));
+		this->triangles.push_back(triangleData[i]);
+		this->triangleMaterialData.push_back(triangleMaterialData[i]);
 	}
 
 	BuildMedianSplit(bvhNodes, 0, static_cast<int>(bvhNodes.size()));

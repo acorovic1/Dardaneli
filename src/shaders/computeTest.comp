@@ -1,9 +1,9 @@
 #version 460 core
 
-layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+layout (local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
 
 
-layout(rgba32f, binding = 0) uniform image2D imgOutput;
+
 
 
 struct Triangle{
@@ -14,14 +14,19 @@ struct Triangle{
 
 };
 
-struct TriangleTex{
+struct TriangleMaterial{
     float u0,v0;
     float u1,v1;
     float u2,v2;
     float n1x, n1y, n1z;
     float n2x, n2y, n2z;
     float n3x, n3y, n3z;
-    float dummy;
+
+   
+    bool mirror;
+
+
+
 };
 
 struct flatRTNode {
@@ -30,6 +35,33 @@ struct flatRTNode {
     float aabbMaxX, aabbMaxY, aabbMaxZ;
     int triIndex;
 };
+
+
+struct Ray{
+    vec3 origin;
+    vec3 direction;
+    float closestT;
+};
+
+
+
+layout(std430, binding = 0) buffer BVH { flatRTNode nodes[]; };
+layout(std430, binding = 1) buffer Triangles { Triangle tris[]; };
+layout(std430, binding = 2) buffer TrianglesTex { TriangleMaterial trisMaterial[]; };
+
+layout(rgba32f, binding = 0) uniform image2D imgOutput;
+
+layout(binding = 1) uniform sampler2D tex;
+layout(binding = 2) uniform samplerCube  skybox;
+
+
+uniform vec3 camPos;
+uniform vec3 camDir;
+uniform vec3 camRight;
+uniform vec3 camUp;
+uniform float fov;
+uniform ivec2 resolution;
+
 
 bool rayAABB(vec3 orig, vec3 dir, flatRTNode node, out float tNear, out float tFar)
 {
@@ -56,7 +88,7 @@ bool rayAABB(vec3 orig, vec3 dir, flatRTNode node, out float tNear, out float tF
     return tNear <= tFar;
 }
 
-bool rayTriangle(vec3 orig, vec3 dir, Triangle tri, out float t, out vec3 hitNormal) {
+bool rayTriangle(vec3 orig, vec3 dir, Triangle tri, out float t, out vec3 hitNormal, out vec2 uv) {
 
     vec3 edge1 = vec3(tri.V1x-tri.V0x,tri.V1y-tri.V0y,tri.V1z-tri.V0z);
     vec3 edge2 = vec3(tri.V2x-tri.V0x,tri.V2y-tri.V0y,tri.V2z-tri.V0z);
@@ -68,14 +100,14 @@ bool rayTriangle(vec3 orig, vec3 dir, Triangle tri, out float t, out vec3 hitNor
 
     float invDet = 1.0 / det;
     vec3 tvec = orig - vec3(tri.V0x,tri.V0y,tri.V0z);
-    float u = dot(tvec, pvec) * invDet;
+    uv.x = dot(tvec, pvec) * invDet;
 
-    if(u < 0.0 || u > 1.0) return false;
+    if(uv.x < 0.0 || uv.x > 1.0) return false;
 
     vec3 qvec = cross(tvec, edge1);
-    float v = dot(dir, qvec) * invDet;
+    uv.y = dot(dir, qvec) * invDet;
 
-    if(v < 0.0 || u + v > 1.0) return false;
+    if(uv.y < 0.0 || uv.x + uv.y > 1.0) return false;
 
     t = dot(edge2, qvec) * invDet;
     hitNormal = normalize(cross(edge1, edge2));
@@ -84,48 +116,11 @@ bool rayTriangle(vec3 orig, vec3 dir, Triangle tri, out float t, out vec3 hitNor
 }
 
 
-layout(std430, binding = 0) buffer BVH { flatRTNode nodes[]; };
-layout(std430, binding = 1) buffer Triangles { Triangle tris[]; };
-layout(std430, binding = 2) buffer TrianglesTex { TriangleTex trisTex[]; };
-
-uniform vec3 camPos;
-uniform vec3 camDir;
-uniform vec3 camRight;
-uniform vec3 camUp;
-uniform float fov;
-uniform ivec2 resolution;
-
-uniform sampler2D tex;
-
 // max height of the BVH, size 32 amounts to over 2 bilion triangles
- const int MAX_STACK_SIZE = 32; 
+const int MAX_STACK_SIZE = 32; 
 
-int counter = 0;
-
-void main()
+void rayTrace(inout Ray ray, out vec3 bestN, out int triIndex,out vec2 bestBarycentric)
 {
-
-    
-
-    ivec2 dims  = imageSize(imgOutput);
-    ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);
-    if (pixel.x >= dims.x || pixel.y >= dims.y)
-        return;
-
-    float aspect = float(dims.x) / float(dims.y);
-    vec2 ndc = (vec2(pixel) + 0.5) / vec2(dims) * 2.0 - 1.0;
-    ndc.x *= aspect;
-
-    vec3 rayOrig = camPos;
-    vec3 rayDir  = normalize(
-        camDir +
-        ndc.x * camRight * tan(fov * 0.5) +
-        ndc.y * camUp    * tan(fov * 0.5)
-    );
-
-    float closestT = 1e30;
-    vec3  bestN    = vec3(0.0);
-
     int stack[MAX_STACK_SIZE];
     int stackPtr = 0;
 
@@ -137,10 +132,10 @@ void main()
         flatRTNode node  = nodes[nodeIndex];
 
         float tNear, tFar;
-        if (!rayAABB(rayOrig, rayDir, node, tNear, tFar))
+        if (!rayAABB(ray.origin, ray.direction, node, tNear, tFar))
             continue;
 
-        if (tNear > closestT)
+        if (tNear > ray.closestT)
             continue;
 
         // Leaf
@@ -148,12 +143,15 @@ void main()
         {
             float t;
             vec3 n;
-            if (rayTriangle(rayOrig, rayDir, tris[node.triIndex], t, n))
+            vec2 barycentric;
+            if (rayTriangle(ray.origin, ray.direction, tris[node.triIndex], t, n,barycentric))
             {
-                if (t > 0.0 && t < closestT)
+                if (t > 0.0 && t < ray.closestT)
                 {
-                    closestT = t;
+                    ray.closestT = t;
                     bestN = n;
+                    triIndex = node.triIndex;
+                    bestBarycentric = barycentric;
                 }
             }
             continue;
@@ -166,8 +164,8 @@ void main()
         float tNearL, tFarL;
         float tNearR, tFarR;
 
-        bool hitL = rayAABB(rayOrig, rayDir, nodes[left],  tNearL, tFarL);
-        bool hitR = rayAABB(rayOrig, rayDir, nodes[right], tNearR, tFarR);
+        bool hitL = rayAABB(ray.origin, ray.direction, nodes[left],  tNearL, tFarL);
+        bool hitR = rayAABB(ray.origin, ray.direction, nodes[right], tNearR, tFarR);
 
         if (!hitL && !hitR)
             continue;
@@ -207,13 +205,166 @@ void main()
             stack[stackPtr++] = second;
 
         // Traverse near node immediately
-        if (tFirst < closestT)
+        if (tFirst < ray.closestT)
         {
 //            if (stackPtr < MAX_STACK_SIZE)
                 stack[stackPtr++] = first;
         }
     }
 
-    vec3 color = (closestT < 1e29) ? abs(bestN) : vec3(0.0);
-    imageStore(imgOutput, pixel, vec4(color, 1.0));
+
+}
+
+
+float hash12(vec2 p)
+{
+    vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+    p3 += dot(p3, p3.yzx + 33.33);
+    return fract((p3.x + p3.y) * p3.z);
+}
+
+vec2 randomOffset(vec2 seed)
+{
+    return vec2(
+        hash12(seed),
+        hash12(seed + 17.0)
+    ) - 0.5;
+}
+
+
+
+void main()
+{
+    ivec2 dims  = imageSize(imgOutput);
+    ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);
+    if (pixel.x >= dims.x || pixel.y >= dims.y)
+        return;
+
+    
+    float aspect = float(dims.x) / float(dims.y);
+
+
+    
+
+    
+
+
+
+
+    vec3  bestN    = vec3(0.0);
+    vec2 bestBarycentric   = vec2(0.0);
+    int triIndex;
+
+
+
+    vec2 dimsInvert = 1/vec2(dims);
+
+    Ray ray;
+    
+    vec4 finalColor = vec4(0.0);
+
+    int samples = 16;
+
+    for(int i=0;i<samples;i++)
+    {
+        vec2 jitter = randomOffset(vec2(pixel) + float(i));
+          
+        vec2 ndc = (vec2(pixel) + 0.5 + jitter) / vec2(dims) * 2.0 - 1.0;
+        ndc.x *= aspect;
+
+     
+        
+        ray.origin = camPos;
+        ray.closestT = 1e30;
+        ray.direction = normalize(
+        camDir +
+        ndc.x * camRight * tan(fov * 0.5) +
+        ndc.y * camUp    * tan(fov * 0.5)
+        );
+
+
+        for(int depth=0;depth<11;depth++)
+        {
+            rayTrace(ray, bestN, triIndex,bestBarycentric);
+
+            if(ray.closestT == 1e30)
+            { 
+               finalColor += texture(skybox,ray.direction);
+               break;
+            } 
+            TriangleMaterial triMat = trisMaterial[triIndex];
+
+
+            float u = bestBarycentric.x * triMat.u0 + 
+                      bestBarycentric.y * triMat.u1 + 
+                      (1.0 - bestBarycentric.x - bestBarycentric.y) * triMat.u2;
+
+            float v = bestBarycentric.x * triMat.v0 + 
+                      bestBarycentric.y * triMat.v1 + 
+                      (1.0 - bestBarycentric.x - bestBarycentric.y) * triMat.v2;
+
+            vec3 normal = normalize(
+                bestBarycentric.x * vec3(triMat.n2x, triMat.n2y, triMat.n2z) +
+                bestBarycentric.y * vec3(triMat.n3x, triMat.n3y, triMat.n3z) +
+                (1.0 - bestBarycentric.x - bestBarycentric.y) * vec3(triMat.n1x, triMat.n1y, triMat.n1z)
+            );
+
+            normal = normal * 0.5 + 0.5;  
+            vec3 I = ray.origin + ray.closestT * ray.direction;
+
+            if(triMat.mirror==true)
+            {
+                //create ray
+                // rayTrace()
+
+                //Ray secondary;
+                ray.direction = ray.direction - 2 * normal * dot(normal,ray.direction);
+                ray.origin = I + ray.direction*0.001f;
+                ray.closestT = 1e30;
+                
+                //finalColor += vec4(1.0,1.0,1.0,1.0);
+                continue;
+                
+
+             }
+             else
+             {             
+             
+             
+                 vec4 albedo = texture(tex, vec2(u, v));
+             
+             
+                 vec3 lightPos = vec3(5.0, 5.0, 5.0);
+                 vec3 lightColor = vec3(1.0, 1.0, 1.0);
+                 float lightIntensity = 100.0f;
+             
+                 
+                 vec3 L = lightPos - I;
+                 float dist = length(L);
+             
+                 L= L * (1.0 / dist);
+             
+             
+             
+                  finalColor += vec4(albedo.xyz * (max(dot(normal, L), 0.1)) *( lightColor *lightIntensity / (dist * dist))  ,1.0);
+                  break;
+             
+             }
+        }
+
+    }
+
+
+   
+   finalColor /= float(samples);
+
+
+
+
+
+
+   imageStore(imgOutput, pixel, finalColor);
+
+
+
 }
