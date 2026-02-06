@@ -34,7 +34,7 @@ class Application {
 	Mode mode = Mode::OBJECT;
 	SelectMode selectMode = SelectMode::VERTEX;
 
-	RenderMode renderMode = RenderMode::SOLID;
+	RenderMode renderMode = RenderMode::RENDER;
 
 
 	std::vector<int> objectIndices = std::vector<int>(1);

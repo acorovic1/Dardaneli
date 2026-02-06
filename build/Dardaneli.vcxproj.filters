@@ -235,6 +235,8 @@
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\UV.vert" />
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\basic.frag" />
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\basic.vert" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeOutput.frag" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeOutput.vert" />
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeTest.comp" />
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeTest.frag" />
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeTest.vert" />

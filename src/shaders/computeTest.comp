@@ -23,7 +23,7 @@ struct TriangleMaterial{
     float n3x, n3y, n3z;
 
    
-    bool mirror;
+    int mirror;
 
 
 
@@ -309,25 +309,10 @@ void main()
                 (1.0 - bestBarycentric.x - bestBarycentric.y) * vec3(triMat.n1x, triMat.n1y, triMat.n1z)
             );
 
-            normal = normal * 0.5 + 0.5;  
+              
             vec3 I = ray.origin + ray.closestT * ray.direction;
 
-            if(triMat.mirror==true)
-            {
-                //create ray
-                // rayTrace()
-
-                //Ray secondary;
-                ray.direction = ray.direction - 2 * normal * dot(normal,ray.direction);
-                ray.origin = I + ray.direction*0.001f;
-                ray.closestT = 1e30;
-                
-                //finalColor += vec4(1.0,1.0,1.0,1.0);
-                continue;
-                
-
-             }
-             else
+            if(triMat.mirror==0) // opaque
              {             
              
              
@@ -346,11 +331,43 @@ void main()
              
              
              
-                  finalColor += vec4(albedo.xyz * (max(dot(normal, L), 0.1)) *( lightColor *lightIntensity / (dist * dist))  ,1.0);
+                  finalColor += vec4(albedo.xyz * (max(dot(normal*0.5+0.5, L), 0.1)) *( lightColor *lightIntensity / (dist * dist))  ,1.0);
                   break;
              
              }
+             else if(triMat.mirror==1) // glass
+             {
+    
+                
+                
+                // refraction
+                ray.direction = refract(normalize(ray.direction),normal, 1.0/1.5);
+                ray.origin = I + ray.direction*0.001f;
+                ray.closestT = 1e30;
+                finalColor += texture(skybox,ray.direction);
+//                break;
+
+                continue;
+      
+
+
+
+
+                
+
+             }else if ( triMat.mirror == 2) // mirror
+
+             {
+             
+                     //   reflection
+                //ray.direction = ray.direction - 2 * normal * dot(normal,ray.direction);
+                ray.direction = reflect(ray.direction, normal);
+                continue;
+             
+             }
+              
         }
+//             
 
     }
 

@@ -3403,7 +3403,7 @@ void Mesh::formTrianglesForRaytracing()
 	triangles.clear();
 	triangleMaterialData.clear();
 
-	int rnd = std::rand() % 5;
+	int rnd = std::rand() % 3;
 
 	for (auto& it : materials)
 	{
@@ -3479,11 +3479,10 @@ void Mesh::formTrianglesForRaytracing()
 				triMat.n3y = t2->normal.y;
 				triMat.n3z = t2->normal.z;
 
-			/*	if (rnd == 0)
-				{
-					triMat.mirror = true;
-					std::cout << "\n\n\t MIRRORING TRIANGLE MATERIAL DATA \t";
-				}*/
+			
+					triMat.mirror = rnd;
+					//std::cout << "\n\n\t MIRRORING TRIANGLE MATERIAL DATA \t";
+				
 
 
 				triangleMaterialData.push_back(triMat);

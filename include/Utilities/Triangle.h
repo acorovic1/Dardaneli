@@ -33,12 +33,7 @@ struct TriangleMaterial {
 	//float dummy;
 
 	// 
-	bool mirror;
-
-	//// dummy padding to make size multiple of 16 bytes
-	bool dummy1;
-	bool dummy2;
-	bool dummy3;
+	int mirror=0;
 };
 
 

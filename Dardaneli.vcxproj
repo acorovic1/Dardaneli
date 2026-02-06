@@ -231,6 +231,8 @@
   <ItemGroup>
     <None Include="src\shaders\basic.frag" />
     <None Include="src\shaders\basic.vert" />
+    <None Include="src\shaders\computeOutput.frag" />
+    <None Include="src\shaders\computeOutput.vert" />
     <None Include="src\shaders\computeTest.frag" />
     <None Include="src\shaders\computeTest.vert" />
     <None Include="src\shaders\grid.frag" />
@@ -341,13 +343,19 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\nx.png" />
+    <Image Include="assets\nx1.png" />
     <Image Include="assets\ny.png" />
+    <Image Include="assets\ny1.png" />
     <Image Include="assets\nz.png" />
+    <Image Include="assets\nz1.png" />
     <Image Include="assets\planks.png" />
     <Image Include="assets\planksSpec.png" />
     <Image Include="assets\px.png" />
+    <Image Include="assets\px1.png" />
     <Image Include="assets\py.png" />
+    <Image Include="assets\py1.png" />
     <Image Include="assets\pz.png" />
+    <Image Include="assets\pz1.png" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="libraries\include\json\json.h" />

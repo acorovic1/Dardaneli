@@ -47,7 +47,7 @@ public:
 	glm::vec3 getOrientation()const { return orientation; };
 
 	glm::vec3 getUp()const { return up; };
-	float getFOV()const { std::cout << "Camera.fov " << fov<<"\n"; return fov; };
+	float getFOV()const {  return fov; };
 
 
 	void setWidth(int width) { Camera::width = width; };

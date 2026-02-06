@@ -20,10 +20,10 @@ void addPlane()
 {
 
 	std::vector<DVertex*> vertices = {
-		new DVertex{glm::vec3(-0.5f, 0.0f, 0.5f),glm::vec3(-0.5f, 0.0f, 0.5f)},
-		new DVertex{glm::vec3(0.5f, 0.0f, 0.5f), glm::vec3(0.5f, 0.0f, 0.5f)},
-		new DVertex{glm::vec3(0.5f, 0.0f, -0.5f), glm::vec3(0.5f, 0.0f, -0.5f)},
-		new DVertex{glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(-0.5f, 0.0f, -0.5f)}
+		new DVertex{glm::vec3(-0.5f, 0.0f, 0.5f),glm::vec3(0.0f, 1.0f, 0.0f)},
+		new DVertex{glm::vec3(0.5f, 0.0f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f)},
+		new DVertex{glm::vec3(0.5f, 0.0f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f)},
+		new DVertex{glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f)}
 	};
 	std::vector<GLuint> indices{
 		0, 1, 2,

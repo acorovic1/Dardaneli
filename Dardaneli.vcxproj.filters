@@ -300,6 +300,8 @@
     <None Include="src\shaders\computeTest.frag" />
     <None Include="src\shaders\quad.vert" />
     <None Include="src\shaders\quad.frag" />
+    <None Include="src\shaders\computeOutput.vert" />
+    <None Include="src\shaders\computeOutput.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Core\Camera.h">
@@ -611,6 +613,24 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="assets\pz.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\nz1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\ny1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\nx1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\px1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\py1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\pz1.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

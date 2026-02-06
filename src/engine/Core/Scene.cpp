@@ -45,13 +45,13 @@ void Scene::init(Window& window)
 	new Shader("Basic", "basic.vert", "basic.frag");
 	new Shader("UV", "UV.vert", "UV.frag");
 	new Shader("Grid", "grid.vert", "grid.frag");
-
-
+	new Shader("ComputeShader", "computeTest.comp");
+	new Shader("ComputeOutput", "computeOutput.vert", "computeOutput.frag");
 
 	app->activeMaterial = new Material("Default");
 
+	//NAPRAVI DA SE NE BUILDA  BVH SVAKI FRAME I DA SE TEKSTURE NE KREIRAJU SVAKI FREJM
 
-	
 
 	int N = 2;                 // cubes per axis → generates N³ cubes
 	float spacing = 2.0f;      // distance between cube centers
@@ -82,13 +82,14 @@ void Scene::init(Window& window)
 			}
 		}
 	}
-
+	//addPlane();
 
 
 
 	//addCube();
 	//addCube();
 	//addCube();
+	//dynamic_cast<Mesh*>(objectSingleton->getObject(0))->rotate(90, glm::vec3(1.0f, 0.0f, 0.0f));
 	//dynamic_cast<Mesh*>(objectSingleton->getObject(0))->assignMaterial(app->activeMaterial);
 	//dynamic_cast<Mesh*>(objectSingleton->getObject(1))->assignMaterial(app->activeMaterial);
 	//dynamic_cast<Mesh*>(objectSingleton->getObject(2))->assignMaterial(app->activeMaterial);
@@ -114,6 +115,7 @@ void Scene::init(Window& window)
 
 	// postavi nove BVHove svugdje i stavi logn max dubinu u edit modu
 
-
+	RaytracingBVHSingleton->Build();
+	RaytracingBVHSingleton->init(window.getWidth(), window.getHeight());
 
 }

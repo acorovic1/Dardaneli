@@ -250,7 +250,7 @@ void MyGUI::drawEditModeUI(bool change)
 	ImGui::RadioButton("BVH", &choice, 1);ImGui::SameLine();
 	ImGui::RadioButton("Ray Interaction", &choice, 2);
 
-	if (choice==1)
+	if (choice == 1)
 	{
 		static Shader& basic = shaderSingleton->getShader("Basic");
 		basic.setInteger(false, "colorMode", static_cast<int>(FragColor::BVH));
@@ -271,7 +271,7 @@ void MyGUI::drawEditModeUI(bool change)
 	}
 	else if (choice == 2)
 	{
-		
+
 
 		BVHRayInteraction();
 	}
@@ -283,7 +283,7 @@ void MyGUI::drawEditModeUI(bool change)
 		extrudeMenu();
 
 
-	
+
 	ImGui::InputInt("BVH Height", &eBVHSubd);
 	int height;
 	if (app->selectMode == SelectMode::VERTEX)
@@ -751,12 +751,12 @@ void MyGUI::BVHRayInteraction()
 	static Shader& basic = shaderSingleton->getShader("Basic");
 	basic.setInteger(false, "colorMode", static_cast<int>(FragColor::BVH));
 	std::vector<int> garbage{};
-	static Camera& camera= *cameraSingleton->getCamera(0);
+	static Camera& camera = *cameraSingleton->getCamera(0);
 
 	if (app->mode == Mode::OBJECT)
-		objectBVHImprovedSingleton->DrawRayInteraction(objectBVHImprovedSingleton->getRoot(),camera.createRay(glfwWindow),camera,basic);
+		objectBVHImprovedSingleton->DrawRayInteraction(objectBVHImprovedSingleton->getRoot(), camera.createRay(glfwWindow), camera, basic);
 	else if (app->mode == Mode::EDIT && app->selectMode == SelectMode::VERTEX)
-		VertexBVHImprovedSingleton->DrawRayInteraction(VertexBVHImprovedSingleton->getRoot(), camera.createRay(glfwWindow),camera, basic );
+		VertexBVHImprovedSingleton->DrawRayInteraction(VertexBVHImprovedSingleton->getRoot(), camera.createRay(glfwWindow), camera, basic);
 
 }
 
@@ -1862,58 +1862,23 @@ void sendData(Shader& shader)
 {
 
 
-	RaytracingBVHSingleton->Build();
-
-	std::vector<flatRTNode>& gpuNodes = RaytracingBVHSingleton->getNodes();
-	std::vector<Triangle> triangleData = RaytracingBVHSingleton->getTriangles();
-	std::vector<TriangleMaterial>& triangleMaterialData = RaytracingBVHSingleton->getTriangleMaterialData();
-
-	std::cout << "\nGPU BVH nodes: " << gpuNodes.size() << "\n";
-	std::cout << "Triangles size: " << triangleData.size() << "\n";
-	std::cout << "TriangleMaterialData size: " << triangleMaterialData.size() << "\n\n"; 
-
-	//for (auto x : triangleMaterialData)
-	//{
-	//	std::cout << " Normal v1	" << x.n1x << " " << x.n1y << " " << x.n1z << "\n";
-	//	std::cout << " Normal v2	" << x.n2x << " " << x.n2y << " " << x.n2z << "\n";
-	//	std::cout << " Normal v3	" << x.n3x << " " << x.n3y << " " << x.n3z << "\n\n";
-	//}
 
 
-	GLuint bvhBuffer, triBuffer, matBuffer;
-	
-	glGenBuffers(1, &bvhBuffer);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvhBuffer);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, gpuNodes.size() * sizeof(flatRTNode), gpuNodes.data(), GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bvhBuffer);
-
-	glGenBuffers(1, &triBuffer);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, triBuffer);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, triangleData.size() * sizeof(Triangle), triangleData.data(), GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, triBuffer);
-
-
-	glGenBuffers(1, &matBuffer);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, matBuffer);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, triangleMaterialData.size() * sizeof(TriangleMaterial), triangleMaterialData.data(), GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, matBuffer);
-
-
-
-	shader.setVector3f(true, "camPos", cameraSingleton->getCamera(0)->getPosition());
-	shader.setVector3f(true, "camDir", cameraSingleton->getCamera(0)->getOrientation());
-	shader.setVector3f(true, "camUp", cameraSingleton->getCamera(0)->getUp());
-	shader.setVector3f(true, "camRight", glm::normalize(glm::cross(cameraSingleton->getCamera(0)->getOrientation(), cameraSingleton->getCamera(0)->getUp())));
-	shader.setFloat(true, "fov", glm::radians(cameraSingleton->getCamera(0)->getFOV()));
-	shader.setVector2i(true, "resolution", glm::vec2(cameraSingleton->getCamera(0)->getWidth(), cameraSingleton->getCamera(0)->getHeight()));
 
 }
 
 void MyGUI::raytraceRender(const char* filename, int width, int height)
 {
-	auto t0 = std::chrono::high_resolution_clock::now();
-	Shader computeShader("ComputeShader", "computeTest.comp");
 
+
+	auto t0 = std::chrono::high_resolution_clock::now();
+
+
+
+	Shader& computeShader = shaderSingleton->getShader("ComputeShader");
+	Shader& computeOutput = shaderSingleton->getShader("ComputeOutput");
+
+	// ovo mene jebe druze sudija
 	GLuint texture;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -1925,6 +1890,8 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
 	glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+
+	//RaytracingBVHSingleton->activate();
 
 	computeShader.activate();
 
@@ -1938,12 +1905,12 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 
 	std::vector<std::string> skybox
 	{
-		"px.png",
-		"nx.png",
-		"py.png",
-		"ny.png",
-		"pz.png",
-		"nz.png"
+		"px1.png",
+		"nx1.png",
+		"py1.png",
+		"ny1.png",
+		"pz1.png",
+		"nz1.png"
 	};
 
 	static unsigned int textureID;
@@ -1952,8 +1919,8 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 
 	/*std::string projectDir = getProjectDirr();*/
 
-	
-	
+
+
 	int w, h, nrChannels;
 	for (unsigned int i = 0; i < 6; i++)
 	{
@@ -1985,8 +1952,60 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 	glUniform1i(glGetUniformLocation(computeShader.getID(), "skybox"), 2);
 
 
-	sendData(computeShader);
-	//
+	//sendData(computeShader);
+
+
+	RaytracingBVHSingleton->Build();
+
+	auto t1 = std::chrono::high_resolution_clock::now();
+
+	std::cout << "\nBVH build time: " << std::chrono::duration<double, std::milli>(t1 - t0).count() << " ms\n";
+
+	std::vector<flatRTNode>& gpuNodes = RaytracingBVHSingleton->getNodes();
+	std::vector<Triangle> triangleData = RaytracingBVHSingleton->getTriangles();
+	std::vector<TriangleMaterial>& triangleMaterialData = RaytracingBVHSingleton->getTriangleMaterialData();
+
+	//std::cout << "\nGPU BVH nodes: " << gpuNodes.size() << "\n";
+	//std::cout << "Triangles size: " << triangleData.size() << "\n";
+	//std::cout << "TriangleMaterialData size: " << triangleMaterialData.size() << "\n\n"; 
+
+	//for (auto x : triangleMaterialData)
+	//{
+	//	std::cout << " Normal v1	" << x.n1x << " " << x.n1y << " " << x.n1z << "\n";
+	//	std::cout << " Normal v2	" << x.n2x << " " << x.n2y << " " << x.n2z << "\n";
+	//	std::cout << " Normal v3	" << x.n3x << " " << x.n3y << " " << x.n3z << "\n\n";
+	//}
+
+
+	GLuint bvhBuffer, triBuffer, matBuffer;
+
+	glGenBuffers(1, &bvhBuffer);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvhBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, gpuNodes.size() * sizeof(flatRTNode), gpuNodes.data(), GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bvhBuffer);
+
+	glGenBuffers(1, &triBuffer);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, triBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, triangleData.size() * sizeof(Triangle), triangleData.data(), GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, triBuffer);
+
+
+	glGenBuffers(1, &matBuffer);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, matBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, triangleMaterialData.size() * sizeof(TriangleMaterial), triangleMaterialData.data(), GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, matBuffer);
+
+
+
+	computeShader.setVector3f(true, "camPos", cameraSingleton->getCamera(0)->getPosition());
+	computeShader.setVector3f(true, "camDir", cameraSingleton->getCamera(0)->getOrientation());
+	computeShader.setVector3f(true, "camUp", cameraSingleton->getCamera(0)->getUp());
+	computeShader.setVector3f(true, "camRight", glm::normalize(glm::cross(cameraSingleton->getCamera(0)->getOrientation(), cameraSingleton->getCamera(0)->getUp())));
+	computeShader.setFloat(true, "fov", glm::radians(cameraSingleton->getCamera(0)->getFOV()));
+	computeShader.setVector2i(true, "resolution", glm::vec2(cameraSingleton->getCamera(0)->getWidth(), cameraSingleton->getCamera(0)->getHeight()));
+
+
+
 	auto s0 = std::chrono::high_resolution_clock::now();
 	//
 	//glDispatchCompute(width, height, 1);
@@ -2004,63 +2023,84 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 
 	glDispatchCompute(width, height, 1);
 
-	
-	glMemoryBarrier(GL_TEXTURE_UPDATE_BARRIER_BIT);
 
-	
-	glFinish();
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT |
+		GL_TEXTURE_FETCH_BARRIER_BIT);
 
 
-	auto s1 = std::chrono::high_resolution_clock::now();
-	double shader_ms = std::chrono::duration<double, std::milli>(s1 - s0).count();
+	computeOutput.activate();
 
-	//for (auto x : gpuTriangles)
-	//	std::cout << "Triangle .debug = " << x.hit << "\n";
+	GLuint quadVAO;
 
+	glCreateVertexArrays(1, &quadVAO);
+	glBindVertexArray(quadVAO);
 
+	glBindTextureUnit(0, texture);
+	//RaytracingBVHSingleton->draw();
 
-
-	// Read back texture 
-	std::vector<float> pixels(width * height * 4);
-
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, pixels.data());
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 
 
-
-	// Convert float -> unsigned char
-	std::vector<unsigned char> u8(width * height * 3);
-
-	for (int i = 0; i < width * height; i++)
-	{
-		u8[i * 3 + 0] = (unsigned char)(glm::clamp(pixels[i * 4 + 0], 0.0f, 1.0f) * 255);
-		u8[i * 3 + 1] = (unsigned char)(glm::clamp(pixels[i * 4 + 1], 0.0f, 1.0f) * 255);
-		u8[i * 3 + 2] = (unsigned char)(glm::clamp(pixels[i * 4 + 2], 0.0f, 1.0f) * 255);
-	}
-
-	// Flip vertically
-	std::vector<unsigned char> flipped(width * height * 3);
-	for (int y = 0; y < height; ++y)
-	{
-		memcpy(&flipped[y * width * 3],
-			&u8[(height - 1 - y) * width * 3],
-			width * 3);
-	}
+	////glFinish();
 
 
-	stbi_write_png(filename, width, height, 3, flipped.data(), width * 3);
+	//auto s1 = std::chrono::high_resolution_clock::now();
+	//double shader_ms = std::chrono::duration<double, std::milli>(s1 - s0).count();
 
-	auto t1 = std::chrono::high_resolution_clock::now();
-	double total_ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
+	////for (auto x : gpuTriangles)
+	////	std::cout << "Triangle .debug = " << x.hit << "\n";
 
-	std::cout << "Shader time: " << shader_ms << " ms\n";
-	std::cout << "Render time: " << total_ms << " ms\n\n";
 
-	openFile(filename);
+
+
+	//// Read back texture 
+	//std::vector<float> pixels(width * height * 4);
+
+	//glBindTexture(GL_TEXTURE_2D, texture);
+	//glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, pixels.data());
+
+
+
+	//// Convert float -> unsigned char
+	//std::vector<unsigned char> u8(width * height * 3);
+
+	//for (int i = 0; i < width * height; i++)
+	//{
+	//	u8[i * 3 + 0] = (unsigned char)(glm::clamp(pixels[i * 4 + 0], 0.0f, 1.0f) * 255);
+	//	u8[i * 3 + 1] = (unsigned char)(glm::clamp(pixels[i * 4 + 1], 0.0f, 1.0f) * 255);
+	//	u8[i * 3 + 2] = (unsigned char)(glm::clamp(pixels[i * 4 + 2], 0.0f, 1.0f) * 255);
+	//}
+
+	//// Flip vertically
+	//std::vector<unsigned char> flipped(width * height * 3);
+	//for (int y = 0; y < height; ++y)
+	//{
+	//	memcpy(&flipped[y * width * 3],
+	//		&u8[(height - 1 - y) * width * 3],
+	//		width * 3);
+	//}
+
+
+	//stbi_write_png(filename, width, height, 3, flipped.data(), width * 3);
+
+	//auto t1 = std::chrono::high_resolution_clock::now();
+	//double total_ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
+
+	//std::cout << "Shader time: " << shader_ms << " ms\n";
+	//std::cout << "Render time: " << total_ms << " ms\n\n";
+
+	//openFile(filename);
+
 
 	glDeleteTextures(1, &texture);
+	glDeleteVertexArrays(1, &quadVAO);
+	glDeleteTextures(1, &textureID);
 
+	//RaytracingBVHSingleton->destroy();
 
+	glDeleteBuffers(1, &bvhBuffer);
+	glDeleteBuffers(1, &triBuffer);
+	glDeleteBuffers(1, &matBuffer);
 }
 
 void MyGUI::importObject()

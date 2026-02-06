@@ -153,6 +153,45 @@ void RaytracingBVH::Build()
 	//root = BuildMedianSplit(bvhNodes, 0, static_cast<int>(bvhNodes.size()));
 }
 
+void RaytracingBVH::init( int width, int height)
+{
+	glGenTextures(1, &outputTexture);
+	glBindTexture(GL_TEXTURE_2D, outputTexture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+	
+
+	glCreateVertexArrays(1, &quadVAO);
+	glBindVertexArray(quadVAO);
+
+	std::cout << "\n Output texture id = " << outputTexture << "\n";
+
+}
+
+void RaytracingBVH::activate()
+{
+	glBindImageTexture(0, outputTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	//glBindTextureUnit(0, outputTexture);
+}
+
+void RaytracingBVH::draw()
+{
+	//glBindVertexArray(quadVAO);
+	glBindTextureUnit(0, outputTexture);
+	//glDrawArrays(GL_TRIANGLES, 0, 3);
+}
+
+void RaytracingBVH::destroy()
+{
+	glDeleteVertexArrays(1, &quadVAO);
+	glDeleteTextures(1, &outputTexture);
+}
+
 void RaytracingBVH::findTlasLeaf(BVHNode* objNode)
 {
 	if (!objNode)return;
@@ -175,7 +214,7 @@ void RaytracingBVH::findTlasLeaf(BVHNode* objNode)
 		return;
 	}
 
-	std::cout << "\nOBJ index = " << objNode->index.back();
+	//std::cout << "\nOBJ index = " << objNode->index.back();
 	Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getObject(objNode->index.back()));
 	mesh->formTrianglesForRaytracing();
 	std::vector<Triangle>& triangleData = mesh->getRaytracingTriangleData();

@@ -455,6 +455,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </None>
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\basic.vert">
     </None>
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeOutput.frag">
+    </None>
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeOutput.vert">
+    </None>
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeTest.comp">
     </None>
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeTest.frag">
