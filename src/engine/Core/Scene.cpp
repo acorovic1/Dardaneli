@@ -12,7 +12,7 @@
 #include <Improved/ObjectModeBVHImproved.h>
 
 
-
+// U MATERIAL PREVIEW CURI MEMORIJA
 
 
 
@@ -23,7 +23,7 @@ void Scene::init(Window& window)
 
 
 
-	new Camera(800, 600, glm::vec3(-2.0f, 3.0f, 6.0f), "Viewport");
+	new Camera(800, 600, glm::vec3(-2.0f, 3.0f, 56.0f), "Viewport");
 	new Camera(800, 600, glm::vec3(0.5f, 0.5f, 1.0f), "UV");
 	new Camera(800, 600, glm::vec3(0.0f, 0.0f, 6.0f), "Shader");
 
@@ -31,7 +31,7 @@ void Scene::init(Window& window)
 
 
 	auto camera = cameraSingleton->getCamera("Viewport");
-	camera->setPerspectiveProjection(45, float(camera->getWidth()) / float(camera->getHeight()), 0.1f, 100.0f);
+	camera->setPerspectiveProjection(45, float(camera->getWidth()) / float(camera->getHeight()), 0.1f, 10000.0f);
 
 	camera = cameraSingleton->getCamera("UV");
 
@@ -50,11 +50,11 @@ void Scene::init(Window& window)
 
 	app->activeMaterial = new Material("Default");
 
-	//NAPRAVI DA SE NE BUILDA  BVH SVAKI FRAME I DA SE TEKSTURE NE KREIRAJU SVAKI FREJM
+	// U buildGPUvertices.. samo quadovi mogu trenutno.. napraviti i za trokut
 
 
-	int N = 2;                 // cubes per axis → generates N³ cubes
-	float spacing = 2.0f;      // distance between cube centers
+	int N = 5;                 // cubes per axis → generates N³ cubes
+	float spacing = 5.0f;      // distance between cube centers
 
 	for (int x = 0; x < N; ++x)
 	{
@@ -64,10 +64,13 @@ void Scene::init(Window& window)
 			for (int z = 0; z < N; ++z)
 			{
 				int id = objectSingleton->getNumberOfObjects();
-				addCube();
+				addDoughnut();
 
 				Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getObject(id));
 				mesh->assignMaterial(app->activeMaterial);
+
+				std::vector<int>& vertexIndices = mesh->getSelectedVertices();
+				//vertexIndices()
 
 				// place them centered
 				float fx = (x - (N - 1) * 0.5f) * spacing;
@@ -102,7 +105,7 @@ void Scene::init(Window& window)
 	//objectBVHSingleton->Refit();
 
 
-	// u mesh constructoru zamijeni ove BVHove.. kao i svugdje ostalo
+	
 
 	objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 

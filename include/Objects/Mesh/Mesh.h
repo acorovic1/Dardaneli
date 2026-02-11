@@ -295,7 +295,7 @@ public:
 
 	// raytracing
 
-	void formTrianglesForRaytracing();
+	void formTrianglesForRaytracing(int rnd);
 
 	std::vector<Triangle>& getRaytracingTriangleData() { return triangles; };
 	std::vector<TriangleMaterial>& getRaytracingMaterialData() { return triangleMaterialData; };

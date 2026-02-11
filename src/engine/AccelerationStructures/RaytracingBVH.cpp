@@ -169,6 +169,70 @@ void RaytracingBVH::init( int width, int height)
 	glCreateVertexArrays(1, &quadVAO);
 	glBindVertexArray(quadVAO);
 
+
+	
+	glGenTextures(1, &cubeMap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap);
+
+	/*std::string projectDir = getProjectDirr();*/
+
+	std::vector<std::string> skybox
+	{
+		"px1.png",
+		"nx1.png",
+		"py1.png",
+		"ny1.png",
+		"pz1.png",
+		"nz1.png"
+	};
+
+
+	int w, h, nrChannels;
+	for (unsigned int i = 0; i < 6; i++)
+	{
+		std::string imagePath = "C:\\Users\\adnan\\Desktop\\Dardaneli\\assets\\" + skybox[i];
+		stbi_set_flip_vertically_on_load(false);
+		unsigned char* data = stbi_load(imagePath.c_str(), &w, &h, &nrChannels, 0);
+		if (data)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+				0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+			);
+			stbi_image_free(data);
+		}
+		else
+		{
+			std::cout << "Cubemap tex failed to load at path: " << skybox[i] << std::endl;
+			stbi_image_free(data);
+		}
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+
+	std::vector<flatRTNode>& gpuNodes = RaytracingBVHSingleton->getNodes();
+	std::vector<Triangle> triangleData = RaytracingBVHSingleton->getTriangles();
+	std::vector<TriangleMaterial>& triangleMaterialData = RaytracingBVHSingleton->getTriangleMaterialData();
+
+	glGenBuffers(1, &bvhBuffer);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvhBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, gpuNodes.size() * sizeof(flatRTNode), gpuNodes.data(), GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bvhBuffer);
+
+	glGenBuffers(1, &triBuffer);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, triBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, triangleData.size() * sizeof(Triangle), triangleData.data(), GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, triBuffer);
+
+
+	glGenBuffers(1, &matBuffer);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, matBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, triangleMaterialData.size() * sizeof(TriangleMaterial), triangleMaterialData.data(), GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, matBuffer);
+
 	std::cout << "\n Output texture id = " << outputTexture << "\n";
 
 }
@@ -177,19 +241,27 @@ void RaytracingBVH::activate()
 {
 	glBindImageTexture(0, outputTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 	//glBindTextureUnit(0, outputTexture);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap);
 }
 
 void RaytracingBVH::draw()
 {
-	//glBindVertexArray(quadVAO);
+	glBindVertexArray(quadVAO);
 	glBindTextureUnit(0, outputTexture);
-	//glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 void RaytracingBVH::destroy()
 {
 	glDeleteVertexArrays(1, &quadVAO);
 	glDeleteTextures(1, &outputTexture);
+	glDeleteTextures(1, &cubeMap);
+
+	glDeleteBuffers(1, &bvhBuffer);
+	glDeleteBuffers(1, &triBuffer);
+	glDeleteBuffers(1, &matBuffer);
 }
 
 void RaytracingBVH::findTlasLeaf(BVHNode* objNode)
@@ -216,7 +288,8 @@ void RaytracingBVH::findTlasLeaf(BVHNode* objNode)
 
 	//std::cout << "\nOBJ index = " << objNode->index.back();
 	Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getObject(objNode->index.back()));
-	mesh->formTrianglesForRaytracing();
+	//mesh->formTrianglesForRaytracing(1);
+	mesh->formTrianglesForRaytracing(objNode->index.back()%3);
 	std::vector<Triangle>& triangleData = mesh->getRaytracingTriangleData();
 	std::vector<TriangleMaterial>& triangleMaterialData = mesh->getRaytracingMaterialData();
 

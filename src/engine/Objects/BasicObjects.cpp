@@ -568,7 +568,7 @@ void addSphere(int segments, int rings, float radius)
 
 	for (int i = 0; i < rings - 1; i++)
 	{
-		std::cout << "\nRing: " << i;
+		//std::cout << "\nRing: " << i;
 		y = radius * sinf(halfPI - ringStep * (i + 1)); // found from the XY/ZY plane (side view)
 
 		radiusStep = radius * cosf(halfPI - ringStep * (i + 1));  // found from the XY/ZY plane (side view)
@@ -657,7 +657,7 @@ void addSphere(int segments, int rings, float radius)
 	float currentVertex;
 	for (int j = 0; j < segments; j++)// last ring of faces (triangles)
 	{
-		std::cout << "\nBottom ring, segment: " << j;
+		//std::cout << "\nBottom ring, segment: " << j;
 		currentVertex = (rings - 2) * (segments)+1 + j;
 
 		edgeIndices.push_back(bottomVertex);
@@ -706,7 +706,7 @@ void addSphere(int segments, int rings, float radius)
 
 	for (int i = 0; i < indices.size();)
 	{
-		std::cout << "\nIndex: " << i;
+		//std::cout << "\nIndex: " << i;
 		DFace* face = new DFace();
 		if (i < 3 * segments || i >= 3 * segments + 6 * segments * (rings - 2)) // triangles
 		{
@@ -743,6 +743,10 @@ void addSphere(int segments, int rings, float radius)
 			l1->next = l2; l1->prev = l3;
 			l2->next = l3; l2->prev = l1;
 			l3->next = l1; l3->prev = l2;
+
+			l1->uvVertex = std::make_shared<UVVertex>();
+			l2->uvVertex = std::make_shared<UVVertex>();
+			l3->uvVertex = std::make_shared<UVVertex>();
 
 			e1->loop = l1;
 			e2->loop = l2;
@@ -793,6 +797,11 @@ void addSphere(int segments, int rings, float radius)
 			l3->next = l4;	l3->prev = l2;
 			l4->next = l1;	l4->prev = l3;
 
+			l1->uvVertex = std::make_shared<UVVertex>();
+			l2->uvVertex = std::make_shared<UVVertex>();
+			l3->uvVertex = std::make_shared<UVVertex>();
+			l4->uvVertex = std::make_shared<UVVertex>();
+
 
 			loopMap.emplace(UnorderedPair<int>(indices[i + 2], indices[i]), l1);
 			loopMap.emplace(UnorderedPair<int>(indices[i], indices[i + 1]), l2);
@@ -813,7 +822,7 @@ void addSphere(int segments, int rings, float radius)
 
 	for (int i = 0; i < edgeIndices.size(); i += 2)
 	{
-		std::cout << "\nEdge: " << i;
+		//std::cout << "\nEdge: " << i;
 
 		/*
 			equal_range returns iterators to the original map
@@ -835,7 +844,7 @@ void addSphere(int segments, int rings, float radius)
 	}
 	for (int i = 0; i < vertices.size(); i++)
 	{
-		std::cout << "\n\n\nDisk edges for vertex: " << i;
+		//std::cout << "\n\n\nDisk edges for vertex: " << i;
 		for (int j = 0; j < diskEdges[i].size(); j++)
 		{
 			DEdge* e = diskEdges[i][j];
@@ -879,7 +888,7 @@ void addSphere(int segments, int rings, float radius)
 		}
 		if (i == vertices.size() - 1)
 		{
-			std::cout << "ljulj";
+			//std::cout << "ljulj";
 		}
 
 
@@ -1575,6 +1584,11 @@ void addDoughnut(int majorSegments, int minorSegments, float majorRadius, float 
 		l2->next = l3;	l2->prev = l1;
 		l3->next = l4;	l3->prev = l2;
 		l4->next = l1;	l4->prev = l3;
+
+		l1->uvVertex = std::make_shared<UVVertex>();
+		l2->uvVertex = std::make_shared<UVVertex>();
+		l3->uvVertex = std::make_shared<UVVertex>();
+		l4->uvVertex = std::make_shared<UVVertex>();
 
 		loopMap.emplace(UnorderedPair<int>(indices[i], indices[i + 1]), l1);
 		loopMap.emplace(UnorderedPair<int>(indices[i + 1], indices[i + 5]), l2);

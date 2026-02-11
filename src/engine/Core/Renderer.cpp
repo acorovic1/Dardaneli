@@ -13,9 +13,18 @@ void Renderer::viewportEditor()
 	glClearColor(0.23f, 0.33f, 0.33f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+	RenderMode renderMode = app->getRenderMode();
+	static Camera* camera = window.getCamera();
+	if (renderMode == RenderMode::RENDER)
+	{
+		camera->update();
+		gui.raytraceRender("final_render.png", window.getWidth(), window.getHeight());
+		return;
+	}
+		camera->update();
+
 	gui.drawGrid3D();
 
-	RenderMode renderMode = app->getRenderMode();
 
 	if (!gui.getFaceCulling() || renderMode == RenderMode::WIREFRAME)
 		glDisable(GL_CULL_FACE);
@@ -23,8 +32,8 @@ void Renderer::viewportEditor()
 		glEnable(GL_CULL_FACE);
 
 
-	static Camera* camera = window.getCamera();
-	camera->update();
+
+
 
 
 

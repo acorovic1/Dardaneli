@@ -3398,12 +3398,12 @@ DFace* Mesh::faceFill(std::vector<int>& verts, bool windingOrderSet, bool update
 	return face;
 }
 
-void Mesh::formTrianglesForRaytracing()
+void Mesh::formTrianglesForRaytracing(int rnd)
 {
 	triangles.clear();
 	triangleMaterialData.clear();
 
-	int rnd = std::rand() % 3;
+	
 
 	for (auto& it : materials)
 	{

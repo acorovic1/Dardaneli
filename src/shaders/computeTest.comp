@@ -216,6 +216,89 @@ void rayTrace(inout Ray ray, out vec3 bestN, out int triIndex,out vec2 bestBaryc
 }
 
 
+bool traceShadowRay(vec3 origin, vec3 direction, float maxDist)
+{
+    int stack[MAX_STACK_SIZE];
+    int stackPtr = 0;
+
+    stack[stackPtr++] = 0; // root
+
+    while (stackPtr > 0)
+    {
+        int nodeIndex = stack[--stackPtr];
+        flatRTNode node = nodes[nodeIndex];
+
+        float tNear, tFar;
+        if (!rayAABB(origin, direction, node, tNear, tFar))
+            continue;
+
+        if (tNear > maxDist)
+            continue;
+
+        // Leaf node - test triangle
+        if (node.triIndex >= 0)
+        {
+            float t;
+            vec3 n;
+            vec2 uv;
+            if (rayTriangle(origin, direction, tris[node.triIndex], t, n, uv))
+            {
+                // If we hit anything within the distance, we're in shadow
+                if (t > 0.001 && t < maxDist)
+                    return true; // Early exit 
+            }
+            continue;
+        }
+
+        // Internal node
+        int left  = nodeIndex + 1;
+        int right = nodeIndex + node.right;
+
+        float tNearL, tFarL;
+        float tNearR, tFarR;
+
+        bool hitL = rayAABB(origin, direction, nodes[left],  tNearL, tFarL);
+        bool hitR = rayAABB(origin, direction, nodes[right], tNearR, tFarR);
+
+        if (!hitL && !hitR)
+            continue;
+
+        
+        int first, second;
+
+        if (hitL && hitR)
+        {
+            if (tNearL < tNearR)
+            {
+                first  = left;
+                second = right;
+            }
+            else
+            {
+                first  = right;
+                second = left;
+            }
+            
+            
+            if (tNearR < maxDist || tNearL < maxDist)
+            {
+                stack[stackPtr++] = second;
+                stack[stackPtr++] = first;
+            }
+        }
+        else if (hitL && tNearL < maxDist)
+        {
+            stack[stackPtr++] = left;
+        }
+        else if (hitR && tNearR < maxDist)
+        {
+            stack[stackPtr++] = right;
+        }
+    }
+
+    return false; 
+}
+
 float hash12(vec2 p)
 {
     vec3 p3 = fract(vec3(p.xyx) * 0.1031);
@@ -239,149 +322,150 @@ void main()
     ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);
     if (pixel.x >= dims.x || pixel.y >= dims.y)
         return;
-
     
     float aspect = float(dims.x) / float(dims.y);
-
-
-    
-
-    
-
-
-
 
     vec3  bestN    = vec3(0.0);
     vec2 bestBarycentric   = vec2(0.0);
     int triIndex;
 
-
-
-    vec2 dimsInvert = 1/vec2(dims);
-
     Ray ray;
+
+    const int numLights = 3;
+
+    vec3 lightPositions[numLights];
+    vec3 lightColors[numLights];
+    float lightIntensities[numLights];
+        
+    lightPositions[0] = vec3(5.0, 5.0, 5.0);
+    lightColors[0] = vec3(1.0, 1.0, 1.0);
+    lightIntensities[0] = 100.0;
+        
+    lightPositions[1] = vec3(-5.0, 5.0, 5.0);
+    lightColors[1] = vec3(1.0, 0.5, 1.0);
+    lightIntensities[1] = 50.0;
+        
+    lightPositions[2] = vec3(0.0, 7.0, 5.0);
+    lightColors[2] = vec3(1.0, 1.0, 0.5);
+    lightIntensities[2] = 40.0;
     
     vec4 finalColor = vec4(0.0);
 
-    int samples = 16;
+    int samples = 4;
+    int maxDepth = 4;
 
-    for(int i=0;i<samples;i++)
+    for(int i=0; i<samples; i++)
     {
         vec2 jitter = randomOffset(vec2(pixel) + float(i));
           
         vec2 ndc = (vec2(pixel) + 0.5 + jitter) / vec2(dims) * 2.0 - 1.0;
         ndc.x *= aspect;
-
-     
         
         ray.origin = camPos;
         ray.closestT = 1e30;
         ray.direction = normalize(
-        camDir +
-        ndc.x * camRight * tan(fov * 0.5) +
-        ndc.y * camUp    * tan(fov * 0.5)
+            camDir +
+            ndc.x * camRight * tan(fov * 0.5) +
+            ndc.y * camUp    * tan(fov * 0.5)
         );
 
+        vec3 throughput = vec3(1.0); //      how much light passes through reflections/refractions
 
-        for(int depth=0;depth<11;depth++)
+        for(int depth=0; depth<maxDepth; depth++)
         {
-            rayTrace(ray, bestN, triIndex,bestBarycentric);
+            rayTrace(ray, bestN, triIndex, bestBarycentric);
 
-            if(ray.closestT == 1e30)
+            if(ray.closestT == 1e30 || depth==maxDepth-1)
             { 
-               finalColor += texture(skybox,ray.direction);
-               break;
+                finalColor += vec4(throughput * texture(skybox, ray.direction).rgb, 1.0);
+                break;
             } 
+            
             TriangleMaterial triMat = trisMaterial[triIndex];
 
-
+            float w = 1.0 - bestBarycentric.x - bestBarycentric.y;
+            
             float u = bestBarycentric.x * triMat.u0 + 
                       bestBarycentric.y * triMat.u1 + 
-                      (1.0 - bestBarycentric.x - bestBarycentric.y) * triMat.u2;
+                      w * triMat.u2;
 
             float v = bestBarycentric.x * triMat.v0 + 
                       bestBarycentric.y * triMat.v1 + 
-                      (1.0 - bestBarycentric.x - bestBarycentric.y) * triMat.v2;
+                      w * triMat.v2;
 
             vec3 normal = normalize(
                 bestBarycentric.x * vec3(triMat.n2x, triMat.n2y, triMat.n2z) +
                 bestBarycentric.y * vec3(triMat.n3x, triMat.n3y, triMat.n3z) +
-                (1.0 - bestBarycentric.x - bestBarycentric.y) * vec3(triMat.n1x, triMat.n1y, triMat.n1z)
+                w * vec3(triMat.n1x, triMat.n1y, triMat.n1z)
             );
-
               
             vec3 I = ray.origin + ray.closestT * ray.direction;
 
-            if(triMat.mirror==0) // opaque
-             {             
-             
-             
-                 vec4 albedo = texture(tex, vec2(u, v));
-             
-             
-                 vec3 lightPos = vec3(5.0, 5.0, 5.0);
-                 vec3 lightColor = vec3(1.0, 1.0, 1.0);
-                 float lightIntensity = 100.0f;
-             
+            if(triMat.mirror == 0) // opaque
+            {             
+                vec4 albedo = texture(tex, vec2(u, v));
+                vec3 totalLighting = vec3(0.0);
+                vec3 ambient = albedo.xyz * 0.05;
                  
-                 vec3 L = lightPos - I;
-                 float dist = length(L);
-             
-                 L= L * (1.0 / dist);
-             
-             
-             
-                  finalColor += vec4(albedo.xyz * (max(dot(normal*0.5+0.5, L), 0.1)) *( lightColor *lightIntensity / (dist * dist))  ,1.0);
-                  break;
-             
-             }
-             else if(triMat.mirror==1) // glass
-             {
-    
+                for(int lightIndex = 0; lightIndex < numLights; lightIndex++)
+                {
+                    vec3 lightPos = lightPositions[lightIndex];
+                    vec3 lightColor = lightColors[lightIndex];
+                    float lightIntensity = lightIntensities[lightIndex];
+                     
+                    vec3 L = lightPos - I;
+                    float dist = length(L);
+                    L = L / dist;
+                     
+                    bool inShadow = traceShadowRay(I + normal * 0.001, L, dist);
+                    float shadow = inShadow ? 0.0 : 1.0;
+                
+                    totalLighting += albedo.xyz * max(dot(normal, L), 0.0) * shadow * 
+                                    (lightColor * lightIntensity / (dist * dist));
+                }
+                 
+                finalColor += vec4(throughput * (ambient + totalLighting), 1.0);
+                break;
+            }
+            else if(triMat.mirror == 1) // glass
+            {
                 
                 
-                // refraction
-                ray.direction = refract(normalize(ray.direction),normal, 1.0/1.5);
-                ray.origin = I + ray.direction*0.001f;
+                float ior = 1.5;
+                vec3 refractDir = refract(normalize(ray.direction), normal, 1.0 / ior);
+                
+                // If total internal reflection occurs, refract returns zero vector
+                if (length(refractDir) < 0.01)
+                {
+                    // Total internal reflection - treat as mirror
+                    ray.direction = reflect(ray.direction, normal);
+                }
+                else
+                {
+                    ray.direction = refractDir;
+                }
+                
+                ray.origin = I + ray.direction * 0.001;
                 ray.closestT = 1e30;
-                finalColor += texture(skybox,ray.direction);
-//                break;
-
-                continue;
-      
-
-
-
-
                 
-
-             }else if ( triMat.mirror == 2) // mirror
-
-             {
-             
-                     //   reflection
-                //ray.direction = ray.direction - 2 * normal * dot(normal,ray.direction);
-                ray.direction = reflect(ray.direction, normal);
+                
+                throughput *= vec3(0.95, 0.95, 0.95);
+                
                 continue;
-             
-             }
-              
+            }
+            else if(triMat.mirror == 2) // mirror
+            {
+                ray.direction = reflect(ray.direction, normal);
+                ray.origin = I + ray.direction * 0.001;
+                ray.closestT = 1e30;
+                
+                
+                throughput *= vec3(0.95, 0.95, 0.95);
+                continue;
+            }
         }
-//             
-
     }
-
-
    
-   finalColor /= float(samples);
-
-
-
-
-
-
-   imageStore(imgOutput, pixel, finalColor);
-
-
-
+    finalColor /= float(samples);
+    imageStore(imgOutput, pixel, finalColor);
 }

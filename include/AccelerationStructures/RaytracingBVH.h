@@ -12,7 +12,11 @@ class RaytracingBVH {
 	std::vector<Texture*> textures;
 
 	GLuint outputTexture;
+	GLuint cubeMap;
 	GLuint quadVAO;
+
+	GLuint bvhBuffer, triBuffer, matBuffer;
+
 	static RaytracingBVH* instancePtr;
 
 	RaytracingBVH() :nodes() {};
@@ -30,6 +34,8 @@ public:
 	std::vector<flatRTNode>& getNodes();
 	std::vector<Triangle>& getTriangles();
 	std::vector<TriangleMaterial>& getTriangleMaterialData();
+	GLuint getOutputTexture() const { return outputTexture; }
+	GLuint getMatBuffer() const { return matBuffer; }
 	void Build();
 
 	void init( int width, int height);

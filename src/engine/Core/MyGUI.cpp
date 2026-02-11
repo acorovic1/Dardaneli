@@ -167,6 +167,23 @@ void MyGUI::drawUI()
 	else if (currentMode == Mode::UV_EDIT)drawUVModeUI(pastMode != currentMode);
 	else if (currentMode == Mode::SHADER_EDIT)drawShaderEditorUI(pastMode != currentMode);
 
+	std::vector<TriangleMaterial>& triangleMaterialData = RaytracingBVHSingleton->getTriangleMaterialData();
+
+	if (ImGui::Button("Render Scene"))
+	{
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, RaytracingBVHSingleton->getMatBuffer());
+
+	glBufferData(
+		GL_SHADER_STORAGE_BUFFER,
+		triangleMaterialData.size() * sizeof(TriangleMaterial),
+		triangleMaterialData.data(),
+		GL_DYNAMIC_DRAW
+	);
+
+		std::cout << "\nMaterial buffer updated with " << triangleMaterialData.size() << " materials.";
+
+	}
+
 	ImGui::End();
 
 	if (app->mode == Mode::EDIT)
@@ -1879,19 +1896,20 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 	Shader& computeOutput = shaderSingleton->getShader("ComputeOutput");
 
 	// ovo mene jebe druze sudija
-	GLuint texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	
+	//GLuint texture;
+	//glGenTextures(1, &texture);
+	//glBindTexture(GL_TEXTURE_2D, texture);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
-	glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+	//glBindImageTexture(0, RaytracingBVHSingleton->getOutputTexture(), 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 
-	//RaytracingBVHSingleton->activate();
+	RaytracingBVHSingleton->activate();
 
 	computeShader.activate();
 
@@ -1903,7 +1921,7 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 	tex.textureUniform(computeShader, "tex", 1);
 
 
-	std::vector<std::string> skybox
+	/*std::vector<std::string> skybox
 	{
 		"px1.png",
 		"nx1.png",
@@ -1911,59 +1929,56 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 		"ny1.png",
 		"pz1.png",
 		"nz1.png"
-	};
+	};*/
 
-	static unsigned int textureID;
-	glGenTextures(1, &textureID);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	//static unsigned int textureID;
+	//glGenTextures(1, &textureID);
+	//glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
-	/*std::string projectDir = getProjectDirr();*/
-
-
-
-	int w, h, nrChannels;
-	for (unsigned int i = 0; i < 6; i++)
-	{
-		std::string imagePath = "C:\\Users\\adnan\\Desktop\\Dardaneli\\assets\\" + skybox[i];
-		stbi_set_flip_vertically_on_load(false);
-		unsigned char* data = stbi_load(imagePath.c_str(), &w, &h, &nrChannels, 0);
-		if (data)
-		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-				0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data
-			);
-			stbi_image_free(data);
-		}
-		else
-		{
-			std::cout << "Cubemap tex failed to load at path: " << skybox[i] << std::endl;
-			stbi_image_free(data);
-		}
-	}
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	///*std::string projectDir = getProjectDirr();*/
 
 
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+	//int w, h, nrChannels;
+	//for (unsigned int i = 0; i < 6; i++)
+	//{
+	//	std::string imagePath = "C:\\Users\\adnan\\Desktop\\Dardaneli\\assets\\" + skybox[i];
+	//	stbi_set_flip_vertically_on_load(false);
+	//	unsigned char* data = stbi_load(imagePath.c_str(), &w, &h, &nrChannels, 0);
+	//	if (data)
+	//	{
+	//		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+	//			0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+	//		);
+	//		stbi_image_free(data);
+	//	}
+	//	else
+	//	{
+	//		std::cout << "Cubemap tex failed to load at path: " << skybox[i] << std::endl;
+	//		stbi_image_free(data);
+	//	}
+	//}
+	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+
+	/*glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);*/
 	glUniform1i(glGetUniformLocation(computeShader.getID(), "skybox"), 2);
+
 
 
 	//sendData(computeShader);
 
 
-	RaytracingBVHSingleton->Build();
+	//RaytracingBVHSingleton->Build();
 
-	auto t1 = std::chrono::high_resolution_clock::now();
+	
 
-	std::cout << "\nBVH build time: " << std::chrono::duration<double, std::milli>(t1 - t0).count() << " ms\n";
 
-	std::vector<flatRTNode>& gpuNodes = RaytracingBVHSingleton->getNodes();
-	std::vector<Triangle> triangleData = RaytracingBVHSingleton->getTriangles();
-	std::vector<TriangleMaterial>& triangleMaterialData = RaytracingBVHSingleton->getTriangleMaterialData();
 
 	//std::cout << "\nGPU BVH nodes: " << gpuNodes.size() << "\n";
 	//std::cout << "Triangles size: " << triangleData.size() << "\n";
@@ -1977,23 +1992,24 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 	//}
 
 
-	GLuint bvhBuffer, triBuffer, matBuffer;
+	// ove buffere jos prebaciti da se ne kreiraju svaki put iznova.. i ne mora se ja msm svaki put slati data
+	//GLuint bvhBuffer, triBuffer, matBuffer;
 
-	glGenBuffers(1, &bvhBuffer);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvhBuffer);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, gpuNodes.size() * sizeof(flatRTNode), gpuNodes.data(), GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bvhBuffer);
+	//glGenBuffers(1, &bvhBuffer);
+	//glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvhBuffer);
+	//glBufferData(GL_SHADER_STORAGE_BUFFER, gpuNodes.size() * sizeof(flatRTNode), gpuNodes.data(), GL_STATIC_DRAW);
+	//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bvhBuffer);
 
-	glGenBuffers(1, &triBuffer);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, triBuffer);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, triangleData.size() * sizeof(Triangle), triangleData.data(), GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, triBuffer);
+	//glGenBuffers(1, &triBuffer);
+	//glBindBuffer(GL_SHADER_STORAGE_BUFFER, triBuffer);
+	//glBufferData(GL_SHADER_STORAGE_BUFFER, triangleData.size() * sizeof(Triangle), triangleData.data(), GL_STATIC_DRAW);
+	//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, triBuffer);
 
 
-	glGenBuffers(1, &matBuffer);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, matBuffer);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, triangleMaterialData.size() * sizeof(TriangleMaterial), triangleMaterialData.data(), GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, matBuffer);
+	//glGenBuffers(1, &matBuffer);
+	//glBindBuffer(GL_SHADER_STORAGE_BUFFER, matBuffer);
+	//glBufferData(GL_SHADER_STORAGE_BUFFER, triangleMaterialData.size() * sizeof(TriangleMaterial), triangleMaterialData.data(), GL_STATIC_DRAW);
+	//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, matBuffer);
 
 
 
@@ -2006,101 +2022,41 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 
 
 
-	auto s0 = std::chrono::high_resolution_clock::now();
-	//
-	//glDispatchCompute(width, height, 1);
-	////
-	////
-	//glMemoryBarrier(
-	//	GL_SHADER_IMAGE_ACCESS_BARRIER_BIT |
-	//	GL_TEXTURE_FETCH_BARRIER_BIT |
-	//	GL_SHADER_STORAGE_BARRIER_BIT
-	//);
-
-	//glMemoryBarrier(GL_TEXTURE_UPDATE_BARRIER_BIT);
-	//glFinish();
-
-
 	glDispatchCompute(width, height, 1);
 
 
-	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT |
-		GL_TEXTURE_FETCH_BARRIER_BIT);
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 
 
 	computeOutput.activate();
 
-	GLuint quadVAO;
+	//GLuint quadVAO;
 
-	glCreateVertexArrays(1, &quadVAO);
-	glBindVertexArray(quadVAO);
+	//glCreateVertexArrays(1, &quadVAO);
+	//glBindVertexArray(quadVAO);
 
-	glBindTextureUnit(0, texture);
-	//RaytracingBVHSingleton->draw();
+	//glBindTextureUnit(0, RaytracingBVHSingleton->getOutputTexture());
+	RaytracingBVHSingleton->draw();
 
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-
-
-	////glFinish();
+	//glDrawArrays(GL_TRIANGLES, 0, 3);
 
 
-	//auto s1 = std::chrono::high_resolution_clock::now();
-	//double shader_ms = std::chrono::duration<double, std::milli>(s1 - s0).count();
-
-	////for (auto x : gpuTriangles)
-	////	std::cout << "Triangle .debug = " << x.hit << "\n";
-
-
-
-
-	//// Read back texture 
-	//std::vector<float> pixels(width * height * 4);
-
-	//glBindTexture(GL_TEXTURE_2D, texture);
-	//glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, pixels.data());
-
-
-
-	//// Convert float -> unsigned char
-	//std::vector<unsigned char> u8(width * height * 3);
-
-	//for (int i = 0; i < width * height; i++)
-	//{
-	//	u8[i * 3 + 0] = (unsigned char)(glm::clamp(pixels[i * 4 + 0], 0.0f, 1.0f) * 255);
-	//	u8[i * 3 + 1] = (unsigned char)(glm::clamp(pixels[i * 4 + 1], 0.0f, 1.0f) * 255);
-	//	u8[i * 3 + 2] = (unsigned char)(glm::clamp(pixels[i * 4 + 2], 0.0f, 1.0f) * 255);
-	//}
-
-	//// Flip vertically
-	//std::vector<unsigned char> flipped(width * height * 3);
-	//for (int y = 0; y < height; ++y)
-	//{
-	//	memcpy(&flipped[y * width * 3],
-	//		&u8[(height - 1 - y) * width * 3],
-	//		width * 3);
-	//}
-
-
-	//stbi_write_png(filename, width, height, 3, flipped.data(), width * 3);
-
-	//auto t1 = std::chrono::high_resolution_clock::now();
-	//double total_ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
-
-	//std::cout << "Shader time: " << shader_ms << " ms\n";
-	//std::cout << "Render time: " << total_ms << " ms\n\n";
-
-	//openFile(filename);
-
-
-	glDeleteTextures(1, &texture);
-	glDeleteVertexArrays(1, &quadVAO);
-	glDeleteTextures(1, &textureID);
+	
+	//glDeleteTextures(1, &texture);
+	//glDeleteVertexArrays(1, &quadVAO);
+	//glDeleteTextures(1, &textureID);
 
 	//RaytracingBVHSingleton->destroy();
 
-	glDeleteBuffers(1, &bvhBuffer);
-	glDeleteBuffers(1, &triBuffer);
-	glDeleteBuffers(1, &matBuffer);
+	//glDeleteBuffers(1, &bvhBuffer);
+	//glDeleteBuffers(1, &triBuffer);
+	//glDeleteBuffers(1, &matBuffer);
+
+	glFinish();
+
+	auto t1 = std::chrono::high_resolution_clock::now();
+
+	//std::cout << "\n Raytrace render time: " << std::chrono::duration<double, std::milli>(t1 - t0).count() << " ms\n";
 }
 
 void MyGUI::importObject()

@@ -16,11 +16,11 @@ void addCube();
 void addCircle(int numSegments = 16, float radius = 1.0f);
 
 // last vertex's disk is wrongly implemented or smth
-void addSphere(int segments = 8, int rings =4, float radius = 1.0f); 
+void addSphere(int segments = 10, int rings =10, float radius = 1.0f); 
 void addCylinder(int numSegments = 16, float height = 2.0f, float radius = 1.0f);
 
 // face selection ne radi
 void addCone(int numSegments = 8, float height = 2.0f, float radius = 1.0f);
 
 // object converges into 1 point in the middle (no hole)
-void addDoughnut(int majorSegments = 32, int minorSegments = 16, float majorRadius = 0.5f, float minorRadius = 0.5f);
+void addDoughnut(int majorSegments = 128, int minorSegments = 64, float majorRadius = 0.5f, float minorRadius = 0.5f);
