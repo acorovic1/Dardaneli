@@ -1936,7 +1936,7 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 	//glGenTextures(1, &textureID);
 	//glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
-	///*std::string projectDir = getProjectDirr();*/
+	//std::string projectDir = getProjectDirr();
 
 
 

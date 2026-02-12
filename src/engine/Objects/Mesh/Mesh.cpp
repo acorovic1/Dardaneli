@@ -1894,7 +1894,8 @@ void Mesh::lscmUVUnwrap()
 					lscmFaceIndicesHelper(tempF, tempV.size() - 1, loop);
 
 				}
-				else std::cout << "\n\n\t The count is 1";
+				else;
+				//std::cout << "\n\n\t The count is 1";
 
 			}
 
