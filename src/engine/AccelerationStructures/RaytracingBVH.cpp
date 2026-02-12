@@ -149,6 +149,21 @@ void RaytracingBVH::Build()
 
 	findTlasLeaf(objRoot);
 
+	std::vector<flatRTNode>& gpuNodes = RaytracingBVHSingleton->getNodes();
+	std::vector<Triangle> triangleData = RaytracingBVHSingleton->getTriangles();
+	std::vector<TriangleMaterial>& triangleMaterialData = RaytracingBVHSingleton->getTriangleMaterialData();
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvhBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, gpuNodes.size() * sizeof(flatRTNode), gpuNodes.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, triBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, triangleData.size() * sizeof(Triangle), triangleData.data(), GL_STATIC_DRAW);
+
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, matBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, triangleMaterialData.size() * sizeof(TriangleMaterial), triangleMaterialData.data(), GL_STATIC_DRAW);
+
+
 
 	//root = BuildMedianSplit(bvhNodes, 0, static_cast<int>(bvhNodes.size()));
 }

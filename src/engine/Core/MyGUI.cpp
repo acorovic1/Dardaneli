@@ -167,20 +167,21 @@ void MyGUI::drawUI()
 	else if (currentMode == Mode::UV_EDIT)drawUVModeUI(pastMode != currentMode);
 	else if (currentMode == Mode::SHADER_EDIT)drawShaderEditorUI(pastMode != currentMode);
 
-	std::vector<TriangleMaterial>& triangleMaterialData = RaytracingBVHSingleton->getTriangleMaterialData();
 
-	if (ImGui::Button("Render Scene"))
+	if (ImGui::Button("Build Raytracing BVH"))
 	{
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, RaytracingBVHSingleton->getMatBuffer());
+		RaytracingBVHSingleton->Build();
+		//std::vector<TriangleMaterial>& triangleMaterialData = RaytracingBVHSingleton->getTriangleMaterialData();
+		//glBindBuffer(GL_SHADER_STORAGE_BUFFER, RaytracingBVHSingleton->getMatBuffer());
 
-	glBufferData(
-		GL_SHADER_STORAGE_BUFFER,
-		triangleMaterialData.size() * sizeof(TriangleMaterial),
-		triangleMaterialData.data(),
-		GL_DYNAMIC_DRAW
-	);
+		//glBufferData(
+		//	GL_SHADER_STORAGE_BUFFER,
+		//	triangleMaterialData.size() * sizeof(TriangleMaterial),
+		//	triangleMaterialData.data(),
+		//	GL_DYNAMIC_DRAW
+		//);
 
-		std::cout << "\nMaterial buffer updated with " << triangleMaterialData.size() << " materials.";
+		//std::cout << "\nMaterial buffer updated with " << triangleMaterialData.size() << " materials.";
 
 	}
 
@@ -1896,7 +1897,7 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 	Shader& computeOutput = shaderSingleton->getShader("ComputeOutput");
 
 	// ovo mene jebe druze sudija
-	
+
 	//GLuint texture;
 	//glGenTextures(1, &texture);
 	//glBindTexture(GL_TEXTURE_2D, texture);
@@ -1976,7 +1977,7 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 
 	//RaytracingBVHSingleton->Build();
 
-	
+
 
 
 
@@ -2041,7 +2042,7 @@ void MyGUI::raytraceRender(const char* filename, int width, int height)
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 
 
-	
+
 	//glDeleteTextures(1, &texture);
 	//glDeleteVertexArrays(1, &quadVAO);
 	//glDeleteTextures(1, &textureID);

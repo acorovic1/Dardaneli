@@ -23,4 +23,4 @@ void addCylinder(int numSegments = 16, float height = 2.0f, float radius = 1.0f)
 void addCone(int numSegments = 8, float height = 2.0f, float radius = 1.0f);
 
 // object converges into 1 point in the middle (no hole)
-void addDoughnut(int majorSegments = 128, int minorSegments = 64, float majorRadius = 0.5f, float minorRadius = 0.5f);
+void addDoughnut(int majorSegments = 16, int minorSegments = 16, float majorRadius = 0.5f, float minorRadius = 0.5f);

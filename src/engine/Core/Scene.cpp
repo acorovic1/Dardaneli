@@ -23,7 +23,7 @@ void Scene::init(Window& window)
 
 
 
-	new Camera(800, 600, glm::vec3(-2.0f, 3.0f, 56.0f), "Viewport");
+	new Camera(800, 600, glm::vec3(-2.0f, 3.0f, 5.0f), "Viewport");
 	new Camera(800, 600, glm::vec3(0.5f, 0.5f, 1.0f), "UV");
 	new Camera(800, 600, glm::vec3(0.0f, 0.0f, 6.0f), "Shader");
 
@@ -53,8 +53,8 @@ void Scene::init(Window& window)
 	// U buildGPUvertices.. samo quadovi mogu trenutno.. napraviti i za trokut
 
 
-	int N = 5;                 // cubes per axis → generates N³ cubes
-	float spacing = 5.0f;      // distance between cube centers
+	int N = 4;                 // cubes per axis → generates N³ cubes
+	float spacing = 2.0f;      // distance between cube centers
 
 	for (int x = 0; x < N; ++x)
 	{
@@ -64,10 +64,22 @@ void Scene::init(Window& window)
 			for (int z = 0; z < N; ++z)
 			{
 				int id = objectSingleton->getNumberOfObjects();
-				addDoughnut();
+				addCube();
 
 				Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getObject(id));
 				mesh->assignMaterial(app->activeMaterial);
+
+				auto& selectedEdges = mesh->getSelectedEdges();
+
+
+				auto selectedEdgesSet = mesh->getAllEdges();
+				selectedEdges.assign(selectedEdgesSet.begin(), selectedEdgesSet.end());
+
+
+				for (DEdge* edge : mesh->getSelectedEdges())
+					edge->isSeam = true;
+
+				mesh->lscmUVUnwrap();
 
 				std::vector<int>& vertexIndices = mesh->getSelectedVertices();
 				//vertexIndices()
@@ -89,6 +101,10 @@ void Scene::init(Window& window)
 
 
 
+
+
+
+
 	//addCube();
 	//addCube();
 	//addCube();
@@ -105,7 +121,7 @@ void Scene::init(Window& window)
 	//objectBVHSingleton->Refit();
 
 
-	
+
 
 	objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 
