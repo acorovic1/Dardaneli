@@ -9,10 +9,6 @@ class Renderer {
 	Window& window;
 	MyGUI& gui;
 
-	void viewportEditor();
-	void uvEditor();
-	void shaderEditor();
-	
 
 
 public:
@@ -23,7 +19,10 @@ public:
 	void render();
 
 
-
+private:
+	void viewportEditor();
+	void uvEditor();
+	void shaderEditor();
 	
 
 };

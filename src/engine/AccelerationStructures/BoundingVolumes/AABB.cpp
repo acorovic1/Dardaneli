@@ -8,8 +8,8 @@ AABB::AABB() { aabb = DrawableAABB(min, max); };
 AABB::AABB(glm::vec3 min, glm::vec3 max)
 
 {
-	this->min = min - glm::vec3(0.005f, 0.005f, 0.005f);
-	this->max = max + glm::vec3(0.005f, 0.005f, 0.005f);
+	this->min = min - glm::vec3(0.05f, 0.05f, 0.05f);
+	this->max = max + glm::vec3(0.05f, 0.05f, 0.05f);
 
 	aabb = DrawableAABB(this->min,this->max);
 }
@@ -32,24 +32,24 @@ AABB::AABB(std::vector<glm::vec3>vertices)
 	it = std::max_element(vertices.begin(), vertices.end(), [](const glm::vec3 a, const glm::vec3 b) {return a.z < b.z;});
 	max.z = it->z;
 
-	if (min.x == max.x) max.x += 0.001f;
+	if (min.x == max.x) max.x += 0.01f;
 	else
 	{
-		min.x -= 0.001f;
-		max.x += 0.001f;
+		min.x -= 0.01f;
+		max.x += 0.01f;
 	}
 
-	if (min.y == max.y) max.y += 0.001f;
+	if (min.y == max.y) max.y += 0.01f;
 	else
 	{
-		min.y -= 0.001f;
-		max.y += 0.001f;
+		min.y -= 0.01f;
+		max.y += 0.01f;
 	}
 
-	if (min.z == max.z) max.z += 0.001f;
+	if (min.z == max.z) max.z += 0.01f;
 	else {
-		min.z -= 0.001f;
-		max.z += 0.001f;
+		min.z -= 0.01f;
+		max.z += 0.01f;
 	}
 
 
@@ -68,24 +68,24 @@ AABB::AABB(Object& object) {
 		max.z = std::max(max.z, x.z);
 	}
 
-	if (min.x == max.x) max.x += 0.001f;
+	if (min.x == max.x) max.x += 0.01f;
 	else
 	{
-		min.x -= 0.001f;
-		max.x += 0.001f;
+		min.x -= 0.01f;
+		max.x += 0.01f;
 	}
 
-	if (min.y == max.y) max.y += 0.001f;
+	if (min.y == max.y) max.y += 0.01f;
 	else
 	{
-		min.y -= 0.001f;
-		max.y += 0.001f;
+		min.y -= 0.01f;
+		max.y += 0.01f;
 	}
 
-	if (min.z == max.z) max.z += 0.001f;
+	if (min.z == max.z) max.z += 0.01f;
 	else {
-		min.z -= 0.001f;
-		max.z += 0.001f;
+		min.z -= 0.01f;
+		max.z += 0.01f;
 	}
 
 	aabb = DrawableAABB(min, max);
@@ -107,8 +107,8 @@ AABB::AABB(AABB& a, AABB& b)
 
 AABB::AABB(glm::vec3 vertex)
 {
-	min = vertex - glm::vec3(0.005f, 0.005f, 0.005f);
-	max = vertex + glm::vec3(0.005f, 0.005f, 0.005f);
+	min = vertex - glm::vec3(0.05f, 0.05f, 0.05f);
+	max = vertex + glm::vec3(0.05f, 0.05f, 0.05f);
 	aabb = DrawableAABB(min, max);
 }
 

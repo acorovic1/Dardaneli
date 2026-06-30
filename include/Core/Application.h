@@ -11,6 +11,7 @@
 #include "GLFW/glfw3.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+//#include "Utilities/FileSystem.h"
 
 
 #include "FaceBVH.h"
@@ -34,7 +35,7 @@ class Application {
 	Mode mode = Mode::OBJECT;
 	SelectMode selectMode = SelectMode::VERTEX;
 
-	RenderMode renderMode = RenderMode::RENDER;
+	RenderMode renderMode = RenderMode::SOLID;
 
 
 	std::vector<int> objectIndices = std::vector<int>(1);

@@ -12,7 +12,7 @@ out vec2 fragUV;
 uniform mat4 model;
 uniform mat4 cameraMatrix;
 
-uniform int colorMode;
+
 
 void main()
 {
@@ -21,10 +21,8 @@ void main()
     WorldPos = vec3(model * vec4( aPos,1.0f));
     Normal = aNormal; 
 
-    if(colorMode == 6 || colorMode == 4) // BVH
-        gl_Position = cameraMatrix * vec4(aPos,1.0);
-    else
- 	    gl_Position = cameraMatrix * model * vec4(aPos, 1.0);
+
+ 	 gl_Position = cameraMatrix * model * vec4(aPos, 1.0);
     
    
 

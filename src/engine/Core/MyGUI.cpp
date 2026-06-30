@@ -13,6 +13,8 @@
 #include "Mesh/DLoop.h"
 #include "MaterialManager.h"
 #include "RaytracingBVH.h"
+#include "Utilities/FragColor.h"
+#include "Utilities/FileSystem.h"
 
 
 #include "ShadingNodes/Texture/TextureNode.h"
@@ -43,19 +45,6 @@
 #include <Improved/FaceBVHImproved.h>
 
 
-void openFile(const char* filename) {
-#if defined(_WIN32)
-	ShellExecuteA(NULL, "open", filename, NULL, NULL, SW_SHOWNORMAL);
-#elif defined(__APPLE__)
-	std::string cmd = "open ";
-	cmd += filename;
-	system(cmd.c_str());
-#elif defined(__linux__)
-	std::string cmd = "xdg-open ";
-	cmd += filename;
-	system(cmd.c_str());
-#endif
-}
 
 
 
@@ -168,22 +157,22 @@ void MyGUI::drawUI()
 	else if (currentMode == Mode::SHADER_EDIT)drawShaderEditorUI(pastMode != currentMode);
 
 
-	if (ImGui::Button("Build Raytracing BVH"))
-	{
-		RaytracingBVHSingleton->Build();
-		//std::vector<TriangleMaterial>& triangleMaterialData = RaytracingBVHSingleton->getTriangleMaterialData();
-		//glBindBuffer(GL_SHADER_STORAGE_BUFFER, RaytracingBVHSingleton->getMatBuffer());
+	//if (ImGui::Button("Build Raytracing BVH"))
+	//{
+	//	RaytracingBVHSingleton->Build();
+	//	//std::vector<TriangleMaterial>& triangleMaterialData = RaytracingBVHSingleton->getTriangleMaterialData();
+	//	//glBindBuffer(GL_SHADER_STORAGE_BUFFER, RaytracingBVHSingleton->getMatBuffer());
 
-		//glBufferData(
-		//	GL_SHADER_STORAGE_BUFFER,
-		//	triangleMaterialData.size() * sizeof(TriangleMaterial),
-		//	triangleMaterialData.data(),
-		//	GL_DYNAMIC_DRAW
-		//);
+	//	//glBufferData(
+	//	//	GL_SHADER_STORAGE_BUFFER,
+	//	//	triangleMaterialData.size() * sizeof(TriangleMaterial),
+	//	//	triangleMaterialData.data(),
+	//	//	GL_DYNAMIC_DRAW
+	//	//);
 
-		//std::cout << "\nMaterial buffer updated with " << triangleMaterialData.size() << " materials.";
+	//	//std::cout << "\nMaterial buffer updated with " << triangleMaterialData.size() << " materials.";
 
-	}
+	//}
 
 	ImGui::End();
 
@@ -249,17 +238,17 @@ void MyGUI::drawObjectModeUI(bool change)
 void MyGUI::drawEditModeUI(bool change)
 {
 	Mesh* mesh = dynamic_cast<Mesh*>(app->getActiveObject());
-	if (change)
-	{
-		double time = glfwGetTime();
+	//if (change)
+	//{
+	//	double time = glfwGetTime();
 
-		VertexBVHImprovedSingleton->BuildBottomUp(*mesh);
-		//EdgeBVHImprovedSingleton->BuildBottomUp(*mesh);
-		//FaceBVHImprovedSingleton->BuildBottomUp(*mesh);
+	//	VertexBVHImprovedSingleton->BuildBottomUp(*mesh);
+	//	//EdgeBVHImprovedSingleton->BuildBottomUp(*mesh);
+	//	//FaceBVHImprovedSingleton->BuildBottomUp(*mesh);
 
-		std::cout << "All 3 BVHs built in " << glfwGetTime() - time << " seconds";
+	//	std::cout << "All 3 BVHs built in " << glfwGetTime() - time << " seconds";
 
-	}
+	//}
 
 
 
@@ -270,8 +259,10 @@ void MyGUI::drawEditModeUI(bool change)
 
 	if (choice == 1)
 	{
-		static Shader& basic = shaderSingleton->getShader("Basic");
-		basic.setInteger(false, "colorMode", static_cast<int>(FragColor::BVH));
+		static Shader& bvh = shaderSingleton->getShader("BVH");
+		bvh.setVector4f(false, "color", FragColor::BVH);
+
+		//basic.setBool(true, "BVH", true);
 		//if (app->selectMode == SelectMode::VERTEX)
 		//	VertexBVHSingleton->DrawLeaves(VertexBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
 		//else if (app->selectMode == SelectMode::EDGE)
@@ -280,11 +271,14 @@ void MyGUI::drawEditModeUI(bool change)
 		//	FaceBVHSingleton->DrawLeaves(FaceBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
 
 		if (app->selectMode == SelectMode::VERTEX)
-			VertexBVHImprovedSingleton->Draw(*cameraSingleton->getCamera(0), basic, eBVHSubd);
+			VertexBVHImprovedSingleton->Draw(*cameraSingleton->getCamera(0), bvh, eBVHSubd);
 		/*	else if (app->selectMode == SelectMode::EDGE)
 				EdgeBVHImprovedSingleton->Draw( *cameraSingleton->getCamera(0), basic,eBVHSubd);
 			else if (app->selectMode == SelectMode::FACE)
 				FaceBVHImprovedSingleton->Draw( *cameraSingleton->getCamera(0), basic,eBVHSubd);*/
+
+				//basic.setBool(true, "BVH", false);
+
 
 	}
 	else if (choice == 2)
@@ -383,7 +377,7 @@ void MyGUI::drawUVModeUI(bool change)
 
 	if (BVHTree)
 	{
-		basic.setInteger(false, "colorMode", static_cast<int>(FragColor::BVH));
+		basic.setVector4f(false, "color", FragColor::BVH);
 		UVVertexBVHSingleton->DrawLeaves(UVVertexBVHSingleton->getRoot(), *cameraSingleton->getCamera("UV"), basic);
 	}
 
@@ -755,26 +749,35 @@ void MyGUI::extrudeMenu()
 
 
 void MyGUI::drawBVH() {
-	static Shader& basic = shaderSingleton->getShader("Basic");
-	basic.setInteger(false, "colorMode", static_cast<int>(FragColor::BVH));
-
-	objectBVHImprovedSingleton->Draw(*cameraSingleton->getCamera(0), basic, BVHSubd);
+	static Shader& bvh = shaderSingleton->getShader("BVH");
+	bvh.setVector4f(false, "color", FragColor::BVH);
 
 
-	basic.setInteger(false, "colorMode", static_cast<int>(FragColor::Seams));
+	objectBVHImprovedSingleton->Draw(*cameraSingleton->getCamera(0), bvh, BVHSubd);
+
+
+
+	//basic.setVector4f(false, "color", FragColor::Seams);
 }
 
 void MyGUI::BVHRayInteraction()
 {
-	static Shader& basic = shaderSingleton->getShader("Basic");
-	basic.setInteger(false, "colorMode", static_cast<int>(FragColor::BVH));
+	static Shader& bvh = shaderSingleton->getShader("BVH");
+	bvh.setVector4f(false, "color", FragColor::BVH);
+
+
 	std::vector<int> garbage{};
 	static Camera& camera = *cameraSingleton->getCamera(0);
 
 	if (app->mode == Mode::OBJECT)
-		objectBVHImprovedSingleton->DrawRayInteraction(objectBVHImprovedSingleton->getRoot(), camera.createRay(glfwWindow), camera, basic);
+		objectBVHImprovedSingleton->DrawRayInteraction(objectBVHImprovedSingleton->getRoot(), camera.createRay(glfwWindow), camera, bvh);
 	else if (app->mode == Mode::EDIT && app->selectMode == SelectMode::VERTEX)
-		VertexBVHImprovedSingleton->DrawRayInteraction(VertexBVHImprovedSingleton->getRoot(), camera.createRay(glfwWindow), camera, basic);
+	{
+
+		VertexBVHImprovedSingleton->DrawRayInteraction(VertexBVHImprovedSingleton->getRoot(), camera.createRay(glfwWindow), camera, bvh);
+
+	}
+
 
 }
 
@@ -1208,6 +1211,7 @@ void MyGUI::modes()
 {
 	static const char* modes[] = { "Object mode","Edit mode","Sculpt mode","Weight paint","Texture paint ","UV Editor","Shader Editor" };
 
+
 	if (ImGui::Button(modes[int(app->mode)]))
 		ImGui::OpenPopup("Modes");
 
@@ -1220,7 +1224,28 @@ void MyGUI::modes()
 			else
 				if (ImGui::Selectable(modes[i]))
 				{
+					Mode prev = app->mode;
+
 					app->mode = Mode(i);
+
+					if (app->mode == Mode::OBJECT && prev == Mode::EDIT)
+					{
+						objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
+						std::cout << "\n\n OBJECT BVH BUILT ...";
+					
+					}
+					else if (app->mode == Mode::EDIT && prev == Mode::OBJECT)
+					{
+						Mesh* mesh = dynamic_cast<Mesh*>(app->getActiveObject());
+						double time = glfwGetTime();
+
+						VertexBVHImprovedSingleton->BuildBottomUp(*mesh);
+						//EdgeBVHImprovedSingleton->BuildBottomUp(*mesh);
+						//FaceBVHImprovedSingleton->BuildBottomUp(*mesh);
+
+						std::cout << "All 3 BVHs built in " << glfwGetTime() - time << " seconds";
+					}
+
 
 					if (app->mode == Mode::UV_EDIT)
 						getWindow()->setCamera(cameraSingleton->getCamera("UV"));
@@ -1837,7 +1862,7 @@ void MyGUI::pbrRender(const char* filename, int width, int height)
 	stbi_write_png(filename, width, height, 3, flipped.data(), width * 3);
 
 
-	openFile(filename);
+	FileSystem::openFile(filename);
 
 }
 

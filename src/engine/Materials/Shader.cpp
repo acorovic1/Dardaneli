@@ -2,85 +2,18 @@
 #include <fstream>
 #include <string>
 
-#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
-#include <experimental/filesystem>
-
-#if defined(_WIN32)
-#include <windows.h>
-#elif defined(__linux__)
-#include <unistd.h>
-#elif defined(__APPLE__)
-#include <mach-o/dyld.h>
-#endif
-
-std::string getExecutablePath() {
-#if defined(_WIN32)
-	char buffer[MAX_PATH];
-	GetModuleFileNameA(NULL, buffer, MAX_PATH);
-	return std::string(buffer);
-#elif defined(__linux__)
-	char buffer[1024];
-	ssize_t len = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
-	if (len == -1) throw std::runtime_error("Cannot get executable path");
-	buffer[len] = '\0';
-	return std::string(buffer);
-#elif defined(__APPLE__)
-	char buffer[1024];
-	uint32_t size = sizeof(buffer);
-	if (_NSGetExecutablePath(buffer, &size) != 0)
-		throw std::runtime_error("Cannot get executable path");
-	return std::string(buffer);
-#else
-	throw std::runtime_error("Unsupported platform");
-#endif
-}
-
-// Remove last N path components to get project directory
-std::string getProjectDir(int levelsUp = 3) {
-	std::string path = getExecutablePath();
-	for (int i = 0; i < levelsUp; ++i) {
-		auto pos = path.find_last_of("/\\");
-		if (pos == std::string::npos) break;
-		path = path.substr(0, pos);
-	}
-	return path;
-}
+#include "Utilities/FileSystem.h"
 
 
 
-std::string get_file_contents(const char* filename) {
-	std::ifstream in(filename, std::ios::binary);
 
-	if (in) {
-		std::string contents;
-		in.seekg(0, std::ios::end);
-		contents.resize(in.tellg());
-		in.seekg(0, std::ios::beg);
-		in.read(&contents[0], contents.size());
-		in.close();
-		return (contents);
-	}
-	else
-	{
-		std::cout << "Failed to open file: " << filename;
-		throw std::runtime_error(std::string("Failed to open file: ") + filename);
-	}
-}
-
-
-
-// Helper function to check if a file exists
-bool fileExists(const char* path) {
-	std::ifstream f(path);
-	return f.is_open();
-}
 
 
 Shader::Shader(std::string name, const char* computeFile)
 {
-	std::string projectDir = getProjectDir();
+	std::string projectDir = FileSystem::getProjectDir();
 	std::string computePath = projectDir + "/src/shaders/" + computeFile;
-	std::string computeCode = get_file_contents(computePath.c_str());
+	std::string computeCode = FileSystem::getFileContents(computePath.c_str());
 	const char* computeSource = computeCode.c_str();
 
 	// Compile compute shader
@@ -105,20 +38,20 @@ Shader::Shader(std::string name, const char* computeFile)
 
 Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFile)
 {
-	std::string projectDir = getProjectDir();
-	std::cout << "\n ExeDir = " << projectDir<<"\n";
+	std::string projectDir = FileSystem::getProjectDir();
+	std::cout << "\n ExeDir = " << projectDir << "\n";
 
 	std::string vertexPath = projectDir + "/src/shaders/" + vertexFile;
 	std::string fragmentPath = projectDir + "/src/shaders/" + fragmentFile;
 
 
-	std::string vertexCode = get_file_contents(vertexPath.c_str());
+	std::string vertexCode = FileSystem::getFileContents(vertexPath.c_str());
 	const char* vertexSource = vertexCode.c_str();
 
 	std::string fragmentCode;
-	if (fileExists(fragmentPath.c_str())) {
+	if (FileSystem::fileExists(fragmentPath.c_str())) {
 		// Treat as file path
-		fragmentCode = get_file_contents(fragmentPath.c_str());
+		fragmentCode = FileSystem::getFileContents(fragmentPath.c_str());
 	}
 	else {
 		// Treat as raw GLSL code
@@ -153,24 +86,24 @@ Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFil
 
 Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFile, const char* geometryFile)
 {
-	std::string projectDir = getProjectDir();
+	std::string projectDir = FileSystem::getProjectDir();
 
 	std::string vertexPath = projectDir + "/src/shaders/" + vertexFile;
-	std::string fragmentPath = projectDir +"/src/shaders/" + fragmentFile;
+	std::string fragmentPath = projectDir + "/src/shaders/" + fragmentFile;
 	std::string geometryPath = projectDir + "/src/shaders/" + geometryFile;
 
-	std::string vertexCode = get_file_contents(vertexPath.c_str());
+	std::string vertexCode = FileSystem::getFileContents(vertexPath.c_str());
 	std::string fragmentCode;
 
-	if (fileExists(fragmentPath.c_str())) {
+	if (FileSystem::fileExists(fragmentPath.c_str())) {
 		// Treat as file path
-		fragmentCode = get_file_contents(fragmentPath.c_str());
+		fragmentCode = FileSystem::getFileContents(fragmentPath.c_str());
 	}
 	else {
 		// Treat as raw GLSL code
 		fragmentCode = fragmentFile;
 	}
-	std::string geometryCode = get_file_contents(geometryPath.c_str());
+	std::string geometryCode = FileSystem::getFileContents(geometryPath.c_str());
 
 	const char* vertexSource = vertexCode.c_str();
 	const char* fragmentSource = fragmentCode.c_str();

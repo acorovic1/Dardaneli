@@ -43,6 +43,7 @@ void Scene::init(Window& window)
 
 
 	new Shader("Basic", "basic.vert", "basic.frag");
+	new Shader("BVH", "BVH.vert", "BVH.frag");
 	new Shader("UV", "UV.vert", "UV.frag");
 	new Shader("Grid", "grid.vert", "grid.frag");
 	new Shader("ComputeShader", "computeTest.comp");
@@ -53,7 +54,7 @@ void Scene::init(Window& window)
 	// U buildGPUvertices.. samo quadovi mogu trenutno.. napraviti i za trokut
 
 
-	int N = 4;                 // cubes per axis → generates N³ cubes
+	int N = 1;                 // cubes per axis → generates N³ cubes
 	float spacing = 2.0f;      // distance between cube centers
 
 	for (int x = 0; x < N; ++x)

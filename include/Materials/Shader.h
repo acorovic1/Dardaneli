@@ -12,9 +12,7 @@
 
 #include "ShaderManager.h"
 
-/////////// SINGLE RESPONSIBILITY PRINCIPLE ////////
-std::string get_file_contents(const char* filename);
-/////////// SINGLE RESPONSIBILITY PRINCIPLE ////////
+
 
 class Shader {
 	GLuint ID;

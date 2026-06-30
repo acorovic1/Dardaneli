@@ -152,6 +152,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\engine\Utilities\FileSystem.cpp" />
+    <ClCompile Include="src\engine\Utilities\FragColor.cpp" />
     <ClCompile Include="src\engine\Utilities\Loader.cpp" />
     <ClCompile Include="src\engine\AccelerationStructures\RaytracingBVH.cpp" />
     <ClCompile Include="src\engine\AccelerationStructures\RaytracingBVHNode.cpp" />
@@ -231,6 +233,8 @@
   <ItemGroup>
     <None Include="src\shaders\basic.frag" />
     <None Include="src\shaders\basic.vert" />
+    <None Include="src\shaders\BVH.frag" />
+    <None Include="src\shaders\BVH.vert" />
     <None Include="src\shaders\computeOutput.frag" />
     <None Include="src\shaders\computeOutput.vert" />
     <None Include="src\shaders\computeTest.frag" />
@@ -274,6 +278,8 @@
     <ClInclude Include="include\AccelerationStructures\EdgeBVHNode.h" />
     <ClInclude Include="include\AccelerationStructures\FaceBVH.h" />
     <ClInclude Include="include\AccelerationStructures\FaceBVHNode.h" />
+    <ClInclude Include="include\Utilities\FileSystem.h" />
+    <ClInclude Include="include\Utilities\FragColor.h" />
     <ClInclude Include="include\Utilities\GeometryUtils.h" />
     <ClInclude Include="include\Objects\Mesh\GPUVertex.h" />
     <ClInclude Include="include\Objects\Lights\DirectionalLight.h" />

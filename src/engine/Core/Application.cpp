@@ -581,6 +581,8 @@ void Application::editMode(Window* window)
 	{
 		keys[GLFW_KEY_TAB] = 0;
 		mode = Mode::OBJECT;
+		
+		objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 	}
 
 	// SELECT ALL

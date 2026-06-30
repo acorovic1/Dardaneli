@@ -3,6 +3,33 @@
 #include "ShaderManager.h"
 #include "MyGUI.h"
 #include "Mesh/DFace.h"
+#include "Utilities/FragColor.h"
+
+Renderer::Renderer(Window& window, MyGUI& gui) :window(window), gui(gui) {}
+
+void Renderer::init() {
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	//glStencilFunc(GL_ALWAYS, 1, 0xFF);
+
+
+	//std::cout << "NUMBER OF SHADERS " << shaderSingleton->getNumberOfShaders();
+}
+
+void Renderer::render()
+{
+
+	Mode mode = gui.getMode();
+	if (mode == Mode::OBJECT || mode == Mode::EDIT || mode == Mode::SCULPT || mode == Mode::TEXTURE_PAINT || mode == Mode::WEIGHT_PAINT)
+		viewportEditor();
+	else if (mode == Mode::UV_EDIT)
+		uvEditor();
+	else if (mode == Mode::SHADER_EDIT)
+		shaderEditor();
+}
 
 void Renderer::viewportEditor()
 {
@@ -15,13 +42,8 @@ void Renderer::viewportEditor()
 
 	RenderMode renderMode = app->getRenderMode();
 	static Camera* camera = window.getCamera();
-	if (renderMode == RenderMode::RENDER)
-	{
-		camera->update();
-		gui.raytraceRender("final_render.png", window.getWidth(), window.getHeight());
-		return;
-	}
-		camera->update();
+
+	camera->update();
 
 	gui.drawGrid3D();
 
@@ -30,6 +52,7 @@ void Renderer::viewportEditor()
 		glDisable(GL_CULL_FACE);
 	else
 		glEnable(GL_CULL_FACE);
+
 
 
 
@@ -71,17 +94,18 @@ void Renderer::viewportEditor()
 				glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 				glStencilMask(0x00);
 				glDisable(GL_DEPTH_TEST);*/
+				basicShader.setBool(true, "selection", true);
 				if (i == selectedObjects.back())
 				{
-					basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::ActiveSelection));
+					basicShader.setVector4f(true, "color", FragColor::ActiveSelection);
 					object->draw(basicShader, *camera, GL_LINES, true); //OUTLINE
 				}
 				else
 				{
-					basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::NonActiveSelection));
+					basicShader.setVector4f(true, "color", FragColor::NonActiveSelection);
 					object->draw(basicShader, *camera, GL_LINES, true); //OUTLINE
 				}
-
+				basicShader.setBool(true, "selection", false);
 				/*glStencilMask(0xFF);
 				glStencilFunc(GL_ALWAYS, 1, 0xFF);
 				glEnable(GL_DEPTH_TEST);*/
@@ -92,29 +116,31 @@ void Renderer::viewportEditor()
 			else if (gui.getMode() == Mode::EDIT)
 			{
 				glLineWidth(0.5f);
-				basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Black));
+				basicShader.setVector4f(true, "color", FragColor::Black);
+
 				mesh->draw(basicShader, *camera, GL_LINES);
 
 				if (gui.getSelectMode() == SelectMode::VERTEX)
 				{
-					glPointSize(3.0f);
-					basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Black));
+					glPointSize(5.0f);
+					basicShader.setVector4f(true, "color", FragColor::Black);
 					mesh->draw(basicShader, *camera, GL_POINTS);
 
 
 					mesh->bindVAO();
 
-					basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::NonActiveSelection));
+					basicShader.setVector4f(true, "color", FragColor::NonActiveSelection);
+					basicShader.setBool(true, "selection", true);
 
 					auto& selectedVertices = mesh->getSelectedVertices();
 					for (int j = 0; j < selectedVertices.size(); j++)
 					{
 						if (j == selectedVertices.size() - 1)
-							basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::ActiveSelection));
+							basicShader.setVector4f(true, "color", FragColor::ActiveSelection);
 
 						glDrawArrays(GL_POINTS, selectedVertices[j], 1);
 					}
-
+					basicShader.setBool(true, "selection", false);
 					glPointSize(1.0f);
 				}
 				else if (gui.getSelectMode() == SelectMode::EDGE)
@@ -133,19 +159,22 @@ void Renderer::viewportEditor()
 					}
 					mesh->bindVAO();
 
-					basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::NonActiveSelection));
-
+					basicShader.setVector4f(true, "color", FragColor::NonActiveSelection);
+					basicShader.setBool(true, "selection", true);
 
 					EBO ebo(edgeVerts);
 					ebo.bind();
+
+					
 					if (edgeVerts.size())
 					{
 						glDrawElements(GL_LINES, edgeVerts.size() - 2, GL_UNSIGNED_INT, 0); // draw red
 
-						basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::ActiveSelection));
+						basicShader.setVector4f(true, "color", FragColor::ActiveSelection);
 						glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, (void*)((edgeVerts.size() - 2) * sizeof(GLuint))); // draw orange
 
 					}
+					basicShader.setBool(true, "selection", false);
 					/////////////////////////////////////////////////////// inneficient for high poly meshes.. inneficient anyways tbh
 					for (DEdge* edge : mesh->getAllEdges())
 						if (edge->isSeam)
@@ -160,7 +189,7 @@ void Renderer::viewportEditor()
 						EBO seamEBO(seamVerts);
 						seamEBO.bind();
 
-						basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Seams));
+						basicShader.setVector4f(true, "color", FragColor::Seams);
 
 						glDrawElements(GL_LINES, seamVerts.size(), GL_UNSIGNED_INT, 0);
 					}
@@ -197,27 +226,28 @@ void Renderer::viewportEditor()
 
 						glDisable(GL_CULL_FACE);
 
-						basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::NonActiveSelection));
+						basicShader.setBool(true, "selection", true);
+						basicShader.setVector4f(true, "color", FragColor::NonActiveSelection);
 						glDrawElements(GL_TRIANGLES, drawFaces.size() - lastFace, GL_UNSIGNED_INT, 0);
 
 
-						basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::ActiveSelection));
+						basicShader.setVector4f(true, "color", FragColor::ActiveSelection);
 						glDrawElements(GL_TRIANGLES, lastFace, GL_UNSIGNED_INT, (void*)((drawFaces.size() - lastFace) * sizeof(GLuint))); // draw orange
-
+						basicShader.setBool(true, "selection", false);
 						glEnable(GL_CULL_FACE);
 					}
 				}
 			}
 		};
-		
+
 
 		glLineWidth(1.0f);
-		basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Default));
+		basicShader.setVector4f(true, "color", FragColor::Default);
 		if (renderMode == RenderMode::WIREFRAME)
 		{
 			if (mesh)
 			{
-				basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Black));
+				basicShader.setVector4f(true, "color", FragColor::Black);
 				mesh->draw(basicShader, *camera, GL_LINES);
 			}
 			else
@@ -225,15 +255,15 @@ void Renderer::viewportEditor()
 		}
 		else if (renderMode == RenderMode::SOLID)
 		{
-			
+
 			/*Texture tex("planks.png", 0);
 			tex.bind();
 			tex.textureUniform(basicShader, "tex", 0);*/
 
 			glLineWidth(0.5f);
-			basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Black));
+			basicShader.setVector4f(true, "color", FragColor::Black);
 			mesh->draw(basicShader, *camera, GL_LINES);
-			basicShader.setInteger(true, "colorMode", static_cast<int>(FragColor::Default));
+			basicShader.setVector4f(true, "color", FragColor::Default);
 			object->draw(basicShader, *camera, GL_TRIANGLES);
 
 		}
@@ -246,12 +276,12 @@ void Renderer::viewportEditor()
 		}
 		else if (renderMode == RenderMode::RENDER)
 		{
-			/*if (mesh)
+			if (mesh)
 				mesh->renderDraw(*camera);
 			else
-				object->draw(basicShader, *camera, GL_TRIANGLES);*/
+				object->draw(basicShader, *camera, GL_TRIANGLES);
 
-			gui.raytraceRender("final_render.png", window.getWidth(), window.getHeight());
+			//gui.raytraceRender("final_render.png", window.getWidth(), window.getHeight());
 		}
 
 	}
@@ -321,30 +351,7 @@ void Renderer::shaderEditor()
 
 
 
-Renderer::Renderer(Window& window, MyGUI& gui) :window(window), gui(gui) {}
 
-void Renderer::init() {
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-
-	glEnable(GL_STENCIL_TEST);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-	//glStencilFunc(GL_ALWAYS, 1, 0xFF);
-
-	//std::cout << "NUMBER OF SHADERS " << shaderSingleton->getNumberOfShaders();
-}
-
-void Renderer::render()
-{
-
-	Mode mode = gui.getMode();
-	if (mode == Mode::OBJECT || mode == Mode::EDIT || mode == Mode::SCULPT || mode == Mode::TEXTURE_PAINT || mode == Mode::WEIGHT_PAINT)
-		viewportEditor();
-	else if (mode == Mode::UV_EDIT)
-		uvEditor();
-	else if (mode == Mode::SHADER_EDIT)
-		shaderEditor();
-}
 
 
 
