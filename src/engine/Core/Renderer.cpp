@@ -256,13 +256,7 @@ void Renderer::viewportEditor()
 		else if (renderMode == RenderMode::SOLID)
 		{
 
-			/*Texture tex("planks.png", 0);
-			tex.bind();
-			tex.textureUniform(basicShader, "tex", 0);*/
 
-			glLineWidth(0.5f);
-			basicShader.setVector4f(true, "color", FragColor::Black);
-			mesh->draw(basicShader, *camera, GL_LINES);
 			basicShader.setVector4f(true, "color", FragColor::Default);
 			object->draw(basicShader, *camera, GL_TRIANGLES);
 

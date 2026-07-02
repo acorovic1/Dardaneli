@@ -1,6 +1,6 @@
 #pragma once
 #include"Object.h"
-
+#include <glm/gtx/string_cast.hpp>
 
 class Light : public Object
 {
@@ -21,7 +21,7 @@ public:
 
 
 
-	virtual void draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES,bool outline = false) = 0;
+	virtual void draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES, bool outline = false) = 0;
 
 
 	void translate(glm::vec3& translateVector) override { model = glm::translate(model, translateVector); }

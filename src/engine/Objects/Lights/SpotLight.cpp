@@ -1,5 +1,5 @@
 ﻿#include "Lights/SpotLight.h"
-#include <ObjectModeBVH.h>
+#include <Improved/ObjectModeBVHImproved.h>
 
 
 SpotLight::SpotLight(const std::string& name) : Light(name)
@@ -67,7 +67,7 @@ SpotLight::SpotLight(const std::string& name) : Light(name)
 
 	vao.unbind();
 
-	objectBVHSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
+	objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 }
 
 
@@ -93,13 +93,13 @@ void SpotLight::draw(Shader& shader, Camera& camera, GLenum mode,bool outline) {
 		shader.setMat4(true, "model", glm::scale(model, glm::vec3(1.03f)));
 	else
 		shader.setMat4(true, "model", model);
-	shader.setVector3f(true, "color", color);
+	shader.setVector4f(true, "color", glm::vec4(color,1.0f));
 
-	auto view = camera.getViewMatrix();
-	auto proj = camera.getProjectionMatrix();
-	shader.setMat4(true, "view", view);
-	shader.setMat4(true, "projection", proj);
-	shader.setFloat(true, "size", 1);
+	//auto view = camera.getViewMatrix();
+	//auto proj = camera.getProjectionMatrix();
+	//shader.setMat4(true, "view", view);
+	//shader.setMat4(true, "projection", proj);
+	//shader.setFloat(true, "size", 1);
 
 	vao.bind();
 	ebo.bind();

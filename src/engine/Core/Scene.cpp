@@ -57,49 +57,85 @@ void Scene::init(Window& window)
 	int N = 1;                 // cubes per axis → generates N³ cubes
 	float spacing = 2.0f;      // distance between cube centers
 
-	for (int x = 0; x < N; ++x)
-	{
-		for (int y = 0; y < N; ++y)
-		{
-			//if (y % 2 == 0)continue;
-			for (int z = 0; z < N; ++z)
-			{
-				int id = objectSingleton->getNumberOfObjects();
-				addCube();
+	//for (int x = 0; x < N; ++x)
+	//{
+	//	for (int y = 0; y < N; ++y)
+	//	{
+	//		//if (y % 2 == 0)continue;
+	//		for (int z = 0; z < N; ++z)
+	//		{
+	//			int id = objectSingleton->getNumberOfObjects();
+	//			addCube();
 
-				Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getObject(id));
-				mesh->assignMaterial(app->activeMaterial);
+	//			Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getObject(id));
+	//			mesh->assignMaterial(app->activeMaterial);
 
-				auto& selectedEdges = mesh->getSelectedEdges();
-
-
-				auto selectedEdgesSet = mesh->getAllEdges();
-				selectedEdges.assign(selectedEdgesSet.begin(), selectedEdgesSet.end());
+	//			auto& selectedEdges = mesh->getSelectedEdges();
 
 
-				for (DEdge* edge : mesh->getSelectedEdges())
-					edge->isSeam = true;
+	//			auto selectedEdgesSet = mesh->getAllEdges();
+	//			selectedEdges.assign(selectedEdgesSet.begin(), selectedEdgesSet.end());
 
-				mesh->lscmUVUnwrap();
 
-				std::vector<int>& vertexIndices = mesh->getSelectedVertices();
-				//vertexIndices()
+	//			for (DEdge* edge : mesh->getSelectedEdges())
+	//				edge->isSeam = true;
 
-				// place them centered
-				float fx = (x - (N - 1) * 0.5f) * spacing;
-				float fy = (y - (N - 1) * 0.5f) * spacing;
-				float fz = (z - (N - 1) * 0.5f) * spacing;
+	//			mesh->lscmUVUnwrap();
 
-				glm::vec3 translateVector = glm::vec3(fx, fy, fz);
+	//			std::vector<int>& vertexIndices = mesh->getSelectedVertices();
+	//			//vertexIndices()
 
-				mesh->translate(translateVector);
+	//			// place them centered
+	//			float fx = (x - (N - 1) * 0.5f) * spacing;
+	//			float fy = (y - (N - 1) * 0.5f) * spacing;
+	//			float fz = (z - (N - 1) * 0.5f) * spacing;
 
-				//std::cout << "\nAdded cube at (" << fx << "," << fy << "," << fz << ")";
-			}
-		}
-	}
+	//			glm::vec3 translateVector = glm::vec3(fx, fy, fz);
+
+	//			mesh->translate(translateVector);
+
+	//			//std::cout << "\nAdded cube at (" << fx << "," << fy << "," << fz << ")";
+	//		}
+	//	}
+	//}
+	//
+	
+
+
 	//addPlane();
+	addCube();
+	//addSphere();
+	//addCylinder();
+	//addCone();
+	//addDoughnut();
 
+	Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getObject(0));
+	mesh->assignMaterial(app->activeMaterial);
+
+
+	//new PointLight("Point Light");
+	//new DirectionalLight("DirLight");
+	//new SpotLight("Spot");
+
+
+	//Mesh* mesh1 = dynamic_cast<Mesh*>(objectSingleton->getObject(0));
+	//Mesh* mesh2 = dynamic_cast<Mesh*>(objectSingleton->getObject(2));
+	//Mesh* mesh3 = dynamic_cast<Mesh*>(objectSingleton->getObject(3));
+	//Mesh* mesh4 = dynamic_cast<Mesh*>(objectSingleton->getObject(4));
+	//Mesh* mesh5 = dynamic_cast<Mesh*>(objectSingleton->getObject(5));
+
+
+	//glm::vec3 translateVector1 = glm::vec3(4.0f,0.0f,0.0f);
+	//glm::vec3 translateVector2 = glm::vec3(0.0f,0.0f,-4.0f);
+	//glm::vec3 translateVector3 = glm::vec3(4.0f,0.0f,-4.0f);
+	//glm::vec3 translateVector4 = glm::vec3(-4.0f,0.0f,0.0f);
+	//glm::vec3 translateVector5 = glm::vec3(-4.0f,0.0f,-4.0f);
+
+	//mesh1->translate(translateVector1);
+	//mesh2->translate(translateVector2);
+	//mesh3->translate(translateVector3);
+	//mesh4->translate(translateVector4);
+	//mesh5->translate(translateVector5);
 
 
 
@@ -135,7 +171,7 @@ void Scene::init(Window& window)
 
 	// postavi nove BVHove svugdje i stavi logn max dubinu u edit modu
 
-	RaytracingBVHSingleton->Build();
-	RaytracingBVHSingleton->init(window.getWidth(), window.getHeight());
+	//RaytracingBVHSingleton->Build();
+	//RaytracingBVHSingleton->init(window.getWidth(), window.getHeight());
 
 }

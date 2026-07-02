@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/gtx/string_cast.hpp>
+
 #include "Object.h"
 #include "GeometryUtils.h"
 #include "Aliases.h"
@@ -7,6 +9,7 @@
 #include "UVVertex.h"
 
 #include "Triangle.h"
+
 
 //#include "Material.h"
 #include "GPUVertex.h"

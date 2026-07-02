@@ -1,5 +1,5 @@
 #include "Lights/DirectionalLight.h"
-#include <ObjectModeBVH.h>
+#include <Improved/ObjectModeBVHImproved.h>
 
 
 DirectionalLight::DirectionalLight(const std::string& name) : Light(name)
@@ -42,7 +42,7 @@ DirectionalLight::DirectionalLight(const std::string& name) : Light(name)
 
 	vao.unbind();
 
-	objectBVHSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
+	objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 }
 
 
@@ -65,13 +65,14 @@ void DirectionalLight::draw(Shader& shader, Camera& camera, GLenum mode,bool out
 		shader.setMat4(true, "model", glm::scale(model, glm::vec3(1.03f)));
 	else
 		shader.setMat4(true, "model", model);
-	shader.setVector3f(true, "color", color);
 
-	auto view = camera.getViewMatrix();
-	auto proj = camera.getProjectionMatrix();
-	shader.setMat4(true, "view", view);
-	shader.setMat4(true, "projection", proj);
-	shader.setFloat(true, "size", 1);
+	shader.setVector4f(true, "color", glm::vec4(color,1.0f));
+
+	//auto view = camera.getViewMatrix();
+	//auto proj = camera.getProjectionMatrix();
+	//shader.setMat4(true, "view", view);
+	//shader.setMat4(true, "projection", proj);
+	//shader.setFloat(true, "size", 1);
 
 	vao.bind();
 	ebo.bind();

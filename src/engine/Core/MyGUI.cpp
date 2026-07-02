@@ -272,10 +272,10 @@ void MyGUI::drawEditModeUI(bool change)
 
 		if (app->selectMode == SelectMode::VERTEX)
 			VertexBVHImprovedSingleton->Draw(*cameraSingleton->getCamera(0), bvh, eBVHSubd);
-		/*	else if (app->selectMode == SelectMode::EDGE)
-				EdgeBVHImprovedSingleton->Draw( *cameraSingleton->getCamera(0), basic,eBVHSubd);
+			else if (app->selectMode == SelectMode::EDGE)
+				EdgeBVHImprovedSingleton->Draw( *cameraSingleton->getCamera(0), bvh,eBVHSubd);
 			else if (app->selectMode == SelectMode::FACE)
-				FaceBVHImprovedSingleton->Draw( *cameraSingleton->getCamera(0), basic,eBVHSubd);*/
+				FaceBVHImprovedSingleton->Draw( *cameraSingleton->getCamera(0), bvh,eBVHSubd);
 
 				//basic.setBool(true, "BVH", false);
 
@@ -1240,8 +1240,8 @@ void MyGUI::modes()
 						double time = glfwGetTime();
 
 						VertexBVHImprovedSingleton->BuildBottomUp(*mesh);
-						//EdgeBVHImprovedSingleton->BuildBottomUp(*mesh);
-						//FaceBVHImprovedSingleton->BuildBottomUp(*mesh);
+						EdgeBVHImprovedSingleton->BuildBottomUp(*mesh);
+						FaceBVHImprovedSingleton->BuildBottomUp(*mesh);
 
 						std::cout << "All 3 BVHs built in " << glfwGetTime() - time << " seconds";
 					}

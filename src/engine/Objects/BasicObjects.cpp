@@ -16,6 +16,9 @@
 //// becomes a dangling pointer
 //
 //
+
+
+
 void addPlane()
 {
 
@@ -120,10 +123,10 @@ void addPlane()
 
 
 
-	l1->uvVertex = std::make_shared<UVVertex>();
-	l2->uvVertex = std::make_shared<UVVertex>();
-	l3->uvVertex = std::make_shared<UVVertex>();
-	l4->uvVertex = std::make_shared<UVVertex>();
+	l1->uvVertex = std::make_shared<UVVertex>(glm::vec2(1.0f,0.0f));
+	l2->uvVertex = std::make_shared<UVVertex>(glm::vec2(1.0f, 1.0f));
+	l3->uvVertex = std::make_shared<UVVertex>(glm::vec2(0.0f, 1.0f));
+	l4->uvVertex = std::make_shared<UVVertex>(glm::vec2(0.0f, 0.0f));
 
 
 

@@ -33,7 +33,7 @@ public:
 	Material(std::string n);
 
 
-
+	// errors when the implementation is moved into .cpp
 	template<typename T>
 	T* createNode() {
 
@@ -43,7 +43,7 @@ public:
 
 
 		ImVec2 cursorPos = ImGui::GetMousePos();
-		ImNodes::SetNodeEditorSpacePos(id, cursorPos);
+		ImNodes::SetNodeScreenSpacePos(id, cursorPos);
 
 		id += 10;
 

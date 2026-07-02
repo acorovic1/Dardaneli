@@ -7,10 +7,14 @@
 #include "Mesh/DEdge.h"
 #include "Mesh/DVertex.h"
 
+
 #include "ObjectModeBVH.h"
-#include "VertexBVH.h"
-#include "EdgeBVH.h"
-#include "FaceBVH.h"
+#include <Improved/VertexBVHImproved.h>
+#include <Improved/EdgeBVHImproved.h>
+#include <Improved/FaceBVHImproved.h>
+//#include "VertexBVH.h"
+//#include "EdgeBVH.h"
+//#include "FaceBVH.h"
 
 #include "Application.h"
 #include "CameraManager.h"
@@ -329,10 +333,18 @@ void Mesh::materialDraw(Camera& camera)
 		draw(shaderSingleton->getShader("Basic"), camera, GL_TRIANGLES);
 }
 
+
+#include <glm/glm.hpp>
+#include <ostream>
+
+std::ostream& operator<<(std::ostream& os, const glm::vec3& v)
+{
+    return os << '(' << v.x << ", " << v.y << ", " << v.z << ')';
+}
 void Mesh::renderDraw(Camera& camera)
 {
-	for (auto x : vertices)
-		x->normal = glm::normalize(x->position);
+	//for (auto x : vertices)
+	//	x->normal = glm::normalize(x->position);
 
 
 
@@ -364,6 +376,9 @@ void Mesh::renderDraw(Camera& camera)
 			g.position = p->getPosition();
 			g.color = p->getColor();
 			g.intensity = p->getIntensity();
+
+			std::cout << "\n\n\tRender.draw PointLight pos = " << glm::to_string(g.position) << glm::to_string(p->getPosition());
+
 		}
 		else if (auto* s = dynamic_cast<SpotLight*>(l)) {
 			g.type = 2;
@@ -608,7 +623,7 @@ void Mesh::edgeScale(DEdge* edge, float delta, bool update)
 
 	vbo.bufferData(vertices);
 
-	EdgeBVHSingleton->Refit(*this);
+	EdgeBVHImprovedSingleton->Refit(*this);
 
 
 }
@@ -839,9 +854,9 @@ void Mesh::insetIndividual(std::vector<DFace*> faces)
 	//this->getSelectedVertices().clear();
 
 
-	FaceBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
-	VertexBVHSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(*this);
 
 }
 
@@ -1134,9 +1149,9 @@ std::unordered_set<DVertex*> Mesh::linearSubdivision()
 	this->getSelectedFaces().clear();
 
 
-	FaceBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
-	VertexBVHSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(*this);
 
 
 
@@ -1344,9 +1359,9 @@ void Mesh::loopCut(DEdge* edge, int numberOfCuts)
 	this->getSelectedFaces().clear();
 
 
-	FaceBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
-	VertexBVHSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(*this);
 
 }
 
@@ -1455,9 +1470,9 @@ void Mesh::mergeVertices(std::vector<int>& verts)
 	this->getSelectedFaces().clear();
 
 
-	FaceBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
-	VertexBVHSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(*this);
 
 
 }
@@ -1839,14 +1854,22 @@ void Mesh::mergeUVs()
 		map.insert({ vertex,std::make_shared<UVVertex>() });
 	}
 
+	int counter = 0;
 	for (DFace* face : getAllFaces())
 	{
 		for (DLoop* loop : face->getLoops())
+		{
 			loop->uvVertex = map[loop->tip];
+			counter++;
+		}
+
+
 
 	}
 
-	std::cout << "\n\n\t MergeUVs size: " << map.size();
+	std::cout << "\n\n\t Number of allocated UVs= " << map.size()<<"\n\t Number of  face corners = "<<counter;
+
+	std::cout << "\n";
 
 }
 
@@ -2181,8 +2204,8 @@ void Mesh::extrudeVertices(std::vector<int>& verts, bool update)
 	updateEdgeEBO();
 	vbo.bufferData(vertices);
 
-	VertexBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
 
 }
 template<typename Container, typename>
@@ -2231,9 +2254,9 @@ void Mesh::pokeFaces(Container& faces, bool update)
 
 	selectedFaces.clear();
 
-	VertexBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
-	FaceBVHSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 	//std::cout << "\n\n\t End of pokeFaces... vertices.size= " << vertices.size();
 
 }
@@ -2300,9 +2323,9 @@ void Mesh::triangulateFaces(Container& faces, bool update)
 
 	selectedFaces.clear();
 
-	//VertexBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
-	FaceBVHSingleton->BuildBottomUp(*this);
+	//VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 
 }
 
@@ -2467,9 +2490,9 @@ void Mesh::bridgeFaces(DFace* faceA, DFace* faceB, bool update)
 
 	selectedFaces.clear();
 
-	//VertexBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
-	FaceBVHSingleton->BuildBottomUp(*this);
+	//VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 
 
 }
@@ -2564,9 +2587,9 @@ void Mesh::trisToQuads(std::unordered_set<DFace*>& faces, bool update)
 
 	selectedFaces.clear();
 
-	//VertexBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
-	FaceBVHSingleton->BuildBottomUp(*this);
+	//VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 
 }
 template <typename Container, typename>
@@ -2675,9 +2698,9 @@ std::unordered_set<DEdge*>  Mesh::extrudeEdges(Container& edges, bool update)
 	vbo.bufferData(vertices);
 	updateEBO();
 
-	VertexBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
-	FaceBVHSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 
 
 	return returnEdges;
@@ -2776,9 +2799,9 @@ void Mesh::extrudeFaces(Container& faces, bool update)
 	//this->getSelectedEdges().clear();
 	//this->getSelectedFaces().clear();
 
-	FaceBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
-	VertexBVHSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(*this);
 
 
 }
@@ -2801,9 +2824,9 @@ void Mesh::extrudeIndividualFaces(Container& faces, bool update)
 	//this->getSelectedEdges().clear();
 	//this->getSelectedFaces().clear();
 
-	FaceBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
-	VertexBVHSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(*this);
 }
 
 void Mesh::extrudeManifold()
@@ -2850,9 +2873,9 @@ std::vector<DFace*> Mesh::separate(Container faces)
 	updateEBO();
 	updateEdgeEBO();
 
-	VertexBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
-	FaceBVHSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 
 	return selectedFaces;
 }
@@ -2873,7 +2896,7 @@ std::vector<DVertex*> Mesh::duplicateVertices(std::vector<int>& verts, bool upda
 	selectedVertexIndices = vertIndices;
 	vbo.bufferData(vertices);
 
-	VertexBVHSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(*this);
 
 	return returnVec;
 }
@@ -2933,9 +2956,9 @@ std::vector<DEdge*> Mesh::duplicateEdges(Container& edges, bool update)
 	//updateEBO();
 	updateEdgeEBO();
 
-	VertexBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
-	//FaceBVHSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
+	//FaceBVHImprovedSingleton->BuildBottomUp(*this);
 
 	return returnVec;
 }
@@ -2980,9 +3003,9 @@ std::vector<DFace*> Mesh::duplicateFaces(Container& faces, bool update)
 	updateEBO();
 	updateEdgeEBO();
 
-	VertexBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
-	FaceBVHSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 
 	return newFaces;
 }
@@ -3043,10 +3066,10 @@ void Mesh::deleteEdges(Container& edges, bool update)
 	edges.clear();
 	this->getSelectedFaces().clear();
 
-	FaceBVHSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 
-	EdgeBVHSingleton->BuildBottomUp(*this);
-	VertexBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(*this);
 
 }
 
@@ -3086,9 +3109,9 @@ void Mesh::deleteFaces(Container& faces, bool update)
 	this->getSelectedEdges().clear();
 	this->getSelectedFaces().clear();
 
-	FaceBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
-	VertexBVHSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(*this);
 
 }
 
@@ -3112,8 +3135,8 @@ void Mesh::deleteOnlyEdgesAndFaces(Container& edges, bool update)
 	this->getSelectedEdges().clear();
 	this->getSelectedFaces().clear();
 
-	FaceBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
 
 }
 
@@ -3134,7 +3157,7 @@ void Mesh::deleteOnlyFaces(Container& faces, bool update)
 	this->getSelectedVertices().clear();
 	faces.clear();
 
-	FaceBVHSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 }
 
 
@@ -3163,7 +3186,7 @@ DEdge* Mesh::edgeFill(std::vector<int>& verts, bool update)
 	if (!update) return e;
 
 	this->updateEdgeEBO();
-	EdgeBVHSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
 	return e;
 
 }
@@ -3391,8 +3414,8 @@ DFace* Mesh::faceFill(std::vector<int>& verts, bool windingOrderSet, bool update
 	this->updateEdgeEBO();
 
 
-	FaceBVHSingleton->BuildBottomUp(*this);
-	EdgeBVHSingleton->BuildBottomUp(*this);
+	FaceBVHImprovedSingleton->BuildBottomUp(*this);
+	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
 	//std::cout << "\n\n\tKRAJ.fill";
 
 

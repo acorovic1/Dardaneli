@@ -1,5 +1,5 @@
 #include "Lights/PointLight.h"
-#include <ObjectModeBVH.h>
+#include <Improved/ObjectModeBVHImproved.h>
 
 
 PointLight::PointLight(const std::string& name) : Light(name)
@@ -44,7 +44,7 @@ PointLight::PointLight(const std::string& name) : Light(name)
 
 	vao.unbind();
 
-	objectBVHSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
+	objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 }
 
 
@@ -59,13 +59,14 @@ void PointLight::draw(Shader& shader, Camera& camera, GLenum mode, bool outline)
 		shader.setMat4(true, "model", glm::scale(model, glm::vec3(1.03f)));
 	else
 		shader.setMat4(true, "model", model);
-	shader.setVector3f(true, "color", color);
+	
+	shader.setVector4f(true, "color", glm::vec4(color,1.0f));
 
-	auto view = camera.getViewMatrix();
-	auto proj = camera.getProjectionMatrix();
-	shader.setMat4(true, "view", view);
-	shader.setMat4(true, "projection", proj);
-	shader.setFloat(true, "size", 1);
+	//auto view = camera.getViewMatrix();
+	//auto proj = camera.getProjectionMatrix();
+	//shader.setMat4(true, "view", view);
+	//shader.setMat4(true, "projection", proj);
+	//shader.setFloat(true, "size", 1);
 
 	camera.cameraUniform(true, shader, "cameraMatrix");
 

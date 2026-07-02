@@ -148,8 +148,8 @@ void Application::objectMode(Window* window)
 		mode = Mode::EDIT;
 
 		VertexBVHImprovedSingleton->BuildBottomUp(*mesh);
-		//EdgeBVHImprovedSingleton->BuildBottomUp(*mesh);
-		//FaceBVHImprovedSingleton->BuildBottomUp(*mesh);
+		EdgeBVHImprovedSingleton->BuildBottomUp(*mesh);
+		FaceBVHImprovedSingleton->BuildBottomUp(*mesh);
 	}
 
 	// GIZMO OPERATION
@@ -263,8 +263,8 @@ void Application::editMode(Window* window)
 		if (keys[GLFW_KEY_G])
 		{
 			VertexBVHImprovedSingleton->Refit(*mesh);
-			//EdgeImprovedBVHSingleton->Refit(*mesh);
-			//FaceImprovedBVHSingleton->Refit(*mesh);
+			EdgeBVHImprovedSingleton->Refit(*mesh);
+			FaceBVHImprovedSingleton->Refit(*mesh);
 			keys[GLFW_KEY_G] = 0;
 			return;
 		}
@@ -328,7 +328,7 @@ void Application::editMode(Window* window)
 			index.clear();
 
 			std::vector<DEdge*> edgesHit;
-			EdgeBVHSingleton->getRoot()->Hit(camera->createRay(glfwWindow), edgesHit);
+			EdgeBVHImprovedSingleton->getRoot()->Hit(camera->createRay(glfwWindow), edgesHit);
 
 			for (auto& edge : edgesHit)
 			{
@@ -422,7 +422,7 @@ void Application::editMode(Window* window)
 			index.clear();
 
 			std::vector<DFace*>facesHit;
-			FaceBVHSingleton->getRoot()->Hit(camera->createRay(glfwWindow), facesHit);
+			FaceBVHImprovedSingleton->getRoot()->Hit(camera->createRay(glfwWindow), facesHit);
 			std::vector<DFace*>& selectedFaces = mesh->getSelectedFaces();
 			int numberOfVerticesInLastFace = 0;
 
