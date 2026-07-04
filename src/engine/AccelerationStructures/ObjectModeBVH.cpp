@@ -16,7 +16,7 @@ void ObjectModeBVH::BuildBottomUp(std::vector<Object*> objects, int numObjects) 
 	std::vector<BVHNode*> bvhNodes(0);
 	for (int i = 0; i < numObjects; i++)
 	{
-		BVHNode* leaf = new BVHNode(*objects[i]);
+		BVHNode* leaf = new BVHNode(objects[i]);
 		bvhNodes.push_back(leaf); //form leaf nodes
 	}
 

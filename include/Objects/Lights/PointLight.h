@@ -14,9 +14,7 @@ public:
 	float getRadius() const { return radius; }
 	void setRadius(float r) { radius = r; }
 
-	void rotate(float degrees, const glm::vec3& axisVector) override {};
-	void scale(glm::vec3& scaleVector)override;
-	void scale(float x, float y, float z)override;
+
 
 
 

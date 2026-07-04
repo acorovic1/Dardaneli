@@ -128,4 +128,12 @@ void DVertex::translate(float* offset) {
 	position.z += offset[2];
 	
 	// calculateNormals();
-};
+}
+void DVertex::setPosition(float x, float y, float z)
+{
+	position.x = x;
+	position.y = y;
+	position.z = z;
+	// calculateNormals();
+}
+;

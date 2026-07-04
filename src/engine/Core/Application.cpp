@@ -27,19 +27,27 @@ void Application::setSelectMode(SelectMode mode)
 	selectMode = mode;
 }
 
-void Application::updateTranslate(glm::vec3 offset)
+void Application::updateGUI(glm::vec3 offset, MyGUI& gui, Operation op)
 {
-	/*translate[0] += offset.x;
-	translate[1] += offset.y;
-	translate[2] += offset.z;*/
+	if (op == Operation::TRANSLATE)
+	{
+
+		gui.position[0] += offset.x;
+		gui.position[1] += offset.y;
+		gui.position[2] += offset.z;
+	}
+	else if (op == Operation::ROTATE)
+	{
+		
+	}
+	else if (op == Operation::SCALE)
+	{
+		
+	}
+
 }
 
-void Application::updateVertexPosition(glm::vec3 offset)
-{
-	vertexPosition[0] += offset.x;
-	vertexPosition[1] += offset.y;
-	vertexPosition[2] += offset.z;
-}
+
 
 
 void Application::objectMode(Window* window)
@@ -104,25 +112,25 @@ void Application::objectMode(Window* window)
 		if (glfwGetKey(glfwWindow, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		{
 			if (index == -1)return;
-			objectIndices.erase(std::remove_if(objectIndices.begin(), objectIndices.end(), [index](int a) {return a == index; }), objectIndices.end());
-			objectIndices.push_back(index);
+			selectedObjects.erase(std::remove_if(selectedObjects.begin(), selectedObjects.end(), [index](int a) {return a == index; }), selectedObjects.end());
+			selectedObjects.push_back(index);
 			gui.selectObject();
 			std::cout << "\nMULTI SELECT ---> " << objectSingleton->getObject(index)->getName();
 		}
 		else if (index == -1)// -1 is the miss constant
 		{
-			objectIndices.clear();
+			selectedObjects.clear();
 		}
 		else
 		{
-			objectIndices.clear();
-			objectIndices.push_back(index);
+			selectedObjects.clear();
+			selectedObjects.push_back(index);
 			std::cout << "\nSELECTED ---> " << objectSingleton->getObject(index)->getName();
 			gui.selectObject();
 		}
 
 		//std::cout << "\n indices ";
-		//for (auto x : objectIndices)
+		//for (auto x : selectedObjects)
 		//	std::cout << x << " ";
 
 		mouseButtons[GLFW_MOUSE_BUTTON_LEFT] = 0;
@@ -143,11 +151,11 @@ void Application::objectMode(Window* window)
 	{
 		keys[GLFW_KEY_TAB] = 0;
 
-		Mesh* mesh = dynamic_cast<Mesh*>(getActiveObject());
+		Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getActiveObject());
 		if (mesh == nullptr) return;
 		mode = Mode::EDIT;
 
-		VertexBVHImprovedSingleton->BuildBottomUp(*mesh);
+		VertexBVHImprovedSingleton->BuildBottomUp(mesh);
 		EdgeBVHImprovedSingleton->BuildBottomUp(*mesh);
 		FaceBVHImprovedSingleton->BuildBottomUp(*mesh);
 	}
@@ -203,7 +211,7 @@ void Application::objectMode(Window* window)
 			std::cout << "X";
 			for (auto x : gui.getObjectIndex())
 				objectSingleton->getObject(x)->translate(offset.x, 0.0f, 0.0f);
-			app->updateTranslate(glm::vec3(offset.x, 0.0f, 0.0f));
+			app->updateGUI(glm::vec3(offset.x, 0.0f, 0.0f), gui,Operation::TRANSLATE);
 		}
 		else if (keys[GLFW_KEY_Y] == 1)
 		{
@@ -211,20 +219,20 @@ void Application::objectMode(Window* window)
 
 			for (auto x : gui.getObjectIndex())
 				objectSingleton->getObject(x)->translate(0.0f, offset.y, 0.0f);
-			app->updateTranslate(glm::vec3(0.0f, offset.y, 0.0f));
+			app->updateGUI(glm::vec3(0.0f, offset.y, 0.0f), gui,Operation::TRANSLATE);
 		}
 		else if (keys[GLFW_KEY_Z] == 1)
 		{
 			std::cout << "Z";
 			for (auto x : gui.getObjectIndex())
 				objectSingleton->getObject(x)->translate(0.0f, 0.0f, offset.z);
-			app->updateTranslate(glm::vec3(0.0f, 0.0f, offset.z));
+			app->updateGUI(glm::vec3(0.0f, 0.0f, offset.z), gui,Operation::TRANSLATE);
 		}
 		else
 		{
 			for (auto x : gui.getObjectIndex())
 				objectSingleton->getObject(x)->translate(offset);
-			app->updateTranslate(offset);
+			app->updateGUI(offset, gui,Operation::TRANSLATE);
 		}
 
 		previousX = posX;
@@ -248,7 +256,9 @@ void Application::editMode(Window* window)
 	GLFWwindow* glfwWindow = window->getGLFWwindow();
 	MyGUI& gui = window->getGui();
 
-	Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(objectIndices.back()));
+	Mesh* mesh = static_cast<Mesh*>(objectSingleton->getActiveObject());
+
+	if (!mesh)return;
 
 	// SELECT
 	if (mouseButtons[GLFW_MOUSE_BUTTON_LEFT])
@@ -262,7 +272,7 @@ void Application::editMode(Window* window)
 		keys[GLFW_KEY_Z] = 0;
 		if (keys[GLFW_KEY_G])
 		{
-			VertexBVHImprovedSingleton->Refit(*mesh);
+			VertexBVHImprovedSingleton->Refit(mesh);
 			EdgeBVHImprovedSingleton->Refit(*mesh);
 			FaceBVHImprovedSingleton->Refit(*mesh);
 			keys[GLFW_KEY_G] = 0;
@@ -581,7 +591,7 @@ void Application::editMode(Window* window)
 	{
 		keys[GLFW_KEY_TAB] = 0;
 		mode = Mode::OBJECT;
-		
+
 		objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 	}
 
@@ -679,7 +689,7 @@ void Application::editMode(Window* window)
 				mesh->updateVertexBuffer(x);
 			}
 
-			app->updateVertexPosition(glm::vec3(offset.x, 0.0f, 0.0f));
+			app->updateGUI(glm::vec3(offset.x, 0.0f, 0.0f), gui,Operation::TRANSLATE);
 		}
 		else if (keys[GLFW_KEY_Y] == 1)
 		{
@@ -690,7 +700,7 @@ void Application::editMode(Window* window)
 				vertices[x]->translate(0.0f, offset.y, 0.0f);
 				mesh->updateVertexBuffer(x);
 			}
-			app->updateVertexPosition(glm::vec3(0.0f, offset.y, 0.0f));
+			app->updateGUI(glm::vec3(0.0f, offset.y, 0.0f), gui,Operation::TRANSLATE);
 		}
 		else if (keys[GLFW_KEY_Z] == 1)
 		{
@@ -700,7 +710,7 @@ void Application::editMode(Window* window)
 				vertices[x]->translate(0.0f, 0.0f, offset.z);
 				mesh->updateVertexBuffer(x);
 			}
-			app->updateVertexPosition(glm::vec3(0.0f, 0.0f, offset.z));
+			app->updateGUI(glm::vec3(0.0f, 0.0f, offset.z), gui,Operation::TRANSLATE);
 		}
 		else
 		{
@@ -709,7 +719,7 @@ void Application::editMode(Window* window)
 				vertices[x]->translate(offset);
 				mesh->updateVertexBuffer(x);
 			}
-			app->updateVertexPosition(offset);
+			app->updateGUI(offset, gui,Operation::TRANSLATE);
 		}
 
 		previousX = posX;
@@ -786,7 +796,7 @@ void Application::editMode(Window* window)
 
 				tempVertices[selectedVertices[i]]->position = startPositions[i];
 				/*		if (i == selectedVertices.size() - 1)
-							app->updateVertexPosition(deltaX * bestDir);*/
+							app->updateGUI(deltaX * bestDir);*/
 			}
 			int j = 0;
 			for (j = 0;j < slideDirections[i].size();j++)
@@ -807,7 +817,7 @@ void Application::editMode(Window* window)
 			mesh->updateVertexBuffer(selectedVertices[i]);
 
 			if (i == selectedVertices.size() - 1)
-				app->updateVertexPosition(bestDir * projectedLength);
+				app->updateGUI(bestDir * projectedLength, gui,Operation::TRANSLATE);
 		}
 
 
@@ -978,7 +988,8 @@ void Application::uVMode(Window* window)
 	GLFWwindow* glfwWindow = window->getGLFWwindow();
 	MyGUI& gui = window->getGui();
 	static Camera* camera = cameraSingleton->getCamera("UV");
-	Mesh* mesh = static_cast<Mesh*>(objectSingleton->getObject(objectIndices.back()));
+	Mesh* mesh = static_cast<Mesh*>(objectSingleton->getActiveObject());
+	if (!mesh)return;
 
 	// SELECT
 	if (mouseButtons[GLFW_MOUSE_BUTTON_LEFT])
@@ -1305,7 +1316,7 @@ void Application::uVMode(Window* window)
 		float deltaX = (posX - previousX) / 150;
 		float deltaY = (previousY - posY) / 150;
 
-		
+
 		if (keys[GLFW_KEY_X] == 1)
 		{
 			std::cout << "X";
@@ -1362,7 +1373,7 @@ void Application::materialEditor(Window* window)
 	static double time = glfwGetTime();
 
 
-	
+
 	if (glfwGetKey(glfwWindow, GLFW_KEY_Q) == GLFW_PRESS)
 	{
 		gui.showAddMenu();

@@ -39,6 +39,8 @@ struct DVertex {
 	void translate(float x, float y, float z);
 
 	void translate(float* offset);
+
+	void setPosition(float x, float y, float z);
 };
 
 

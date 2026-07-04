@@ -2,7 +2,7 @@
 
 BVHNode::BVHNode() :box(), left(nullptr), right(nullptr), index(-1) {}
 
-BVHNode::BVHNode(Object& object) :box(object), left(nullptr), right(nullptr), index{ object.getIndex() } {}
+BVHNode::BVHNode(Object* object) :box(object), left(nullptr), right(nullptr), index{ object->getIndex() } {}
 BVHNode::BVHNode(glm::vec3& vertex, unsigned int i) :box(vertex), left(nullptr), right(nullptr), index{ i } {}
 BVHNode::BVHNode(float x, float y, float z, unsigned int index): box(glm::vec3(x,y,z)),left(nullptr),right(nullptr),index{index}{}
 
@@ -41,7 +41,7 @@ void BVHNode::refitNode()
 {
 	if (!this->left && !this->right)
 	{
-		this->box = AABB(*objectSingleton->getObject(this->index[0]));
+		this->box = AABB(objectSingleton->getObject(this->index[0]));
 	}
 	else
 	{
@@ -55,16 +55,16 @@ void BVHNode::refitNode()
 		else this->box = AABB(this->right->box);
 	}
 }
-void BVHNode::refitNodeVertex(Object& object)
+void BVHNode::refitNodeVertex(Mesh* mesh)
 {
 	if (!this->left && !this->right) // if its a leaf node
 	{
-		this->box = AABB(object.getModelXVertex(this->index[0]));
+		this->box = AABB(mesh->getModelXVertex(this->index[0]));
 	}
 	else
 	{
-		this->left->refitNodeVertex(object);
-		this->right->refitNodeVertex(object);
+		this->left->refitNodeVertex(mesh);
+		this->right->refitNodeVertex(mesh);
 
 		if (this->left && this->right)
 			this->box = AABB(this->left->box, this->right->box);

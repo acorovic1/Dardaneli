@@ -102,44 +102,6 @@ Mesh::Mesh(const char* file) :Object("objLoad")
 Mesh::~Mesh() {}
 
 
-void Mesh::translate(glm::vec3& translateVector)
-{
-	position += translateVector;
-	fillModel();
-
-
-}
-void Mesh::translate(float x, float y, float z)
-{
-	position.x += x;
-	position.y += y;
-	position.z += z;
-
-	fillModel();
-}
-
-void Mesh::rotate(float degrees, const glm::vec3& axisVector)
-{
-	rotation = glm::rotate(rotation, glm::radians(degrees), axisVector);
-
-	fillModel();
-}
-
-void Mesh::scale(glm::vec3& scaleVector)
-{
-	scaling *= scaleVector;
-	fillModel();
-}
-void Mesh::scale(float x, float y, float z) {
-	scaling.x *= x;
-	scaling.y *= y;
-	scaling.z *= z;
-
-	fillModel();
-}
-
-
-
 
 void Mesh::bindEBO() { ebo.bind(); }
 void Mesh::updateEBO() { ebo.bufferData(indices); }
@@ -291,6 +253,7 @@ DEdge* Mesh::getEdge(DVertex* start, DVertex* end)
 
 void Mesh::materialDraw(Camera& camera)
 {
+	glm::mat4 model = getModelMatrix();
 
 	for (auto& buff : renderBuffers)
 	{
@@ -334,19 +297,13 @@ void Mesh::materialDraw(Camera& camera)
 }
 
 
-#include <glm/glm.hpp>
-#include <ostream>
 
-std::ostream& operator<<(std::ostream& os, const glm::vec3& v)
-{
-    return os << '(' << v.x << ", " << v.y << ", " << v.z << ')';
-}
 void Mesh::renderDraw(Camera& camera)
 {
 	//for (auto x : vertices)
 	//	x->normal = glm::normalize(x->position);
 
-
+	glm::mat4 model = getModelMatrix();
 
 
 	struct GPULight {
@@ -370,6 +327,10 @@ void Mesh::renderDraw(Camera& camera)
 			g.direction = d->getDirection();
 			g.color = d->getColor();
 			g.intensity = d->getIntensity();
+
+			std::cout << "\n\n\tRender.draw DirectionalLight dir = " << glm::to_string(g.direction) ;
+
+
 		}
 		else if (auto* p = dynamic_cast<PointLight*>(l)) {
 			g.type = 1;
@@ -574,9 +535,9 @@ void Mesh::draw(Shader& shader, Camera& camera, GLenum mode, bool outline) {
 	camera.cameraUniform(true, shader, "cameraMatrix");
 	shader.setVector3f(true, "camPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
 	if (outline)
-		shader.setMat4(true, "model", glm::scale(model, glm::vec3(1.03f)));
+		shader.setMat4(true, "model", glm::scale(getModelMatrix(), glm::vec3(1.03f)));
 	else
-		shader.setMat4(true, "model", model);
+		shader.setMat4(true, "model", getModelMatrix());
 
 	if (mode == GL_TRIANGLES)
 	{
@@ -856,7 +817,7 @@ void Mesh::insetIndividual(std::vector<DFace*> faces)
 
 	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
-	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(this);
 
 }
 
@@ -1151,7 +1112,7 @@ std::unordered_set<DVertex*> Mesh::linearSubdivision()
 
 	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
-	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(this);
 
 
 
@@ -1361,7 +1322,7 @@ void Mesh::loopCut(DEdge* edge, int numberOfCuts)
 
 	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
-	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(this);
 
 }
 
@@ -1472,7 +1433,7 @@ void Mesh::mergeVertices(std::vector<int>& verts)
 
 	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
-	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(this);
 
 
 }
@@ -1508,7 +1469,7 @@ std::vector<glm::vec2> Mesh::getSlideUnprojectedDirections(DVertex* vert, std::u
 	int screenWidth = camera->getWidth();
 	int screenHeight = camera->getHeight();
 
-	glm::mat4 projectionViewModel = camera->getProjectionMatrix() * camera->getViewMatrix() * model;
+	glm::mat4 projectionViewModel = camera->getProjectionMatrix() * camera->getViewMatrix() * getModelMatrix();
 
 
 	std::vector<glm::vec2> directions;
@@ -1622,6 +1583,58 @@ std::pair<int, int> Mesh::getEdgeIndices(DEdge* edge)
 	return std::pair<int, int>{this->getVertexIndex(edge->v1), this->getVertexIndex(edge->v2)};
 }
 
+void Mesh::updateVertexBuffer(int i)
+{
+	vbo.bind();
+	glBufferSubData(GL_ARRAY_BUFFER, i * sizeof(DVertex), sizeof(DVertex), vertices[i]);
+}
+
+int Mesh::getNumberOfVertices() { return vertices.size(); };
+std::vector<DVertex*>& Mesh::getVertices() { return vertices; }
+const std::vector<DVertex*>& Mesh::getVertices()const { return vertices; }
+std::vector<DVertex> Mesh::getVerticesCopy() {
+
+	std::vector<DVertex> copy;
+	for (const auto v : vertices) {
+		copy.push_back(*v);
+	}
+
+	return copy;
+}
+std::vector<glm::vec3> Mesh::getModelXVertices()
+{
+	glm::mat4 model = getModelMatrix();
+	std::vector<glm::vec3>position(0);
+	for (const auto x : vertices)
+		position.push_back(glm::vec3(model * glm::vec4(x->position, 1.0f)));
+
+	return position;
+}
+// kako je lijepo biti glup
+glm::vec3 Mesh::getModelXVertex(GLuint vertexIndex)
+{
+	return getModelXVertex(vertices[vertexIndex]);
+	//return glm::vec3(model * glm::vec4(vertices[vertexIndex]->position, 1.0f));
+}
+// kako je lijepo biti glup
+glm::vec3 Mesh::getModelXVertex(DVertex* vertex)
+{
+	return glm::vec3(getModelMatrix() * glm::vec4(vertex->position, 1.0f));
+	//return getModelXVertex(this->getVertexIndex(vertex));
+}
+
+int Mesh::getVertexIndex(DVertex* v)
+{
+	auto it = std::find_if(vertices.begin(), vertices.end(), [v](const DVertex* vert) {return vert == v;});
+	if (it != vertices.end()) {
+		return static_cast<int>(std::distance(vertices.begin(), it));
+	}
+	else {
+		std::cerr << "\n\n		ERROR \n	Mesh.getVertexIndex.. DVertex does not exist \t function returns -1\t";
+		std::cout << v->position.x << " " << v->position.y << " " << v->position.z;
+		return -1; // Not found
+	}
+}
 
 
 
@@ -2204,7 +2217,7 @@ void Mesh::extrudeVertices(std::vector<int>& verts, bool update)
 	updateEdgeEBO();
 	vbo.bufferData(vertices);
 
-	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(this);
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
 
 }
@@ -2254,7 +2267,7 @@ void Mesh::pokeFaces(Container& faces, bool update)
 
 	selectedFaces.clear();
 
-	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(this);
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
 	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 	//std::cout << "\n\n\t End of pokeFaces... vertices.size= " << vertices.size();
@@ -2323,7 +2336,7 @@ void Mesh::triangulateFaces(Container& faces, bool update)
 
 	selectedFaces.clear();
 
-	//VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	//VertexBVHImprovedSingleton->BuildBottomUp(this);
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
 	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 
@@ -2490,7 +2503,7 @@ void Mesh::bridgeFaces(DFace* faceA, DFace* faceB, bool update)
 
 	selectedFaces.clear();
 
-	//VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	//VertexBVHImprovedSingleton->BuildBottomUp(this);
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
 	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 
@@ -2587,7 +2600,7 @@ void Mesh::trisToQuads(std::unordered_set<DFace*>& faces, bool update)
 
 	selectedFaces.clear();
 
-	//VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	//VertexBVHImprovedSingleton->BuildBottomUp(this);
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
 	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 
@@ -2698,7 +2711,7 @@ std::unordered_set<DEdge*>  Mesh::extrudeEdges(Container& edges, bool update)
 	vbo.bufferData(vertices);
 	updateEBO();
 
-	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(this);
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
 	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 
@@ -2801,7 +2814,7 @@ void Mesh::extrudeFaces(Container& faces, bool update)
 
 	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
-	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(this);
 
 
 }
@@ -2826,7 +2839,7 @@ void Mesh::extrudeIndividualFaces(Container& faces, bool update)
 
 	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
-	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(this);
 }
 
 void Mesh::extrudeManifold()
@@ -2873,7 +2886,7 @@ std::vector<DFace*> Mesh::separate(Container faces)
 	updateEBO();
 	updateEdgeEBO();
 
-	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(this);
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
 	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 
@@ -2896,7 +2909,7 @@ std::vector<DVertex*> Mesh::duplicateVertices(std::vector<int>& verts, bool upda
 	selectedVertexIndices = vertIndices;
 	vbo.bufferData(vertices);
 
-	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(this);
 
 	return returnVec;
 }
@@ -2956,7 +2969,7 @@ std::vector<DEdge*> Mesh::duplicateEdges(Container& edges, bool update)
 	//updateEBO();
 	updateEdgeEBO();
 
-	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(this);
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
 	//FaceBVHImprovedSingleton->BuildBottomUp(*this);
 
@@ -3003,7 +3016,7 @@ std::vector<DFace*> Mesh::duplicateFaces(Container& faces, bool update)
 	updateEBO();
 	updateEdgeEBO();
 
-	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(this);
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
 	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 
@@ -3069,7 +3082,7 @@ void Mesh::deleteEdges(Container& edges, bool update)
 	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
-	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(this);
 
 }
 
@@ -3111,7 +3124,7 @@ void Mesh::deleteFaces(Container& faces, bool update)
 
 	FaceBVHImprovedSingleton->BuildBottomUp(*this);
 	EdgeBVHImprovedSingleton->BuildBottomUp(*this);
-	VertexBVHImprovedSingleton->BuildBottomUp(*this);
+	VertexBVHImprovedSingleton->BuildBottomUp(this);
 
 }
 
@@ -3427,7 +3440,7 @@ void Mesh::formTrianglesForRaytracing(int rnd)
 	triangles.clear();
 	triangleMaterialData.clear();
 
-	
+	glm::mat4 model = getModelMatrix();
 
 	for (auto& it : materials)
 	{

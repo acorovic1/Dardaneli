@@ -24,7 +24,7 @@ void ObjectModeBVHImproved::BuildBottomUp(std::vector<Object*> objects, int numO
 
 
 	root = BVHBuilder::BuildBVH(objects.begin(), objects.begin() + numObjects,
-		[](Object* object) { return new BVHNode(*object); });
+		[](Object* object) { return new BVHNode(object); });
 
 }
 

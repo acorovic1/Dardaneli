@@ -288,7 +288,7 @@
     <ClInclude Include="include\Objects\Lights\SpotLight.h" />
     <ClInclude Include="include\Utilities\Loader.h" />
     <ClInclude Include="include\Utilities\PairHash.h" />
-    <ClInclude Include="include\Utilities\EditorModes.h" />
+    <ClInclude Include="include\Utilities\Enums.h" />
     <ClInclude Include="include\Materials\ShadingNodes\Output\AmbientOcclusionOutputNode.h" />
     <ClInclude Include="include\Materials\ShadingNodes\Color\ColorBurnNode.h" />
     <ClInclude Include="include\Materials\ShadingNodes\Color\ColorMixNode.h" />

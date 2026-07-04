@@ -8,62 +8,54 @@ SpotLight::SpotLight(const std::string& name) : Light(name)
 	float radiusInner = tan(glm::radians(innerCutoff)) * coneLength;
 
 	int segments = 16;
-
+	std::vector<GLuint> indices;
 	for (int i = 0; i < segments; i++) {
 		float angle = i / (float)segments * 2.0f * 3.1415926f;
 		float nextAngle = (i + 1) / (float)segments * 2.0f * 3.1415926f;
 
 		// Outer circle vertices
-		DVertex* outerCurr = new DVertex();
-		outerCurr->position = glm::vec3(radiusOuter * cos(angle), 0, radiusOuter * sin(angle));
-		DVertex* outerNext = new DVertex();
-		outerNext->position = glm::vec3(radiusOuter * cos(nextAngle), 0, radiusOuter * sin(nextAngle));
-		vertices.push_back(outerCurr);
-		vertices.push_back(outerNext);
+		drawVertices.push_back(glm::vec3(radiusOuter * cos(angle), 0, radiusOuter * sin(angle)));
+		drawVertices.push_back(glm::vec3(radiusOuter * cos(nextAngle), 0, radiusOuter * sin(nextAngle)));
 
 		// Inner circle vertices
-		DVertex* innerCurr = new DVertex();
-		innerCurr->position = glm::vec3(radiusInner * cos(angle), 0, radiusInner * sin(angle));
-		DVertex* innerNext = new DVertex();
-		innerNext->position = glm::vec3(radiusInner * cos(nextAngle), 0, radiusInner * sin(nextAngle));
-		vertices.push_back(innerCurr);
-		vertices.push_back(innerNext);
+		drawVertices.push_back(glm::vec3(radiusInner * cos(angle), 0, radiusInner * sin(angle)));
+		drawVertices.push_back(glm::vec3(radiusInner * cos(nextAngle), 0, radiusInner * sin(nextAngle)));
+
+		int base = 4 * i;
+
+		indices.push_back(base);     // start of line
+		indices.push_back(base + 1); // end of line
+
+		indices.push_back(base + 2); // start of line
+		indices.push_back(base + 3); // end of line
 	}
 
 
+	drawVertices.push_back(glm::vec3(0, coneLength, 0));
 
-
-	std::vector<GLuint> indices;
-	for (GLuint i = 0; i < vertices.size(); i += 2) {
-		indices.push_back(i);     // start of line
-		indices.push_back(i + 1); // end of line
-	}
-	DVertex* tip = new DVertex();
-	tip->position = glm::vec3(0, coneLength, 0);
-	vertices.push_back(tip);
-	indices.push_back(vertices.size() - 1); // tip index
+	indices.push_back(drawVertices.size() - 1); // tip index
 	indices.push_back(0);
 
-	indices.push_back(vertices.size() - 1); // tip index
+	indices.push_back(drawVertices.size() - 1); // tip index
 	indices.push_back(16);
 
-	indices.push_back(vertices.size() - 1); // tip index
+	indices.push_back(drawVertices.size() - 1); // tip index
 	indices.push_back(32);
 
-	indices.push_back(vertices.size() - 1); // tip index
+	indices.push_back(drawVertices.size() - 1); // tip index
 	indices.push_back(48);
 
-	tip = new DVertex();
-	tip->position = glm::vec3(0, -coneLength * 2, 0);
-	vertices.push_back(tip);
-	indices.push_back(vertices.size() - 2); // tip index
-	indices.push_back(vertices.size() - 1);
+	
+	drawVertices.push_back( glm::vec3(0, -coneLength * 2, 0));
+	
+	indices.push_back(drawVertices.size() - 2); // tip index
+	indices.push_back(drawVertices.size() - 1);
 
 	vao.bind();
 
-	vbo.bufferData(vertices);
+	vbo.bufferData(drawVertices);
 	ebo.bufferData(indices);
-	vao.linkAttribute(vbo, 0, 3, GL_FLOAT, sizeof(DVertex), (void*)0); //position
+	vao.linkAttribute(vbo, 0, 3, GL_FLOAT, sizeof(glm::vec3), (void*)0); //position
 
 	vao.unbind();
 
@@ -71,40 +63,42 @@ SpotLight::SpotLight(const std::string& name) : Light(name)
 }
 
 
-void SpotLight::rotate(float degrees, const glm::vec3& axisVector)
+void SpotLight::rotate(float degrees, const glm::vec3 axisVector)
 {
-	model = glm::rotate(model, glm::radians(degrees), axisVector);
+	rotation = glm::rotate(rotation, glm::radians(degrees), axisVector);
+
 	glm::mat4 rot = glm::rotate(glm::mat4(1.0f), glm::radians(degrees), axisVector);
-	direction = glm::vec3(rot * glm::vec4(direction, 0.0f)); // w = 0 → treat as direction
-	direction = glm::normalize(direction);
+	direction = glm::normalize(glm::vec3(rot * glm::vec4(direction, 0.0f))); // w = 0 ? treat as direction
 
-	std::cout << "Direction vec: " << direction.x << " " << direction.y << " " << direction.z;
 
+	//std::cout << "Direction vec: " << direction.x << " " << direction.y << " " << direction.z;
 
 }
 
-void SpotLight::scale(glm::vec3& scaleVector) { model = glm::scale(model, glm::vec3(scaleVector.x)); }
-void SpotLight::scale(float x, float y, float z) { model = glm::scale(model, glm::vec3(x, x, x)); }
+void SpotLight::rotate(glm::quat quat)
+{
+	rotation = quat * rotation;
+	direction = glm::normalize(glm::vec3(quat * glm::vec4(direction, 0.0f))); // w = 0 ? treat as direction
+	//std::cout << "Direction vec: " << direction.x << " " << direction.y << " " << direction.z;
+}
 
 
-void SpotLight::draw(Shader& shader, Camera& camera, GLenum mode,bool outline) {
+
+
+void SpotLight::draw(Shader& shader, Camera& camera, GLenum mode, bool outline) {
 	shader.activate();
 	if (outline)
-		shader.setMat4(true, "model", glm::scale(model, glm::vec3(1.03f)));
+		shader.setMat4(true, "model", glm::scale(getModelMatrix(), glm::vec3(1.03f)));
 	else
-		shader.setMat4(true, "model", model);
-	shader.setVector4f(true, "color", glm::vec4(color,1.0f));
+		shader.setMat4(true, "model", getModelMatrix());
+	shader.setVector4f(true, "color", glm::vec4(color, 1.0f));
 
-	//auto view = camera.getViewMatrix();
-	//auto proj = camera.getProjectionMatrix();
-	//shader.setMat4(true, "view", view);
-	//shader.setMat4(true, "projection", proj);
-	//shader.setFloat(true, "size", 1);
+
 
 	vao.bind();
 	ebo.bind();
 	glLineWidth(5.0f);
-	glDrawElements(GL_LINES, vertices.size() * 2 + 8 + 2, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_LINES, drawVertices.size() * 2 + 8 + 2, GL_UNSIGNED_INT, 0);
 	glLineWidth(1.0f);
 
 	ebo.unbind();

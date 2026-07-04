@@ -15,7 +15,7 @@
 
 
 #include "FaceBVH.h"
-#include "EditorModes.h"
+#include "Enums.h"
 
 //#include "Material.h"
 
@@ -32,18 +32,19 @@ class Application {
 	static Application* instance;
 	Application() {};
 
+	friend class MyGUI;
+
 	Mode mode = Mode::OBJECT;
 	SelectMode selectMode = SelectMode::VERTEX;
 
 	RenderMode renderMode = RenderMode::SOLID;
 
 
-	std::vector<int> objectIndices = std::vector<int>(1);
+	std::vector<int> selectedObjects = std::vector<int>(1);
 
 
 
-	float vertexPosition[3] = { 0.0f,0.0f,0.0f };
-	float vertexPrevPosition[3] = { 0.0f,0.0f,0.0f };
+
 
 
 
@@ -70,9 +71,11 @@ public:
 
 	void setSelectMode(SelectMode mode);
 
-	void updateTranslate(glm::vec3 offset);//Updates translate for gui
+	void updateGUI(glm::vec3 offset, MyGUI& gui, Operation op);
 
-	void updateVertexPosition(glm::vec3 offset);
+	std::vector<int>& getSelectedObjects() { return selectedObjects; }
+
+
 
 	void objectMode(Window* window); //Inputs
 	void editMode(Window* window); //Inputs
@@ -80,17 +83,12 @@ public:
 	void materialEditor(Window* window); //Inputs
 	void inputs(Window* window); //Inputs
 
-	Object* getActiveObject() {
-		if (!objectIndices.size() /*|| objectIndices.back() < 0 || objectIndices.back() >= objectSingleton->getNumberOfObjects()*/)
-			return nullptr;
-		return objectSingleton->getObject(objectIndices.back());
-	}
+	
 
 	void deleteObjects();
 
 
 
-	friend class MyGUI;
 };
 
 extern Application* app;

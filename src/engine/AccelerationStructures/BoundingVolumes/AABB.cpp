@@ -1,5 +1,7 @@
 #include "BoundingVOlumes/AABB.h"
 #include "Mesh/DFace.h"
+#include "Mesh/Mesh.h"
+#include "Lights/Light.h"
 
 // MAKE ADAPTIVE PADDING 
 
@@ -55,9 +57,11 @@ AABB::AABB(std::vector<glm::vec3>vertices)
 
 	aabb = DrawableAABB(min, max);
 }
-AABB::AABB(Object& object) {
-	for (auto& a : object.getVertices()) {
-		glm::vec3 x = object.getModelXVertex(a);
+AABB::AABB(Object* object) {
+	Mesh* mesh = dynamic_cast<Mesh*>(object);
+	if(mesh)
+	for (auto& a : mesh->getVertices()) {
+		glm::vec3 x = mesh->getModelXVertex(a);
 		//std::cout << " x: " << x.x << " y: " << x.y << " z: " << x.z << "\n";
 		min.x = std::min(min.x, x.x);
 		min.y = std::min(min.y, x.y);
@@ -66,6 +70,21 @@ AABB::AABB(Object& object) {
 		max.x = std::max(max.x, x.x);
 		max.y = std::max(max.y, x.y);
 		max.z = std::max(max.z, x.z);
+	}
+	else if (dynamic_cast<Light*>(object))
+	{
+		Light* light = dynamic_cast<Light*>(object);
+		auto modelMatrix = light->getModelMatrix();
+		for (auto& a : light->getDrawVertices())
+		{
+			glm::vec3 x = glm::vec3(modelMatrix * glm::vec4(a,1.0f));
+			min.x = std::min(min.x, x.x);
+			min.y = std::min(min.y, x.y);
+			min.z = std::min(min.z, x.z);
+			max.x = std::max(max.x, x.x);
+			max.y = std::max(max.y, x.y);
+			max.z = std::max(max.z, x.z);
+		}
 	}
 
 	if (min.x == max.x) max.x += 0.01f;

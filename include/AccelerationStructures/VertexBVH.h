@@ -27,10 +27,10 @@ public:
 	void operator=(const VertexBVH& copy) = delete;
 
 	BVHNode* getRoot();
-	void BuildBottomUp(Object& object);
+	void BuildBottomUp(Mesh* mesh);
 	// pokusati staviti default vrijednosti kroz objectManager
 
-	void Refit(Object& object);
+	void Refit(Mesh* mesh);
 	void Clear();
 
 	void Draw(Camera& camera, Shader& shader, int subdivision);

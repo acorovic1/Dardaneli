@@ -129,13 +129,14 @@ vec3 pbr(vec3 N, vec3 V, vec3 albedo, float metallic, float roughness, float ao)
         if (lights[i].type == 0) {
             // directional
             L = normalize(-lights[i].direction);
+           // L = normalize(-lights[i].direction);
         } else {
             // point & spot
             L = normalize(lights[i].position - WorldPos);
         }
         vec3 H = normalize(V + L);
 
-
+ 
         vec3 radiance = lightRadiance(lights[i],WorldPos);
 
         // Cook-Torrance BRDF

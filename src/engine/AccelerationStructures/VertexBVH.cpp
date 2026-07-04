@@ -11,12 +11,12 @@ VertexBVH* VertexBVH::getInstance()
 	return instancePtr;
 }
 
-void VertexBVH::BuildBottomUp(Object& object) // O(n^3)
+void VertexBVH::BuildBottomUp(Mesh* mesh) // O(n^3)
 {
 	this->Clear();
-	int numObjects = object.getNumberOfVertices();
+	int numObjects = mesh->getNumberOfVertices();
 	if (!numObjects)return;
-	std::vector<glm::vec3 >vertices = object.getModelXVertices();
+	std::vector<glm::vec3 >vertices = mesh->getModelXVertices();
 	std::vector<BVHNode*> bvhNodes(0);
 
 	for (int i = 0; i < numObjects; i++)
@@ -43,8 +43,8 @@ void VertexBVH::BuildBottomUp(Object& object) // O(n^3)
 
 BVHNode* VertexBVH::getRoot() { return root; }
 
-void VertexBVH::Refit(Object& object) {
-	getRoot()->refitNodeVertex(object);
+void VertexBVH::Refit(Mesh* mesh) {
+	getRoot()->refitNodeVertex(mesh);
 }
 
 void VertexBVH::Clear()

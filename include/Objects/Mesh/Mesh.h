@@ -23,7 +23,7 @@ using json = nlohmann::json;
 class Material;
 class Mesh : public Object {
 
-
+	std::vector<DVertex*> vertices;
 
 	std::vector<GLuint>indices; // used for drawing faces
 	std::vector<GLuint>edgeIndices; // used for drawing edges
@@ -95,13 +95,7 @@ public:
 
 	~Mesh();
 
-	void translate(glm::vec3& translateVector)override;
-	void translate(float x, float y, float z)override;
 
-	void rotate(float degrees, const glm::vec3& axisVector)override;
-
-	void scale(glm::vec3& scaleVector)override;
-	void scale(float x, float y, float z)override;
 
 
 	void draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES, bool outline = false) override;
@@ -117,6 +111,25 @@ public:
 	int getNumberOfEdges() { return edgeIndices.size() * 0.5; }
 	// rethink getAllFaces approach later
 	int getNumberOfFaces() { return getAllFaces().size(); };
+
+	int getNumberOfVertices();
+	std::vector<DVertex*>& getVertices();
+	const std::vector<DVertex*>& getVertices()const;
+	std::vector<DVertex> getVerticesCopy();
+
+	std::vector<glm::vec3> getModelXVertices();
+	glm::vec3 getModelXVertex(GLuint vertexIndex);
+	glm::vec3 getModelXVertex(DVertex* vertex);
+
+	int getVertexIndex(DVertex* v);
+
+	// may be unstable !!
+	void updateVertexBuffer(int i);
+
+
+
+
+
 	std::vector<GLuint> formTrianglesForDrawing();
 
 

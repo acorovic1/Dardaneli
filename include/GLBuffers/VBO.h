@@ -16,6 +16,7 @@ public:
 	void bufferData(std::vector<DVertex*>& vertices);
 	void bufferData(std::vector<GPUVertex>& vertices);
 	void bufferData(float* vertices,int size);
+	void bufferData(std::vector<glm::vec3>& vertices);
 	void bind();
 	void unbind();
 	void Delete();

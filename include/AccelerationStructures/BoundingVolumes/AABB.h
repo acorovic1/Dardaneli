@@ -28,7 +28,7 @@ struct AABB {
 
 	AABB(std::vector<glm::vec3> vertices);
 	AABB(AABB& a, AABB& b);
-	AABB(Object& object);
+	AABB(Object* object);
 
 
 	bool intersectRayAABB(const Ray& ray);

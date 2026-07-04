@@ -69,7 +69,7 @@ void Renderer::viewportEditor()
 		basicShader.activate();
 		// setting model and cameraUniform uniforms may be reduntat bcs they are also set in object.draw method
 
-		basicShader.setMat4(true, "model", object->getModel());
+		basicShader.setMat4(true, "model", object->getModelMatrix());
 
 		camera->cameraUniform(true, basicShader, "cameraMatrix");
 		if (std::any_of(selectedObjects.begin(), selectedObjects.end(), [i](int a) {return i == a; }))
@@ -297,7 +297,7 @@ void Renderer::uvEditor()
 	gui.drawGrid2D();
 
 	// ovo treba uljepsat, izbacit VAOve i VBOve te ih staviti u mesh(vjerovatno)
-	Mesh* mesh = dynamic_cast<Mesh*>(app->getActiveObject());
+	Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getActiveObject());
 	std::vector<std::shared_ptr<UVVertex>>& uvCoords = mesh->getUVCoords();
 	std::vector<glm::vec2> uvCoordsVec;
 	for (auto x : uvCoords)

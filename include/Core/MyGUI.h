@@ -27,12 +27,19 @@ class MyGUI  {
 	ImGuiIO* gizmoIo;
 	GLFWwindow* glfwWindow;
 
+	friend class Application;
+
+	// gui data
 	float position[3] = { 0.0f, 0.0f, 0.0f };
-	float positionPrev[3] = { 0.0f, 0.0f, 0.0f };
 	float rotation[3] = { 0.0f, 0.0f, 0.0f };
-	float rotationPrev[3] = { 0.0f, 0.0f, 0.0f };
 	float scale[3] = { 1.0f, 1.0f, 1.0f };
-	float scalePrev[3] = { 1.0f, 1.0f, 1.0f };
+
+
+	// used for gizmo operations
+	 glm::mat4 transform = glm::mat4(1.0f);
+	 glm::mat4 previousTransform = glm::mat4(1.0f);
+
+
 
 	DLoop* selectedLoop = nullptr;
 
@@ -92,7 +99,7 @@ public:
 	Mode getMode() { return app->mode; };
 	SelectMode getSelectMode() { return app->selectMode; };
 	bool getFaceCulling() { return faceCulling; }
-	std::vector<int>& getObjectIndex() { return app->objectIndices; };
+	std::vector<int>& getObjectIndex() { return app->selectedObjects; };
 
 	void showAddMenu();
 	void showDeleteMenu();

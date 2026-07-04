@@ -6,7 +6,7 @@
 #include "ShadingNodes/ShadingNodes.h"
 #include "ShadingNodes/Texture/Texture.h"
 
-#include "EditorModes.h"
+#include "Enums.h"
 
 
 

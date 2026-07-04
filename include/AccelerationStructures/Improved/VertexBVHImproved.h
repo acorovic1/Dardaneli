@@ -29,9 +29,9 @@ public:
 	void operator=(const VertexBVHImproved& copy) = delete;
 
 	BVHNode* getRoot();
-	void BuildBottomUp(Object& object);
+	void BuildBottomUp(Mesh* mesh);
 
-	void Refit(Object& object);
+	void Refit(Mesh* mesh);
 	void Clear();
 
 	void Draw(Camera& camera, Shader& shader, int subdivision,bool rayInteract=false);

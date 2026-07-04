@@ -549,7 +549,7 @@
     <ClInclude Include="include\Materials\ShadingNodes\Color\ColorMixNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Utilities\EditorModes.h">
+    <ClInclude Include="include\Utilities\Enums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Utilities\Aliases.h">

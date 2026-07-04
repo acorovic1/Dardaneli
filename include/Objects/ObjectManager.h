@@ -26,6 +26,7 @@ public:
 	void deleteObject(GLuint index);
 
 	Object* getObject(GLuint index);
+	Object* getActiveObject();
 
 	std::vector<Object*>& getAllObjects();
 };

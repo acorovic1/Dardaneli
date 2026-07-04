@@ -17,13 +17,13 @@ VertexBVHImproved* VertexBVHImproved::getInstance()
 	return instancePtr;
 }
 
-void VertexBVHImproved::BuildBottomUp(Object& object)
+void VertexBVHImproved::BuildBottomUp(Mesh* mesh)
 {
 	this->Clear();
-	int numObjects = object.getNumberOfVertices();
+	int numObjects = mesh->getNumberOfVertices();
 	if (!numObjects) return;
 
-	std::vector<glm::vec3> vertices = object.getModelXVertices();
+	std::vector<glm::vec3> vertices = mesh->getModelXVertices();
 
 	std::vector<int> indices(numObjects);
 	std::iota(indices.begin(), indices.end(), 0);
@@ -35,9 +35,9 @@ void VertexBVHImproved::BuildBottomUp(Object& object)
 
 BVHNode* VertexBVHImproved::getRoot() { return root; }
 
-void VertexBVHImproved::Refit(Object& object) {
+void VertexBVHImproved::Refit(Mesh* mesh) {
 	if (auto* currentRoot = getRoot())
-		currentRoot->refitNodeVertex(object);
+		currentRoot->refitNodeVertex(mesh);
 }
 
 void VertexBVHImproved::Clear()

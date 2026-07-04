@@ -16,12 +16,12 @@
 class Object {
 protected:
 
-	std::vector<DVertex*> vertices;
+	
 
 	glm::vec3 position = glm::vec3(0.0f);
 	glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-	glm::vec3 scaling = glm::vec3(1.0f);
-	glm::mat4 model;
+	glm::vec3 scaleFac = glm::vec3(1.0f);
+
 
 	// used for updating VBO
 	//std::vector<DVertex> vboverts;
@@ -43,8 +43,27 @@ public:
 	std::string getName();
 	GLuint getIndex()const;
 
-	glm::mat4& getModel() { return model; };
-	const glm::mat4& getModel() const { return model; };
+	virtual void draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES, bool outline = false) = 0;
+
+	void translate(glm::vec3 translateVector);
+	void translate(float x, float y, float z);
+
+	virtual void rotate(float degrees, const glm::vec3 axisVector);
+	virtual void rotate(glm::quat quat);
+
+	void scale(glm::vec3 scaleVector);
+	void scale(float x, float y, float z);
+
+
+	void setPosition(glm::vec3 pos);
+	void setPosition(float x, float y, float z);
+
+	void setRotation(glm::vec3 rot);
+	void setRotation(float x, float y, float z);
+	void setRotationRad(float radiansX, float radiansY, float radiansZ);
+
+	void setScale(glm::vec3 scale);
+	void setScale(float x, float y, float z);
 
 	glm::vec3& getPosition() { return position; }
 	const glm::vec3& getPosition() const { return position; }
@@ -52,38 +71,21 @@ public:
 	glm::quat& getRotation() { return rotation; }
 	const glm::vec3 getRotationVec() const { return glm::degrees(glm::eulerAngles(rotation)); }
 
-	glm::vec3& getScale() { return scaling; }
-	const glm::vec3& getScale() const { return scaling; }
+	glm::vec3& getScale() { return scaleFac; }
+	const glm::vec3& getScale() const { return scaleFac; }
 
-	// rotiranje vraca na 0 sve elemente u guiu.. mesh.rotate i gui.selectObject pogledati
 
-	void fillModel();
+		
+	
 
+	
+	glm::mat4 getModelMatrix();
 
 	void bindVAO();
 
-	// may be unstable !!
-	void updateVertexBuffer(int i);
+	
 
-	int getNumberOfVertices();
-	std::vector<DVertex*>& getVertices();
-	const std::vector<DVertex*>& getVertices()const;
-	std::vector<DVertex> getVerticesCopy();
-	std::vector<glm::vec3> getModelXVertices();
-	glm::vec3 getModelXVertex(GLuint vertexIndex);
-	glm::vec3 getModelXVertex(DVertex* vertex);
 
-	int getVertexIndex(DVertex* v);
-
-	virtual void draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES, bool outline = false) = 0;
-
-	virtual void translate(glm::vec3& translateVector) = 0;
-	virtual void translate(float x, float y, float z) = 0;
-
-	virtual void rotate(float degrees, const glm::vec3& axisVector) = 0;
-
-	virtual void scale(glm::vec3& scaleVector) = 0;
-	virtual void scale(float x, float y, float z) = 0;
 
 
 

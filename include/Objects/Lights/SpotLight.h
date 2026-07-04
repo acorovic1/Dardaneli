@@ -25,10 +25,8 @@ public:
 	void setOuterCutoff(float c) { outerCutoff = c; }
 
 
-	void rotate(float degrees, const glm::vec3& axisVector);
+	void rotate(float degrees, const glm::vec3 axisVector)override;
+	 void rotate(glm::quat quat) override;
 
-
-	void scale(glm::vec3& scaleVector);
-	void scale(float x, float y, float z);
 
 };
