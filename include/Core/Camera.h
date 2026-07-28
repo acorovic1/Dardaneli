@@ -14,6 +14,7 @@
 
 class MyGUI;
 class Window;
+class Viewport;
 
 class Camera {
 	std::string name;
@@ -32,7 +33,13 @@ class Camera {
 
 public:
 
-	Camera(int width, int height, glm::vec3 Position, std::string name);
+	Camera(int width, int height, glm::vec3 position, std::string name);
+	Camera(int width, int height, glm::vec3 position, glm::vec3 orientation, glm::vec3 up, std::string name);
+	Camera(const Camera& copy);
+	Camera(Camera&& move) = delete;
+	Camera& operator=(const Camera& copy) = delete;
+	Camera& operator=(Camera&& move) = delete;
+
 	void update();
 	void cameraUniform(bool activated, Shader& shader, const char* uniform);
 
@@ -58,12 +65,13 @@ public:
 	void setProjection(glm::mat4 projection) { Camera::projection = projection; };
 
 	void setPerspectiveProjection(float fovy, float aspect, float near, float far);
-	void setOrthographicProjection();
+	// scale controls zoom level
+	void setOrthographicProjection(float scale,float aspect, float near, float far);
 
-	Ray createRay(GLFWwindow* window);
+	Ray createRay(GLFWwindow* glfwWindow);
 
-	void movement3D(GLFWwindow* glfwWindow);
-	void movement2D(GLFWwindow* glfwWindow);
+	void movement3D(Window* window,Viewport* viewport);
+	void movement2D(Window* window,Viewport* viewport);
 
 
 	void setCamera2D();

@@ -21,7 +21,7 @@
 #include "ImGUI/imnodes.h"
 #include "Material.h"
 
-
+class Viewport;
 class MyGUI  {
 	ImGuiIO* io;
 	ImGuiIO* gizmoIo;
@@ -29,24 +29,26 @@ class MyGUI  {
 
 	friend class Application;
 
+	
 	// gui data
-	float position[3] = { 0.0f, 0.0f, 0.0f };
-	float rotation[3] = { 0.0f, 0.0f, 0.0f };
-	float scale[3] = { 1.0f, 1.0f, 1.0f };
+	static float position[3];
+	static float rotation[3];
+	static float scale[3];
 
+	static ImGuizmo::OPERATION operation;
 
 	// used for gizmo operations
-	 glm::mat4 transform = glm::mat4(1.0f);
-	 glm::mat4 previousTransform = glm::mat4(1.0f);
+	static glm::mat4 transform;
+	static glm::mat4 previousTransform;
 
 
 
-	DLoop* selectedLoop = nullptr;
 
-	//DFace* selectedFace = nullptr;
 
 	// used only for disk.d1
 	DEdge* vertexEdge = nullptr;
+	DLoop* selectedLoop = nullptr;
+	//DFace* selectedFace = nullptr;
 
 	VAO grid3DVAO;
 	EBO grid3DEBO;
@@ -59,7 +61,6 @@ class MyGUI  {
 	std::vector<GLuint> gridIndices2D;
 
 
-	ImGuizmo::OPERATION operation = ImGuizmo::OPERATION::TRANSLATE;
 
 	float hoverTime = 0.0f;
 	int BVHSubd = 0;
@@ -74,8 +75,11 @@ class MyGUI  {
 	bool showAddMenuFlag = false;
 	bool showDeleteMenuFlag = false;
 	bool showExtrudeMenuFlag = false;
-	bool showInsetMenuFlag = false;
 	bool showImportDialog = false;
+	bool showViewportActions = false;
+
+	bool viewportAdjust = true;
+	ViewportBoundary viewportAdjustBoundary = ViewportBoundary::LEFT;
 
 
 
@@ -87,29 +91,33 @@ public:
 	void render();
 	void shutdown();
 
-	void drawUI();
-	void drawObjectModeUI(bool change);
-	void drawEditModeUI(bool change);
-	void drawUVModeUI(bool change);
-	void drawShaderEditorUI(bool change);
+	void drawUI(Viewport* viewport);
+	void drawObjectModeUI(Viewport* viewport,bool change);
+	void drawEditModeUI(Viewport* viewport,bool change);
+	void drawUVModeUI(Viewport* viewport,bool change);
+	void drawShaderEditorUI(Viewport* viewport,bool change);
 
 	ImGuiIO* getIO() { return io; };
 	GLFWwindow* getGLFWwindow() { return glfwWindow; }
 	Window* getWindow() { return reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow)); }
-	Mode getMode() { return app->mode; };
-	SelectMode getSelectMode() { return app->selectMode; };
+	//Mode getMode() { return app->mode; };
+	//SelectMode getSelectMode() { return app->selectMode; };
 	bool getFaceCulling() { return faceCulling; }
 	std::vector<int>& getObjectIndex() { return app->selectedObjects; };
 
 	void showAddMenu();
 	void showDeleteMenu();
 	void showExtrudeMenu();
-	void showInsetMenu();
+	void showViewportActionsMenu();
+	
 
 	void addMenu();
 	void deleteMenu();
 	void extrudeMenu();
-	
+	void viewportActionsMenu();
+
+	bool isViewportAdjusted();
+	void stopViewportAdjustment();
 
 	void drawBVH();
 	void BVHRayInteraction();
@@ -121,13 +129,13 @@ public:
 	void selectObject();
 
 	void initializeGrid3D(int width = 20);
-	void drawGrid3D();
+	void drawGrid3D(Viewport* viewport);
 	void initializeGrid2D(int width = 10);
-	void drawGrid2D();
+	void drawGrid2D(Viewport* viewport);
 
 	void setGizmoOperation(ImGuizmo::OPERATION op);
 
-	void modes();
+	void modes(Viewport* viewport);
 
 	void dMesh();
 

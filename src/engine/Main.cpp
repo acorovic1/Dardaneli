@@ -62,26 +62,16 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
+
 	Window window("Dardaneli");
 	window.init();
-
-	MyGUI& gui = window.getGui();
 
 	Scene scene;
 	scene.init(window);
 
-
-	Renderer renderer(window, gui);
-
+	Renderer renderer(window);
 	renderer.init();
 
-	window.setCamera(cameraSingleton->getCamera("Viewport"));
-
-	double prevTime = 0.0;
-	double crntTime = 0.0;
-	double timeDiff;
-
-	unsigned int counter = 0;
 	int flags;
 	glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
 	if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
@@ -89,23 +79,24 @@ int main() {
 	else
 		std::cout << "Debug context not enabled." << std::endl;
 
-
-	glfwSetTime(0);
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(glDebugOutput, nullptr);
 	const GLubyte* version = glGetString(GL_VERSION);
 	std::cout << "OpenGL Version: " << version << std::endl;
 
+	double prevTime = 0.0;
+	double crntTime = 0.0;
+	double timeDiff;
+	unsigned int counter = 0;
+
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
+	glCullFace(GL_BACK);
 
-
+	glfwSetTime(0);
 
 	std::cout << "\nDardaneli started successfully!\n\n";
-
-
 
 	while (!window.shouldClose()) {
 		crntTime = glfwGetTime();
@@ -122,27 +113,12 @@ int main() {
 			counter = 0;
 		}
 
-		gui.newFrame();
-
-		//window.getCamera()->Update();
-
-
 		renderer.render();
-
-		if (!gui.getIO()->WantCaptureMouse || app->getMode() == Mode::SHADER_EDIT) {
-			app->inputs(&window);
-		}
-		//if (gui.getIO()->WantCaptureMouse)std::cout << "\n Mouse captured by GUI		"<<gui.getGLFWwindow();
-
-		gui.drawUI();
-		gui.render();
 
 		window.pollEvents();
 	};
 
-	std::cout << "\nTime = " << glfwGetTime();
-
-
+	std::cout << "\n\n\t\tTime = " << glfwGetTime();
 
 	window.terminate();
 	deleteAllShaders();

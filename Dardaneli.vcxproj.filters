@@ -1,657 +1,349 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\ImGuiFileDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imgui_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imgui_draw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imgui_impl_glfw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imgui_impl_opengl3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imgui_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imnodes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUIZMO\GraphEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUIZMO\ImCurveEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUIZMO\ImGradient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUIZMO\ImGuizmo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\BVHNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\BoundingVolumes\AABB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\BoundingVolumes\DrawableAABB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\EdgeBVH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\EdgeBVHNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\FaceBVH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\FaceBVHNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\Improved\EdgeBVHImproved.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\Improved\FaceBVHImproved.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\Improved\ObjectModeBVHImproved.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\Improved\UVVertexBVHImproved.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\Improved\VertexBVHImproved.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\ObjectModeBVH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\RaytracingBVH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\RaytracingBVHNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\UVVertexBVH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\VertexBVH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\CameraManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\MyGUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\Viewport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\WindowManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\GLBuffers\EBO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\GLBuffers\VAO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\GLBuffers\VBO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\MaterialManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShaderManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Color\ColorBurnNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Color\ColorMixNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Input\ColorNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Input\ValueNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Math\MathNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Output\AmbientOcclusionOutputNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Output\ColorOutputNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Output\MetallicOutputNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Output\NormalOutputNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Output\RoughnessOutputNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\ShadingNodesManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Texture\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Materials\ShadingNodes\Texture\TextureNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\BasicObjects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Lights\DirectionalLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Lights\PointLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Lights\SpotLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Mesh\DEdge.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Mesh\DFace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Mesh\DLoop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Mesh\DVertex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Mesh\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\Object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\ObjectManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Utilities\FileSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Utilities\FragColor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Utilities\GeometryUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Utilities\Loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Utilities\Ray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Utilities\stb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\adnan\Desktop\Dardaneli\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\BVH.frag" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\BVH.vert" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\UV.frag" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\UV.vert" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\basic.frag" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\basic.vert" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeOutput.frag" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeOutput.vert" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeTest.comp" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeTest.frag" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\computeTest.vert" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\grid.frag" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\grid.vert" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\pbr.geom" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\pbr.vert" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\quad.frag" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\quad.vert" />
+    <None Include=".gitignore" />
+    <None Include="imgui.ini" />
+    <None Include="README.md" />
+  </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Resource Files\Shaders">
-      <UniqueIdentifier>{6a33b8ec-213c-4c42-bf1a-06274583f94c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Textures">
-      <UniqueIdentifier>{3eaa42d8-2fd3-48c4-97f1-d36eed8a7bbf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Picking">
-      <UniqueIdentifier>{70e6cee5-121a-47d1-a304-dab176981000}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Objects">
-      <UniqueIdentifier>{7407688d-85e7-432d-912e-6c7086e23e20}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Objects">
-      <UniqueIdentifier>{96d57a2a-ae90-4ea4-8caf-0055657210c7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Picking">
-      <UniqueIdentifier>{feb137fa-a6b5-49e6-b872-74d44da30631}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer">
-      <UniqueIdentifier>{cbd12281-f7bf-41c1-bb40-ff5b479792f4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Renderer">
-      <UniqueIdentifier>{9d220d78-39ab-42e0-a4bb-5481db63e115}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\GUI">
-      <UniqueIdentifier>{997d1f34-c5e8-4162-a5e9-fbd64015aab0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\GUI\ImGUIZMO">
-      <UniqueIdentifier>{533ac0e4-6ee5-4d9d-83ea-1e4467f9d05e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\GUI\ImGUI">
-      <UniqueIdentifier>{b003ee70-3d86-4628-a73e-23930dba0030}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\GUI">
-      <UniqueIdentifier>{9a0a914a-4e23-4c75-8c98-59a3e8a6f3fc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\GUI\ImGUI">
-      <UniqueIdentifier>{de0cff33-a450-474a-bdeb-b4a2f5d35ec7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\GUI\ImGUIZMO">
-      <UniqueIdentifier>{b24c00d9-3fba-4ad3-8ab7-2103f7143f4a}</UniqueIdentifier>
+      <UniqueIdentifier>{1825A31A-1D6F-32AF-A693-030229124E0F}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\engine\Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Core\Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\include\ImGUI\imgui_widgets.cpp">
-      <Filter>Source Files\GUI\ImGUI</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\include\ImGUI\imgui.cpp">
-      <Filter>Source Files\GUI\ImGUI</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\include\ImGUI\imgui_demo.cpp">
-      <Filter>Source Files\GUI\ImGUI</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\include\ImGUI\imgui_draw.cpp">
-      <Filter>Source Files\GUI\ImGUI</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\include\ImGUI\imgui_impl_glfw.cpp">
-      <Filter>Source Files\GUI\ImGUI</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\include\ImGUI\imgui_impl_opengl3.cpp">
-      <Filter>Source Files\GUI\ImGUI</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\include\ImGUI\imgui_tables.cpp">
-      <Filter>Source Files\GUI\ImGUI</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\BoundingVolumes\AABB.cpp">
-      <Filter>Source Files\Picking</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\BVHNode.cpp">
-      <Filter>Source Files\Picking</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\GLBuffers\EBO.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\glad.c">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Objects\Mesh\Mesh.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Objects\Object.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Objects\ObjectManager.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Utilities\Ray.cpp">
-      <Filter>Source Files\Picking</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\Shader.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\ShadingNodes\Texture\Texture.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\GLBuffers\VAO.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\GLBuffers\VBO.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Utilities\stb.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Core\Window.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Core\Renderer.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Core\Scene.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Objects\BasicObjects.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\ShaderManager.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\ObjectModeBVH.cpp">
-      <Filter>Source Files\Picking</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\BoundingVolumes\DrawableAABB.cpp">
-      <Filter>Source Files\Picking</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Core\CameraManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\include\ImGUIZMO\GraphEditor.cpp">
-      <Filter>Source Files\GUI\ImGUIZMO</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\include\ImGUIZMO\ImCurveEdit.cpp">
-      <Filter>Source Files\GUI\ImGUIZMO</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\include\ImGUIZMO\ImGradient.cpp">
-      <Filter>Source Files\GUI\ImGUIZMO</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\include\ImGUIZMO\ImGuizmo.cpp">
-      <Filter>Source Files\GUI\ImGUIZMO</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\VertexBVH.cpp">
-      <Filter>Source Files\Picking</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Core\MyGUI.cpp">
-      <Filter>Source Files\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Core\Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Core\WindowManager.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\EdgeBVH.cpp">
-      <Filter>Source Files\Picking</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\FaceBVH.cpp">
-      <Filter>Source Files\Picking</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\FaceBVHNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\EdgeBVHNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Objects\Mesh\DEdge.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Objects\Mesh\DVertex.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Objects\Mesh\DFace.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Utilities\GeometryUtils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\UVVertexBVH.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\include\ImGUI\imnodes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\include\ImGUI\ImGuiFileDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\ShadingNodes\ShadingNodesManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\MaterialManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\Material.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\ShadingNodes\Output\ColorOutputNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\ShadingNodes\Output\AmbientOcclusionOutputNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\ShadingNodes\Output\MetallicOutputNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\ShadingNodes\Output\RoughnessOutputNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\ShadingNodes\Output\NormalOutputNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Objects\Lights\PointLight.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Objects\Lights\DirectionalLight.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Objects\Lights\SpotLight.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Objects\Mesh\DLoop.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\ShadingNodes\Input\ValueNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\ShadingNodes\Color\ColorBurnNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\ShadingNodes\Color\ColorMixNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\ShadingNodes\Input\ColorNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\ShadingNodes\Math\MathNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Materials\ShadingNodes\Texture\TextureNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\RaytracingBVH.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\RaytracingBVHNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\Improved\EdgeBVHImproved.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\Improved\FaceBVHImproved.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\Improved\ObjectModeBVHImproved.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\Improved\UVVertexBVHImproved.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\AccelerationStructures\Improved\VertexBVHImproved.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Utilities\Loader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Utilities\FragColor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Utilities\FileSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\shaders\basic.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="src\shaders\basic.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="src\shaders\UV.vert" />
-    <None Include="src\shaders\UV.frag" />
-    <None Include="src\shaders\pbr.geom" />
-    <None Include="src\shaders\pbr.vert" />
-    <None Include="src\shaders\grid.vert" />
-    <None Include="src\shaders\grid.frag" />
-    <None Include="src\shaders\computeTest.vert" />
-    <None Include="src\shaders\computeTest.frag" />
-    <None Include="src\shaders\quad.vert" />
-    <None Include="src\shaders\quad.frag" />
-    <None Include="src\shaders\computeOutput.vert" />
-    <None Include="src\shaders\computeOutput.frag" />
-    <None Include="src\shaders\BVH.vert" />
-    <None Include="src\shaders\BVH.frag" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\Core\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GLBuffers\EBO.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\Shader.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\ShadingNodes\Texture\Texture.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GLBuffers\VAO.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GLBuffers\VBO.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\BoundingVolumes\AABB.h">
-      <Filter>Header Files\Picking</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Utilities\Ray.h">
-      <Filter>Header Files\Picking</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\BVHNode.h">
-      <Filter>Header Files\Picking</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Objects\Object.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Objects\ObjectManager.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Core\Renderer.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Core\Window.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Core\Scene.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Objects\BasicObjects.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\ShaderManager.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\ObjectModeBVH.h">
-      <Filter>Header Files\Picking</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\BoundingVolumes\DrawableAABB.h">
-      <Filter>Header Files\Picking</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Core\CameraManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUIZMO\ImCurveEdit.h">
-      <Filter>Header Files\GUI\ImGUIZMO</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUIZMO\ImGradient.h">
-      <Filter>Header Files\GUI\ImGUIZMO</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUIZMO\ImGuizmo.h">
-      <Filter>Header Files\GUI\ImGUIZMO</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUIZMO\ImZoomSlider.h">
-      <Filter>Header Files\GUI\ImGUIZMO</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUIZMO\GraphEditor.h">
-      <Filter>Header Files\GUI\ImGUIZMO</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUI\imconfig.h">
-      <Filter>Header Files\GUI\ImGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUI\imgui.h">
-      <Filter>Header Files\GUI\ImGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUI\imgui_impl_glfw.h">
-      <Filter>Header Files\GUI\ImGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUI\imgui_impl_opengl3.h">
-      <Filter>Header Files\GUI\ImGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUI\imgui_impl_opengl3_loader.h">
-      <Filter>Header Files\GUI\ImGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUI\imgui_internal.h">
-      <Filter>Header Files\GUI\ImGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUI\imstb_rectpack.h">
-      <Filter>Header Files\GUI\ImGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUI\imstb_textedit.h">
-      <Filter>Header Files\GUI\ImGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUI\imstb_truetype.h">
-      <Filter>Header Files\GUI\ImGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\VertexBVH.h">
-      <Filter>Header Files\Picking</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Core\Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Core\MyGUI.h">
-      <Filter>Header Files\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Core\WindowManager.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\EdgeBVH.h">
-      <Filter>Header Files\Picking</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\FaceBVH.h">
-      <Filter>Header Files\Picking</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\FaceBVHNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\EdgeBVHNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Objects\Mesh\DDiskLink.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Objects\Mesh\DLoop.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Objects\Mesh\DVertex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Objects\Mesh\DEdge.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Objects\Mesh\DFace.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Utilities\UnorderedPair.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Utilities\PairHash.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Utilities\GeometryUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Objects\Mesh\UVVertex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\UVVertexBVH.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUI\imnodes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUI\imnodes_internal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUI\ImGuiFileDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\ImGUI\ImGuiFileDialogConfig.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\stb\stb_image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\stb\stb_image_resize2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\ShadingNodes\ShadingNodes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\ShadingNodes\Texture\TextureNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\ShadingNodes\Math\MathNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\ShadingNodes\ShadingNodesManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\Material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\ShaderBuilder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Objects\Mesh\GPUVertex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\MaterialManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\ShadingNodes\Input\ValueNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\ShadingNodes\Output\ColorOutputNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\ShadingNodes\Output\NormalOutputNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\ShadingNodes\Output\MetallicOutputNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\ShadingNodes\Output\RoughnessOutputNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\ShadingNodes\Output\AmbientOcclusionOutputNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\ShadingNodes\Input\ColorNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Objects\Lights\Light.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Objects\Lights\PointLight.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Objects\Lights\DirectionalLight.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Objects\Lights\SpotLight.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\ShadingNodes\Color\ColorBurnNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="libraries\include\stb\stb_image_write.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Materials\ShadingNodes\Color\ColorMixNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Utilities\Enums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Utilities\Aliases.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Objects\Mesh\Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\RaytracingBVH.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Utilities\Triangle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\RaytracingBVHNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\Improved\BVHBuilder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\Improved\EdgeBVHImproved.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\Improved\FaceBVHImproved.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\Improved\ObjectModeBVHImproved.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\Improved\ParallelBVHBuilder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\Improved\UVVertexBVHImproved.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AccelerationStructures\Improved\VertexBVHImproved.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Utilities\Loader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Program Files\RenderDoc\renderdoc_app.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Utilities\RenderDocIntegration.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Utilities\FragColor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Utilities\FileSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="assets\planksSpec.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="assets\planks.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="assets\nx.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\ny.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\nz.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\px.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\py.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\pz.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\nz1.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\ny1.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\nx1.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\px1.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\py1.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\pz1.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="src\shaders\computeTest.comp" />
-    <Text Include="libraries\include\json\json.h">
-      <Filter>Header Files</Filter>
-    </Text>
+    <ClInclude Include="include\AccelerationStructures\BoundingVolumes\AABB.h" />
+    <ClInclude Include="include\AccelerationStructures\BoundingVolumes\DrawableAABB.h" />
+    <ClInclude Include="include\AccelerationStructures\Improved\BVHBuilder.h" />
+    <ClInclude Include="include\AccelerationStructures\Improved\EdgeBVHImproved.h" />
+    <ClInclude Include="include\AccelerationStructures\Improved\FaceBVHImproved.h" />
+    <ClInclude Include="include\AccelerationStructures\Improved\ObjectModeBVHImproved.h" />
+    <ClInclude Include="include\AccelerationStructures\Improved\ParallelBVHBuilder.h" />
+    <ClInclude Include="include\AccelerationStructures\Improved\SimdBVHBuilder.h" />
+    <ClInclude Include="include\AccelerationStructures\Improved\SimdParallelBVHBuilder.h" />
+    <ClInclude Include="include\AccelerationStructures\Improved\UVVertexBVHImproved.h" />
+    <ClInclude Include="include\AccelerationStructures\Improved\VertexBVHImproved.h" />
+    <ClInclude Include="include\AccelerationStructures\BVHNode.h" />
+    <ClInclude Include="include\AccelerationStructures\EdgeBVH.h" />
+    <ClInclude Include="include\AccelerationStructures\EdgeBVHNode.h" />
+    <ClInclude Include="include\AccelerationStructures\FaceBVH.h" />
+    <ClInclude Include="include\AccelerationStructures\FaceBVHNode.h" />
+    <ClInclude Include="include\AccelerationStructures\ObjectModeBVH.h" />
+    <ClInclude Include="include\AccelerationStructures\RaytracingBVH.h" />
+    <ClInclude Include="include\AccelerationStructures\RaytracingBVHNode.h" />
+    <ClInclude Include="include\AccelerationStructures\UVVertexBVH.h" />
+    <ClInclude Include="include\AccelerationStructures\VertexBVH.h" />
+    <ClInclude Include="include\Core\Application.h" />
+    <ClInclude Include="include\Core\Camera.h" />
+    <ClInclude Include="include\Core\CameraManager.h" />
+    <ClInclude Include="include\Core\MyGUI.h" />
+    <ClInclude Include="include\Core\Renderer.h" />
+    <ClInclude Include="include\Core\Scene.h" />
+    <ClInclude Include="include\Core\Viewport.h" />
+    <ClInclude Include="include\Core\Window.h" />
+    <ClInclude Include="include\Core\WindowManager.h" />
+    <ClInclude Include="include\GLBuffers\EBO.h" />
+    <ClInclude Include="include\GLBuffers\VAO.h" />
+    <ClInclude Include="include\GLBuffers\VBO.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Color\ColorBurnNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Color\ColorMixNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Input\ColorNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Input\ValueNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Math\MathNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Output\AmbientOcclusionOutputNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Output\ColorOutputNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Output\MetallicOutputNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Output\NormalOutputNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Output\RoughnessOutputNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Texture\Texture.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\Texture\TextureNode.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\ShadingNodes.h" />
+    <ClInclude Include="include\Materials\ShadingNodes\ShadingNodesManager.h" />
+    <ClInclude Include="include\Materials\Material.h" />
+    <ClInclude Include="include\Materials\MaterialManager.h" />
+    <ClInclude Include="include\Materials\Shader.h" />
+    <ClInclude Include="include\Materials\ShaderBuilder.h" />
+    <ClInclude Include="include\Materials\ShaderManager.h" />
+    <ClInclude Include="include\Objects\Lights\DirectionalLight.h" />
+    <ClInclude Include="include\Objects\Lights\Light.h" />
+    <ClInclude Include="include\Objects\Lights\PointLight.h" />
+    <ClInclude Include="include\Objects\Lights\SpotLight.h" />
+    <ClInclude Include="include\Objects\Mesh\DDiskLink.h" />
+    <ClInclude Include="include\Objects\Mesh\DEdge.h" />
+    <ClInclude Include="include\Objects\Mesh\DFace.h" />
+    <ClInclude Include="include\Objects\Mesh\DLoop.h" />
+    <ClInclude Include="include\Objects\Mesh\DVertex.h" />
+    <ClInclude Include="include\Objects\Mesh\GPUVertex.h" />
+    <ClInclude Include="include\Objects\Mesh\Mesh.h" />
+    <ClInclude Include="include\Objects\Mesh\UVVertex.h" />
+    <ClInclude Include="include\Objects\BasicObjects.h" />
+    <ClInclude Include="include\Objects\Object.h" />
+    <ClInclude Include="include\Objects\ObjectManager.h" />
+    <ClInclude Include="include\Utilities\Aliases.h" />
+    <ClInclude Include="include\Utilities\Enums.h" />
+    <ClInclude Include="include\Utilities\FileSystem.h" />
+    <ClInclude Include="include\Utilities\FragColor.h" />
+    <ClInclude Include="include\Utilities\GeometryUtils.h" />
+    <ClInclude Include="include\Utilities\Loader.h" />
+    <ClInclude Include="include\Utilities\PairHash.h" />
+    <ClInclude Include="include\Utilities\Ray.h" />
+    <ClInclude Include="include\Utilities\RenderDocIntegration.h" />
+    <ClInclude Include="include\Utilities\Triangle.h" />
+    <ClInclude Include="include\Utilities\UnorderedPair.h" />
   </ItemGroup>
 </Project>

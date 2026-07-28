@@ -1,0 +1,3 @@
+C:/Users/adnan/Desktop/Dardaneli/CMakeFiles/Dardaneli.dir
+C:/Users/adnan/Desktop/Dardaneli/CMakeFiles/ALL_BUILD.dir
+C:/Users/adnan/Desktop/Dardaneli/CMakeFiles/ZERO_CHECK.dir

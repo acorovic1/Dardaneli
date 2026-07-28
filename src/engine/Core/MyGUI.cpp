@@ -46,9 +46,20 @@
 #include <Improved/VertexBVHImproved.h>
 #include <Improved/FaceBVHImproved.h>
 
+#include "Viewport.h"
 
 
 
+// gui data
+float MyGUI::position[3] = { 0.0f, 0.0f, 0.0f };
+float MyGUI::rotation[3] = { 0.0f, 0.0f, 0.0f };
+float MyGUI::scale[3] = { 1.0f, 1.0f, 1.0f };
+
+ImGuizmo::OPERATION MyGUI::operation = ImGuizmo::OPERATION::TRANSLATE;
+
+// used for gizmo operations
+glm::mat4 MyGUI::transform = glm::mat4(1.0f);
+glm::mat4 MyGUI::previousTransform = glm::mat4(1.0f);
 
 
 
@@ -92,7 +103,7 @@ void MyGUI::shutdown()
 
 
 
-void MyGUI::drawUI()
+void MyGUI::drawUI(Viewport* viewport)
 {
 	ImGui::Begin("Dardaneli - ImGUI");
 
@@ -114,10 +125,12 @@ void MyGUI::drawUI()
 		importObject();
 
 
-	Mode pastMode = app->mode;
-	modes();
+	Mode pastMode = viewport->getMode();
+
+	modes(viewport);
 	ImGui::SameLine();
-	Mode currentMode = app->mode;
+
+	Mode& currentMode = viewport->getMode();
 
 
 	if (ImGui::Button("Render Scene"))
@@ -139,13 +152,13 @@ void MyGUI::drawUI()
 		ImGui::EndPopup();
 	}
 
-
-	int current = static_cast<int>(app->renderMode);
+	RenderMode& renderMode = viewport->getRenderMode();
+	int current = (size_t)renderMode;
 	ImGui::SameLine();
-	if (ImGui::RadioButton("Wireframe", &current, 0)) app->renderMode = RenderMode::WIREFRAME; ImGui::SameLine();
-	if (ImGui::RadioButton("Solid", &current, 1)) app->renderMode = RenderMode::SOLID; ImGui::SameLine();
-	if (ImGui::RadioButton("Material Preview", &current, 2)) app->renderMode = RenderMode::MATERIAL_PREVIEW; ImGui::SameLine();
-	if (ImGui::RadioButton("Render", &current, 3)) app->renderMode = RenderMode::RENDER; ImGui::SameLine();
+	if (ImGui::RadioButton("Wireframe", &current, 0)) renderMode = RenderMode::WIREFRAME; ImGui::SameLine();
+	if (ImGui::RadioButton("Solid", &current, 1)) renderMode = RenderMode::SOLID; ImGui::SameLine();
+	if (ImGui::RadioButton("Material Preview", &current, 2))renderMode = RenderMode::MATERIAL_PREVIEW; ImGui::SameLine();
+	if (ImGui::RadioButton("Render", &current, 3)) renderMode = RenderMode::RENDER; ImGui::SameLine();
 
 
 	ImGui::End();
@@ -153,33 +166,15 @@ void MyGUI::drawUI()
 
 	ImGui::Begin("Tools");
 
-	if (currentMode == Mode::OBJECT)drawObjectModeUI(pastMode != currentMode);
-	else if (currentMode == Mode::EDIT)drawEditModeUI(pastMode != currentMode);
-	else if (currentMode == Mode::UV_EDIT)drawUVModeUI(pastMode != currentMode);
-	else if (currentMode == Mode::SHADER_EDIT)drawShaderEditorUI(pastMode != currentMode);
+	if (currentMode == Mode::OBJECT)drawObjectModeUI(viewport, pastMode != currentMode);
+	else if (currentMode == Mode::EDIT)drawEditModeUI(viewport, pastMode != currentMode);
+	else if (currentMode == Mode::UV_EDIT)drawUVModeUI(viewport, pastMode != currentMode);
+	else if (currentMode == Mode::SHADER_EDIT)drawShaderEditorUI(viewport, pastMode != currentMode);
 
 
-	//if (ImGui::Button("Build Raytracing BVH"))
-	//{
-	//	RaytracingBVHSingleton->Build();
-	//	//std::vector<TriangleMaterial>& triangleMaterialData = RaytracingBVHSingleton->getTriangleMaterialData();
-	//	//glBindBuffer(GL_SHADER_STORAGE_BUFFER, RaytracingBVHSingleton->getMatBuffer());
-
-	//	//glBufferData(
-	//	//	GL_SHADER_STORAGE_BUFFER,
-	//	//	triangleMaterialData.size() * sizeof(TriangleMaterial),
-	//	//	triangleMaterialData.data(),
-	//	//	GL_DYNAMIC_DRAW
-	//	//);
-
-	//	//std::cout << "\nMaterial buffer updated with " << triangleMaterialData.size() << " materials.";
-
-	//}
 
 	ImGui::End();
 
-	if (app->mode == Mode::EDIT)
-		dMesh();
 
 
 
@@ -188,7 +183,7 @@ void MyGUI::drawUI()
 
 }
 
-void MyGUI::drawObjectModeUI(bool change)
+void MyGUI::drawObjectModeUI(Viewport* viewport, bool change)
 {
 
 	static int choice = 0;
@@ -208,6 +203,18 @@ void MyGUI::drawObjectModeUI(bool change)
 
 	if (showAddMenuFlag)
 		addMenu();
+
+	if (showViewportActions)
+		viewportActionsMenu();
+
+	if (viewportAdjust)
+	{
+		Window* window = getWindow();
+		Viewport* viewport = window->getViewportAtCursor();
+		viewport->resize(window, viewportAdjustBoundary);
+
+
+	}
 
 	if (choice == 1)
 	{
@@ -237,21 +244,11 @@ void MyGUI::drawObjectModeUI(bool change)
 
 }
 
-void MyGUI::drawEditModeUI(bool change)
+void MyGUI::drawEditModeUI(Viewport* viewport, bool change)
 {
 	Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getActiveObject());
-	//if (change)
-	//{
-	//	double time = glfwGetTime();
 
-	//	VertexBVHImprovedSingleton->BuildBottomUp(*mesh);
-	//	//EdgeBVHImprovedSingleton->BuildBottomUp(*mesh);
-	//	//FaceBVHImprovedSingleton->BuildBottomUp(*mesh);
-
-	//	std::cout << "All 3 BVHs built in " << glfwGetTime() - time << " seconds";
-
-	//}
-
+	SelectMode& selectMode = viewport->getSelectMode();
 
 
 	static int choice = 0;
@@ -272,11 +269,11 @@ void MyGUI::drawEditModeUI(bool change)
 		//else if (app->selectMode == SelectMode::FACE)
 		//	FaceBVHSingleton->DrawLeaves(FaceBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
 
-		if (app->selectMode == SelectMode::VERTEX)
+		if (selectMode == SelectMode::VERTEX)
 			VertexBVHImprovedSingleton->Draw(*cameraSingleton->getCamera(0), bvh, eBVHSubd);
-		else if (app->selectMode == SelectMode::EDGE)
+		else if (selectMode == SelectMode::EDGE)
 			EdgeBVHImprovedSingleton->Draw(*cameraSingleton->getCamera(0), bvh, eBVHSubd);
-		else if (app->selectMode == SelectMode::FACE)
+		else if (selectMode == SelectMode::FACE)
 			FaceBVHImprovedSingleton->Draw(*cameraSingleton->getCamera(0), bvh, eBVHSubd);
 
 		//basic.setBool(true, "BVH", false);
@@ -300,9 +297,9 @@ void MyGUI::drawEditModeUI(bool change)
 
 	ImGui::InputInt("BVH Height", &eBVHSubd);
 	int height;
-	if (app->selectMode == SelectMode::VERTEX)
+	if (selectMode == SelectMode::VERTEX)
 		height = log(mesh->getNumberOfVertices()) / log(2);
-	else if (app->selectMode == SelectMode::EDGE)
+	else if (selectMode == SelectMode::EDGE)
 		height = log(mesh->getNumberOfEdges()) / log(2);
 	else
 		height = log(mesh->getNumberOfFaces()) / log(2);
@@ -339,15 +336,15 @@ void MyGUI::drawEditModeUI(bool change)
 		mesh->mergeUVs();
 	}
 
-	int e = (int)app->selectMode;
+	int e = (int)selectMode;
 
 	ImGui::RadioButton("DVertex select", &e, 0); ImGui::SameLine();
 	ImGui::RadioButton("Edge select", &e, 1); ImGui::SameLine();
 	ImGui::RadioButton("DFace select", &e, 2);
 
-	if (e == 0)app->selectMode = SelectMode::VERTEX;
-	else if (e == 1)app->selectMode = SelectMode::EDGE;
-	else if (e == 2)app->selectMode = SelectMode::FACE;
+	if (e == 0)selectMode = SelectMode::VERTEX;
+	else if (e == 1)selectMode = SelectMode::EDGE;
+	else if (e == 2)selectMode = SelectMode::FACE;
 
 
 	std::vector<int>& vertexIndicesTemp = mesh->getSelectedVertices();
@@ -364,12 +361,12 @@ void MyGUI::drawEditModeUI(bool change)
 
 
 	vertexTransform();
-
+	dMesh();
 
 
 }
 
-void MyGUI::drawUVModeUI(bool change)
+void MyGUI::drawUVModeUI(Viewport* viewport, bool change)
 {
 	ImGui::Checkbox("BVHTree", &BVHTree);
 
@@ -385,7 +382,7 @@ void MyGUI::drawUVModeUI(bool change)
 
 }
 
-void MyGUI::drawShaderEditorUI(bool change)
+void MyGUI::drawShaderEditorUI(Viewport* viewport, bool change)
 {
 	if (showAddMenuFlag) addShadingNodes();
 
@@ -486,7 +483,9 @@ void MyGUI::drawShaderEditorUI(bool change)
 void MyGUI::showAddMenu() { showAddMenuFlag = true; }
 void MyGUI::showDeleteMenu() { showDeleteMenuFlag = true; }
 void MyGUI::showExtrudeMenu() { showExtrudeMenuFlag = true; }
-void MyGUI::showInsetMenu() { showInsetMenuFlag = true; }
+void MyGUI::showViewportActionsMenu() { showViewportActions = true; }
+
+
 
 void MyGUI::addMenu() {
 	hoverTime = glfwGetTime();
@@ -615,7 +614,7 @@ void MyGUI::addMenu() {
 			glfwSetTime(0);
 			hoverTime = 0;
 
-			getWindow()->getKeys()[GLFW_KEY_Q] = 0;
+			//getWindow()->getViewportAtCursor()->getKeys()[GLFW_KEY_Q] = 0;
 			//std::cout << "HEHEHAHA ";
 			showAddMenuFlag = false;
 			ImGui::CloseCurrentPopup();
@@ -676,7 +675,7 @@ void MyGUI::deleteMenu()
 			glfwSetTime(0);
 			hoverTime = 0;
 
-			getWindow()->getKeys()[GLFW_KEY_X] = 0;
+			getWindow()->getViewportAtCursor()->getKeys()[GLFW_KEY_X] = 0;
 			//std::cout << "HEHEHAHA ";
 			showDeleteMenuFlag = false;
 			ImGui::CloseCurrentPopup();
@@ -738,7 +737,7 @@ void MyGUI::extrudeMenu()
 			glfwSetTime(0);
 			hoverTime = 0;
 
-			getWindow()->getKeys()[GLFW_KEY_E] = 0;
+			getWindow()->getViewportAtCursor()->getKeys()[GLFW_KEY_E] = 0;
 			showExtrudeMenuFlag = false;
 			ImGui::CloseCurrentPopup();
 		}
@@ -747,6 +746,167 @@ void MyGUI::extrudeMenu()
 	}
 
 
+}
+void MyGUI::viewportActionsMenu()
+{
+	hoverTime = glfwGetTime();
+
+	Window* window = getWindow();
+	ImGui::OpenPopup("Viewport popup");
+	//std::cout << "\n3\n";
+
+	if (ImGui::BeginPopup("Viewport popup"))
+	{
+		ImVec2 pos = ImGui::GetWindowPos();
+		ImGui::SeparatorText("Viewport");
+
+
+		if (ImGui::BeginMenu("Split"))
+		{
+
+
+			if (ImGui::MenuItem("Horizontal"))
+				window->addViewport(window->getViewportAtCursor(pos.x, pos.y), pos.x, pos.y, false);
+			
+
+			if (ImGui::MenuItem("Vertical"))
+				window->addViewport(window->getViewportAtCursor(pos.x, pos.y), pos.x, pos.y, true);
+			ImGui::EndMenu();
+		}
+
+		ImGui::Separator();
+
+		if (ImGui::BeginMenu("Join"))
+		{
+			if (ImGui::MenuItem("Left"))
+				window->getViewportAtCursor(pos.x, pos.y)->joinViewport(window, ViewportBoundary::LEFT);
+
+			if (ImGui::MenuItem("Right"))
+				window->getViewportAtCursor(pos.x, pos.y)->joinViewport(window, ViewportBoundary::RIGHT);
+
+			if (ImGui::MenuItem("Top"))
+				window->getViewportAtCursor(pos.x, pos.y)->joinViewport(window, ViewportBoundary::TOP);
+
+			if (ImGui::MenuItem("Bottom"))
+				window->getViewportAtCursor(pos.x, pos.y)->joinViewport(window, ViewportBoundary::BOTTOM);
+
+			ImGui::EndMenu();
+		}
+
+		ImGui::Separator();
+
+		if (ImGui::BeginMenu("Adjust"))
+		{
+			if (ImGui::MenuItem("Left"))
+			{
+				viewportAdjustBoundary = ViewportBoundary::LEFT;
+				viewportAdjust = true;
+			}
+
+			if (ImGui::MenuItem("Bottom"))
+			{
+				viewportAdjustBoundary = ViewportBoundary::BOTTOM;
+				viewportAdjust = true;
+			}
+
+			if (ImGui::MenuItem("Right"))
+			{
+				viewportAdjustBoundary = ViewportBoundary::RIGHT;
+				viewportAdjust = true;
+			}
+
+
+			if (ImGui::MenuItem("Top"))
+			{
+				viewportAdjustBoundary = ViewportBoundary::TOP;
+				viewportAdjust = true;
+			}
+
+
+
+
+
+			ImGui::EndMenu();
+		}
+
+		ImGui::Separator();
+
+		if (ImGui::BeginMenu("Preset"))
+		{
+			if (ImGui::MenuItem("1x1"))
+			{
+				auto& vps = window->getViewports();
+				vps.clear();
+
+				vps.push_back(std::make_unique<Viewport>(0.0, 0.0, 1.0, 1.0, window->getGLFWwindow()));
+
+			}
+
+
+			if (ImGui::MenuItem("2x1"))
+			{
+				auto& vps = window->getViewports();
+				vps.clear();
+
+				vps.push_back(std::make_unique<Viewport>(0.0, 0.0, 1.0, 0.5, window->getGLFWwindow()));
+				vps.push_back(std::make_unique<Viewport>(0.0, 0.5, 1.0, 1.0, window->getGLFWwindow()));
+			}
+
+
+			if (ImGui::MenuItem("1x2"))
+			{
+				auto& vps = window->getViewports();
+				vps.clear();
+
+
+				vps.push_back(std::make_unique<Viewport>(0.0, 0.0, 0.5, 1.0, window->getGLFWwindow()));
+				vps.push_back(std::make_unique<Viewport>(0.5, 0.0, 1.0, 1.0, window->getGLFWwindow()));
+			}
+
+			if (ImGui::MenuItem("2x2"))
+			{
+				auto& vps = window->getViewports();
+				vps.clear();
+
+
+				vps.push_back(std::make_unique<Viewport>(0.0, 0.0, 0.5, 0.5, window->getGLFWwindow()));
+				vps.push_back(std::make_unique<Viewport>(0.5, 0.0, 1.0, 0.5, window->getGLFWwindow()));
+				vps.push_back(std::make_unique<Viewport>(0.0, 0.5, 0.5, 1.0, window->getGLFWwindow()));
+				vps.push_back(std::make_unique<Viewport>(0.5, 0.5, 1.0, 1.0, window->getGLFWwindow()));
+			}
+
+
+
+
+			ImGui::EndMenu();
+		}
+
+
+
+
+		if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) && !ImGui::IsAnyItemHovered() && hoverTime > 1.4)
+		{
+			glfwSetTime(0);
+			hoverTime = 0;
+
+			//getWindow()->getViewportAtCursor()->getKeys()[GLFW_KEY_Q] = 0;
+			//std::cout << "HEHEHAHA ";
+			showViewportActions = false;
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+}
+
+bool MyGUI::isViewportAdjusted()
+{
+	return viewportAdjust;
+}
+
+void MyGUI::stopViewportAdjustment()
+{
+	viewportAdjust = false;
 }
 
 
@@ -764,7 +924,7 @@ void MyGUI::drawBVH() {
 
 void MyGUI::BVHRayInteraction()
 {
-	static Shader& bvh = shaderSingleton->getShader("BVH");
+	/*static Shader& bvh = shaderSingleton->getShader("BVH");
 	bvh.setVector4f(false, "color", FragColor::BVH);
 
 
@@ -778,7 +938,7 @@ void MyGUI::BVHRayInteraction()
 
 		VertexBVHImprovedSingleton->DrawRayInteraction(VertexBVHImprovedSingleton->getRoot(), camera.createRay(glfwWindow), camera, bvh);
 
-	}
+	}*/
 
 
 }
@@ -788,7 +948,9 @@ void MyGUI::gizmos()
 {
 	if (!app->selectedObjects.size())return;
 
-	Camera* camera = getWindow()->getCamera();
+	Viewport* viewport = getWindow()->getViewportAtCursor();
+	if (!viewport)return;
+	Camera* camera = viewport->getActiveCamera();
 
 	ImGuizmo::SetOrthographic(false);
 
@@ -853,7 +1015,7 @@ void MyGUI::gizmos()
 					transform[1][1] / previousTransform[1][1],
 					transform[2][2] / previousTransform[2][2]);
 		}
-		
+
 		objectBVHImprovedSingleton->Refit();
 
 	}
@@ -870,9 +1032,9 @@ void MyGUI::vertexTransform()
 	std::vector<int>& selectedVertices = static_cast<Mesh*>(activeObject)->getSelectedVertices();
 	if (selectedVertices.size() == 0)return;
 
-	 position[0] = vertices[selectedVertices.back()]->position.x;
-	 position[1] = vertices[selectedVertices.back()]->position.y;
-	 position[2] = vertices[selectedVertices.back()]->position.z;
+	position[0] = vertices[selectedVertices.back()]->position.x;
+	position[1] = vertices[selectedVertices.back()]->position.y;
+	position[2] = vertices[selectedVertices.back()]->position.z;
 
 	ImGui::InputFloat3("DVertex position", position);
 	if (ImGui::IsItemDeactivatedAfterEdit())
@@ -934,13 +1096,13 @@ void MyGUI::selectObject()
 	const glm::vec3& rotationVec = objectSingleton->getObject(selectedObjectIndex)->getRotationVec();
 	const glm::vec3& scaleVec = objectSingleton->getObject(selectedObjectIndex)->getScale();
 
-	position[0]  = positionVec.x;
-	position[1]  = positionVec.y;
-	position[2]  = positionVec.z;
+	position[0] = positionVec.x;
+	position[1] = positionVec.y;
+	position[2] = positionVec.z;
 
-	scale[0]  = scaleVec.x;
-	scale[1]  = scaleVec.y;
-	scale[2]  = scaleVec.z;
+	scale[0] = scaleVec.x;
+	scale[1] = scaleVec.y;
+	scale[2] = scaleVec.z;
 
 	rotation[0] = rotationVec.x;
 	rotation[1] = rotationVec.y;
@@ -1032,7 +1194,7 @@ void MyGUI::initializeGrid2D(int width)
 
 
 }
-void MyGUI::drawGrid3D()
+void MyGUI::drawGrid3D(Viewport* viewport)
 {
 	static auto& shader = shaderSingleton->getShader("Grid");
 	shader.activate();
@@ -1044,12 +1206,12 @@ void MyGUI::drawGrid3D()
 
 
 
-	getWindow()->getCamera()->cameraUniform(true, shader, "cameraMatrix");
+	viewport->getActiveCamera()->cameraUniform(true, shader, "cameraMatrix");
 
 
 	glDrawElements(GL_LINES, gridIndices3D.size(), GL_UNSIGNED_INT, 0);
 }
-void MyGUI::drawGrid2D()
+void MyGUI::drawGrid2D(Viewport* viewport)
 {
 	static auto& shader = shaderSingleton->getShader("Grid");
 	shader.activate();
@@ -1060,18 +1222,19 @@ void MyGUI::drawGrid2D()
 	shader.setBool(true, "DDD", false);
 
 
-	getWindow()->getCamera()->cameraUniform(true, shader, "cameraMatrix");
+	viewport->getActiveCamera()->cameraUniform(true, shader, "cameraMatrix");
 
 
 	glDrawElements(GL_LINES, gridIndices2D.size(), GL_UNSIGNED_INT, 0);
 }
 
-void MyGUI::modes()
+void MyGUI::modes(Viewport* viewport)
 {
 	static const char* modes[] = { "Object mode","Edit mode","Sculpt mode","Weight paint","Texture paint ","UV Editor","Shader Editor" };
 
+	Mode& mode = viewport->getMode();
 
-	if (ImGui::Button(modes[int(app->mode)]))
+	if (ImGui::Button(modes[int(mode)]))
 		ImGui::OpenPopup("Modes");
 
 	if (ImGui::BeginPopup("Modes"))
@@ -1083,17 +1246,17 @@ void MyGUI::modes()
 			else
 				if (ImGui::Selectable(modes[i]))
 				{
-					Mode prev = app->mode;
+					Mode prev = mode;
 
-					app->mode = Mode(i);
+					mode = Mode(i);
 
-					if (app->mode == Mode::OBJECT && prev == Mode::EDIT)
+					if (mode == Mode::OBJECT && prev == Mode::EDIT)
 					{
 						objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 						std::cout << "\n\n OBJECT BVH BUILT ...";
 
 					}
-					else if (app->mode == Mode::EDIT && prev == Mode::OBJECT)
+					else if (mode == Mode::EDIT && prev == Mode::OBJECT)
 					{
 						Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getActiveObject());
 						double time = glfwGetTime();
@@ -1105,13 +1268,12 @@ void MyGUI::modes()
 						std::cout << "All 3 BVHs built in " << glfwGetTime() - time << " seconds";
 					}
 
-
-					if (app->mode == Mode::UV_EDIT)
-						getWindow()->setCamera(cameraSingleton->getCamera("UV"));
-					else if (app->mode == Mode::SHADER_EDIT)
-						getWindow()->setCamera(cameraSingleton->getCamera("Shader"));
+					if (mode == Mode::UV_EDIT)
+						viewport->setActiveCamera(CameraTypes::UV);
+					else if (mode == Mode::SHADER_EDIT)
+						viewport->setActiveCamera(CameraTypes::SHADER);
 					else
-						getWindow()->setCamera(cameraSingleton->getCamera("Viewport"));
+						viewport->setActiveCamera(CameraTypes::VIEWPORT);
 				}
 		ImGui::EndPopup();
 	}
@@ -1668,7 +1830,7 @@ void MyGUI::addShadingNodes()
 		glfwSetTime(0);
 		hoverTime = 0;
 
-		getWindow()->getKeys()[GLFW_KEY_A] = 0;
+		getWindow()->getViewportAtCursor()->getKeys()[GLFW_KEY_A] = 0;
 
 		showAddMenuFlag = false;
 		ImGui::CloseCurrentPopup();
@@ -1702,7 +1864,7 @@ void MyGUI::pbrRender(const char* filename, int width, int height)
 		Mesh* mesh = dynamic_cast<Mesh*>(object);
 
 
-		mesh->renderDraw(*getWindow()->getCamera());
+		mesh->renderDraw(*getWindow()->getViewportAtCursor()->getActiveCamera());
 	}
 
 	glFinish();

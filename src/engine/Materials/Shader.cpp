@@ -39,7 +39,7 @@ Shader::Shader(std::string name, const char* computeFile)
 Shader::Shader(std::string name, const char* vertexFile, const char* fragmentFile)
 {
 	std::string projectDir = FileSystem::getProjectDir();
-	std::cout << "\n ExeDir = " << projectDir << "\n";
+	//std::cout << "\n ExeDir = " << projectDir << "\n";
 
 	std::string vertexPath = projectDir + "/src/shaders/" + vertexFile;
 	std::string fragmentPath = projectDir + "/src/shaders/" + fragmentFile;
@@ -235,7 +235,7 @@ void Shader::compileErrors(unsigned int shader, const char* type)
 	GLint hasCompiled;
 	// Character array to store error message in
 	char infoLog[1024];
-	if (type != "PROGRAM")
+	if (std::string(type) != "PROGRAM")
 	{
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &hasCompiled);
 		if (hasCompiled == GL_FALSE)

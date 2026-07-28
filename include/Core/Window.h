@@ -10,14 +10,15 @@
 #include "ObjectManager.h"
 #include "ObjectModeBVH.h"
 #include "MyGUI.h"
+#include "Viewport.h"
 
 // kada budem pravio vise window-a \\
 
 	// modove razdvojiti, shader editor i uv editor ne trebaju spadati medju modove, vec da imaju svoj EDITOR TYPE
 	// modovi trebaju biti object,edit,sculpt i slicno
-	
+
 	// varijable kao sto su renderMode iz Application-a prebaciti u Window (ili MyGUI)
-	
+
 
 
 // kada budem pravio vise window-a \\
@@ -25,23 +26,20 @@
 
 class Application;
 class Window {
-	/*GLFWwindow* window;*/
-	Camera* camera;
-	MyGUI* gui;
 
+	GLFWwindow* glfwWindow;
+	std::unique_ptr<MyGUI> gui;
 
 	std::string name;
 
 	int width, height;
 
+	std::vector<std::unique_ptr<Viewport>> viewports;
+
 	double posX = 0, posY = 0;
 	double previousX = 0, previousY = 0;
 	bool firstClick = true;
 
-	std::vector<int>keys = std::vector<int>(1024, 0);      // Holds current state (pressed or not)
-	std::vector<int>keysProcessed = std::vector<int>(1024, 0);    // Ensures action happens once per press
-	std::vector<int>mouseButtons = std::vector<int>(3, 0);
-	std::vector<int>mouseButtonsProcessed = std::vector<int>(3, 0);
 
 public:
 	Window(const char* title);
@@ -57,18 +55,13 @@ public:
 	void setCallbacks();
 
 
-	MyGUI& getGui() { return *gui; }
-	Camera* getCamera() { return camera; }
-	GLFWwindow* getGLFWwindow() { return gui->getGLFWwindow(); }
+	GLFWwindow* getGLFWwindow()const { return glfwWindow; }
+	MyGUI& getGui() const { return *gui.get(); }
+	std::vector<std::unique_ptr<Viewport>>& getViewports() { return viewports; }
 
-	std::string getName() { return name; };
-	int getWidth() { return width; };
-	int getHeight() { return height; };
-
-	std::vector<int>& getKeys() { return keys; }
-	std::vector<int>& getKeysProcessed() { return keysProcessed; }
-	std::vector<int>& getMouseButtons() { return mouseButtons; }
-	std::vector<int>& getMouseButtonsProcessed() { return mouseButtonsProcessed; }
+	std::string getName()const { return name; };
+	int getWidth() const { return width; };
+	int getHeight()const { return height; };
 
 	double& getPosX() { return posX; }
 	double& getPreviousX() { return previousX; }
@@ -76,10 +69,18 @@ public:
 	double& getPreviousY() { return previousY; }
 	bool& getFirstClick() { return firstClick; }
 
+	void addViewport(Viewport* baseViewport, double xPos, double yPos, bool vertical);
+	//Viewport* getViewportClosestToCursor();
 
-	void setCamera(Camera* cam);
+
+
 	void resizeWindow(int width, int height);
 	void splitWindow(int width, int height);
+
+
+	Viewport* getViewportAtCursor(double x=-1,double y=-1);
+	void deleteViewport(Viewport* viewport);
+	void deleteDegenerateViewports();
 
 
 };

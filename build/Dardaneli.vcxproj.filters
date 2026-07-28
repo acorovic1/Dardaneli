@@ -109,6 +109,9 @@
     <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\Viewport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Core\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -211,6 +214,12 @@
     <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Objects\ObjectManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Utilities\FileSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Utilities\FragColor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Utilities\GeometryUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -231,6 +240,8 @@
     <CustomBuild Include="C:\Users\adnan\Desktop\Dardaneli\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\BVH.frag" />
+    <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\BVH.vert" />
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\UV.frag" />
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\UV.vert" />
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\basic.frag" />

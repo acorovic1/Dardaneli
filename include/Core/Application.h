@@ -26,6 +26,7 @@
 
 class MyGUI;
 class Window;
+class Viewport;
 class Material;
 // cut off one head two more shall take its place
 class Application { 
@@ -34,28 +35,12 @@ class Application {
 
 	friend class MyGUI;
 
-	Mode mode = Mode::OBJECT;
-	SelectMode selectMode = SelectMode::VERTEX;
-
-	RenderMode renderMode = RenderMode::SOLID;
-
+	//Mode mode = Mode::OBJECT;
+	//SelectMode selectMode = SelectMode::VERTEX;
+	//RenderMode renderMode = RenderMode::SOLID;
 
 	std::vector<int> selectedObjects = std::vector<int>(1);
 
-
-
-
-
-
-
-	bool slide = false;
-	bool slideFirstClick=false;
-	double slideStartX=0, slideStartY=0;
-	std::vector< std::vector<glm::vec3>>slideLengths;
-	std::vector< std::vector<glm::vec3>> slideDirections;
-	std::vector< std::vector<glm::vec2>> slideUnProjectedDirections;
-	std::vector<glm::vec3> bestDirection;
-	std::vector<glm::vec3> startPositions;
 
 public:
 	Material* activeMaterial;
@@ -66,28 +51,18 @@ public:
 	void operator=(const Application& copy) = delete;
 
 
-	Mode getMode() { return mode; }
-	RenderMode getRenderMode() { return renderMode; }
 
-	void setSelectMode(SelectMode mode);
+	//void setSelectMode(SelectMode mode);
 
 	void updateGUI(glm::vec3 offset, MyGUI& gui, Operation op);
 
 	std::vector<int>& getSelectedObjects() { return selectedObjects; }
 
-
-
-	void objectMode(Window* window); //Inputs
-	void editMode(Window* window); //Inputs
-	void uVMode(Window* window); //Inputs
-	void materialEditor(Window* window); //Inputs
-	void inputs(Window* window); //Inputs
-
-	
-
-	void deleteObjects();
-
-
+	void objectMode(Window* window,Viewport* viewport); //Inputs
+	void editMode(Window* window,Viewport* viewport); //Inputs
+	void uVMode(Window* window,Viewport* viewport); //Inputs
+	void materialEditor(Window* window,Viewport* viewport); //Inputs
+	void inputs(Window* window,Viewport* viewport); //Inputs
 
 };
 

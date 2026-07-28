@@ -23,22 +23,22 @@ void Scene::init(Window& window)
 
 
 
-	new Camera(800, 600, glm::vec3(-2.0f, 3.0f, 5.0f), "Viewport");
-	new Camera(800, 600, glm::vec3(0.5f, 0.5f, 1.0f), "UV");
-	new Camera(800, 600, glm::vec3(0.0f, 0.0f, 6.0f), "Shader");
+	//new Camera(800, 600, glm::vec3(-2.0f, 3.0f, 5.0f), "Viewport");
+	//new Camera(800, 600, glm::vec3(0.5f, 0.5f, 1.0f), "UV");
+	//new Camera(800, 600, glm::vec3(0.0f, 0.0f, 6.0f), "Shader");
 
 
 
 
-	auto camera = cameraSingleton->getCamera("Viewport");
-	camera->setPerspectiveProjection(45, float(camera->getWidth()) / float(camera->getHeight()), 0.1f, 10000.0f);
+	//auto camera = cameraSingleton->getCamera("Viewport");
+	//camera->setPerspectiveProjection(45, float(camera->getWidth()) / float(camera->getHeight()), 0.1f, 10000.0f);
 
-	camera = cameraSingleton->getCamera("UV");
+	//camera = cameraSingleton->getCamera("UV");
 
-	camera->setOrientation(glm::vec3(0.0f, 0.0f, -1.0f)); // looking down the -Z axis
+	//camera->setOrientation(glm::vec3(0.0f, 0.0f, -1.0f)); // looking down the -Z axis
 
-	float aspect = float(window.getWidth()) / float(window.getHeight());
-	camera->setProjection(glm::ortho(aspect * -1.0f, aspect * 1.0f, -1.0f, 1.0f, -2000.0f, 300000.0f));
+	//float aspect = float(window.getWidth()) / float(window.getHeight());
+	//camera->setProjection(glm::ortho(aspect * -1.0f, aspect * 1.0f, -1.0f, 1.0f, -2000.0f, 300000.0f));
 
 
 

@@ -2,53 +2,48 @@
 #include "MyGUI.h"
 
 Window::Window(const char* title)
-	: name(title), camera(nullptr), gui(nullptr)
+	: name(title), glfwWindow(nullptr)
 {
 
 	glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
-	GLFWwindow* glfwWindow = glfwCreateWindow(1, 1, title, nullptr, nullptr);
+	glfwWindow = glfwCreateWindow(1, 1, title, nullptr, nullptr);
 	glfwMakeContextCurrent(glfwWindow);
 	gladLoadGL();
+
+
 
 	glfwSetWindowUserPointer(glfwWindow, reinterpret_cast<void*>(this));
 	glfwGetWindowSize(glfwWindow, &width, &height);
 
-	gui = new MyGUI(glfwWindow);
+	viewports.emplace_back(std::make_unique<Viewport>(0.0, 0.0, 1.0, 1.0, glfwWindow));
+
+	gui = std::make_unique<MyGUI>(glfwWindow);
 
 }
 
-void Window::init() {
+void Window::init() { setCallbacks(); }
 
-	setCallbacks();
-}
-
-void Window::terminate()
-{
+void Window::terminate() {
 	gui->shutdown();
-	glfwDestroyWindow(gui->getGLFWwindow());
-
-	delete gui;
+	glfwDestroyWindow(glfwWindow);
 }
 
-bool Window::shouldClose() {
-	return glfwWindowShouldClose(gui->getGLFWwindow());
-}
-
+bool Window::shouldClose() { return glfwWindowShouldClose(glfwWindow); }
 void Window::pollEvents() {
 	static 	int width, height, widthPrev, heightPrev;
 
-	glfwGetWindowSize(gui->getGLFWwindow(), &width, &height);
+	glfwGetWindowSize(glfwWindow, &width, &height);
 	if (width != widthPrev || height != heightPrev)
 	{
 		resizeWindow(width, height);
 		widthPrev = width;
 		heightPrev = height;
 
-		std::cout << "Window resized -- Width: " << width << " Height: " << height << "\n";
+		//std::cout << "Window resized -- Width: " << width << " Height: " << height << "\n";
 	}
 
-	glfwSwapBuffers(gui->getGLFWwindow());
+	glfwSwapBuffers(glfwWindow);
 	glfwPollEvents();
 }
 
@@ -57,9 +52,12 @@ void Window::key_callback(GLFWwindow* glfwWindow, int key, int scancode, int act
 	ImGui_ImplGlfw_KeyCallback(glfwWindow, key, scancode, action, mods);
 
 	Window* window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
+	Viewport* viewport = window->getViewportAtCursor();
+	if (!viewport)return;
+	std::vector<int>& keys = viewport->getKeys();
 	if (key >= 0 && key < 1024)
 		if (action == GLFW_PRESS)
-			window->keys[key] = (window->keys[key] + 1) % 3;
+			keys[key] = (keys[key] + 1) % 3;
 
 
 }
@@ -68,15 +66,19 @@ void Window::mouse_button_callback(GLFWwindow* glfwWindow, int button, int actio
 	ImGui_ImplGlfw_MouseButtonCallback(glfwWindow, button, action, mods);
 	if (button > 2)return;
 	Window* window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
+	Viewport* viewport = window->getViewportAtCursor();
+	if (!viewport)return;
+	std::vector<int>& mouseButtons = viewport->getMouseButtons();
+	std::vector<int>& mouseButtonsProcessed = viewport->getMouseButtonsProcessed();
 	if (action == GLFW_PRESS)
 	{
-		window->mouseButtons[button] = 1;
-		window->mouseButtonsProcessed[button] = 0;
+		mouseButtons[button] = 1;
+		mouseButtonsProcessed[button] = 0;
 	}
 	else if (action == GLFW_RELEASE)
 	{
-		window->mouseButtons[button] = 0;
-		window->mouseButtonsProcessed[button] = 1;
+		mouseButtons[button] = 0;
+		mouseButtonsProcessed[button] = 1;
 	}
 }
 void Window::scroll_callback(GLFWwindow* glfwWindow, double xoffset, double yoffset) {
@@ -85,7 +87,9 @@ void Window::scroll_callback(GLFWwindow* glfwWindow, double xoffset, double yoff
 
 	//scroll down = -1 ... scroll up = +1
 	Window* classWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
-	Camera* camera = classWindow->getCamera();
+	Viewport* viewport = classWindow->getViewportAtCursor();
+	if (!viewport)return;
+	Camera* camera = viewport->getActiveCamera();
 
 	//std::cout << "\n\t" << camera->getName() << " ";
 
@@ -98,46 +102,112 @@ void Window::scroll_callback(GLFWwindow* glfwWindow, double xoffset, double yoff
 
 void Window::setCallbacks()
 {
-	glfwSetKeyCallback(gui->getGLFWwindow(), key_callback);
-	glfwSetMouseButtonCallback(gui->getGLFWwindow(), mouse_button_callback);
-	glfwSetScrollCallback(gui->getGLFWwindow(), scroll_callback);
+	glfwSetKeyCallback(glfwWindow, key_callback);
+	glfwSetMouseButtonCallback(glfwWindow, mouse_button_callback);
+	glfwSetScrollCallback(glfwWindow, scroll_callback);
 }
 
 
-void Window::setCamera(Camera* cam)
+void Window::addViewport(Viewport* baseViewport, double xPos, double yPos, bool vertical)
 {
-	camera = cam;
-	std::cout << "\n\nCamera set to: " << camera->getName() << "\n";
-	camera->setWidth(width);
-	camera->setHeight(height);
-	if (camera->getName() == "Viewport")
-		camera->setPerspectiveProjection(camera->getFOV(), float(camera->getWidth()) / float(camera->getHeight()), 0.1f, 100.0f);
+	viewports.emplace_back(std::make_unique<Viewport>(baseViewport, xPos, yPos, vertical, this));
 }
+
+//Viewport* Window::getViewportClosestToCursor()
+//{
+//	Viewport* returnViewport = viewports[0].get();
+//	// ne radi sa normalizovanim koordinatama viewporta
+//	int tempX = posX;
+//	if (tempX > width) tempX = width;
+//	else if (tempX < 0) tempX = 0;
+//
+//	int tempY = posY;
+//	if (tempY > height) tempY = height;
+//	else if (tempY < 0) tempY = 0;
+//
+//
+//	for (int i = 1;i < viewports.size();i++)
+//		if (tempX >= viewports[i]->getLeft() && tempX <= viewports[i]->getRight() &&
+//			tempY >= viewports[i]->getBottom() && tempY <= viewports[i]->getTop())
+//			return viewports[i].get();
+//
+//	std::cout << "\n\n\tNo viewport found at cursor position (" << posX << ", " << posY << ") !!!\n\n";
+//	return nullptr;
+//}
 
 void Window::resizeWindow(int width, int height)
 {
 	if (width == 0 || height == 0)
-		glfwIconifyWindow(gui->getGLFWwindow());
+		glfwIconifyWindow(glfwWindow);
 	else
 	{
+		for (auto& viewport : viewports)
+			viewport->resizeWindow(width, height);
+
 		this->width = width;
 		this->height = height;
-
-		float aspect = float(width) / float(height);
-
-		camera->setWidth(width);
-		camera->setHeight(height);
-		if (camera->getName() == "Viewport")
-			camera->setPerspectiveProjection(45, float(camera->getWidth()) / float(camera->getHeight()), 0.1f, 100.0f);
-		if (camera->getName() == "UV")
-			camera->setProjection(glm::ortho(aspect * -1.0f, aspect * 1.0f, -1.0f, 1.0f, -2000.0f, 300000.0f));
 	}
-	glViewport(0, 0, width, height);
 }
 
 void Window::splitWindow(int width, int height)
 {
-	glViewport(0, 0, width / 2, height);
+
+}
+
+Viewport* Window::getViewportAtCursor(double x, double y)
+{
+	if (x == -1 && y == -1)
+	{
+		glfwGetCursorPos(glfwWindow, &x, &y);
+
+
+	}
+	//std::cout << "\n\t Cursor position " << x << " " << y;
+	y = height - y;
+
+
+	for (int i = 0;i < viewports.size();i++)
+	{
+		glm::ivec4 corners = viewports[i]->getCorners(this);
+		if (x >= corners.x && x <= corners.z &&
+			y >= corners.y && y <= corners.w)
+		{
+			//std::cout << "\n\n\t\t RETURNED VIEWPORT " << i << "with corners at " << corners.x << " " << corners.y << " " << corners.z << " " << corners.w;
+			return viewports[i].get();
+		}
+	}
+
+	//std::cout << "\n\n\tNo viewport found at cursor position (" << cursorX << ", " << cursorY << ") !!!\n\n";
+	return nullptr;
+
+}
+
+void Window::deleteViewport(Viewport* viewport)
+{
+
+	auto it = std::find_if(viewports.begin(), viewports.end(),
+		[viewport](const std::unique_ptr<Viewport>& vp)
+		{
+			return vp.get() == viewport;
+		});
+
+	if (it != viewports.end())
+	{
+		viewports.erase(it);
+	}
+}
+
+void Window::deleteDegenerateViewports()
+{
+	for (int i = 0;i < viewports.size();i++)
+		if (viewports[i]->getTop() - viewports[i]->getBottom() < myEpsilon || viewports[i]->getRight() - viewports[i]->getLeft() < myEpsilon)
+		{
+			std::cout << "\n\t Deleted a degenerate viewport!";
+			
+			viewports.erase(viewports.begin() + i);
+		}
+
+
 }
 
 

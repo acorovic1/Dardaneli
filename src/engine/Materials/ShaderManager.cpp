@@ -43,7 +43,7 @@ Shader& ShaderManager::getShader(std::string name)
 
 void deleteAllShaders()
 {
-	std::cout << "Deleting all shaders. Shaders created: " << shaderSingleton->getNumberOfShaders() << std::endl;
+	//std::cout << "Deleting all shaders. Shaders created: " << shaderSingleton->getNumberOfShaders() << std::endl;
 
 	for (auto it = shaderSingleton->shaders.begin(); it != shaderSingleton->shaders.end(); ++it)
 		glDeleteProgram(it->second->getID());

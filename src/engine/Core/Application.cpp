@@ -5,11 +5,15 @@
 #include "Mesh/DLoop.h"
 #include "GeometryUtils.h"
 #include "Window.h"
+#include "Viewport.h"
+
 #include <Improved/VertexBVHImproved.h>
 #include <Improved/EdgeBVHImproved.h>
 #include <Improved/FaceBVHImproved.h>
 #include <Improved/ObjectModeBVHImproved.h>
 
+
+#include <iomanip>
 
 
 Application* Application::instance = nullptr;
@@ -22,10 +26,10 @@ Application* Application::getInstance() {
 	return instance;
 }
 
-void Application::setSelectMode(SelectMode mode)
-{
-	selectMode = mode;
-}
+//void Application::setSelectMode(SelectMode mode)
+//{
+//	selectMode = mode;
+//}
 
 void Application::updateGUI(glm::vec3 offset, MyGUI& gui, Operation op)
 {
@@ -38,11 +42,11 @@ void Application::updateGUI(glm::vec3 offset, MyGUI& gui, Operation op)
 	}
 	else if (op == Operation::ROTATE)
 	{
-		
+
 	}
 	else if (op == Operation::SCALE)
 	{
-		
+
 	}
 
 }
@@ -50,30 +54,98 @@ void Application::updateGUI(glm::vec3 offset, MyGUI& gui, Operation op)
 
 
 
-void Application::objectMode(Window* window)
+void Application::objectMode(Window* window, Viewport* viewport)
 {
-	static Camera* camera = cameraSingleton->getCamera(0);
 
-	std::vector<int>& mouseButtons = window->getMouseButtons();
-	std::vector<int>& mouseButtonsProcessed = window->getMouseButtonsProcessed();
-	std::vector<int>& keys = window->getKeys();
-	std::vector<int>& keysProcessed = window->getKeysProcessed();
+	GLFWwindow* glfwWindow = window->getGLFWwindow();
+	Camera* camera = viewport->getActiveCamera();
+	MyGUI& gui = window->getGui();
+
+	std::vector<int>& mouseButtons = viewport->getMouseButtons();
+	std::vector<int>& mouseButtonsProcessed = viewport->getMouseButtonsProcessed();
+	std::vector<int>& keys = viewport->getKeys();
+	std::vector<int>& keysProcessed = viewport->getKeysProcessed();
 	bool& firstClick = window->getFirstClick();
 	double& posX = window->getPosX();
 	double& posY = window->getPosY();
 	double& previousX = window->getPreviousX();
 	double& previousY = window->getPreviousY();
 
-	GLFWwindow* glfwWindow = window->getGLFWwindow();
-	MyGUI& gui = window->getGui();
+	if (keys[GLFW_KEY_SPACE])
+	{
+		keys[GLFW_KEY_SPACE] = 0;
+
+
+		auto& vps = window->getViewports();
+
+		std::cout << "\n\n\n\nNumber of viewports = " << vps.size();
+
+		auto x = viewport->getAdjecentViewports(window, ViewportBoundary::BOTTOM);
+		auto w = viewport->getAdjecentViewports(window, ViewportBoundary::LEFT);
+		auto z = viewport->getAdjecentViewports(window, ViewportBoundary::TOP);
+		auto y = viewport->getAdjecentViewports(window, ViewportBoundary::RIGHT);
+		std::cout << "\nBottom neighbours = " << x.size();
+		std::cout << "\nLeft neighbours = " << w.size();
+		std::cout << "\nTop neighbours = " << z.size();
+		std::cout << "\nRight neighbours = " << y.size();
+
+		viewport->joinViewport(window, ViewportBoundary::TOP);
+
+
+
+
+		 x = viewport->getAdjecentViewports(window, ViewportBoundary::BOTTOM);
+		 w = viewport->getAdjecentViewports(window, ViewportBoundary::LEFT);
+		 z = viewport->getAdjecentViewports(window, ViewportBoundary::TOP);
+		 y = viewport->getAdjecentViewports(window, ViewportBoundary::RIGHT);
+		std::cout << "\nBottom neighbours = " << x.size();
+		std::cout << "\nLeft neighbours = " << w.size();
+		std::cout << "\nTop neighbours = " << z.size();
+		std::cout << "\nRight neighbours = " << y.size();
+
+		std::cout << "\n Number of viewports = " << vps.size();
+		std::cout << "\n\n";
+		for (const auto& v : vps)
+		{
+			std::cout << "Viewport --> "
+				<< std::fixed << std::setprecision(4)
+				<< std::setw(6) << v->getLeft() << " "
+				<< std::setw(6) << v->getBottom() << " "
+				<< std::setw(6) << v->getRight() << " "
+				<< std::setw(6) << v->getTop()
+				<< '\n';
+		}
+		/*for (auto v : z)
+		{
+			std::cout << "\nViewport --> " << v->getLeft() << " " << v->getBottom() << " " << v->getRight() << " " << v->getTop();
+		}*/
+	}
+
+	// VIEWPORT
+	if (keys[GLFW_KEY_LEFT_SHIFT] && keys[GLFW_KEY_LEFT_CONTROL])
+	{
+
+		keys[GLFW_KEY_LEFT_SHIFT] = 0;
+		keys[GLFW_KEY_LEFT_CONTROL] = 0;
+
+		gui.showViewportActionsMenu();
+
+		//glfwGetCursorPos(glfwWindow, &posX, &posY);
+
+		//window->addViewport(window->getViewportAtCursor(posX,posY), posX, posY, true);
+	}
 
 	// SELECT
 	if (mouseButtons[GLFW_MOUSE_BUTTON_LEFT])
 	{
+		if (gui.isViewportAdjusted())
+			gui.stopViewportAdjustment();
+
 		if (keys[GLFW_KEY_LEFT_ALT])return;
 		if (keys[GLFW_KEY_G])
 		{
 			objectBVHImprovedSingleton->Refit();
+
 			keys[GLFW_KEY_G] = 0;
 
 			return;
@@ -135,6 +207,8 @@ void Application::objectMode(Window* window)
 
 		mouseButtons[GLFW_MOUSE_BUTTON_LEFT] = 0;
 
+		//std::cout << "\n\t Ray casted";
+
 		firstClick = true;
 		keys[GLFW_KEY_X] = 0;
 		keys[GLFW_KEY_Y] = 0;
@@ -153,7 +227,7 @@ void Application::objectMode(Window* window)
 
 		Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getActiveObject());
 		if (mesh == nullptr) return;
-		mode = Mode::EDIT;
+		viewport->setMode(Mode::EDIT);
 
 		VertexBVHImprovedSingleton->BuildBottomUp(mesh);
 		EdgeBVHImprovedSingleton->BuildBottomUp(*mesh);
@@ -191,8 +265,9 @@ void Application::objectMode(Window* window)
 		// Fetches the coordinates of the cursor
 		glfwGetCursorPos(glfwWindow, &posX, &posY);
 
-		// Prevents  jumping on the first click
-		if (firstClick)
+		bool temp = viewport->cursorWrapAround(window, posX, posY);
+		// Prevents  jumping on the first click and wrap around
+		if (firstClick || temp)
 		{
 			//glfwSetCursorPos(window, (width / 2), (height / 2));
 			previousX = posX;
@@ -206,12 +281,14 @@ void Application::objectMode(Window* window)
 		/// FALI Y KRETNJA
 		auto offset = deltaX * glm::normalize(glm::cross(camera->getOrientation(), glm::vec3(0.0f, 1.0f, 0.0f))) + deltaY * glm::vec3(0.0f, 1.0f, 0.0f);
 
+
+
 		if (keys[GLFW_KEY_X] == 1)
 		{
 			std::cout << "X";
 			for (auto x : gui.getObjectIndex())
 				objectSingleton->getObject(x)->translate(offset.x, 0.0f, 0.0f);
-			app->updateGUI(glm::vec3(offset.x, 0.0f, 0.0f), gui,Operation::TRANSLATE);
+			app->updateGUI(glm::vec3(offset.x, 0.0f, 0.0f), gui, Operation::TRANSLATE);
 		}
 		else if (keys[GLFW_KEY_Y] == 1)
 		{
@@ -219,42 +296,45 @@ void Application::objectMode(Window* window)
 
 			for (auto x : gui.getObjectIndex())
 				objectSingleton->getObject(x)->translate(0.0f, offset.y, 0.0f);
-			app->updateGUI(glm::vec3(0.0f, offset.y, 0.0f), gui,Operation::TRANSLATE);
+			app->updateGUI(glm::vec3(0.0f, offset.y, 0.0f), gui, Operation::TRANSLATE);
 		}
 		else if (keys[GLFW_KEY_Z] == 1)
 		{
 			std::cout << "Z";
 			for (auto x : gui.getObjectIndex())
 				objectSingleton->getObject(x)->translate(0.0f, 0.0f, offset.z);
-			app->updateGUI(glm::vec3(0.0f, 0.0f, offset.z), gui,Operation::TRANSLATE);
+			app->updateGUI(glm::vec3(0.0f, 0.0f, offset.z), gui, Operation::TRANSLATE);
 		}
 		else
 		{
 			for (auto x : gui.getObjectIndex())
 				objectSingleton->getObject(x)->translate(offset);
-			app->updateGUI(offset, gui,Operation::TRANSLATE);
+			app->updateGUI(offset, gui, Operation::TRANSLATE);
 		}
 
 		previousX = posX;
 		previousY = posY;
 	}
 }
-void Application::editMode(Window* window)
+void Application::editMode(Window* window, Viewport* viewport)
 {
+	GLFWwindow* glfwWindow = window->getGLFWwindow();
+	Camera* camera = viewport->getActiveCamera();
+	MyGUI& gui = window->getGui();
 
-	std::vector<int>& mouseButtons = window->getMouseButtons();
-	std::vector<int>& mouseButtonsProcessed = window->getMouseButtonsProcessed();
-	std::vector<int>& keys = window->getKeys();
-	std::vector<int>& keysProcessed = window->getKeysProcessed();
+	std::vector<int>& mouseButtons = viewport->getMouseButtons();
+	std::vector<int>& mouseButtonsProcessed = viewport->getMouseButtonsProcessed();
+	std::vector<int>& keys = viewport->getKeys();
+	std::vector<int>& keysProcessed = viewport->getKeysProcessed();
 	bool& firstClick = window->getFirstClick();
 	double& posX = window->getPosX();
 	double& posY = window->getPosY();
 	double& previousX = window->getPreviousX();
 	double& previousY = window->getPreviousY();
 
-	static Camera* camera = cameraSingleton->getCamera(0);
-	GLFWwindow* glfwWindow = window->getGLFWwindow();
-	MyGUI& gui = window->getGui();
+	SelectMode selectMode = viewport->getSelectMode();
+
+
 
 	Mesh* mesh = static_cast<Mesh*>(objectSingleton->getActiveObject());
 
@@ -263,7 +343,7 @@ void Application::editMode(Window* window)
 	// SELECT
 	if (mouseButtons[GLFW_MOUSE_BUTTON_LEFT])
 	{
-		slide = false;
+		//slide = false;
 		firstClick = true;
 		if (keys[GLFW_KEY_LEFT_ALT])return;
 		keys[GLFW_KEY_S] = 0;
@@ -590,7 +670,7 @@ void Application::editMode(Window* window)
 	if (keys[GLFW_KEY_TAB])
 	{
 		keys[GLFW_KEY_TAB] = 0;
-		mode = Mode::OBJECT;
+		viewport->setMode(Mode::OBJECT);
 
 		objectBVHImprovedSingleton->BuildBottomUp(objectSingleton->getAllObjects(), objectSingleton->getNumberOfObjects());
 	}
@@ -689,7 +769,7 @@ void Application::editMode(Window* window)
 				mesh->updateVertexBuffer(x);
 			}
 
-			app->updateGUI(glm::vec3(offset.x, 0.0f, 0.0f), gui,Operation::TRANSLATE);
+			app->updateGUI(glm::vec3(offset.x, 0.0f, 0.0f), gui, Operation::TRANSLATE);
 		}
 		else if (keys[GLFW_KEY_Y] == 1)
 		{
@@ -700,7 +780,7 @@ void Application::editMode(Window* window)
 				vertices[x]->translate(0.0f, offset.y, 0.0f);
 				mesh->updateVertexBuffer(x);
 			}
-			app->updateGUI(glm::vec3(0.0f, offset.y, 0.0f), gui,Operation::TRANSLATE);
+			app->updateGUI(glm::vec3(0.0f, offset.y, 0.0f), gui, Operation::TRANSLATE);
 		}
 		else if (keys[GLFW_KEY_Z] == 1)
 		{
@@ -710,7 +790,7 @@ void Application::editMode(Window* window)
 				vertices[x]->translate(0.0f, 0.0f, offset.z);
 				mesh->updateVertexBuffer(x);
 			}
-			app->updateGUI(glm::vec3(0.0f, 0.0f, offset.z), gui,Operation::TRANSLATE);
+			app->updateGUI(glm::vec3(0.0f, 0.0f, offset.z), gui, Operation::TRANSLATE);
 		}
 		else
 		{
@@ -719,7 +799,7 @@ void Application::editMode(Window* window)
 				vertices[x]->translate(offset);
 				mesh->updateVertexBuffer(x);
 			}
-			app->updateGUI(offset, gui,Operation::TRANSLATE);
+			app->updateGUI(offset, gui, Operation::TRANSLATE);
 		}
 
 		previousX = posX;
@@ -729,100 +809,8 @@ void Application::editMode(Window* window)
 	// SLIDE
 	if (keys[GLFW_KEY_G] == 2)
 	{
-		static glm::vec2 drag;
-		static glm::vec2 dragPrev;
-		if (!mesh->getSelectedVertices().size())
-		{
-			keys[GLFW_KEY_G] = 0;
-			return;
-		}
-		// Fetches the coordinates of the cursor
-
-		glfwGetCursorPos(glfwWindow, &posX, &posY);
-
-
-		auto& tempVertices = mesh->getVertices();
-
-		// Prevents  jumping on the first click
-		if (!slide)
-		{
-
-			slide = true;
-
-			slideDirections.clear();
-			startPositions.clear();
-			slideUnProjectedDirections.clear();
-			bestDirection = std::vector<glm::vec3>(mesh->getSelectedVertices().size(), glm::vec3(0.0f));
-
-			for (auto x : mesh->getSelectedVertices())
-			{
-				auto neighbours = tempVertices[x]->getAdjecentVertices();
-				startPositions.push_back(tempVertices[x]->position);
-				slideLengths.push_back(mesh->getSlideClampMax(neighbours));
-				slideDirections.push_back(mesh->getSlideDirections(tempVertices[x], neighbours));
-				slideUnProjectedDirections.push_back(mesh->getSlideUnprojectedDirections(tempVertices[x], neighbours));
-			}
-
-			previousX = posX;
-			previousY = posY;
-
-			slideStartX = posX;
-			slideStartY = posY;
-
-			std::cout << "\n\n\t slideStartX " << slideStartX << "\n\t slideStartY " << slideStartY;
-
-			dragPrev = drag = glm::vec2(0.0f, 0.0f);
-
-			return;
-		}
-		float deltaX = (posX - previousX) / 150;
-		float deltaY = (previousY - posY) / 150;
-
-
-
-		drag.x = (posX - slideStartX)/* * (drag.x - dragPrev.x >= 0) ? 1 : -1*/;
-		drag.y = (slideStartY - posY)/* * (dragPrev.y - drag.y >= 0) ? 1 : -1*/;
-
-
-
-		auto selectedVertices = mesh->getSelectedVertices();
-
-		for (int i = 0;i < selectedVertices.size();i++)
-		{
-			auto bestDir = GeometryUtils::bestSlideDirection(slideDirections[i], slideUnProjectedDirections[i], drag);
-			if (!glm::all(glm::epsilonEqual(bestDir, bestDirection[i], 0.001f)))
-			{
-				bestDirection[i] = bestDir;
-
-				tempVertices[selectedVertices[i]]->position = startPositions[i];
-				/*		if (i == selectedVertices.size() - 1)
-							app->updateGUI(deltaX * bestDir);*/
-			}
-			int j = 0;
-			for (j = 0;j < slideDirections[i].size();j++)
-			{
-				if (glm::all(glm::epsilonEqual(bestDir, slideDirections[i][j], 0.001f)) || glm::all(glm::epsilonEqual(bestDir, -slideDirections[i][j], 0.001f)))
-					break;
-			}
-
-			tempVertices[selectedVertices[i]]->translate(fabs(deltaX) * bestDir);
-
-
-			float projectedLength = glm::dot(tempVertices[selectedVertices[i]]->position - startPositions[i], bestDir); // scalar movement along direction
-			float maxLength = glm::length(slideLengths[i][j] - startPositions[i]);
-			projectedLength = glm::clamp(projectedLength, 0.0f, maxLength);
-
-			tempVertices[selectedVertices[i]]->position = startPositions[i] + bestDir * projectedLength;
-
-			mesh->updateVertexBuffer(selectedVertices[i]);
-
-			if (i == selectedVertices.size() - 1)
-				app->updateGUI(bestDir * projectedLength, gui,Operation::TRANSLATE);
-		}
-
-
-		previousX = posX;
-		previousY = posY;
+		keys[GLFW_KEY_G] = 0;
+		std::cout << "\n\n\t Operation slide is not implemented yet!\n";
 	}
 
 	// INSET
@@ -971,23 +959,22 @@ void Application::editMode(Window* window)
 	}
 
 }
-void Application::uVMode(Window* window)
+void Application::uVMode(Window* window, Viewport* viewport)
 {
+	GLFWwindow* glfwWindow = window->getGLFWwindow();
+	MyGUI& gui = window->getGui();
+	Camera* camera = viewport->getActiveCamera();
 
-
-	std::vector<int>& mouseButtons = window->getMouseButtons();
-	std::vector<int>& mouseButtonsProcessed = window->getMouseButtonsProcessed();
-	std::vector<int>& keys = window->getKeys();
-	std::vector<int>& keysProcessed = window->getKeysProcessed();
+	std::vector<int>& mouseButtons = viewport->getMouseButtons();
+	std::vector<int>& mouseButtonsProcessed = viewport->getMouseButtonsProcessed();
+	std::vector<int>& keys = viewport->getKeys();
+	std::vector<int>& keysProcessed = viewport->getKeysProcessed();
 	bool& firstClick = window->getFirstClick();
 	double& posX = window->getPosX();
 	double& posY = window->getPosY();
 	double& previousX = window->getPreviousX();
 	double& previousY = window->getPreviousY();
 
-	GLFWwindow* glfwWindow = window->getGLFWwindow();
-	MyGUI& gui = window->getGui();
-	static Camera* camera = cameraSingleton->getCamera("UV");
 	Mesh* mesh = static_cast<Mesh*>(objectSingleton->getActiveObject());
 	if (!mesh)return;
 
@@ -1354,13 +1341,15 @@ void Application::uVMode(Window* window)
 
 
 }
-void Application::materialEditor(Window* window)
+void Application::materialEditor(Window* window, Viewport* viewport)
 {
+	GLFWwindow* glfwWindow = window->getGLFWwindow();
+	MyGUI& gui = window->getGui();
 
-	std::vector<int>& mouseButtons = window->getMouseButtons();
-	std::vector<int>& mouseButtonsProcessed = window->getMouseButtonsProcessed();
-	std::vector<int>& keys = window->getKeys();
-	std::vector<int>& keysProcessed = window->getKeysProcessed();
+	std::vector<int>& mouseButtons = viewport->getMouseButtons();
+	std::vector<int>& mouseButtonsProcessed = viewport->getMouseButtonsProcessed();
+	std::vector<int>& keys = viewport->getKeys();
+	std::vector<int>& keysProcessed = viewport->getKeysProcessed();
 	bool& firstClick = window->getFirstClick();
 	double& posX = window->getPosX();
 	double& posY = window->getPosY();
@@ -1368,8 +1357,6 @@ void Application::materialEditor(Window* window)
 	double& previousY = window->getPreviousY();
 
 
-	GLFWwindow* glfwWindow = window->getGLFWwindow();
-	MyGUI& gui = window->getGui();
 	static double time = glfwGetTime();
 
 
@@ -1400,27 +1387,25 @@ void Application::materialEditor(Window* window)
 
 
 }
-void Application::inputs(Window* window)
+void Application::inputs(Window* window, Viewport* viewport)
 {
-	GLFWwindow* glfwWindow = window->getGLFWwindow();
-	Camera* camera = window->getCamera();
-	Mode mode = window->getGui().getMode();
+	Camera* camera = viewport->getActiveCamera();
+	Mode mode = viewport->getMode();
 
 	if (mode == Mode::UV_EDIT)
-		camera->movement2D(glfwWindow);
+		camera->movement2D(window, viewport);
 	else
-		camera->movement3D(glfwWindow);
+		camera->movement3D(window, viewport);
 
 	if (mode == Mode::OBJECT)
-		Application::objectMode(window);
+		Application::objectMode(window, viewport);
 	else if (mode == Mode::EDIT)
-		Application::editMode(window);
+		Application::editMode(window, viewport);
 	else if (mode == Mode::UV_EDIT)
-		Application::uVMode(window);
+		Application::uVMode(window, viewport);
 	else if (mode == Mode::SHADER_EDIT)
-	{
-		Application::materialEditor(window);
-	}
+		Application::materialEditor(window, viewport);
+
 }
 
-void Application::deleteObjects() {}
+

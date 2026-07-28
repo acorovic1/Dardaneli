@@ -7,22 +7,22 @@
 
 class Renderer {
 	Window& window;
-	MyGUI& gui;
+	//MyGUI& gui;
 
 
 
 public:
 
-	Renderer(Window& window, MyGUI& gui);
+	Renderer(Window& window);
 
 	void init();
 	void render();
 
 
 private:
-	void viewportEditor();
-	void uvEditor();
-	void shaderEditor();
+	void objectEditor(Viewport* viewport,glm::vec3 color);
+	void uvEditor(Viewport* viewport);
+	void shaderEditor(Viewport* viewport);
 	
 
 };

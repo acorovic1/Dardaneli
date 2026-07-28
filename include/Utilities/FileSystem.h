@@ -24,7 +24,7 @@ namespace FileSystem
 	std::string getExecutablePath();
 
 	// Remove last N path components to get project directory
-	std::string getProjectDir(int levelsUp=3);
+	std::string getProjectDir(int levelsUp=2);
 
 	std::string getFileContents(const char* filename);
 

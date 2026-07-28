@@ -5,7 +5,9 @@
 #include "Mesh/DFace.h"
 #include "Utilities/FragColor.h"
 
-Renderer::Renderer(Window& window, MyGUI& gui) :window(window), gui(gui) {}
+#include "random"
+
+Renderer::Renderer(Window& window) :window(window) {}
 
 void Renderer::init() {
 	glEnable(GL_DEPTH_TEST);
@@ -21,31 +23,68 @@ void Renderer::init() {
 
 void Renderer::render()
 {
+	const std::vector<std::unique_ptr<Viewport>>& viewports = window.getViewports();
+	//std::cout << "\n\n\tNumber of viewports: " << viewports.size();
+	MyGUI& gui = window.getGui();
+	gui.newFrame();
 
-	Mode mode = gui.getMode();
-	if (mode == Mode::OBJECT || mode == Mode::EDIT || mode == Mode::SCULPT || mode == Mode::TEXTURE_PAINT || mode == Mode::WEIGHT_PAINT)
-		viewportEditor();
-	else if (mode == Mode::UV_EDIT)
-		uvEditor();
-	else if (mode == Mode::SHADER_EDIT)
-		shaderEditor();
+
+
+
+	for (int i = 0;i < viewports.size();i++)
+	{
+		Viewport* viewport = viewports[i].get();
+		glm::ivec4 corners = viewport->getCorners(&window);
+
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(corners.x, corners.y, corners.z - corners.x, corners.w - corners.y);
+		glViewport(corners.x, corners.y, corners.z - corners.x, corners.w - corners.y);
+
+		std::mt19937 gen(i);               // same seed => same color every frame
+		std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+
+		float r = dist(gen);
+		float g = dist(gen);
+		float b = dist(gen);
+
+
+		Mode mode = viewport->getMode();
+		if (mode == Mode::OBJECT || mode == Mode::EDIT || mode == Mode::SCULPT || mode == Mode::TEXTURE_PAINT || mode == Mode::WEIGHT_PAINT)
+			objectEditor(viewport, glm::vec3(0.23f, 0.33f, 0.33f));
+		else if (mode == Mode::UV_EDIT)
+			uvEditor(viewport);
+		else if (mode == Mode::SHADER_EDIT)
+			shaderEditor(viewport);
+
+
+		if (viewport->getKeys()[GLFW_KEY_G] || !gui.getIO()->WantCaptureMouse || mode == Mode::SHADER_EDIT) {
+			app->inputs(&window, viewport);
+			//std::cout << "\n\t333";
+		}
+
+	}
+	gui.drawUI(viewports[0].get());
+	gui.render();
 }
 
-void Renderer::viewportEditor()
+void Renderer::objectEditor(Viewport* viewport, glm::vec3 color)
 {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_STENCIL_TEST);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-	glClearColor(0.23f, 0.33f, 0.33f, 1.0f);
+	glClearColor(color.x, color.y, color.z, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	RenderMode renderMode = app->getRenderMode();
-	static Camera* camera = window.getCamera();
+	RenderMode renderMode = viewport->getRenderMode();
+	Camera* camera = viewport->getActiveCamera();
+	MyGUI& gui = window.getGui();
 
 	camera->update();
 
-	gui.drawGrid3D();
+	gui.drawGrid3D(viewport);
+
+	gui.drawBVH();
 
 
 	if (!gui.getFaceCulling() || renderMode == RenderMode::WIREFRAME)
@@ -53,17 +92,12 @@ void Renderer::viewportEditor()
 	else
 		glEnable(GL_CULL_FACE);
 
-
-
-
-
-
-
-
 	static Shader& basicShader = shaderSingleton->getShader("Basic");
 	auto& selectedObjects = gui.getObjectIndex();
 	for (int i = 0; i < objectSingleton->getNumberOfObjects(); i++)
 	{
+		if (renderMode == RenderMode::RENDER)
+			std::cout << std::endl;
 		Object* object = objectSingleton->getObject(i);
 		Mesh* mesh = dynamic_cast<Mesh*>(object);
 		basicShader.activate();
@@ -74,7 +108,7 @@ void Renderer::viewportEditor()
 		camera->cameraUniform(true, basicShader, "cameraMatrix");
 		if (std::any_of(selectedObjects.begin(), selectedObjects.end(), [i](int a) {return i == a; }))
 		{
-			if (gui.getMode() == Mode::OBJECT)
+			if (viewport->getMode() == Mode::OBJECT)
 			{
 				// OUTLINE STENCIL BUFFER TECHNIQUE
 
@@ -113,14 +147,14 @@ void Renderer::viewportEditor()
 
 
 			}
-			else if (gui.getMode() == Mode::EDIT)
+			else if (viewport->getMode() == Mode::EDIT)
 			{
 				glLineWidth(0.5f);
 				basicShader.setVector4f(true, "color", FragColor::Black);
 
 				mesh->draw(basicShader, *camera, GL_LINES);
 
-				if (gui.getSelectMode() == SelectMode::VERTEX)
+				if (viewport->getSelectMode() == SelectMode::VERTEX)
 				{
 					glPointSize(5.0f);
 					basicShader.setVector4f(true, "color", FragColor::Black);
@@ -143,7 +177,7 @@ void Renderer::viewportEditor()
 					basicShader.setBool(true, "selection", false);
 					glPointSize(1.0f);
 				}
-				else if (gui.getSelectMode() == SelectMode::EDGE)
+				else if (viewport->getSelectMode() == SelectMode::EDGE)
 				{
 
 					std::vector<DEdge*>& selectedEdges = mesh->getSelectedEdges();
@@ -165,7 +199,7 @@ void Renderer::viewportEditor()
 					EBO ebo(edgeVerts);
 					ebo.bind();
 
-					
+
 					if (edgeVerts.size())
 					{
 						glDrawElements(GL_LINES, edgeVerts.size() - 2, GL_UNSIGNED_INT, 0); // draw red
@@ -271,7 +305,10 @@ void Renderer::viewportEditor()
 		else if (renderMode == RenderMode::RENDER)
 		{
 			if (mesh)
+			{
 				mesh->renderDraw(*camera);
+				//std::cout << "\tObject id = " << i;
+			}
 			else
 				object->draw(basicShader, *camera, GL_TRIANGLES);
 
@@ -281,7 +318,7 @@ void Renderer::viewportEditor()
 	}
 }
 
-void Renderer::uvEditor()
+void Renderer::uvEditor(Viewport* viewport)
 {
 
 
@@ -291,10 +328,11 @@ void Renderer::uvEditor()
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 
-	static Camera* camera = window.getCamera();
+	Camera* camera = viewport->getActiveCamera();
+	MyGUI& gui = window.getGui();
 	camera->update();
 
-	gui.drawGrid2D();
+	gui.drawGrid2D(viewport);
 
 	// ovo treba uljepsat, izbacit VAOve i VBOve te ih staviti u mesh(vjerovatno)
 	Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getActiveObject());
@@ -331,14 +369,15 @@ void Renderer::uvEditor()
 
 }
 
-void Renderer::shaderEditor()
+void Renderer::shaderEditor(Viewport* viewport)
 {
 
 	glClearColor(0.23f, 0.33f, 0.33f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 
-
+	Camera* camera = viewport->getActiveCamera();
+	MyGUI& gui = window.getGui();
 	gui.shaderNodeEditor();
 
 }
