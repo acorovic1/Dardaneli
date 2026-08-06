@@ -56,6 +56,8 @@ void Renderer::render()
 		else if (mode == Mode::SHADER_EDIT)
 			shaderEditor(viewport);
 
+		viewport->drawGui(gui, std::to_string(i));
+
 
 		if (viewport->getKeys()[GLFW_KEY_G] || !gui.getIO()->WantCaptureMouse || mode == Mode::SHADER_EDIT) {
 			app->inputs(&window, viewport);
@@ -84,7 +86,6 @@ void Renderer::objectEditor(Viewport* viewport, glm::vec3 color)
 
 	gui.drawGrid3D(viewport);
 
-	gui.drawBVH();
 
 
 	if (!gui.getFaceCulling() || renderMode == RenderMode::WIREFRAME)

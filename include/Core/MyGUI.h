@@ -72,11 +72,14 @@ class MyGUI  {
 	bool gizmo = false;
 	bool faceCulling = true;
 
+	
+
 	bool showAddMenuFlag = false;
 	bool showDeleteMenuFlag = false;
 	bool showExtrudeMenuFlag = false;
 	bool showImportDialog = false;
 	bool showViewportActions = false;
+	bool showViewportModes = false;
 
 	bool viewportAdjust = true;
 	ViewportBoundary viewportAdjustBoundary = ViewportBoundary::LEFT;
@@ -92,10 +95,10 @@ public:
 	void shutdown();
 
 	void drawUI(Viewport* viewport);
-	void drawObjectModeUI(Viewport* viewport,bool change);
-	void drawEditModeUI(Viewport* viewport,bool change);
-	void drawUVModeUI(Viewport* viewport,bool change);
-	void drawShaderEditorUI(Viewport* viewport,bool change);
+	void drawObjectModeUI(Viewport* viewport);
+	void drawEditModeUI(Viewport* viewport);
+	void drawUVModeUI(Viewport* viewport);
+	void drawShaderEditorUI(Viewport* viewport);
 
 	ImGuiIO* getIO() { return io; };
 	GLFWwindow* getGLFWwindow() { return glfwWindow; }
@@ -109,6 +112,7 @@ public:
 	void showDeleteMenu();
 	void showExtrudeMenu();
 	void showViewportActionsMenu();
+	void showViewportModesMenu();
 	
 
 	void addMenu();
@@ -116,10 +120,12 @@ public:
 	void extrudeMenu();
 	void viewportActionsMenu();
 
+	void viewportModeMenu();
+
 	bool isViewportAdjusted();
 	void stopViewportAdjustment();
 
-	void drawBVH();
+	void drawBVH(Camera* camera);
 	void BVHRayInteraction();
 
 	void gizmos();

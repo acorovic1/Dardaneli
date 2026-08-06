@@ -134,6 +134,8 @@ public:
 	void setMode(Mode newMode) { mode = newMode; }
 	void setRenderMode(RenderMode newRenderMode) { renderMode = newRenderMode; }
 
+	void drawGui(MyGUI& gui,std::string id);
+
 
 	std::vector<int>& getKeys() { return keys; }
 	std::vector<int>& getKeysProcessed() { return keysProcessed; }

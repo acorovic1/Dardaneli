@@ -76,63 +76,31 @@ void Application::objectMode(Window* window, Viewport* viewport)
 		keys[GLFW_KEY_SPACE] = 0;
 
 
-		auto& vps = window->getViewports();
 
-		std::cout << "\n\n\n\nNumber of viewports = " << vps.size();
-
-		auto x = viewport->getAdjecentViewports(window, ViewportBoundary::BOTTOM);
-		auto w = viewport->getAdjecentViewports(window, ViewportBoundary::LEFT);
-		auto z = viewport->getAdjecentViewports(window, ViewportBoundary::TOP);
-		auto y = viewport->getAdjecentViewports(window, ViewportBoundary::RIGHT);
-		std::cout << "\nBottom neighbours = " << x.size();
-		std::cout << "\nLeft neighbours = " << w.size();
-		std::cout << "\nTop neighbours = " << z.size();
-		std::cout << "\nRight neighbours = " << y.size();
-
-		viewport->joinViewport(window, ViewportBoundary::TOP);
-
-
-
-
-		 x = viewport->getAdjecentViewports(window, ViewportBoundary::BOTTOM);
-		 w = viewport->getAdjecentViewports(window, ViewportBoundary::LEFT);
-		 z = viewport->getAdjecentViewports(window, ViewportBoundary::TOP);
-		 y = viewport->getAdjecentViewports(window, ViewportBoundary::RIGHT);
-		std::cout << "\nBottom neighbours = " << x.size();
-		std::cout << "\nLeft neighbours = " << w.size();
-		std::cout << "\nTop neighbours = " << z.size();
-		std::cout << "\nRight neighbours = " << y.size();
-
-		std::cout << "\n Number of viewports = " << vps.size();
-		std::cout << "\n\n";
-		for (const auto& v : vps)
-		{
-			std::cout << "Viewport --> "
-				<< std::fixed << std::setprecision(4)
-				<< std::setw(6) << v->getLeft() << " "
-				<< std::setw(6) << v->getBottom() << " "
-				<< std::setw(6) << v->getRight() << " "
-				<< std::setw(6) << v->getTop()
-				<< '\n';
-		}
-		/*for (auto v : z)
-		{
-			std::cout << "\nViewport --> " << v->getLeft() << " " << v->getBottom() << " " << v->getRight() << " " << v->getTop();
-		}*/
 	}
 
-	// VIEWPORT
-	if (keys[GLFW_KEY_LEFT_SHIFT] && keys[GLFW_KEY_LEFT_CONTROL])
+
+
+	// VIEWPORT ACTIONS
+	if (keys[GLFW_KEY_LEFT_SHIFT] && keys[GLFW_KEY_V])
 	{
 
 		keys[GLFW_KEY_LEFT_SHIFT] = 0;
-		keys[GLFW_KEY_LEFT_CONTROL] = 0;
+		keys[GLFW_KEY_V] = 0;
 
 		gui.showViewportActionsMenu();
 
-		//glfwGetCursorPos(glfwWindow, &posX, &posY);
+	}
 
-		//window->addViewport(window->getViewportAtCursor(posX,posY), posX, posY, true);
+	// VIEWPORT MODES
+	if (keys[GLFW_KEY_V])
+	{
+
+
+		keys[GLFW_KEY_V] = 0;
+
+		gui.showViewportModesMenu();
+
 	}
 
 	// SELECT
@@ -165,7 +133,7 @@ void Application::objectMode(Window* window, Viewport* viewport)
 				index = indexVec[0];
 				if (indexVec.size() > 1)
 				{
-					auto cameraPosition = cameraSingleton->getCamera(0)->getPosition();
+					auto cameraPosition = camera->getPosition();
 					auto closestPosition = glm::distance(cameraPosition, objectSingleton->getObject(indexVec[0])->getPosition());
 
 					for (int i = 1; i < indexVec.size(); i++)
@@ -218,6 +186,7 @@ void Application::objectMode(Window* window, Viewport* viewport)
 	// ADD MENU
 	if (glfwGetKey(glfwWindow, GLFW_KEY_Q) == GLFW_PRESS)
 	{
+		std::cout << "Hello";
 		gui.showAddMenu();
 	}
 
@@ -332,7 +301,7 @@ void Application::editMode(Window* window, Viewport* viewport)
 	double& previousX = window->getPreviousX();
 	double& previousY = window->getPreviousY();
 
-	SelectMode selectMode = viewport->getSelectMode();
+	SelectMode& selectMode = viewport->getSelectMode();
 
 
 
@@ -377,7 +346,7 @@ void Application::editMode(Window* window, Viewport* viewport)
 				{
 					index = { indexVec[0] };
 
-					auto cameraPosition = cameraSingleton->getCamera(0)->getPosition();
+					auto cameraPosition = camera->getPosition();
 					const auto& v = mesh->getVerticesCopy();
 					auto closestPosition = glm::distance(cameraPosition, v[index[0]].position);
 
@@ -440,7 +409,7 @@ void Application::editMode(Window* window, Viewport* viewport)
 					//std::cout << "\n\n\nVEC SIZE " << indexVec.size();
 				index = { indexVec[0],indexVec[1] };
 
-				auto cameraPosition = cameraSingleton->getCamera(0)->getPosition();
+				auto cameraPosition = camera->getPosition();
 				const auto& v = mesh->getVerticesCopy();
 				auto v0 = v[indexVec[0]].position;
 				auto v1 = v[indexVec[1]].position;
@@ -549,7 +518,7 @@ void Application::editMode(Window* window, Viewport* viewport)
 					index.push_back(indexVec[i]);
 
 
-				auto cameraPosition = cameraSingleton->getCamera(0)->getPosition();
+				auto cameraPosition = camera->getPosition();
 
 				const auto& v = mesh->getVerticesCopy();
 
@@ -868,7 +837,7 @@ void Application::editMode(Window* window, Viewport* viewport)
 		gui.showExtrudeMenu();
 
 		keys[GLFW_KEY_E] = 0;
-		keys[GLFW_KEY_G] = 1;
+		//keys[GLFW_KEY_G] = 1;
 	}
 
 	// FILL
@@ -1405,6 +1374,15 @@ void Application::inputs(Window* window, Viewport* viewport)
 		Application::uVMode(window, viewport);
 	else if (mode == Mode::SHADER_EDIT)
 		Application::materialEditor(window, viewport);
+
+}
+
+void Application::init()
+{
+}
+
+void Application::newFrame()
+{
 
 }
 

@@ -1465,51 +1465,52 @@ std::vector<glm::vec3> Mesh::getSlideDirections(DVertex* vert, std::unordered_se
 
 std::vector<glm::vec2> Mesh::getSlideUnprojectedDirections(DVertex* vert, std::unordered_set<DVertex*> neighbours)
 {
-	auto camera = cameraSingleton->getCamera("Viewport");
-	int screenWidth = camera->getWidth();
-	int screenHeight = camera->getHeight();
+	
+	//auto camera = cameraSingleton->getCamera("Viewport");
+	//int screenWidth = camera->getWidth();
+	//int screenHeight = camera->getHeight();
 
-	glm::mat4 projectionViewModel = camera->getProjectionMatrix() * camera->getViewMatrix() * getModelMatrix();
+	//glm::mat4 projectionViewModel = camera->getProjectionMatrix() * camera->getViewMatrix() * getModelMatrix();
 
 
 	std::vector<glm::vec2> directions;
 
 
-	glm::vec4 clipSpace = projectionViewModel * glm::vec4(vert->position, 1.0f);
+	//glm::vec4 clipSpace = projectionViewModel * glm::vec4(vert->position, 1.0f);
 
-	if (clipSpace.w == 0.0f)
-		std::cout << "\n\n\t ERROR mesh.getSlideUnprojectedDirections 1 "; // or handle error
+	//if (clipSpace.w == 0.0f)
+	//	std::cout << "\n\n\t ERROR mesh.getSlideUnprojectedDirections 1 "; // or handle error
 
-	glm::vec3 ndc = glm::vec3(clipSpace) / clipSpace.w;
+	//glm::vec3 ndc = glm::vec3(clipSpace) / clipSpace.w;
 
-	glm::vec2 vert2D;
-	vert2D.x = (ndc.x + 1.0f) * 0.5f * screenWidth;
-	vert2D.y = (1.0f - ndc.y) * 0.5f * screenHeight;
+	//glm::vec2 vert2D;
+	//vert2D.x = (ndc.x + 1.0f) * 0.5f * screenWidth;
+	//vert2D.y = (1.0f - ndc.y) * 0.5f * screenHeight;
 
-	std::cout << "\n\n\t vert2D " << vert2D.x << " " << vert2D.y;
+	//std::cout << "\n\n\t vert2D " << vert2D.x << " " << vert2D.y;
 
 
 
-	for (auto x : neighbours)
-	{
-		clipSpace = projectionViewModel * glm::vec4(x->position, 1.0f);
+	//for (auto x : neighbours)
+	//{
+	//	clipSpace = projectionViewModel * glm::vec4(x->position, 1.0f);
 
-		if (clipSpace.w == 0.0f)
-			std::cout << "\n\n\t ERROR mesh.getSlideUnprojectedDirections 2 "; // or handle error
+	//	if (clipSpace.w == 0.0f)
+	//		std::cout << "\n\n\t ERROR mesh.getSlideUnprojectedDirections 2 "; // or handle error
 
-		ndc = glm::vec3(clipSpace) / clipSpace.w;
+	//	ndc = glm::vec3(clipSpace) / clipSpace.w;
 
-		glm::vec2 x2D;
-		x2D.x = (ndc.x + 1.0f) * 0.5f * screenWidth;
-		x2D.y = (1.0f - ndc.y) * 0.5f * screenHeight;
+	//	glm::vec2 x2D;
+	//	x2D.x = (ndc.x + 1.0f) * 0.5f * screenWidth;
+	//	x2D.y = (1.0f - ndc.y) * 0.5f * screenHeight;
 
-		std::cout << "\n\n\t x2D " << x2D.x << " " << x2D.y;
+	//	std::cout << "\n\n\t x2D " << x2D.x << " " << x2D.y;
 
-		directions.push_back(glm::normalize(x2D - vert2D));
+	//	directions.push_back(glm::normalize(x2D - vert2D));
 
-		std::cout << "\n\n\t unprojected direction " << directions.back().x << " " << directions.back().y;
-		//directions.push_back(glm::normalize(vert2D - x2D));
-	}
+	//	std::cout << "\n\n\t unprojected direction " << directions.back().x << " " << directions.back().y;
+	//	//directions.push_back(glm::normalize(vert2D - x2D));
+	//}
 
 
 	return directions;

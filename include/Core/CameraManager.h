@@ -24,4 +24,4 @@ public:
 	std::vector<Camera*>& getAllCameras();
 };
 
-extern CameraManager* cameraSingleton;
+//extern CameraManager* cameraSingleton;

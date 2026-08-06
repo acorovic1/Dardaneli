@@ -64,6 +64,10 @@ public:
 	void materialEditor(Window* window,Viewport* viewport); //Inputs
 	void inputs(Window* window,Viewport* viewport); //Inputs
 
+
+	void init();
+	void newFrame();
+
 };
 
 extern Application* app;

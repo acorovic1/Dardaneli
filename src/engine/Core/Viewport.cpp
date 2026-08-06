@@ -19,6 +19,7 @@ Viewport::Viewport(double left, double bottom, double right, double top, GLFWwin
 	cameras[(size_t)CameraTypes::VIEWPORT]->setPerspectiveProjection(45, aspect, 0.1f, 10000.0f);
 	cameras[(size_t)CameraTypes::UV]->setOrthographicProjection(1.0f, aspect, -2000.0f, 300000.0f);
 
+	cameras[(size_t)CameraTypes::UV]->setOrientation(glm::vec3(0.0f, 0.0f, -1.0f));
 
 
 	glViewport(left * width, bottom * height, right * width, top * height);
@@ -76,6 +77,8 @@ Viewport::Viewport(Viewport* baseViewport, double xPos, double yPos, bool vertic
 	cameras[(size_t)CameraTypes::VIEWPORT]->setPerspectiveProjection(45, aspect, 0.1f, 10000.0f);
 	cameras[(size_t)CameraTypes::UV]->setOrthographicProjection(1.0f, aspect, -2000.0f, 300000.0f);
 
+	cameras[(size_t)CameraTypes::UV]->setOrientation(glm::vec3(0.0f, 0.0f, -1.0f));
+
 
 	if (vertical)
 		baseViewport->adjustSize(right, bottom, baseViewport->getRight(), top, window);
@@ -89,6 +92,49 @@ Viewport::Viewport(Viewport* baseViewport, double xPos, double yPos, bool vertic
 
 Viewport::~Viewport()
 {
+
+}
+
+void Viewport::drawGui(MyGUI& gui, std::string id)
+{
+	ImGui::Begin(("Tools##" + id).c_str());
+
+	switch (mode)
+	{
+	case Mode::OBJECT:
+		gui.drawObjectModeUI(this);
+		break;
+
+	case Mode::EDIT:
+		gui.drawEditModeUI(this);
+		break;
+	case Mode::UV_EDIT:
+		gui.drawUVModeUI(this);
+		break;
+	case Mode::SHADER_EDIT:
+		gui.drawShaderEditorUI(this);
+		break;
+
+	}
+
+	ImGui::End();
+
+
+
+
+	ImGui::Begin(("##" + id).c_str());
+	
+	int current = (size_t)renderMode;
+	ImGui::SameLine();
+	if (ImGui::RadioButton("Wireframe", &current, 0)) renderMode = RenderMode::WIREFRAME; ImGui::SameLine();
+	if (ImGui::RadioButton("Solid", &current, 1)) renderMode = RenderMode::SOLID; ImGui::SameLine();
+	if (ImGui::RadioButton("Material Preview", &current, 2))renderMode = RenderMode::MATERIAL_PREVIEW; ImGui::SameLine();
+	if (ImGui::RadioButton("Render", &current, 3)) renderMode = RenderMode::RENDER; ImGui::SameLine();
+
+
+	ImGui::End();
+
+
 
 }
 

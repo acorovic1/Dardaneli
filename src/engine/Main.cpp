@@ -94,6 +94,8 @@ int main() {
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);
 
+	//app->init(window.getGLFWwindow());
+
 	glfwSetTime(0);
 
 	std::cout << "\nDardaneli started successfully!\n\n";

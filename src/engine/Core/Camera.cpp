@@ -13,7 +13,7 @@ Camera::Camera(int width, int height, glm::vec3 position, std::string name)
 
 	fov = 45.0, near = 0.01f, far = 100.0f;
 
-	cameraSingleton->addCamera(this);
+	//cameraSingleton->addCamera(this);
 }
 
 Camera::Camera(int width, int height, glm::vec3 position, glm::vec3 orientation, glm::vec3 up, std::string name)
@@ -25,7 +25,7 @@ Camera::Camera(int width, int height, glm::vec3 position, glm::vec3 orientation,
 	Camera::up = up;
 	Camera::name = name;
 	fov = 45.0, near = 0.01f, far = 100.0f;
-	cameraSingleton->addCamera(this);
+	//cameraSingleton->addCamera(this);
 }
 
 Camera::Camera(const Camera& copy)
@@ -43,7 +43,7 @@ Camera::Camera(const Camera& copy)
 
 	// ovo je covek neki sto mi uzeee sve
 	name = copy.name;
-	cameraSingleton->addCamera(this);
+	//cameraSingleton->addCamera(this);
 }
 
 void Camera::update()
