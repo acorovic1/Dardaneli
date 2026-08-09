@@ -20,7 +20,7 @@ public:
 
 
 private:
-	void objectEditor(Viewport* viewport,glm::vec3 color);
+	void objectEditor(Viewport* viewport);
 	void uvEditor(Viewport* viewport);
 	void shaderEditor(Viewport* viewport);
 	

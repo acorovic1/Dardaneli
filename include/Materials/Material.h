@@ -35,14 +35,14 @@ public:
 
 	// errors when the implementation is moved into .cpp
 	template<typename T>
-	T* createNode() {
+	T* createNode(ImVec2 cursorPos) {
 
 		auto node = std::make_unique<T>(id);
 		T* ptr = node.get();
 		nodes.push_back(std::move(node));
 
 
-		ImVec2 cursorPos = ImGui::GetMousePos();
+		 
 		ImNodes::SetNodeScreenSpacePos(id, cursorPos);
 
 		id += 10;

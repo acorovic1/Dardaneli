@@ -417,10 +417,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imgui_tables.cpp" />
     <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imgui_widgets.cpp" />
     <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imnodes.cpp" />
-    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUIZMO\GraphEditor.cpp" />
-    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUIZMO\ImCurveEdit.cpp" />
-    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUIZMO\ImGradient.cpp" />
-    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUIZMO\ImGuizmo.cpp" />
     <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\BVHNode.cpp" />
     <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\BoundingVolumes\AABB.cpp" />
     <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\BoundingVolumes\DrawableAABB.cpp" />
@@ -486,6 +482,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Utilities\Ray.cpp" />
     <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\Utilities\stb.cpp" />
     <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\glad.c" />
+    <ClCompile Include="libraries\include\ImGUIZMO\ImGuizmo.cpp" />
     <None Include=".gitignore" />
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\BVH.frag">
     </None>
@@ -521,7 +518,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </None>
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\quad.vert">
     </None>
-    <None Include="imgui.ini" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
@@ -603,6 +599,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="include\Utilities\RenderDocIntegration.h" />
     <ClInclude Include="include\Utilities\Triangle.h" />
     <ClInclude Include="include\Utilities\UnorderedPair.h" />
+    <ClInclude Include="libraries\include\ImGUIZMO\ImGuizmo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -46,6 +46,7 @@
 #include <Improved/VertexBVHImproved.h>
 #include <Improved/FaceBVHImproved.h>
 
+
 #include "Viewport.h"
 
 
@@ -77,6 +78,8 @@ void MyGUI::init()
 
 	ImNodes::CreateContext();
 
+	io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
 	initializeGrid2D();
 	initializeGrid3D();
 }
@@ -97,16 +100,57 @@ void MyGUI::shutdown()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 
+	ImGui::DestroyPlatformWindows();
 	ImNodes::DestroyContext();
 	ImGui::DestroyContext();
 }
 
 
 
-void MyGUI::drawUI(Viewport* viewport)
+void MyGUI::drawGeneral(Viewport* viewport)
 {
-	ImGui::Begin("##1");
-	
+
+	if (showViewportActions)
+		viewportActionsMenu();
+
+	if (showViewportModes)
+		viewportModeMenu();
+
+	if (viewportAdjust)
+	{
+		Window* window = getWindow();
+		Viewport* viewport = window->getViewportAtCursor();
+		viewport->resize(window, viewportAdjustBoundary);
+	}
+
+
+
+	drawHierarchy(viewport);
+
+
+
+	/*
+
+	if (viewport->getMode() == Mode::OBJECT || viewport->getMode() == Mode::EDIT)
+		drawBVH(viewport);
+
+	*/
+
+}
+
+void MyGUI::drawTopBar()
+{
+
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::SetNextWindowSize(ImVec2(this->getWindow()->getWidth(), this->getWindow()->getHeight() * 0.05));
+
+	ImGui::Begin("TitleBar##1", nullptr,
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar
+	);
 
 	if (ImGui::Button("File "))
 	{
@@ -124,16 +168,8 @@ void MyGUI::drawUI(Viewport* viewport)
 	if (showImportDialog)
 		importObject();
 
-
-	//Mode pastMode = viewport->getMode();
-
-	//modes(viewport);
-	//ImGui::SameLine();
-
-	//Mode& currentMode = viewport->getMode();
-
-
-	if (ImGui::Button("Render Scene"))
+	ImGui::SameLine();
+	if (ImGui::Button("Render"))
 	{
 		ImGui::OpenPopup("RenderSceneMenu");
 	}
@@ -156,38 +192,10 @@ void MyGUI::drawUI(Viewport* viewport)
 	ImGui::End();
 
 
-	if (showViewportActions)
-		viewportActionsMenu();
-
-	if (showViewportModes)
-		viewportModeMenu();
-
-	if (viewportAdjust)
-	{
-		Window* window = getWindow();
-		Viewport* viewport = window->getViewportAtCursor();
-		viewport->resize(window, viewportAdjustBoundary);
-	}
-
-
-
-
 }
 
-void MyGUI::drawObjectModeUI(Viewport* viewport)
+void MyGUI::drawObjectTools(Viewport* viewport)
 {
-
-	static int choice = 0;
-	ImGui::RadioButton("Default", &choice, 0);ImGui::SameLine();
-	ImGui::RadioButton("BVH", &choice, 1);ImGui::SameLine();
-	ImGui::RadioButton("Ray Interaction", &choice, 2);
-	ImGui::InputInt("BVH Depth", &BVHSubd);
-	if (BVHSubd > log(objectSingleton->getNumberOfObjects()) / log(2))
-		BVHSubd = static_cast<int>(log(objectSingleton->getNumberOfObjects()) / log(2));
-	if (BVHSubd < 0)
-		BVHSubd = 0;
-	ImGui::Checkbox("FaceCulling", &faceCulling);
-	ImGui::Checkbox("Gizmo", &gizmo);
 
 	if (gizmo)
 		gizmos();
@@ -197,37 +205,52 @@ void MyGUI::drawObjectModeUI(Viewport* viewport)
 
 
 
+	ImGui::Checkbox("Gizmo", &gizmo); ImGui::SameLine();
+	ImGui::Checkbox("FaceCulling", &faceCulling);
+
+	if (ImGui::CollapsingHeader("Render Mode"))
+		drawRenderModeOptions(viewport);
+
+	if (ImGui::CollapsingHeader("Transforms"))
+		transformations();
 
 
-	/*if (choice == 1)
+	if (ImGui::CollapsingHeader("Add"))
 	{
-		drawBVH();
-	}
-	else if (choice == 2)
-	{
-		BVHRayInteraction();
-	}*/
-
-	if (app->selectedObjects.size())
-	{
-
-		int& lastIndex = app->selectedObjects.back();
-
-		if (ImGui::InputInt("Index", &lastIndex))
+		if (ImGui::CollapsingHeader("Mesh"))
 		{
-			(ImGui::InputInt("Index", &lastIndex));
-			if (lastIndex < 0) lastIndex = 0;
-			if (lastIndex >= objectSingleton->getNumberOfObjects()) lastIndex = objectSingleton->getNumberOfObjects() - 1;
+			ImGui::Columns(2, nullptr, false);
 
-			selectObject();
+			if (ImGui::Button("Plane")) addPlane();
+			if (ImGui::Button("Cube")) addCube();
+			if (ImGui::Button("Circle")) addCircle();
+			if (ImGui::Button("Sphere")) addSphere();
+
+			ImGui::NextColumn();
+
+			if (ImGui::Button("Cylinder")) addCylinder();
+			if (ImGui::Button("Cone")) addCone();
+			if (ImGui::Button("Doughnut")) addDoughnut();
+
+			ImGui::Columns(1);
+		}
+
+		if (ImGui::CollapsingHeader("Light"))
+		{
+			if (ImGui::Button("Point Light")) new PointLight("Point Light");
+			if (ImGui::Button("Directional Light")) new DirectionalLight("Directional Light");
+			if (ImGui::Button("Spot Light")) new SpotLight("Spot Light");
 		}
 	}
 
-	transformations();
+
+
+
+
 
 }
 
-void MyGUI::drawEditModeUI(Viewport* viewport)
+void MyGUI::drawEditTools(Viewport* viewport)
 {
 	Mesh* mesh = dynamic_cast<Mesh*>(objectSingleton->getActiveObject());
 
@@ -236,41 +259,66 @@ void MyGUI::drawEditModeUI(Viewport* viewport)
 	Camera* camera = viewport->getCamera(CameraTypes::VIEWPORT);
 
 
-	static int choice = 0;
-	ImGui::RadioButton("Default", &choice, 0);ImGui::SameLine();
-	ImGui::RadioButton("BVH", &choice, 1);ImGui::SameLine();
-	ImGui::RadioButton("Ray Interaction", &choice, 2);
+	//static int choice = 0;
+	//ImGui::RadioButton("Default", &choice, 0);ImGui::SameLine();
+	//ImGui::RadioButton("BVH", &choice, 1);ImGui::SameLine();
+	//ImGui::RadioButton("Ray Interaction", &choice, 2);
 
-	if (choice == 1)
-	{
-		static Shader& bvh = shaderSingleton->getShader("BVH");
-		bvh.setVector4f(false, "color", FragColor::BVH);
+	//if (choice == 1)
+	//{
+	//	static Shader& bvh = shaderSingleton->getShader("BVH");
+	//	bvh.setVector4f(false, "color", FragColor::BVH);
 
-		//basic.setBool(true, "BVH", true);
-		//if (app->selectMode == SelectMode::VERTEX)
-		//	VertexBVHSingleton->DrawLeaves(VertexBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
-		//else if (app->selectMode == SelectMode::EDGE)
-		//	EdgeBVHSingleton->DrawLeaves(EdgeBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
-		//else if (app->selectMode == SelectMode::FACE)
-		//	FaceBVHSingleton->DrawLeaves(FaceBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
+	//	//basic.setBool(true, "BVH", true);
+	//	//if (app->selectMode == SelectMode::VERTEX)
+	//	//	VertexBVHSingleton->DrawLeaves(VertexBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
+	//	//else if (app->selectMode == SelectMode::EDGE)
+	//	//	EdgeBVHSingleton->DrawLeaves(EdgeBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
+	//	//else if (app->selectMode == SelectMode::FACE)
+	//	//	FaceBVHSingleton->DrawLeaves(FaceBVHSingleton->getRoot(), *cameraSingleton->getCamera(0), basic);
 
-		if (selectMode == SelectMode::VERTEX)
-			VertexBVHImprovedSingleton->Draw(*camera, bvh, eBVHSubd);
-		else if (selectMode == SelectMode::EDGE)
-			EdgeBVHImprovedSingleton->Draw(*camera, bvh, eBVHSubd);
-		else if (selectMode == SelectMode::FACE)
-			FaceBVHImprovedSingleton->Draw(*camera, bvh, eBVHSubd);
+	//	if (selectMode == SelectMode::VERTEX)
+	//		VertexBVHImprovedSingleton->Draw(*camera, bvh, eBVHSubd);
+	//	else if (selectMode == SelectMode::EDGE)
+	//		EdgeBVHImprovedSingleton->Draw(*camera, bvh, eBVHSubd);
+	//	else if (selectMode == SelectMode::FACE)
+	//		FaceBVHImprovedSingleton->Draw(*camera, bvh, eBVHSubd);
 
-		//basic.setBool(true, "BVH", false);
-
-
-	}
-	else if (choice == 2)
-	{
+	//	//basic.setBool(true, "BVH", false);
 
 
-		BVHRayInteraction();
-	}
+	//}
+	//else if (choice == 2)
+	//{
+
+
+	//	BVHRayInteraction();
+	//}
+
+	//ImGui::InputInt("BVH Height", &eBVHSubd);
+	//int height;
+	//if (selectMode == SelectMode::VERTEX)
+	//	height = log(mesh->getNumberOfVertices()) / log(2);
+	//else if (selectMode == SelectMode::EDGE)
+	//	height = log(mesh->getNumberOfEdges()) / log(2);
+	//else
+	//	height = log(mesh->getNumberOfFaces()) / log(2);
+
+	//if (eBVHSubd > height)
+	//	eBVHSubd = height;
+	//if (eBVHSubd < 0)
+	//	eBVHSubd = 0;
+
+	//std::vector<int>& vertexIndicesTemp = mesh->getSelectedVertices();
+	//int size = vertexIndicesTemp.size();
+	//if (size)
+	//{
+	//	int& lastIndex = vertexIndicesTemp.back();
+	//	(ImGui::InputInt("Index", &lastIndex));
+	//	if (lastIndex < 0) lastIndex = 0;
+	//	if (lastIndex >= mesh->getVertices().size()) lastIndex = mesh->getVertices().size() - 1;
+	//}
+
 
 	if (showDeleteMenuFlag)
 		deleteMenu();
@@ -279,79 +327,176 @@ void MyGUI::drawEditModeUI(Viewport* viewport)
 		extrudeMenu();
 
 
-
-	ImGui::InputInt("BVH Height", &eBVHSubd);
-	int height;
-	if (selectMode == SelectMode::VERTEX)
-		height = log(mesh->getNumberOfVertices()) / log(2);
-	else if (selectMode == SelectMode::EDGE)
-		height = log(mesh->getNumberOfEdges()) / log(2);
-	else
-		height = log(mesh->getNumberOfFaces()) / log(2);
-
-	if (eBVHSubd > height)
-		eBVHSubd = height;
-	if (eBVHSubd < 0)
-		eBVHSubd = 0;
-
 	ImGui::Checkbox("FaceCulling", &faceCulling);
 
-	ImGui::Button("Mark seam");
-	if (ImGui::IsItemClicked())
+	if (ImGui::CollapsingHeader("Render Mode"))
+		drawRenderModeOptions(viewport);
+
+
+	if (ImGui::CollapsingHeader("Vertex Select"))
 	{
-		ImGui::SetTooltip("Mark seam for selected edges");
 
-		std::cout << "\nSeams marked";
+		int e = (int)selectMode;
 
-		for (DEdge* edge : mesh->getSelectedEdges())
-			edge->isSeam = true;
+		ImGui::RadioButton("DVertex select", &e, 0); ImGui::SameLine();
+		ImGui::RadioButton("Edge select", &e, 1); ImGui::SameLine();
+		ImGui::RadioButton("DFace select", &e, 2);
 
-		mesh->lscmUVUnwrap();
+		switch (e)
+		{
+		case 0: selectMode = SelectMode::VERTEX; break;
+		case 1: selectMode = SelectMode::EDGE; break;
+		case 2: selectMode = SelectMode::FACE; break;
+		}
 	}
 
+	if (ImGui::CollapsingHeader("Transform"))
+		vertexTransform();
 
-	ImGui::Button("Clear seam");
-	if (ImGui::IsItemClicked())
+
+	//dMesh();
+
+
+
+	if (ImGui::CollapsingHeader("Mesh Editing"))
 	{
-		ImGui::SetTooltip("Clear seam for selected edges");
+		if (ImGui::CollapsingHeader("Add"))
+		{
+			ImGui::Columns(2, nullptr, false);
 
-		for (DEdge* edge : mesh->getSelectedEdges())
-			edge->isSeam = false;
+			if (ImGui::Button("Extrude")) ImGui::OpenPopup("ExtrudePopup");
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: E");
 
-		mesh->mergeUVs();
+			if (ImGui::BeginPopup("ExtrudePopup"))
+			{
+				if (ImGui::Selectable("Vertices")) { mesh->extrudeVertices(mesh->getSelectedVertices(), true); ImGui::CloseCurrentPopup(); }
+				if (ImGui::Selectable("Edges")) { mesh->extrudeEdges(mesh->getSelectedEdges(), true); ImGui::CloseCurrentPopup(); }
+				if (ImGui::Selectable("Faces")) { mesh->extrudeFaces(mesh->getSelectedFaces(), true); ImGui::CloseCurrentPopup(); }
+				if (ImGui::Selectable("Individual Faces")) { mesh->extrudeIndividualFaces(mesh->getSelectedFaces(), true); ImGui::CloseCurrentPopup(); }
+
+				if (ImGui::Selectable("Along Normals")) { mesh->extrudeAlongNormals(); ImGui::CloseCurrentPopup(); }
+				if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: WIP");
+
+				if (ImGui::Selectable("Manifold")) { mesh->extrudeManifold(); ImGui::CloseCurrentPopup(); }
+				if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: WIP");
+
+				if (ImGui::Selectable("Repeat")) { mesh->extrudeRepeat(); ImGui::CloseCurrentPopup(); }
+				if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: WIP");
+
+				if (ImGui::Selectable("Spin")) { mesh->spin(); ImGui::CloseCurrentPopup(); }
+				if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: WIP");
+
+				ImGui::EndPopup();
+			}
+
+			if (ImGui::Button("Inset")) mesh->insetIndividual(mesh->getSelectedFaces());
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: I");
+
+			if (ImGui::Button("Fill")) { auto& selected = mesh->getSelectedVertices(); if (selected.size() == 2) mesh->edgeFill(selected); else mesh->faceFill(selected, false, true); }
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: F");
+
+			ImGui::NextColumn();
+
+			if (ImGui::Button("Bridge Faces")) { auto faces = mesh->getSelectedFaces(); if (faces.size() >= 2) mesh->bridgeFaces(faces[0], faces[1], true); }
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: B");
+
+			if (ImGui::Button("Duplicate"))
+			{
+				switch (viewport->getSelectMode())
+				{
+				case SelectMode::VERTEX: mesh->duplicateVertices(mesh->getSelectedVertices(), true); break;
+				case SelectMode::EDGE: mesh->duplicateEdges(mesh->getSelectedEdges(), true); break;
+				case SelectMode::FACE: mesh->duplicateFaces(mesh->getSelectedFaces(), true); break;
+				}
+			}
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: Shift + D");
+
+			if (ImGui::Button("Separate")) mesh->separate(mesh->getSelectedFaces());
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: Y");
+
+			ImGui::Columns(1);
+		}
+
+		if (ImGui::CollapsingHeader("Delete"))
+		{
+			ImGui::Columns(2, nullptr, false);
+
+			if (ImGui::Button("Delete Vertices")) mesh->deleteVertices(mesh->getSelectedVertices(), true);
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: X");
+
+			if (ImGui::Button("Delete Edges")) mesh->deleteEdges(mesh->getSelectedEdges(), true);
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: X");
+
+			if (ImGui::Button("Delete Faces")) mesh->deleteFaces(mesh->getSelectedFaces(), true);
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: X");
+
+			if (ImGui::Button("Delete Edges + Faces")) mesh->deleteOnlyEdgesAndFaces(mesh->getSelectedEdges(), true);
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: X");
+
+			if (ImGui::Button("Delete Only Faces")) mesh->deleteOnlyFaces(mesh->getSelectedFaces(), true);
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: X");
+
+			ImGui::NextColumn();
+
+			if (ImGui::Button("Dissolve Vertices")) mesh->dissolveVertices();
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: X");
+
+			if (ImGui::Button("Dissolve Edges")) mesh->dissolveEdges();
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: X");
+
+			if (ImGui::Button("Dissolve Faces")) mesh->dissolveFaces();
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: X");
+
+			ImGui::Columns(1);
+		}
+
+		if (ImGui::CollapsingHeader("Topology"))
+		{
+			ImGui::Columns(2, nullptr, false);
+
+			if (ImGui::Button("Subdivide")) mesh->linearSubdivision();
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: Ctrl + S");
+
+			if (ImGui::Button("Loop Cut")) { auto edges = mesh->getSelectedEdges(); if (!edges.empty()) mesh->loopCut(edges.back(), 1); }
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: Ctrl + R");
+
+			if (ImGui::Button("Merge Vertices")) mesh->mergeVertices(mesh->getSelectedVertices());
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: Ctrl + M");
+
+			ImGui::NextColumn();
+
+			if (ImGui::Button("Triangulate")) mesh->triangulateFaces(mesh->getSelectedFaces(), true);
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: Ctrl + T");
+
+			if (ImGui::Button("Tris To Quads")) { auto faces = mesh->getSelectedFaces(); std::unordered_set<DFace*> set(faces.begin(), faces.end()); mesh->trisToQuads(set, true); }
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: Alt + T");
+
+			if (ImGui::Button("Poke Faces")) mesh->pokeFaces(mesh->getSelectedFaces(), true);
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: P");
+
+			ImGui::Columns(1);
+		}
+
+		if (ImGui::CollapsingHeader("Normals"))
+		{
+			if (ImGui::Button("Flip Normals")) mesh->flipFaceNormals(mesh->getSelectedFaces());
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Shortcut: Alt + N");
+		}
+
+		if (ImGui::CollapsingHeader("UVs"))
+		{
+			if (ImGui::Button("Mark seam")) { for (DEdge* edge : mesh->getSelectedEdges()) edge->isSeam = true; }
+			if (ImGui::Button("Clear seam")) { for (DEdge* edge : mesh->getSelectedEdges()) edge->isSeam = false;mesh->mergeUVs(); }
+			if (ImGui::Button("LSCM Unwrap"))	mesh->lscmUVUnwrap();
+
+		}
+
 	}
-
-	int e = (int)selectMode;
-
-	ImGui::RadioButton("DVertex select", &e, 0); ImGui::SameLine();
-	ImGui::RadioButton("Edge select", &e, 1); ImGui::SameLine();
-	ImGui::RadioButton("DFace select", &e, 2);
-
-	if (e == 0)selectMode = SelectMode::VERTEX;
-	else if (e == 1)selectMode = SelectMode::EDGE;
-	else if (e == 2)selectMode = SelectMode::FACE;
-
-
-	std::vector<int>& vertexIndicesTemp = mesh->getSelectedVertices();
-	int size = vertexIndicesTemp.size();
-
-	if (size)
-	{
-		int& lastIndex = vertexIndicesTemp.back();
-		(ImGui::InputInt("Index", &lastIndex));
-		if (lastIndex < 0) lastIndex = 0;
-		if (lastIndex >= mesh->getVertices().size()) lastIndex = mesh->getVertices().size() - 1;
-	}
-
-
-
-	vertexTransform();
-	dMesh();
 
 
 }
 
-void MyGUI::drawUVModeUI(Viewport* viewport)
+void MyGUI::drawUVTools(Viewport* viewport)
 {
 	ImGui::Checkbox("BVHTree", &BVHTree);
 
@@ -369,7 +514,7 @@ void MyGUI::drawUVModeUI(Viewport* viewport)
 
 }
 
-void MyGUI::drawShaderEditorUI(Viewport* viewport)
+void MyGUI::drawNodeTools(Viewport* viewport)
 {
 	if (showAddMenuFlag) addShadingNodes();
 
@@ -406,12 +551,16 @@ void MyGUI::drawShaderEditorUI(Viewport* viewport)
 	ImGui::SameLine();
 	ImGui::RadioButton("Object Materials", &current, 0);
 
+	//auto activeMaterial = viewport->getActiveMaterial();
+
+	auto activeMaterial = app->activeMaterial;
+
 	if (mesh)
 	{
-		if (ImGui::Button("Assign Material")) mesh->assignMaterial(app->activeMaterial);
+		if (ImGui::Button("Assign Material")) mesh->assignMaterial(activeMaterial);
 		ImGui::SameLine();
 
-		if (ImGui::Button("Remove Material")) mesh->removeMaterial(app->activeMaterial);
+		if (ImGui::Button("Remove Material")) mesh->removeMaterial(activeMaterial);
 		ImGui::SameLine();
 	}
 
@@ -432,9 +581,9 @@ void MyGUI::drawShaderEditorUI(Viewport* viewport)
 			}
 			selectedIndex = i;
 
-			app->activeMaterial->getNodePositions();   // save old material node positions
-			app->activeMaterial = materials[i];
-			app->activeMaterial->setNodePositions();   // set new material node positions
+			activeMaterial->getNodePositions();   // save old material node positions
+			activeMaterial = materials[i];
+			activeMaterial->setNodePositions();   // set new material node positions
 		}
 
 
@@ -460,8 +609,166 @@ void MyGUI::drawShaderEditorUI(Viewport* viewport)
 		}
 	}
 
+	ImVec2 center = viewport->getShaderNodeEditorCenter();
+
+	if (ImGui::CollapsingHeader("Add"))
+	{
+		if (ImGui::CollapsingHeader("Color"))
+		{
+			ImGui::PushID("Color");
+
+			if (ImGui::Button("Color")) activeMaterial->createNode<ColorNode>(center);
+			if (ImGui::Button("ColorMix")) activeMaterial->createNode<ColorMixNode>(center);
+
+			ImGui::PopID();
+		}
+
+		if (ImGui::CollapsingHeader("Math"))
+		{
+			ImGui::PushID("Math");
+
+			if (ImGui::Button("Math")) activeMaterial->createNode<MathNode>(center);
+
+			ImGui::PopID();
+		}
+
+		if (ImGui::CollapsingHeader("Texture"))
+		{
+			ImGui::PushID("Texture");
+
+			if (ImGui::Button("Texture")) activeMaterial->createNode<TextureNode>(center);
+
+			ImGui::PopID();;
+		}
+
+		if (ImGui::CollapsingHeader("Input"))
+		{
+			ImGui::PushID("Input");
+
+			if (ImGui::Button("Value")) activeMaterial->createNode<ValueNode>(center);
+
+			ImGui::PopID();
+		}
+
+		if (ImGui::CollapsingHeader("Output"))
+		{
+			ImGui::PushID("Output");
+
+			if (ImGui::Button("Color Output")) activeMaterial->createNode<ColorOutputNode>(center);
+			if (ImGui::Button("Normal Output")) activeMaterial->createNode<NormalOutputNode>(center);
+			if (ImGui::Button("Roughness Output")) activeMaterial->createNode<RoughnessOutputNode>(center);
+			if (ImGui::Button("Metallic Output")) activeMaterial->createNode<MetallicOutputNode>(center);
+			if (ImGui::Button("Ambient Occlusion Output")) activeMaterial->createNode<AmbientOcclusionOutputNode>(center);
+
+			ImGui::PopID();
+		}
+	}
+
+}
+
+void MyGUI::drawHierarchy(Viewport* viewport)
+{
+	ImGui::Begin(("Hierarchy##" + std::to_string(viewport->getGuiId())).c_str());
+	auto& objects = objectSingleton->getAllObjects();
+
+	static int renameIndex = -1;
+	static char renameBuffer[256] = {};
+
+	std::unordered_set<int> selectedSet(app->selectedObjects.begin(), app->selectedObjects.end());
+
+	for (int i = 0; i < objects.size(); ++i)
+	{
+		Object* object = objects[i];
+
+		if (!object)
+			continue;
 
 
+		if (renameIndex == i)
+		{
+			ImGui::SetKeyboardFocusHere();
+
+			if (ImGui::InputText("##Rename", renameBuffer, sizeof(renameBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
+			{
+				object->setName(renameBuffer);
+				renameIndex = -1;
+			}
+
+
+			if (!ImGui::IsItemActive() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+			{
+				renameIndex = -1;
+			}
+		}
+		else
+		{
+
+
+			bool selected = selectedSet.find(i) != selectedSet.end();
+			bool active = !app->selectedObjects.empty() &&
+				app->selectedObjects.back() == i;
+
+			if (active)
+				ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.8f, 0.4f, 0.1f, 1.0f));
+
+			if (ImGui::Selectable((object->getName() + "##Object_" + std::to_string(i)).c_str(), selected))
+			{
+				if (!ImGui::IsKeyDown(ImGuiKey_LeftShift))
+					app->selectedObjects.clear();
+				app->selectedObjects.push_back(i);
+			}
+			if (active)
+				ImGui::PopStyleColor();
+
+
+			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+			{
+				renameIndex = i;
+				strncpy_s(renameBuffer, sizeof(renameBuffer), object->getName().c_str(), _TRUNCATE);
+			}
+		}
+	}
+	ImGui::End();
+}
+
+void MyGUI::drawRenderModeOptions(Viewport* viewport)
+{
+
+	RenderMode& renderMode = viewport->getRenderMode();
+	int current = (size_t)renderMode;
+
+	if (ImGui::RadioButton("Wireframe", &current, 0)) renderMode = RenderMode::WIREFRAME; ImGui::SameLine();
+	if (ImGui::RadioButton("Solid", &current, 1)) renderMode = RenderMode::SOLID; ImGui::SameLine();
+	if (ImGui::RadioButton("Material", &current, 2))renderMode = RenderMode::MATERIAL_PREVIEW; ImGui::SameLine();
+	if (ImGui::RadioButton("Render", &current, 3)) renderMode = RenderMode::RENDER;
+
+
+}
+
+void MyGUI::drawBVH(Viewport* viewport)
+{
+	ImGui::Begin("BVH Visualization");
+
+	static int choice = 0;
+	ImGui::RadioButton("Default", &choice, 0);ImGui::SameLine();
+	ImGui::RadioButton("BVH", &choice, 1);ImGui::SameLine();
+	ImGui::RadioButton("Ray Interaction", &choice, 2);
+	ImGui::InputInt("BVH Depth", &BVHSubd);
+	if (BVHSubd > log(objectSingleton->getNumberOfObjects()) / log(2))
+		BVHSubd = static_cast<int>(log(objectSingleton->getNumberOfObjects()) / log(2));
+	if (BVHSubd < 0)
+		BVHSubd = 0;
+
+	if (choice == 1)
+	{
+		displayBVH(viewport->getActiveCamera());
+	}
+	else if (choice == 2)
+	{
+		BVHRayInteraction(viewport);
+	}
+
+	ImGui::End();
 
 }
 
@@ -723,7 +1030,7 @@ void MyGUI::extrudeMenu()
 		{
 			glfwSetTime(0);
 			hoverTime = 0;
-				std::cout << "\n\t HEllo";
+			std::cout << "\n\t HEllo";
 
 			if (selected_option != -1)
 			{
@@ -969,7 +1276,7 @@ void MyGUI::viewportModeMenu()
 		{
 			if (ImGui::MenuItem("Wireframe", nullptr, renderMode == RenderMode::WIREFRAME)) renderMode = RenderMode::WIREFRAME;
 			if (ImGui::MenuItem("Solid", nullptr, renderMode == RenderMode::SOLID)) renderMode = RenderMode::SOLID;
-			if (ImGui::MenuItem("Material Preview", nullptr, renderMode == RenderMode::MATERIAL_PREVIEW)) renderMode = RenderMode::MATERIAL_PREVIEW;
+			if (ImGui::MenuItem("Material", nullptr, renderMode == RenderMode::MATERIAL_PREVIEW)) renderMode = RenderMode::MATERIAL_PREVIEW;
 			if (ImGui::MenuItem("Render", nullptr, renderMode == RenderMode::RENDER)) renderMode = RenderMode::RENDER;
 
 			ImGui::EndMenu();
@@ -1015,7 +1322,7 @@ void MyGUI::stopViewportAdjustment()
 }
 
 
-void MyGUI::drawBVH(Camera* camera) {
+void MyGUI::displayBVH(Camera* camera) {
 	static Shader& bvh = shaderSingleton->getShader("BVH");
 	bvh.setVector4f(false, "color", FragColor::BVH);
 
@@ -1027,23 +1334,23 @@ void MyGUI::drawBVH(Camera* camera) {
 	//basic.setVector4f(false, "color", FragColor::Seams);
 }
 
-void MyGUI::BVHRayInteraction()
+void MyGUI::BVHRayInteraction(Viewport* viewport)
 {
-	/*static Shader& bvh = shaderSingleton->getShader("BVH");
+	static Shader& bvh = shaderSingleton->getShader("BVH");
 	bvh.setVector4f(false, "color", FragColor::BVH);
 
 
 	std::vector<int> garbage{};
-	static Camera& camera = *cameraSingleton->getCamera(0);
+	Camera* camera = viewport->getActiveCamera();
 
-	if (app->mode == Mode::OBJECT)
-		objectBVHImprovedSingleton->DrawRayInteraction(objectBVHImprovedSingleton->getRoot(), camera.createRay(glfwWindow), camera, bvh);
-	else if (app->mode == Mode::EDIT && app->selectMode == SelectMode::VERTEX)
+	if (viewport->getMode() == Mode::OBJECT)
+		objectBVHImprovedSingleton->DrawRayInteraction(objectBVHImprovedSingleton->getRoot(), camera->createRay(glfwWindow), *camera, bvh);
+	else if (viewport->getMode() == Mode::EDIT && viewport->getSelectMode() == SelectMode::VERTEX)
 	{
 
-		VertexBVHImprovedSingleton->DrawRayInteraction(VertexBVHImprovedSingleton->getRoot(), camera.createRay(glfwWindow), camera, bvh);
+		VertexBVHImprovedSingleton->DrawRayInteraction(VertexBVHImprovedSingleton->getRoot(), camera->createRay(glfwWindow), *camera, bvh);
 
-	}*/
+	}
 
 
 }
@@ -1760,17 +2067,23 @@ void MyGUI::dMesh()
 
 
 
-void MyGUI::shaderNodeEditor()
+void MyGUI::shaderNodeEditor(Viewport* viewport)
 {
 	// ovo negdje drugo prebaciti
 	ImNodesStyle& style = ImNodes::GetStyle();
 	style.Colors[ImNodesCol_TitleBarSelected] = IM_COL32(200, 200, 0, 255);
 
-	ImGui::Begin("Shader Node Editor ");
+	ImGui::Begin(("Shader Node Editor##" + std::to_string(viewport->getGuiId())).c_str());
 
 	ImNodes::BeginNodeEditor();
 
 	app->activeMaterial->drawNodes();
+
+	// Get exact screen boundaries of the visible canvas area
+	ImGuiWindow* nodeEditorWindow = ImGui::GetCurrentWindow();
+
+	viewport->setShaderNodeEditorCenter((nodeEditorWindow->ClipRect.Max - nodeEditorWindow->ClipRect.Min) / 2);
+
 
 	auto& links = app->activeMaterial->getLinks();
 	for (int i = 0; i < links.size(); ++i)
@@ -1784,8 +2097,6 @@ void MyGUI::shaderNodeEditor()
 	ImNodes::MiniMap(0.25f, ImNodesMiniMapLocation_BottomRight);
 
 	ImNodes::EndNodeEditor();
-
-
 
 	/////////////////////////////////////////////////////////////////////
 		// link creation logic \\
@@ -1830,11 +2141,9 @@ void MyGUI::shaderNodeEditor()
 
 void MyGUI::addShadingNodes()
 {
-
 	hoverTime = glfwGetTime();
-
+	ImVec2 cursorPos = ImGui::GetMousePos();
 	ImGui::OpenPopup("Add popup");
-
 	if (ImGui::BeginPopup("Add popup"))
 	{
 		ImGui::SeparatorText("Add");
@@ -1842,110 +2151,48 @@ void MyGUI::addShadingNodes()
 		ImGui::InputText("WIP", searchText, IM_ARRAYSIZE(searchText));
 		ImGui::Separator();
 
-		// Color Nodes
 		if (ImGui::BeginMenu("Color"))
 		{
-			if (ImGui::MenuItem("Color"))
-			{
-				app->activeMaterial->createNode<ColorNode>();
-				std::cout << "Color node added\n";
-			}
-			if (ImGui::MenuItem("ColorMix"))
-			{
-				app->activeMaterial->createNode<ColorMixNode>();
-				std::cout << "ColorMix node added\n";
-			}
-
+			if (ImGui::MenuItem("Color")) app->activeMaterial->createNode<ColorNode>(cursorPos);
+			if (ImGui::MenuItem("ColorMix")) app->activeMaterial->createNode<ColorMixNode>(cursorPos);
 			ImGui::EndMenu();
 		}
-
-		// Math Nodes
 		if (ImGui::BeginMenu("Math"))
 		{
-			if (ImGui::MenuItem("Math"))
-			{
-				app->activeMaterial->createNode<MathNode>();
-				std::cout << "Math node added\n";
-			}
+			if (ImGui::MenuItem("Math")) app->activeMaterial->createNode<MathNode>(cursorPos);
 			ImGui::EndMenu();
 		}
-
-		// Texture Nodes
 		if (ImGui::BeginMenu("Texture"))
 		{
-			if (ImGui::MenuItem("Texture"))
-			{
-				app->activeMaterial->createNode<TextureNode>();
-				std::cout << "Texture node added\n";
-			}
+			if (ImGui::MenuItem("Texture")) app->activeMaterial->createNode<TextureNode>(cursorPos);
 			ImGui::EndMenu();
 		}
-
-		// Input Nodes
 		if (ImGui::BeginMenu("Input"))
 		{
-			if (ImGui::MenuItem("Value"))
-			{
-				app->activeMaterial->createNode<ValueNode>();
-				std::cout << "Value node added\n";
-			}
+			if (ImGui::MenuItem("Value")) app->activeMaterial->createNode<ValueNode>(cursorPos);
 			ImGui::EndMenu();
 		}
-
-		// Output Nodes
 		if (ImGui::BeginMenu("Output"))
 		{
-			if (ImGui::MenuItem("Color Output"))
-			{
-				app->activeMaterial->createNode<ColorOutputNode>();
-				std::cout << "Color Output node added\n";
-			}
-			if (ImGui::MenuItem("Normal Output"))
-			{
-				app->activeMaterial->createNode<NormalOutputNode>();
-				std::cout << "Normal Output node added\n";
-			}
-			if (ImGui::MenuItem("Roughness Output"))
-			{
-				app->activeMaterial->createNode<RoughnessOutputNode>();
-				std::cout << "Roughness Output node added\n";
-			}
-			if (ImGui::MenuItem("Metallic Output"))
-			{
-				app->activeMaterial->createNode<MetallicOutputNode>();
-				std::cout << "Metallic Output node added\n";
-			}
-			if (ImGui::MenuItem("Ambient Occlusion Output"))
-			{
-				app->activeMaterial->createNode<AmbientOcclusionOutputNode>();
-				std::cout << "Ambient Occlusion Output node added\n";
-			}
-
+			if (ImGui::MenuItem("Color Output")) app->activeMaterial->createNode<ColorOutputNode>(cursorPos);
+			if (ImGui::MenuItem("Normal Output")) app->activeMaterial->createNode<NormalOutputNode>(cursorPos);
+			if (ImGui::MenuItem("Roughness Output")) app->activeMaterial->createNode<RoughnessOutputNode>(cursorPos);
+			if (ImGui::MenuItem("Metallic Output")) app->activeMaterial->createNode<MetallicOutputNode>(cursorPos);
+			if (ImGui::MenuItem("Ambient Occlusion Output")) app->activeMaterial->createNode<AmbientOcclusionOutputNode>(cursorPos);
 			ImGui::EndMenu();
 		}
-
 		ImGui::EndPopup();
 	}
 
-	// auto-close logic
-	if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)
-		&& !ImGui::IsAnyItemHovered()
-		&& hoverTime > 1.4)
+	if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) && !ImGui::IsAnyItemHovered() && hoverTime > 1.4)
 	{
 		glfwSetTime(0);
 		hoverTime = 0;
-
 		getWindow()->getViewportAtCursor()->getKeys()[GLFW_KEY_A] = 0;
-
 		showAddMenuFlag = false;
 		ImGui::CloseCurrentPopup();
 	}
-
-
-
 }
-
-
 
 
 

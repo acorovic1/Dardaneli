@@ -28,18 +28,6 @@
     <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUI\imnodes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUIZMO\GraphEditor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUIZMO\ImCurveEdit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUIZMO\ImGradient.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\libraries\include\ImGUIZMO\ImGuizmo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\AccelerationStructures\BVHNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -235,6 +223,12 @@
     <ClCompile Include="C:\Users\adnan\Desktop\Dardaneli\src\engine\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Downloads\ImGuizmo-master\ImGuizmo-master\src\GraphEditor.cpp" />
+    <ClCompile Include="..\..\Downloads\ImGuizmo-master\ImGuizmo-master\src\ImCurveEdit.cpp" />
+    <ClCompile Include="..\..\Downloads\ImGuizmo-master\ImGuizmo-master\src\ImGradient.cpp" />
+    <ClCompile Include="..\..\Downloads\ImGuizmo-master\ImGuizmo-master\src\ImGuizmo.cpp" />
+    <ClCompile Include="..\..\Downloads\ImGuizmo-master\ImGuizmo-master\src\ImSequencer.cpp" />
+    <ClCompile Include="..\..\Downloads\ImGuizmo-master\ImGuizmo-master\src\ImVectorEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\adnan\Desktop\Dardaneli\CMakeLists.txt" />
@@ -258,7 +252,6 @@
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\quad.frag" />
     <None Include="C:\Users\adnan\Desktop\Dardaneli\src\shaders\quad.vert" />
     <None Include=".gitignore" />
-    <None Include="imgui.ini" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
@@ -345,5 +338,13 @@
     <ClInclude Include="include\Utilities\RenderDocIntegration.h" />
     <ClInclude Include="include\Utilities\Triangle.h" />
     <ClInclude Include="include\Utilities\UnorderedPair.h" />
+    <ClInclude Include="..\..\Downloads\ImGuizmo-master\ImGuizmo-master\src\GraphEditor.h" />
+    <ClInclude Include="..\..\Downloads\ImGuizmo-master\ImGuizmo-master\src\ImCurveEdit.h" />
+    <ClInclude Include="..\..\Downloads\ImGuizmo-master\ImGuizmo-master\src\ImGradient.h" />
+    <ClInclude Include="..\..\Downloads\ImGuizmo-master\ImGuizmo-master\src\ImGuizmo.h" />
+    <ClInclude Include="..\..\Downloads\ImGuizmo-master\ImGuizmo-master\src\ImLightRig.h" />
+    <ClInclude Include="..\..\Downloads\ImGuizmo-master\ImGuizmo-master\src\ImSequencer.h" />
+    <ClInclude Include="..\..\Downloads\ImGuizmo-master\ImGuizmo-master\src\ImVectorEditor.h" />
+    <ClInclude Include="..\..\Downloads\ImGuizmo-master\ImGuizmo-master\src\ImZoomSlider.h" />
   </ItemGroup>
 </Project>

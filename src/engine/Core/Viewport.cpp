@@ -1,7 +1,7 @@
 #include "Viewport.h"
 #include "Window.h"
 
-
+int Viewport::nextViewportId = 0;
 
 Viewport::Viewport(double left, double bottom, double right, double top, GLFWwindow* glfwWindow) :
 	left(left), right(right), bottom(bottom), top(top)
@@ -24,7 +24,10 @@ Viewport::Viewport(double left, double bottom, double right, double top, GLFWwin
 
 	glViewport(left * width, bottom * height, right * width, top * height);
 
-
+	guiId = nextViewportId++;
+	//dockspaceId = ImGui::GetID(("vp_dock_" + std::to_string(id)).c_str());
+	//windowClass.ClassId = ImGui::GetID(("vp_class_" + std::to_string(id)).c_str());
+	//windowClass.DockingAllowUnclassed = false;
 
 }
 
@@ -88,6 +91,12 @@ Viewport::Viewport(Viewport* baseViewport, double xPos, double yPos, bool vertic
 
 
 	glViewport(left * width, bottom * height, right * width, top * height);
+
+
+	guiId = nextViewportId++;
+	//dockspaceId = ImGui::GetID(("vp_dock_" + std::to_string(id)).c_str());
+	//windowClass.ClassId = ImGui::GetID(("vp_class_" + std::to_string(id)).c_str());
+	//windowClass.DockingAllowUnclassed = false;
 }
 
 Viewport::~Viewport()
@@ -95,44 +104,98 @@ Viewport::~Viewport()
 
 }
 
-void Viewport::drawGui(MyGUI& gui, std::string id)
+
+
+
+
+
+void Viewport::drawGui(MyGUI& gui)
 {
-	ImGui::Begin(("Tools##" + id).c_str());
+	glm::ivec4 corners = this->getCorners(gui.getWindow());
+	int windowHeight = gui.getWindow()->getHeight();
+
+	float posX = static_cast<float>(corners.x);
+	float posY = static_cast<float>(windowHeight - corners.w);
+	float width = static_cast<float>(corners.z - corners.x);
+	float height = static_cast<float>(corners.w - corners.y);
+
+
+	if (corners.w == windowHeight)
+	{
+		posY = 0.051 * height;
+		height -= posY;
+	}
+
+	if (width <= 0.0f || height <= 0.0f) return;
+
+
+	ImGui::SetNextWindowPos(ImVec2(posX, posY));
+	ImGui::SetNextWindowSize(ImVec2(width, height));
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+
+	std::string hostName = "PaneHost##" + std::to_string(guiId);
+	ImGui::Begin(hostName.c_str(), nullptr,
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoBringToFrontOnFocus |
+		ImGuiWindowFlags_NoNavFocus |
+		ImGuiWindowFlags_NoBackground |
+		ImGuiWindowFlags_NoDocking);
+
+	ImGuiID dockspaceId = ImGui::GetID("ViewportDockSpace");
+
+	if (ImGui::DockBuilderGetNode(dockspaceId) == nullptr)
+	{
+		ImGui::DockBuilderRemoveNode(dockspaceId);
+		ImGui::DockBuilderAddNode(dockspaceId, ImGuiDockNodeFlags_DockSpace);
+		ImGui::DockBuilderSetNodeSize(dockspaceId, ImVec2(width, height));
+
+		ImGuiID dock_main_id = dockspaceId;
+
+		ImGuiID dock_id_top = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.10f, nullptr, &dock_main_id);
+		ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.25f, nullptr, &dock_main_id);
+		ImGuiID dock_id_right = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.15f, nullptr, &dock_main_id);
+
+		//ImGuiID dock_id_shader = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_, 0.35f, nullptr, &dock_main_id);
+
+
+		ImGui::DockBuilderDockWindow(("Shader Node Editor##" + std::to_string(guiId)).c_str(), dock_main_id);
+
+		// Assign windows to their respective split nodes
+		//ImGui::DockBuilderDockWindow(("RenderMode##" + std::to_string(id)).c_str(), dock_id_top);
+		ImGui::DockBuilderDockWindow(("Editor Tools##" + std::to_string(guiId)).c_str(), dock_id_left);
+		ImGui::DockBuilderDockWindow(("Hierarchy##" + std::to_string(guiId)).c_str(), dock_id_right);
+
+		ImGui::DockBuilderFinish(dockspaceId);
+	}
+
+	ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+
+	ImGui::End();
+	ImGui::PopStyleVar();
+
+	ImGui::SetNextWindowSizeConstraints(ImVec2(5.0f, 5.0f), ImVec2(FLT_MAX, FLT_MAX));
+
+	ImGui::Begin(("Editor Tools##" + std::to_string(guiId)).c_str());
+	switch (mode)
+	{
+	case Mode::OBJECT:      gui.drawObjectTools(this);		break;
+	case Mode::EDIT:        gui.drawEditTools(this);		break;
+	case Mode::UV_EDIT:     gui.drawUVTools(this);			break;
+	case Mode::SHADER_EDIT: gui.drawNodeTools(this);	break;
+	}
+	ImGui::End();
 
 	switch (mode)
 	{
-	case Mode::OBJECT:
-		gui.drawObjectModeUI(this);
-		break;
-
-	case Mode::EDIT:
-		gui.drawEditModeUI(this);
-		break;
-	case Mode::UV_EDIT:
-		gui.drawUVModeUI(this);
-		break;
-	case Mode::SHADER_EDIT:
-		gui.drawShaderEditorUI(this);
-		break;
-
+		//case Mode::OBJECT:      gui.drawObjectModeUI(this);		break;
+		//case Mode::EDIT:        gui.drawEditModeUI(this);		break;
+		//case Mode::UV_EDIT:     gui.drawUVModeUI(this);			break;
+	case Mode::SHADER_EDIT: gui.shaderNodeEditor(this);	break;
 	}
-
-	ImGui::End();
-
-
-
-
-	ImGui::Begin(("##" + id).c_str());
-	
-	int current = (size_t)renderMode;
-	ImGui::SameLine();
-	if (ImGui::RadioButton("Wireframe", &current, 0)) renderMode = RenderMode::WIREFRAME; ImGui::SameLine();
-	if (ImGui::RadioButton("Solid", &current, 1)) renderMode = RenderMode::SOLID; ImGui::SameLine();
-	if (ImGui::RadioButton("Material Preview", &current, 2))renderMode = RenderMode::MATERIAL_PREVIEW; ImGui::SameLine();
-	if (ImGui::RadioButton("Render", &current, 3)) renderMode = RenderMode::RENDER; ImGui::SameLine();
-
-
-	ImGui::End();
 
 
 

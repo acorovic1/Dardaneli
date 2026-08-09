@@ -15,6 +15,11 @@ class Viewport {
 	double left, right, bottom, top;
 
 
+	ImGuiID dockspaceId;
+	ImGuiWindowClass windowClass;
+	int guiId;
+	static int nextViewportId;
+
 
 	std::array<std::unique_ptr<Camera>, (size_t)CameraTypes::COUNT> cameras;
 	int currentCameraIndex = (size_t)CameraTypes::VIEWPORT;
@@ -22,6 +27,10 @@ class Viewport {
 	Mode mode = Mode::OBJECT;
 	SelectMode selectMode = SelectMode::VERTEX;
 	RenderMode renderMode = RenderMode::SOLID;
+	// used to display the material in shader editor
+	Material* activeMaterial = nullptr;
+	ImVec2 shaderNodeEditorCenter = ImVec2(0.0f, 0.0f);
+
 
 
 
@@ -106,7 +115,7 @@ public:
 	Viewport& operator=(Viewport&& move) = delete;
 
 
-	
+
 	Viewport(double left, double bottom, double right, double top, GLFWwindow* glfwWindow);
 	// used for adding aditional viewports
 	Viewport(Viewport* baseViewport, double xPos, double yPos, bool vertical, Window* window);
@@ -130,11 +139,17 @@ public:
 	Mode& getMode() { return mode; }
 	SelectMode& getSelectMode() { return selectMode; }
 	RenderMode& getRenderMode() { return renderMode; }
+	Material* getActiveMaterial() { return activeMaterial; }
+	ImVec2 getShaderNodeEditorCenter() { return shaderNodeEditorCenter; }
+	
 
 	void setMode(Mode newMode) { mode = newMode; }
 	void setRenderMode(RenderMode newRenderMode) { renderMode = newRenderMode; }
+	void setShaderNodeEditorCenter(ImVec2 newCenter) { shaderNodeEditorCenter = newCenter; }
 
-	void drawGui(MyGUI& gui,std::string id);
+
+	void drawGui(MyGUI& gui);
+	int getGuiId() { return guiId; }
 
 
 	std::vector<int>& getKeys() { return keys; }

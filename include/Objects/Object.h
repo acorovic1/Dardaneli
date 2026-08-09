@@ -16,7 +16,7 @@
 class Object {
 protected:
 
-	
+
 
 	glm::vec3 position = glm::vec3(0.0f);
 	glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
@@ -41,6 +41,7 @@ public:
 	Object(std::string name);		// call the object bvh in the constructor of the child class
 
 	std::string getName();
+	void setName(std::string name) { this->name = name; }
 	GLuint getIndex()const;
 
 	virtual void draw(Shader& shader, Camera& camera, GLenum mode = GL_TRIANGLES, bool outline = false) = 0;
@@ -75,15 +76,15 @@ public:
 	const glm::vec3& getScale() const { return scaleFac; }
 
 
-		
-	
 
-	
+
+
+
 	glm::mat4 getModelMatrix();
 
 	void bindVAO();
 
-	
+
 
 
 

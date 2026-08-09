@@ -12,19 +12,20 @@ Window::Window(const char* title)
 	gladLoadGL();
 
 
+	gui = std::make_unique<MyGUI>(glfwWindow);
 
 	glfwSetWindowUserPointer(glfwWindow, reinterpret_cast<void*>(this));
 	glfwGetWindowSize(glfwWindow, &width, &height);
 
 	viewports.emplace_back(std::make_unique<Viewport>(0.0, 0.0, 1.0, 1.0, glfwWindow));
 
-	gui = std::make_unique<MyGUI>(glfwWindow);
 
 }
 
 void Window::init() { setCallbacks(); }
 
 void Window::terminate() {
+	
 	gui->shutdown();
 	glfwDestroyWindow(glfwWindow);
 }

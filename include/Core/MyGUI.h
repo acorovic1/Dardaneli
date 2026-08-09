@@ -8,6 +8,10 @@
 
 #include "ImGUIZMO/ImGuizmo.h"
 
+// Required for ImGuiDockBuilder functions
+ // Include if using ImHashStr, or use the integer trick below
+#include <ImGui/imgui_internal.h>
+
 #include <glad/glad.h>
 #include "ObjectManager.h"
 #include "CameraManager.h"
@@ -94,11 +98,7 @@ public:
 	void render();
 	void shutdown();
 
-	void drawUI(Viewport* viewport);
-	void drawObjectModeUI(Viewport* viewport);
-	void drawEditModeUI(Viewport* viewport);
-	void drawUVModeUI(Viewport* viewport);
-	void drawShaderEditorUI(Viewport* viewport);
+
 
 	ImGuiIO* getIO() { return io; };
 	GLFWwindow* getGLFWwindow() { return glfwWindow; }
@@ -107,6 +107,20 @@ public:
 	//SelectMode getSelectMode() { return app->selectMode; };
 	bool getFaceCulling() { return faceCulling; }
 	std::vector<int>& getObjectIndex() { return app->selectedObjects; };
+
+
+
+	void drawGeneral(Viewport* viewport);
+
+	void drawTopBar();
+	void drawObjectTools(Viewport* viewport);
+	void drawEditTools(Viewport* viewport);
+	void drawUVTools(Viewport* viewport);
+	void drawNodeTools(Viewport* viewport);
+
+	void drawHierarchy(Viewport* viewport);
+	void drawRenderModeOptions(Viewport* viewport);
+	void drawBVH(Viewport* viewport);
 
 	void showAddMenu();
 	void showDeleteMenu();
@@ -125,8 +139,8 @@ public:
 	bool isViewportAdjusted();
 	void stopViewportAdjustment();
 
-	void drawBVH(Camera* camera);
-	void BVHRayInteraction();
+	void displayBVH(Camera* camera);
+	void BVHRayInteraction(Viewport* viewport);
 
 	void gizmos();
 
@@ -145,7 +159,7 @@ public:
 
 	void dMesh();
 
-	void shaderNodeEditor();
+	void shaderNodeEditor(Viewport* viewport);
 	void addShadingNodes();
 
 

@@ -31,32 +31,35 @@ void Renderer::render()
 
 
 
+
+
+
 	for (int i = 0;i < viewports.size();i++)
 	{
 		Viewport* viewport = viewports[i].get();
 		glm::ivec4 corners = viewport->getCorners(&window);
 
+		if (!gui.getFaceCulling() || viewport->getRenderMode() == RenderMode::WIREFRAME)
+			glDisable(GL_CULL_FACE);
+		else
+			glEnable(GL_CULL_FACE);
+
+
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(corners.x, corners.y, corners.z - corners.x, corners.w - corners.y);
 		glViewport(corners.x, corners.y, corners.z - corners.x, corners.w - corners.y);
 
-		std::mt19937 gen(i);               // same seed => same color every frame
-		std::uniform_real_distribution<float> dist(0.0f, 1.0f);
-
-		float r = dist(gen);
-		float g = dist(gen);
-		float b = dist(gen);
-
 
 		Mode mode = viewport->getMode();
 		if (mode == Mode::OBJECT || mode == Mode::EDIT || mode == Mode::SCULPT || mode == Mode::TEXTURE_PAINT || mode == Mode::WEIGHT_PAINT)
-			objectEditor(viewport, glm::vec3(0.23f, 0.33f, 0.33f));
+			objectEditor(viewport);
 		else if (mode == Mode::UV_EDIT)
 			uvEditor(viewport);
 		else if (mode == Mode::SHADER_EDIT)
 			shaderEditor(viewport);
 
-		viewport->drawGui(gui, std::to_string(i));
+		viewport->drawGui(gui);
+		gui.drawGeneral(viewport);
 
 
 		if (viewport->getKeys()[GLFW_KEY_G] || !gui.getIO()->WantCaptureMouse || mode == Mode::SHADER_EDIT) {
@@ -65,17 +68,17 @@ void Renderer::render()
 		}
 
 	}
-	gui.drawUI(viewports[0].get());
+	gui.drawTopBar();
 	gui.render();
 }
 
-void Renderer::objectEditor(Viewport* viewport, glm::vec3 color)
+void Renderer::objectEditor(Viewport* viewport)
 {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_STENCIL_TEST);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-	glClearColor(color.x, color.y, color.z, 1.0f);
+	glClearColor(0.23f, 0.33f, 0.33f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	RenderMode renderMode = viewport->getRenderMode();
@@ -88,10 +91,6 @@ void Renderer::objectEditor(Viewport* viewport, glm::vec3 color)
 
 
 
-	if (!gui.getFaceCulling() || renderMode == RenderMode::WIREFRAME)
-		glDisable(GL_CULL_FACE);
-	else
-		glEnable(GL_CULL_FACE);
 
 	static Shader& basicShader = shaderSingleton->getShader("Basic");
 	auto& selectedObjects = gui.getObjectIndex();
@@ -379,7 +378,7 @@ void Renderer::shaderEditor(Viewport* viewport)
 
 	Camera* camera = viewport->getActiveCamera();
 	MyGUI& gui = window.getGui();
-	gui.shaderNodeEditor();
+	//gui.shaderNodeEditor(viewport);
 
 }
 
